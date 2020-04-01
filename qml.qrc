@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>resources/img/back_waves.png</file>
+        <file>resources/img/icon_app.png</file>
+        <file>qml/AppTheme.qml</file>
+        <file>qml/qmldir</file>
+        <file>qml/custom/TanksList.qml</file>
+        <file>resources/img/wave_blue.png</file>
+        <file>resources/img/wave_green.png</file>
+    </qresource>
+</RCC>
