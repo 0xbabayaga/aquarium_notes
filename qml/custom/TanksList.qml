@@ -7,7 +7,7 @@ Item
 {
     id: tanksList
     height: 128 * app.scale
-    width: 720 * app.scale + AppTheme.margin * app.scale * 4
+    width: (view.model.count > 2) ? app.width + AppTheme.margin * app.scale * 4 : 360 * app.scale
 
     property alias tanksListmodel: view.model
 
@@ -24,6 +24,7 @@ Item
 
             Item
             {
+                id: itemContainer
                 width: 128 * app.scale
                 height: 128 * app.scale
                 scale: PathView.iconScale
@@ -32,7 +33,7 @@ Item
                 {
                     id: rect
                     anchors.fill: parent
-                    radius: 8 * app.scale
+                    radius: AppTheme.radius * app.scale
                     color: AppTheme.whiteColor
                     clip: true
                 }
@@ -42,9 +43,9 @@ Item
                     anchors.fill: rect
                     horizontalOffset: 0
                     verticalOffset: -3
-                    radius: 8.0
-                    samples: 17
-                    color: "#20000000"
+                    radius: 16.0
+                    samples: 16
+                    color: "#40000000"
                     source: rect
                 }
 
@@ -52,7 +53,7 @@ Item
                 Rectangle
                 {
                     anchors.fill: rect
-                    radius: 8 * app.scale
+                    radius: AppTheme.radius * app.scale
                     color: (view.currentIndex === index) ? AppTheme.whiteColor : ((type === 0) ? AppTheme.lightBlueColor : AppTheme.lightGreenColor)
                     clip: true
 
@@ -96,6 +97,15 @@ Item
                         height: AppTheme.compHeight * app.scale
                     }
 
+                    MouseArea
+                    {
+                        anchors.fill: parent
+                        onClicked:
+                        {
+                            view.currentIndex = index
+                            sigCurrentIndexChanged(index)
+                        }
+                    }
                 }
             }
         }

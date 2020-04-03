@@ -15,9 +15,18 @@ Window
     ListModel
     {
         id: tmpTankModel
-        ListElement { name: "MY REEF";  volume: 450;    type: 0    }
-        ListElement { name: "BEST REEF EVER";  volume: 120;    type: 0    }
-        ListElement { name: "MY FRESH";  volume: 70;    type: 1    }
+        ListElement { name: "MY REEF";          volume: 450;    type: 0;    photo: ""   }
+        ListElement { name: "BEST REEF EVER";   volume: 120;    type: 0;    photo: ""   }
+        ListElement { name: "MY FRESH";         volume: 70;     type: 1;    photo: ""   }
+    }
+
+    ListModel
+    {
+        id: tmpParamModel
+        ListElement { name: "Salinity";     value: "33.5ppm";    }
+        ListElement { name: "Ca";           value: "397mg\\l";     }
+        ListElement { name: "kH";           value: "7.7dKH";     }
+        ListElement { name: "pH";           value: "8.2";     }
     }
 
 
@@ -76,33 +85,97 @@ Window
             color: AppTheme.blueColor
             text: qsTr("AQUARIUM NOTES")
         }
+    }
+
+    Text
+    {
+        id: textTankName
+        anchors.top: parent.top
+        anchors.topMargin: AppTheme.margin * app.scale * 2
+        anchors.horizontalCenter: parent.horizontalCenter
+        verticalAlignment: Text.AlignVCenter
+        font.family: AppTheme.fontFamily
+        font.pixelSize: AppTheme.fontSuperBigSize * app.scale
+        color: AppTheme.blueColor
+        text: tanksListmodel.get(0).name;
+    }
+
+    TanksList
+    {
+        id: tanksList
+        anchors.top: parent.top
+        anchors.topMargin: AppTheme.rowHeightMin * app.scale * 2
+        anchors.horizontalCenter: parent.horizontalCenter
+        tanksListmodel: tmpTankModel
+        onSigCurrentIndexChanged: textTankName.text = tanksListmodel.get(id).name
+    }
+
+    Rectangle
+    {
+        id: rectDataContainer
+        anchors.top:tanksList.bottom
+        anchors.margins: AppTheme.margin * app.scale
+        anchors.topMargin: AppTheme.rowHeight * app.scale * 2
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        color: "#00000000"
 
         Text
         {
-            id: textTankName
+            id: textCurrentLabel
             anchors.top: parent.top
-            anchors.topMargin: AppTheme.margin * app.scale * 2
-            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.right: parent.right
             verticalAlignment: Text.AlignVCenter
             font.family: AppTheme.fontFamily
-            font.pixelSize: AppTheme.fontSuperBigSize * app.scale
-            color: AppTheme.blueColor
-            text: tanksListmodel.get(0).name;
+            font.pixelSize: AppTheme.fontBigSize * app.scale
+            color: AppTheme.greyColor
+            text: "[" + qsTr("CURRENT") + "]"
         }
 
-
-        TanksList
+        ListView
         {
-            anchors.left: parent.left
-            anchors.leftMargin: -AppTheme.margin * app.scale * 2
-            anchors.right: parent.right
-            anchors.rightMargin: -AppTheme.margin * app.scale * 2
-            anchors.top: parent.top
-            anchors.topMargin: AppTheme.rowHeightMin * app.scale * 2
-            width: parent.width
-            tanksListmodel: tmpTankModel
+            id: paramListView
+            anchors.fill: parent
+            anchors.topMargin: textCurrentLabel.height
+            spacing: 0
+            model: tmpParamModel
+            delegate: Rectangle
+            {
+                width: parent.width
+                height: AppTheme.rowHeight * app.scale
+                color: "#00000000"
 
-            onSigCurrentIndexChanged: textTankName.text = tanksListmodel.get(id).name
+                Text
+                {
+                    anchors.left: parent.left
+                    anchors.verticalCenter: parent.verticalCenter
+                    verticalAlignment: Text.AlignVCenter
+                    font.family: AppTheme.fontFamily
+                    font.pixelSize: AppTheme.fontBigSize * app.scale
+                    color: AppTheme.blueColor
+                    text: name
+                }
+
+                Text
+                {
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    verticalAlignment: Text.AlignVCenter
+                    font.family: AppTheme.fontFamily
+                    font.pixelSize: AppTheme.fontBigSize * app.scale
+                    color: AppTheme.greyColor
+                    text: value
+                }
+
+                Rectangle
+                {
+                    width: parent.width
+                    height: 1 * app.scale
+                    anchors.bottom: parent.bottom
+                    color: ((index + 1) === paramListView.model.count) ? "#00000000" : AppTheme.shideColor
+                }
+            }
         }
     }
 }
