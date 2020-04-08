@@ -1,0 +1,74 @@
+Users table (UTABLE):
+-----------------------------------------
+MAN_ID        	|	CHAR[32] (UNIQUE Randomly generated on creation)
+UNAME			|	STRING(64)
+UPASS			|	STRING(128)
+SELECTED		|	False\True
+STATUS			|	INT (Enabled/Disabled/Blocked ... )
+PHONE			|	STRING(32)
+EMAIL			|	STRING(64)
+AVATAR_IMG		|	STRING (base64 jpg)
+DATE_CREATE		|	TIMESTAMP
+DATE_EDIT		|	TIMESTAMP
+
+
+User tanks table (TANKSTABLE):
+-----------------------------------------
+TANK_ID			|	CHAR[32] (UNIQUE Randomly generated on creation)
+MAN_ID			|	Assocoated key (See UTABLE)
+TYPE			|	Int (Fresh/Reef ... )
+NAME			|	STRING(64)
+DESC			|	TEXT(512)
+IMG				|	STRING (base64 jpg)
+STATUS			|	Int (Enabled/Disabled/Blocked ....)
+DATE_CREATE		|	TIMESTAMP
+DATE_EDIT		| 	TIMESTAMP
+
+
+Logged data table (LOGTABLE):
+-----------------------------------------
+TANK_ID			|	Assocoated key (see TANKSTABLE)
+SMP_ID			|	INT	(increment)	
+TIMESTAMP		|	TIMESTAMP
+PARAM_ID		|	INT
+VALUE			|	FLOAT
+Warning: SMP_ID (sample ID) is autoincrement. However to identify if several parameters belong to
+the same sample SMP_ID & TIMESTAMP for this set of parameters must be the same
+
+
+
+Dictionary of parameters table (DICTTABLE):
+-----------------------------------------
+PARAM_ID		|	ENUM
+SHORT_NAME	  	|	STRING(8)
+FULL_NAME	    |	STRING(32)
+UNIT_NAME	    |	STRING(8)
+-----------------------------------------
+VALUES
+-----------------------------------------------------------------
+TYPE_ID       |   SHORT_NAME    |   FULL_NAME     |   UNIT_NAME
+-----------------------------------------------------------------
+0                 -                 -                 -
+1                 Temp.             Temperature       C		    	  
+2                 Sal.              Salinity		  ppm
+3                 Ca			    Calcium	          mg\l
+4                 pH				pH                
+5				  kH                kH                dKh
+6                 gH				gH                
+7                 PO4				Phosphates        ppm
+8                 NO2				Nitrite           ppm
+9                 NO3				Nitrate           ppm
+10                NH3				Ammonia           ppm
+11                CO2				Carbon            mg\l
+12                O2				Oxigen            mg\l
+13                Mg				Magnesium         ppm
+14                Si				Silicates         ppm
+15                K				    Potassium         ppm
+16                I				    Iodine            ppm
+17                Sr				Strontium         ppm
+18                Fe				Ferrum            ppm
+19                Cu                Cuprum            ppm
+20                B				    Boron             ppm
+21                Mo				Molybdenum        ppm
+22                Cl                Clorine           ppm
+23                ORP				ORP               
