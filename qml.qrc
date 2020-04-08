@@ -11,5 +11,9 @@
         <file>qml/Page_TankData.qml</file>
         <file>resources/img/icon_arrow_left.png</file>
         <file>qml/custom/StandardButton.qml</file>
+        <file>qml/Page_AccountCreation.qml</file>
+        <file>qml/Page_Main.qml</file>
+        <file>qml/custom/ComboList.qml</file>
+        <file>qml/custom/TextInput.qml</file>
     </qresource>
 </RCC>

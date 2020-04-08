@@ -17,7 +17,7 @@ Item
         anchors.fill: parent
         radius: width/2
         color: "#00000000"
-        border.width: 2 * app.scale
+        border.width: 1 * app.scale
         border.color: AppTheme.blueColor
 
         Text
