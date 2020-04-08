@@ -9,7 +9,8 @@ Item
     height: 128 * app.scale
     width: (view.model.count > 2) ? app.width + AppTheme.margin * app.scale * 4 : 360 * app.scale
 
-    property alias tanksListmodel: view.model
+    property alias tanksListModel: view.model
+    property alias currentIndex: view.currentIndex
 
     signal sigCurrentIndexChanged(int id)
 

@@ -60,8 +60,8 @@ Window
             anchors.rightMargin: 12 * app.scale
             anchors.verticalCenter: parent.verticalCenter
             fillMode: Image.PreserveAspectFit
-            width: 16 * app.scale
-            height: 16 * app.scale
+            width: 24 * app.scale
+            height: 24 * app.scale
             source: "qrc:/resources/img/icon_app.png"
             mipmap: true
 
@@ -106,8 +106,11 @@ Window
         anchors.top: parent.top
         anchors.topMargin: AppTheme.rowHeightMin * app.scale * 2
         anchors.horizontalCenter: parent.horizontalCenter
-        tanksListmodel: tmpTankModel
-        onSigCurrentIndexChanged: textTankName.text = tanksListmodel.get(id).name
+        tanksListModel: tmpTankModel
+        onSigCurrentIndexChanged:
+        {
+            textTankName.text = tanksListModel.get(id).name
+        }
     }
 
     Rectangle
@@ -177,5 +180,28 @@ Window
                 }
             }
         }
+    }
+
+    StandardButton
+    {
+        id: butShowMore
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: AppTheme.margin * app.scale
+        bText: qsTr("Show more")
+
+        onSigButtonClicked:
+        {
+            page_TankData.showPage(true, tanksList.tanksListModel.get(tanksList.currentIndex).name,
+                                   tanksList.tanksListModel.get(tanksList.currentIndex).type)
+        }
+    }
+
+    Page_TankData
+    {
+        id: page_TankData
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.verticalCenterOffset: AppTheme.rowHeightMin * app.scale
     }
 }
