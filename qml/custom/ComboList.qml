@@ -70,7 +70,16 @@ Item
         font.family: AppTheme.fontFamily
         font.pixelSize: AppTheme.fontNormalSize * app.scale
         horizontalAlignment: Text.AlignLeft
+        verticalAlignment: Text.AlignVCenter
         color: enabled ? AppTheme.blueColor : AppTheme.hideColor
+        onFocusChanged: focus ? rectUnderLine.color = AppTheme.blueColor : rectUnderLine.color = AppTheme.hideColor
+
+        MouseArea
+        {
+            anchors.fill: parent
+            onClicked: textArea.forceActiveFocus()
+        }
+
     }
 
     Rectangle
@@ -80,7 +89,7 @@ Item
         anchors.left: textArea.left
         anchors.right: textArea.right
         height: 1 * app.scale
-        color: textArea.enabled ? AppTheme.blueColor : AppTheme.hideColor
+        color: AppTheme.hideColor
         opacity: comboList.opacity
     }
 
@@ -89,16 +98,20 @@ Item
         id: img
         anchors.right: parent.right
         anchors.top: parent.top
-        width: parent.height
-        height: parent.height
-        source: "qrc:/resources/img/icon_arrow_left.png"
+        width: 27 * app.scale
+        height: 27 * app.scale
+        source: "qrc:/resources/img/icon_listdown.png"
         mipmap: true
 
         MouseArea
         {
             anchors.fill: parent
 
-            onClicked: showList(true)
+            onClicked:
+            {
+                textArea.forceActiveFocus()
+                showList(true)
+            }
         }
     }
 
@@ -147,24 +160,6 @@ Item
                 color: "#ffffffff"
                 clip: true
 
-                /*
-                Image
-                {
-                    anchors.fill: parent
-                    anchors.topMargin: -yOffset
-                    source: "qrc:/resources/background.jpg"
-                    fillMode: Image.PreserveAspectCrop
-                    width: app.width
-                    height: app.height
-
-                    MouseArea
-                    {
-                        anchors.fill: parent
-                        onClicked: rect.visible = false
-                    }
-                }
-                */
-
                 Rectangle
                 {
                     anchors.top: parent.top
@@ -204,7 +199,7 @@ Item
                         text: qsTr("Property:")
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontNormalSize * app.scale
-                        color: AppTheme.blueColor
+                        color: AppTheme.greyDarkColor
                         verticalAlignment: Text.AlignBottom
                     }
 
@@ -219,15 +214,15 @@ Item
                         {
                             color: "#00000000"
                             width: listView.width
-                            height: AppTheme.rowHeightMin * app.scale
+                            height: AppTheme.compHeight * app.scale
 
                             Text
                             {
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.left: parent.left
                                 font.family: AppTheme.fontFamily
-                                font.pixelSize: AppTheme.fontBigSize * app.scale
-                                color: AppTheme.fontMainColor
+                                font.pixelSize: AppTheme.fontNormalSize * app.scale
+                                color: AppTheme.blueColor
                                 verticalAlignment: Text.AlignVCenter
                                 horizontalAlignment: Text.AlignHCenter
                                 text: name

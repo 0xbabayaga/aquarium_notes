@@ -15,5 +15,6 @@
         <file>qml/Page_Main.qml</file>
         <file>qml/custom/ComboList.qml</file>
         <file>qml/custom/TextInput.qml</file>
+        <file>resources/img/icon_listdown.png</file>
     </qresource>
 </RCC>

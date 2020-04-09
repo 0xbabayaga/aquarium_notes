@@ -12,6 +12,9 @@ Item
     property alias text: textArea.text
     property alias echoMode: textArea.echoMode
     property string placeholderText: "sometext"
+    property alias maximumLength: textArea.maximumLength
+    property alias validator: textArea.validator
+
 
     TextInput
     {
@@ -20,17 +23,22 @@ Item
         height: textInput.height
         font.family: AppTheme.fontFamily
         font.pixelSize: AppTheme.fontNormalSize * app.scale
+        verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignLeft
         color: enabled ? AppTheme.blueColor : AppTheme.hideColor
 
         Text
         {
             text: textInput.placeholderText
+            verticalAlignment: Text.AlignVCenter
             font.family: AppTheme.fontFamily
             font.pixelSize: AppTheme.fontNormalSize * app.scale
-            color: AppTheme.hideColor
+            color: AppTheme.greyColor
+            height: parent.height
             visible: !textArea.text
         }
+
+        onFocusChanged: focus ? rectUnderLine.color = AppTheme.blueColor : rectUnderLine.color = AppTheme.hideColor
     }
 
     Rectangle
@@ -40,7 +48,7 @@ Item
         anchors.left: textArea.left
         anchors.right: textArea.right
         height: 1 * app.scale
-        color: textArea.enabled ? AppTheme.blueColor : AppTheme.hideColor
+        color: AppTheme.hideColor
         opacity: textInput.opacity
     }
 }
