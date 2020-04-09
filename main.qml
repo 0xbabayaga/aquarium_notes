@@ -17,7 +17,8 @@ Window
     width: 360
     height: 720
 
-    signal sigCreateAccount(string uname, string upass, string umail, int tankType)
+    signal sigCreateAccount(string uname, string upass, string umail)
+    signal sigCreateTank(string uname, int tankType, int l, int w, int h)
 
     Image
     {

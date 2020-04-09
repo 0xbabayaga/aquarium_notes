@@ -7,18 +7,15 @@ Item
 {
     id: page_AccountCreation
 
-    function openAccountDialog(open)
+    function openAccountDialog(page)
     {
-        if (open === true)
-        {
-            animationBack.stop();
-            animationNext.start();
-        }
-        else
-        {
-            animationNext.stop();
-            animationBack.start();
-        }
+        animationToPage.stop()
+
+        animationToPage.from = animationToPage.to
+        animationToPage.to = app.height * page
+
+
+        animationToPage.start()
     }
 
     ListModel
@@ -46,25 +43,15 @@ Item
             anchors.left: parent.left
             anchors.right: parent.right
             contentWidth: width
-            contentHeight: app.height * 2
+            contentHeight: app.height * 4
 
             flickableDirection: Flickable.VerticalFlick
             interactive: false
 
             NumberAnimation on contentY
             {
-                id: animationNext
+                id: animationToPage
                 from: 0
-                to: app.height
-                duration: 500
-                easing.type: Easing.OutExpo
-                running: false
-            }
-
-            NumberAnimation on contentY
-            {
-                id: animationBack
-                from: app.height
                 to: 0
                 duration: 500
                 easing.type: Easing.OutExpo
@@ -108,16 +95,19 @@ Item
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontNormalSize * app.scale
                         color: AppTheme.greyColor
-                        text: qsTr("There is no active account detected")
+                        text: qsTr("There is no active account found")
                     }
+
+                    Item { height: 1; width: 1;}
+                    Item { height: 1; width: 1;}
 
                     StandardButton
                     {
                         id: buttonGoToAccount
                         anchors.horizontalCenter: parent.horizontalCenter
-                        bText: qsTr("Create account")
+                        bText: qsTr("CREATE")
 
-                        onSigButtonClicked: page_AccountCreation.openAccountDialog(true)
+                        onSigButtonClicked: page_AccountCreation.openAccountDialog(1)
                      }
                 }
             }
@@ -130,6 +120,101 @@ Item
                 anchors.leftMargin: AppTheme.margin * app.scale
                 anchors.right: parent.right
                 anchors.rightMargin: AppTheme.margin * app.scale
+                height: app.height
+                color: "#00000000"
+
+                Column
+                {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.verticalCenterOffset: 60 * app.scale
+                    height: 300 * app.scale
+                    width: parent.width
+                    spacing: AppTheme.padding * app.scale
+
+                    Text
+                    {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        height: AppTheme.compHeight * app.scale
+                        verticalAlignment: Text.AlignVCenter
+                        font.family: AppTheme.fontFamily
+                        font.pixelSize: AppTheme.fontBigSize * app.scale
+                        color: AppTheme.blueColor
+                        text: qsTr("Creating account:")
+                    }
+
+                    Item { height: 1; width: 1;}
+
+                    TextInput
+                    {
+                        id: textUserName
+                        placeholderText: qsTr("User name")
+                        width: parent.width
+                    }
+
+                    Item { height: 1; width: 1;}
+
+                    TextInput
+                    {
+                        id: textUserEmail
+                        placeholderText: qsTr("User email")
+                        width: parent.width
+                    }
+
+                    Item { height: 1; width: 1;}
+
+                    TextInput
+                    {
+                        id: textUserPass
+                        placeholderText: qsTr("User password")
+                        width: parent.width
+                    }
+
+                    Item { height: 1; width: 1;}
+                    Item { height: 1; width: 1;}
+                    Item { height: 1; width: 1;}
+
+                    Rectangle
+                    {
+                        width: parent.width
+                        height: AppTheme.compHeight * app.scale
+
+                        StandardButton
+                        {
+                            id: buttonCancel
+                            anchors.left: parent.left
+                            width: 130 * app.scale
+                            bText: qsTr("CANCEL")
+
+                            onSigButtonClicked: page_AccountCreation.openAccountDialog(0)
+                        }
+
+                        StandardButton
+                        {
+                            id: buttonCreate
+                            anchors.right: parent.right
+                            width: 130 * app.scale
+                            bText: qsTr("CREATE")
+
+                            onSigButtonClicked:
+                            {
+                                app.sigCreateAccount(textUserName.text,
+                                                     textUserPass.text,
+                                                     textUserEmail.text)
+
+                                page_AccountCreation.openAccountDialog(2)
+                            }
+                        }
+                    }
+                }
+            }
+
+            Rectangle
+            {
+                id: rectNoTanc
+                anchors.top: rectCreateAccount.bottom
+                anchors.left: parent.left
+                width: parent.width
                 height: app.height
                 color: "#00000000"
 
@@ -150,29 +235,152 @@ Item
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontBigSize * app.scale
                         color: AppTheme.blueColor
-                        text: qsTr("Creating account:")
+                        text: qsTr("Hello") + ", " +qsTr("User")
                     }
+
+                    Text
+                    {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        height: AppTheme.compHeight * app.scale
+                        verticalAlignment: Text.AlignVCenter
+                        font.family: AppTheme.fontFamily
+                        font.pixelSize: AppTheme.fontNormalSize * app.scale
+                        color: AppTheme.greyColor
+                        text: qsTr("There is no active tank found")
+                    }
+
+                    Item { height: 1; width: 1;}
+                    Item { height: 1; width: 1;}
+
+                    StandardButton
+                    {
+                        id: buttonGoToTank
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        bText: qsTr("CREATE")
+
+                        onSigButtonClicked: page_AccountCreation.openAccountDialog(3)
+                     }
+                }
+            }
+
+            Rectangle
+            {
+                id: rectCreateTank
+                anchors.top: rectNoTanc.bottom
+                anchors.left: parent.left
+                anchors.leftMargin: AppTheme.margin * app.scale
+                anchors.right: parent.right
+                anchors.rightMargin: AppTheme.margin * app.scale
+                height: app.height
+                color: "#00000000"
+
+                Column
+                {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.verticalCenterOffset: 60 * app.scale
+                    height: 300 * app.scale
+                    width: parent.width
+                    spacing: AppTheme.padding * app.scale
+
+                    Text
+                    {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        height: AppTheme.compHeight * app.scale
+                        verticalAlignment: Text.AlignVCenter
+                        font.family: AppTheme.fontFamily
+                        font.pixelSize: AppTheme.fontBigSize * app.scale
+                        color: AppTheme.blueColor
+                        text: qsTr("Creating tank:")
+                    }
+
+                    Item { height: 1; width: 1;}
 
                     TextInput
                     {
-                        id: textUserName
-                        placeholderText: qsTr("User name")
+                        id: textTankName
+                        placeholderText: qsTr("Tank name")
                         width: parent.width
                     }
 
-                    TextInput
+                    Item { height: 1; width: 1;}
+
+                    Rectangle
                     {
-                        id: textUserPass
-                        placeholderText: qsTr("User password")
+                        id: rectRow
                         width: parent.width
+                        height: AppTheme.compHeight * app.scale
+                        color: "#00000000"
+
+                        property int unitWidth: 20 * app.scale
+
+                        TextInput
+                        {
+                            id: textTankL
+                            anchors.left: parent.left
+                            placeholderText: qsTr("100")
+                            width: (parent.width - rectRow.unitWidth * 3) / 3
+                            maximumLength: 4
+                            validator : RegExpValidator { regExp : /[0-9]+[0-9]+/ }
+
+                            Text
+                            {
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.right: parent.right
+                                verticalAlignment: Text.AlignVCenter
+                                font.family: AppTheme.fontFamily
+                                font.pixelSize: AppTheme.fontNormalSize * app.scale
+                                color: AppTheme.blueColor
+                                text: qsTr("cm")
+                            }
+                        }
+
+                        TextInput
+                        {
+                            id: textTankW
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            placeholderText: qsTr("50")
+                            width: (parent.width - rectRow.unitWidth * 3) / 3
+                            maximumLength: 4
+                            validator : RegExpValidator { regExp : /[0-9]+[0-9]+/ }
+
+                            Text
+                            {
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.right: parent.right
+                                verticalAlignment: Text.AlignVCenter
+                                font.family: AppTheme.fontFamily
+                                font.pixelSize: AppTheme.fontNormalSize * app.scale
+                                color: AppTheme.blueColor
+                                text: qsTr("cm")
+                            }
+                        }
+
+                        TextInput
+                        {
+                            id: textTankH
+                            anchors.right: parent.right
+                            anchors.rightMargin: unitWidth
+                            placeholderText: qsTr("50")
+                            width: (parent.width - rectRow.unitWidth * 3) / 3
+                            maximumLength: 4
+                            validator : RegExpValidator { regExp : /[0-9]+[0-9]+/ }
+
+                            Text
+                            {
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.right: parent.right
+                                verticalAlignment: Text.AlignVCenter
+                                font.family: AppTheme.fontFamily
+                                font.pixelSize: AppTheme.fontNormalSize * app.scale
+                                color: AppTheme.blueColor
+                                text: qsTr("cm")
+                            }
+                        }
                     }
 
-                    TextInput
-                    {
-                        id: textUserEmail
-                        placeholderText: qsTr("User email")
-                        width: parent.width
-                    }
+
+                    Item { height: 1; width: 1;}
 
                     ComboList
                     {
@@ -183,6 +391,8 @@ Item
                     }
 
                     Item { height: 1; width: 1;}
+                    Item { height: 1; width: 1;}
+                    Item { height: 1; width: 1;}
 
                     Rectangle
                     {
@@ -191,27 +401,28 @@ Item
 
                         StandardButton
                         {
-                            id: buttonCancel
+                            id: buttonCancel2
                             anchors.left: parent.left
                             width: 130 * app.scale
-                            bText: qsTr("Cancel")
+                            bText: qsTr("CANCEL")
 
-                            onSigButtonClicked: page_AccountCreation.openAccountDialog(false)
+                            onSigButtonClicked: page_AccountCreation.openAccountDialog(2)
                         }
 
                         StandardButton
                         {
-                            id: buttonCreate
+                            id: buttonCreate2
                             anchors.right: parent.right
                             width: 130 * app.scale
-                            bText: qsTr("Create account")
+                            bText: qsTr("CREATE")
 
                             onSigButtonClicked:
                             {
-                                app.sigCreateAccount(textUserName.text,
-                                                     textUserPass.text,
-                                                     textUserEmail.text,
-                                                     comboTankType.currentIndex)
+                                app.sigCreateTank(textTankName.text,
+                                                  comboTankType.currentIndex,
+                                                  textTankL.text,
+                                                  textTankW.text,
+                                                  textTankH.text)
                             }
                         }
                     }
