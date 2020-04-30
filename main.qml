@@ -24,9 +24,9 @@ Window
     {
         anchors.left: parent.left
         anchors.top: parent.top
-        anchors.topMargin: AppTheme.margin
+        anchors.topMargin: AppTheme.margin * app.scale
         anchors.right: parent.right
-        fillMode: Image.PreserveAspectFit
+        //fillMode: Image.PreserveAspectFit
         source: "qrc:/resources/img/back_waves.png"
     }
 

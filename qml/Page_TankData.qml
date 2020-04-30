@@ -99,7 +99,7 @@ Item
             anchors.top: parent.top
             anchors.topMargin: -(AppTheme.rowHeightMin - AppTheme.margin) * app.scale
             anchors.right: parent.right
-            fillMode: Image.PreserveAspectFit
+            //fillMode: Image.PreserveAspectFit
             source: "qrc:/resources/img/back_waves.png"
             opacity: 0.15
         }

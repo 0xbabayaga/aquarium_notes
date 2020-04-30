@@ -122,8 +122,8 @@ Item
 
         onSigButtonClicked:
         {
-            page_TankData.showPage(true, tanksList.tanksListModel.get(tanksList.currentIndex).name,
-                                   tanksList.tanksListModel.get(tanksList.currentIndex).type)
+            page_TankData.showPage(true, tanksList.model[tanksList.currentIndex].name,
+                                   tanksList.model[tanksList.currentIndex].type)
         }
     }
 }

@@ -76,7 +76,7 @@ Item
                     {
                         id: imgWave
                         width: parent.width
-                        fillMode: Image.PreserveAspectFit
+                        //fillMode: Image.PreserveAspectFit
                         anchors.bottom: parent.bottom
                         source: (type === 0) ? "qrc:/resources/img/wave_blue.png" : "qrc:/resources/img/wave_green.png"
                         mipmap: true
