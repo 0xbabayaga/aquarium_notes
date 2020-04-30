@@ -21,6 +21,9 @@ NAME			|	STRING(64)
 DESC			|	TEXT(512)
 IMG				|	STRING (base64 jpg)
 STATUS			|	Int (Enabled/Disabled/Blocked ....)
+L           | Int
+W           | Int
+H           | Int
 DATE_CREATE		|	TIMESTAMP
 DATE_EDIT		| 	TIMESTAMP
 
