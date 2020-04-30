@@ -2,18 +2,33 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtGraphicalEffects 1.12
 import "custom"
+import AppInitEnum 1.0
 
 Item
 {
     id: page_AccountCreation
 
+    property string currentUName: qsTr("User")
+    property int stage: -1
+
+    onStageChanged: if (stage !== -1)   openAccountDialog(stage)
+
+    signal sigAppInitCompleted()
+
     function openAccountDialog(page)
     {
         animationToPage.stop()
 
+        console.log("Staging to ", page)
+
         animationToPage.from = animationToPage.to
         animationToPage.to = app.height * page
 
+        if (page === AppInitEnum.AppInit_Completed)
+        {
+            page_AccountCreation.visible = false
+            sigAppInitCompleted()
+        }
 
         animationToPage.start()
     }
@@ -25,9 +40,7 @@ Item
         ListElement {   name: "Reef aquarium";      desc:   ""  }
         ListElement {   name: "Fresh aquarium";     desc:   ""  }
         ListElement {   name: "Cichlid aquarium";   desc:   ""  }
-
     }
-
 
     Rectangle
     {
@@ -84,7 +97,7 @@ Item
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontBigSize * app.scale
                         color: AppTheme.blueColor
-                        text: qsTr("Hello") + ", " +qsTr("User")
+                        text: qsTr("Hello") + ", " + currentUName
                     }
 
                     Text
@@ -202,7 +215,7 @@ Item
                                                      textUserPass.text,
                                                      textUserEmail.text)
 
-                                page_AccountCreation.openAccountDialog(2)
+                                //page_AccountCreation.openAccountDialog(2)
                             }
                         }
                     }
@@ -235,7 +248,7 @@ Item
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontBigSize * app.scale
                         color: AppTheme.blueColor
-                        text: qsTr("Hello") + ", " +qsTr("User")
+                        text: qsTr("Hello") + ", " + currentUName
                     }
 
                     Text
@@ -258,7 +271,7 @@ Item
                         anchors.horizontalCenter: parent.horizontalCenter
                         bText: qsTr("CREATE")
 
-                        onSigButtonClicked: page_AccountCreation.openAccountDialog(3)
+                        onSigButtonClicked: stage = AppInitEnum.AppInit_CreateTank
                      }
                 }
             }

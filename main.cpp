@@ -1,15 +1,17 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include "c++/dbmanager.h"
+#include "c++/AppDefs.h"
 
 int main(int argc, char *argv[])
 {
-    //QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-
     QGuiApplication app(argc, argv);
 
-    app.setOrganizationName("Some Company");
-    app.setOrganizationDomain("somecompany.com");
-    app.setApplicationName("Amazing Application");
+    AppDef::declareQML();
+
+    app.setOrganizationName("ANotes");
+    app.setOrganizationDomain("org.anotes.com");
+    app.setApplicationName("AquariumNotes");
 
     QQmlApplicationEngine engine;
     const QUrl url(QStringLiteral("qrc:/main.qml"));
@@ -20,6 +22,7 @@ int main(int argc, char *argv[])
     }, Qt::QueuedConnection);
     engine.load(url);
 
+    DBManager *dbMan = new DBManager(&engine);
 
 
     return app.exec();

@@ -18,7 +18,7 @@ Window
     height: 720
 
     signal sigCreateAccount(string uname, string upass, string umail)
-    signal sigCreateTank(string uname, int tankType, int l, int w, int h)
+    signal sigCreateTank(string name, int type, int l, int w, int h)
 
     Image
     {
@@ -90,8 +90,11 @@ Window
     Page_AccountCreation
     {
         id: page_AccountCreation
+        objectName: "page_AccountCreation"
         anchors.fill: rectBackground
         visible: isAccountCreated === false
+
+        onSigAppInitCompleted: isAccountCreated = true
     }
 
     Page_TankData
