@@ -5,6 +5,7 @@
 #include <QSqlDatabase>
 #include <QDir>
 #include <QQmlApplicationEngine>
+#include "dbobjects.h"
 
 #define RAND_ID_LENGTH  32
 
@@ -26,9 +27,9 @@ private:
     /* Database management */
     bool    initDB();
     bool    createUser(QString uname, QString upass, QString phone, QString email);
-    bool    createTank(QString name, int type, int l, int w, int h);
-    bool    isUserExist();
-    bool    isTankExist();
+    bool    createTank(QString name, QString manId, int type, int l, int w, int h);
+    UserObj *getCurrentUser();
+    QList<QObject*> *getUserTanksList(QString manId);
     QString randId();
 
 private:
@@ -49,7 +50,8 @@ private:
     QString         dbFileLink;
     QSqlDatabase    db;
 
-    QString         curUserName;
+    QList<QObject*> listOfUserTanks;
+    UserObj         *curUser = nullptr;
 
 private:
     QQmlApplicationEngine   *qmlEngine = nullptr;

@@ -5,9 +5,12 @@
 #include <QSqlError>
 #include <QDir>
 #include <QStandardPaths>
+#include <QQmlContext>
 #include <QDateTime>
 #include <QDebug>
+#include <QList>
 #include "AppDefs.h"
+#include "dbobjects.h"
 
 DBManager::DBManager(QQmlApplicationEngine *engine, QObject *parent) : QObject(parent)
 {
@@ -33,14 +36,20 @@ DBManager::DBManager(QQmlApplicationEngine *engine, QObject *parent) : QObject(p
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateAccount(QString, QString, QString)), this, SLOT(onGuiUserCreate(QString, QString, QString)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateTank(QString, int, int, int, int)), this, SLOT(onGuiTankCreate(QString, int, int, int, int)));
 
-    //createUser("Jonh Wick", "12345", "+375", "john.wick@nobody.com");
+    curUser = getCurrentUser();
 
-    if (isUserExist() == true)
+    if (curUser != nullptr)
     {
-        if (isTankExist() == true)
-            setInitialDialogStage(AppDef::AppInit_Completed, curUserName);
+        getUserTanksList(curUser->man_id);
+
+        if (listOfUserTanks.size() > 0)
+        {
+            setInitialDialogStage(AppDef::AppInit_Completed, curUser->uname);
+
+            qmlEngine->rootContext()->setContextProperty("tanksListModel", QVariant::fromValue(listOfUserTanks));
+        }
         else
-            setInitialDialogStage(AppDef::AppInit_UserExist, curUserName);
+            setInitialDialogStage(AppDef::AppInit_UserExist, curUser->uname);
     }
     else
         setInitialDialogStage(AppDef::AppInit_NoData, "User");
@@ -50,13 +59,9 @@ DBManager::~DBManager()
 {
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateAccount(QString, QString, QString)), this, SLOT(onUserCreate(QString, QString, QString)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateTank(QString, int, int, int, int)), this, SLOT(onGuiTankCreate(QString, int, int, int, int)));
-    /*
-    if (db != nullptr)
-    {
-        db->close();
-        delete db;
-    }
-    */
+
+    if (curUser != nullptr)
+        delete curUser;
 }
 
 void DBManager::setInitialDialogStage(int stage, QString name)
@@ -79,7 +84,8 @@ void DBManager::onGuiUserCreate(QString uname, QString upass, QString email)
 
     if (createUser(uname, upass, "123", email) == true)
     {
-        setInitialDialogStage(AppDef::AppInit_UserExist, curUserName);
+        curUser = getCurrentUser();
+        setInitialDialogStage(AppDef::AppInit_UserExist, curUser->uname);
     }
 }
 
@@ -87,52 +93,44 @@ void DBManager::onGuiTankCreate(QString name, int type, int l, int w, int h)
 {
     qDebug() << "onGuiTankCreate";
 
-    if (createTank(name, type, l, w, h) == true)
+    if (createTank(name, curUser->man_id, type, l, w, h) == true)
     {
-        setInitialDialogStage(AppDef::AppInit_Completed, curUserName);
+        setInitialDialogStage(AppDef::AppInit_Completed, curUser->uname);
     }
 }
 
-bool DBManager::isUserExist()
+UserObj *DBManager::getCurrentUser()
 {
     bool res = false;
     QSqlQuery query("SELECT * FROM UTABLE");
-    int uname_idx = query.record().indexOf("UNAME");
-    int selected_idx = query.record().indexOf("SELECTED");
-    QString uname;
-    bool selected;
+    UserObj *user = nullptr;
 
     while (query.next())
     {
-        uname = query.value(uname_idx).toString();
-        selected = query.value(selected_idx).toBool();
-
-        curUserName = uname;
-        //qDebug() << uname << selected;
-
-        res = true;
+        /* Read only one User */
+        user = new UserObj(&query);
+        break;
     }
 
-    return res;
+    return user;
 }
 
-bool DBManager::isTankExist()
+QList<QObject *> *DBManager::getUserTanksList(QString manId)
 {
-    bool res = false;
-    QSqlQuery query("SELECT * FROM TANKSTABLE");
-    int name_idx = query.record().indexOf("NAME");
-    QString name;
+    TankObj *obj = nullptr;
+    QSqlQuery query("SELECT * FROM TANKSTABLE WHERE MAN_ID='"+manId+"'");
+
+    listOfUserTanks.clear();
 
     while (query.next())
     {
-        name = query.value(name_idx).toString();
+        obj = new TankObj(&query);
+        listOfUserTanks.append(obj);
 
-        qDebug() << name;
-
-        res = true;
+        qDebug() << obj->name() << obj->desc() << obj->volume();
     }
 
-    return res;
+    return &listOfUserTanks;
 }
 
 bool DBManager::createUser(QString uname, QString upass, QString phone, QString email)
@@ -169,7 +167,7 @@ bool DBManager::createUser(QString uname, QString upass, QString phone, QString 
         return false;
 }
 
-bool DBManager::createTank(QString name, int type, int l, int w, int h)
+bool DBManager::createTank(QString name, QString manId, int type, int l, int w, int h)
 {
     if (name.length() > 0 && name.length() <= 64)
     {
@@ -180,7 +178,7 @@ bool DBManager::createTank(QString name, int type, int l, int w, int h)
                       "VALUES (:tank_id, :man_id, :type, :name, :status, :l, :w, :h, :date_create, :date_edit)");
 
         query.bindValue(":tank_id", randId());
-        query.bindValue(":man_id", "");
+        query.bindValue(":man_id", manId);
         query.bindValue(":type", type);
         query.bindValue(":name", name);
         query.bindValue(":status", UStatus_Enabled);
@@ -243,7 +241,6 @@ bool DBManager::initDB()
                 "DESC text, "
                 "IMG text, "
                 "STATUS integer, "
-                "AVATAR_IMG text, "
                 "L integer, "
                 "W integer, "
                 "H integer, "

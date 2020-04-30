@@ -10,14 +10,6 @@ Item
 
     ListModel
     {
-        id: tmpTankModel
-        ListElement { name: "MY REEF";          volume: 450;    type: 0;    photo: ""   }
-        ListElement { name: "BEST REEF EVER";   volume: 120;    type: 0;    photo: ""   }
-        ListElement { name: "MY FRESH";         volume: 70;     type: 1;    photo: ""   }
-    }
-
-    ListModel
-    {
         id: tmpParamModel
         ListElement { name: "Salinity";     value: "33.5ppm";    }
         ListElement { name: "Ca";           value: "397mg\\l";     }
@@ -44,7 +36,7 @@ Item
         anchors.top: parent.top
         anchors.topMargin: AppTheme.rowHeightMin * app.scale * 2
         anchors.horizontalCenter: parent.horizontalCenter
-        tanksListModel: tmpTankModel
+        model: tanksListModel
         onSigCurrentIndexChanged:
         {
             textTankName.text = tanksListModel.get(id).name

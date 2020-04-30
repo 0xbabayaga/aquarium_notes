@@ -373,7 +373,7 @@ Item
                         {
                             id: textTankH
                             anchors.right: parent.right
-                            anchors.rightMargin: unitWidth
+                            //anchors.rightMargin: unitWidth
                             placeholderText: qsTr("50")
                             width: (parent.width - rectRow.unitWidth * 3) / 3
                             maximumLength: 4

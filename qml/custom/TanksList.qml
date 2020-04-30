@@ -9,7 +9,7 @@ Item
     height: 128 * app.scale
     width: (view.model.count > 2) ? app.width + AppTheme.margin * app.scale * 4 : 360 * app.scale
 
-    property alias tanksListModel: view.model
+    property alias model: view.model
     property alias currentIndex: view.currentIndex
 
     signal sigCurrentIndexChanged(int id)
@@ -80,8 +80,6 @@ Item
                         anchors.bottom: parent.bottom
                         source: (type === 0) ? "qrc:/resources/img/wave_blue.png" : "qrc:/resources/img/wave_green.png"
                         mipmap: true
-
-
                     }
 
                     Text

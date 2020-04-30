@@ -36,4 +36,5 @@ DISTFILES += \
 
 HEADERS += \
     c++/AppDefs.h \
-    c++/dbmanager.h
+    c++/dbmanager.h \
+    c++/dbobjects.h
