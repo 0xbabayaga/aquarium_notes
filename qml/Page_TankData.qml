@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtGraphicalEffects 1.12
+import "custom"
 
 Item
 {
@@ -32,28 +33,25 @@ Item
         scaleAnimation.start()
     }
 
-    function formattedValue(val_prev, val_curr)
+    function addLogRecord(isAdd)
     {
-        var str = ""
+        if (isAdd === true)
+        {
+            for (var i = 0; i < addRecordListView.model.length; i++)
+            {
+                if (addRecordListView.model[i].value !== -1)
+                {
+                    app.sigAddRecord(app.lastSmpId,
+                                     addRecordListView.model[i].paramId,
+                                     addRecordListView.model[i].value)
+                }
+            }
 
-        if (val_curr > val_prev)
-            str = "+"
+            app.lastSmpId++
+        }
 
-        str += Math.round((val_curr - val_prev) * 100) / 100
-
-        return str
-    }
-
-    ListModel
-    {
-        id: tmpDetailedParamModel
-
-        ListElement     {   pname:  "Salinity"; punit: "ppm";   pvalue_curr: 33.5;  pvalue_prev: 33.6; }
-        ListElement     {   pname:  "Ca";       punit: "mg\\l"; pvalue_curr: 390;   pvalue_prev: 397;  }
-        ListElement     {   pname:  "kH";       punit: "dKh";   pvalue_curr: 9.7;   pvalue_prev: 9.5;  }
-        ListElement     {   pname:  "pH";       punit: "";      pvalue_curr: 33.5;  pvalue_prev: 33.6; }
-        ListElement     {   pname:  "NO3";      punit: "ppm";   pvalue_curr: 3.5;   pvalue_prev: 3.6;  }
-        ListElement     {   pname:  "PO4";      punit: "ppm";   pvalue_curr: 0.25;  pvalue_prev: 0.25; }
+        rectAddRecordDialog.opacity = 0
+        rectDataContainer.opacity = 1
     }
 
     ScaleAnimator
@@ -90,6 +88,7 @@ Item
     {
         id: rectRealContainer
         anchors.fill: parent
+        anchors.bottomMargin: AppTheme.rowHeightMin * app.scale
         radius: AppTheme.radius * 2 * app.scale
         color: AppTheme.whiteColor
 
@@ -98,10 +97,12 @@ Item
             anchors.left: parent.left
             anchors.top: parent.top
             anchors.topMargin: -(AppTheme.rowHeightMin - AppTheme.margin) * app.scale
-            anchors.right: parent.right
+            width: parent.width
+            height: width * 0.75
+            //anchors.right: parent.right
             //fillMode: Image.PreserveAspectFit
             source: "qrc:/resources/img/back_waves.png"
-            opacity: 0.15
+            opacity: 0.3
         }
 
         Image
@@ -128,7 +129,11 @@ Item
             MouseArea
             {
                 anchors.fill: parent
-                onClicked: showPage(false, "")
+                onClicked:
+                {
+                    addLogRecord(false)
+                    showPage(false, "")
+                }
             }
         }
 
@@ -149,159 +154,181 @@ Item
         {
             id: rectDataContainer
             anchors.fill: parent
-            anchors.leftMargin: AppTheme.padding * app.scale
-            anchors.rightMargin: AppTheme.padding * app.scale
-            anchors.topMargin: AppTheme.rowHeight * app.scale
+            anchors.leftMargin: AppTheme.padding * 2 * app.scale
+            anchors.rightMargin: AppTheme.padding * 2 * app.scale
+            anchors.topMargin: AppTheme.rowHeight * 2 * app.scale
             anchors.bottomMargin: AppTheme.padding * app.scale
-            color: "#00000000"
+            color: "#00002000"
+
+            Behavior on opacity
+            {
+                NumberAnimation {   duration: 400 }
+            }
+
+            CurrentParamsTable
+            {
+                id: paramsTable
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.right: parent.right
+                height: 400 * app.scale
+                model: curParamsModel
+            }
 
             Rectangle
             {
-                id: rectDataHeader
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: parent.top
-                height: AppTheme.compHeight * app.scale
+                anchors.fill: paramsTable
+                visible: (curParamsModel.length === 0)
                 color: "#00000000"
 
-                Row
+                Text
                 {
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-
-                    Text
-                    {
-                        verticalAlignment: Text.AlignVCenter
-                        width: 100 * app.scale
-                        font.family: AppTheme.fontFamily
-                        font.pixelSize: AppTheme.fontBigSize * app.scale
-                        color: AppTheme.blueColor
-                        text: ""
-                    }
-
-                    Text
-                    {
-                        verticalAlignment: Text.AlignVCenter
-                        width: 60 * app.scale
-                        font.family: AppTheme.fontFamily
-                        font.pixelSize: AppTheme.fontNormalSize * app.scale
-                        color: AppTheme.greyColor
-                        text: ""
-                    }
-
-                    Text
-                    {
-                        width: 70 * app.scale
-                        verticalAlignment: Text.AlignVCenter
-                        font.family: AppTheme.fontFamily
-                        font.pixelSize: AppTheme.fontBigNormalSize * app.scale
-                        color: AppTheme.greyColor
-                        text: "[" + qsTr("current") + "]"
-                    }
-
-                    Text
-                    {
-                        width: 70 * app.scale
-                        verticalAlignment: Text.AlignVCenter
-                        font.family: AppTheme.fontFamily
-                        font.pixelSize: AppTheme.fontBigNormalSize * app.scale
-                        color: AppTheme.greyColor
-                        text: "[" + qsTr("previous") + "]"
-                    }
-
-                    Text
-                    {
-                        width: 40 * app.scale
-                        verticalAlignment: Text.AlignVCenter
-                        horizontalAlignment: Text.AlignRight
-                        font.family: AppTheme.fontFamily
-                        font.pixelSize: AppTheme.fontBigSize * app.scale
-                        color: AppTheme.blueColor
-                        text: ""
-                    }
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    horizontalAlignment: Text.AlignHCenter
+                    width: 250 * app.scale
+                    font.family: AppTheme.fontFamily
+                    font.pixelSize: AppTheme.fontBigSize * app.scale
+                    wrapMode: Text.WordWrap
+                    color: AppTheme.greyColor
+                    text: qsTr("No record found for this aquarium")
                 }
             }
 
+            IconButton
+            {
+                id: addRecordButton
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: AppTheme.margin * app.scale
+
+                onSigButtonClicked:
+                {
+                    rectAddRecordDialog.opacity = 1
+                    rectDataContainer.opacity = 0
+                }
+            }
+        }
+
+        Rectangle
+        {
+            id: rectAddRecordDialog
+            anchors.fill: parent
+            anchors.leftMargin: AppTheme.padding * 2 * app.scale
+            anchors.rightMargin: AppTheme.padding * 2 * app.scale
+            anchors.topMargin: AppTheme.rowHeight * 2 * app.scale
+            anchors.bottomMargin: AppTheme.padding * app.scale
+            color: "#00000020"
+            opacity: 0
+            visible: (opacity === 0) ? false : true
+
+            Behavior on opacity
+            {
+                NumberAnimation {   duration: 400 }
+            }
+
+            Text
+            {
+                anchors.top: parent.top
+                anchors.left: parent.left
+                verticalAlignment: Text.AlignVCenter
+                width: 100 * app.scale
+                font.family: AppTheme.fontFamily
+                font.pixelSize: AppTheme.fontBigSize * app.scale
+                color: AppTheme.blueColor
+                text: qsTr("Add record:")
+            }
 
             ListView
             {
-                id: paramListView
+                id: addRecordListView
                 anchors.fill: parent
                 anchors.topMargin: AppTheme.compHeight * app.scale
+                anchors.bottomMargin: AppTheme.rowHeight * 2 * app.scale
                 spacing: 0
-                model: tmpDetailedParamModel
+                model: app.getParamsModel()
+                clip: true
 
                 delegate: Rectangle
                 {
                     width: parent.width
-                    height: AppTheme.compHeight * app.scale
+                    height: AppTheme.rowHeightMin * app.scale
                     color: "#00000000"
 
-                    Row
+                    Text
                     {
+                        anchors.verticalCenter: parent.verticalCenter
                         anchors.left: parent.left
+                        verticalAlignment: Text.AlignVCenter
+                        width: 100 * app.scale
+                        font.family: AppTheme.fontFamily
+                        font.pixelSize: AppTheme.fontNormalSize * app.scale
+                        color: AppTheme.blueColor
+                        text: fullName
+                    }
+
+                    TextInput
+                    {
+                        id: textInputValue
                         anchors.right: parent.right
+                        placeholderText: "0"
+                        width: 100 * app.scale
+                        maximumLength: 4
+
+                        onTextChanged: value = textInputValue.text
 
                         Text
                         {
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.right: parent.right
                             verticalAlignment: Text.AlignVCenter
-                            width: 100 * app.scale
-                            font.family: AppTheme.fontFamily
-                            font.pixelSize: AppTheme.fontBigSize * app.scale
-                            color: AppTheme.blueColor
-                            text: pname
-                        }
-
-                        Text
-                        {
-                            verticalAlignment: Text.AlignBottom
-                            width: 60 * app.scale
                             font.family: AppTheme.fontFamily
                             font.pixelSize: AppTheme.fontNormalSize * app.scale
                             color: AppTheme.greyColor
-                            text: punit
+                            text: unitName
                         }
-
-                        Text
-                        {
-                            width: 70 * app.scale
-                            verticalAlignment: Text.AlignVCenter
-                            font.family: AppTheme.fontFamily
-                            font.pixelSize: AppTheme.fontBigSize * app.scale
-                            color: AppTheme.blueColor
-                            text: pvalue_curr
-                        }
-
-                        Text
-                        {
-                            width: 70 * app.scale
-                            verticalAlignment: Text.AlignVCenter
-                            font.family: AppTheme.fontFamily
-                            font.pixelSize: AppTheme.fontBigSize * app.scale
-                            color: AppTheme.greyColor
-                            text: pvalue_prev
-                        }
-
-                        Text
-                        {
-                            width: 40 * app.scale
-                            verticalAlignment: Text.AlignVCenter
-                            horizontalAlignment: Text.AlignRight
-                            font.family: AppTheme.fontFamily
-                            font.pixelSize: AppTheme.fontBigSize * app.scale
-                            color: AppTheme.blueColor
-                            text: page_TankData.formattedValue(pvalue_prev, pvalue_curr)
-                        }
-                    }
-
-                    Rectangle
-                    {
-                        width: parent.width
-                        height: 1 * app.scale
-                        anchors.bottom: parent.bottom
-                        color: ((index + 1) === paramListView.model.count) ? "#00000000" : AppTheme.shideColor
                     }
                 }
+
+                ScrollBar.vertical: ScrollBar
+                {
+                    policy: ScrollBar.AlwaysOn
+                    parent: addRecordListView.parent
+                    anchors.top: addRecordListView.top
+                    anchors.left: addRecordListView.right
+                    anchors.leftMargin: AppTheme.padding * app.scale
+                    anchors.bottom: addRecordListView.bottom
+
+                    contentItem: Rectangle
+                    {
+                        implicitWidth: 2
+                        implicitHeight: 100
+                        radius: width / 2
+                        color: AppTheme.hideColor
+                    }
+                }
+            }
+
+            StandardButton
+            {
+                id: buttonCancel
+                anchors.top: addRecordListView.bottom
+                anchors.topMargin: AppTheme.margin * app.scale
+                anchors.left: parent.left
+                bText: qsTr("CANCEL")
+
+                onSigButtonClicked: addLogRecord(false)
+            }
+
+            StandardButton
+            {
+                id: buttonAdd
+                anchors.top: addRecordListView.bottom
+                anchors.topMargin: AppTheme.margin * app.scale
+                anchors.right: parent.right
+                bText: qsTr("ADD")
+
+                onSigButtonClicked: addLogRecord(true)
             }
         }
     }

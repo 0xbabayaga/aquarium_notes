@@ -16,5 +16,10 @@
         <file>qml/custom/ComboList.qml</file>
         <file>qml/custom/TextInput.qml</file>
         <file>resources/img/icon_listdown.png</file>
+        <file>qml/custom/IconButton.qml</file>
+        <file>resources/img/icon_plus.png</file>
+        <file>qml/custom/CurrentParamsTable.qml</file>
+        <file>qml/custom/CurrentParamsMainTable.qml</file>
+        <file>qml/custom/CurrrentActivities.qml</file>
     </qresource>
 </RCC>

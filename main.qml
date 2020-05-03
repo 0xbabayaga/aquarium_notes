@@ -10,8 +10,23 @@ Window
     id: app
     objectName: "app"
 
+    property int lastSmpId: 0
     property bool isAccountCreated: false
     property real scale: (Screen.orientation  === Qt.PortraitOrientation) ? Screen.desktopAvailableHeight / 720 : Screen.desktopAvailableHeight / 1080
+
+    ListView
+    {
+        id: tmpParamList
+        model: paramsModel
+        visible: false
+    }
+
+    ListView
+    {
+        id: tmpTankList
+        model: tanksListModel
+        visible: false
+    }
 
     visible: true
     width: 360
@@ -19,13 +34,32 @@ Window
 
     signal sigCreateAccount(string uname, string upass, string umail)
     signal sigCreateTank(string name, int type, int l, int w, int h)
+    signal sigAddRecord(int smpId, int paramId, double value)
+    signal sigTankSelected(int tankIdx)
+
+    function getParamsModel() { return paramsModel   }
+    function getTankListModel() { return tanksListModel   }
+
+
+    function getParamById(id)
+    {
+        for (var i = 0; i < paramsModel.length; i++)
+        {
+            if (paramsModel[i].paramId === id)
+                return paramsModel[i]
+        }
+
+        return 0
+    }
 
     Image
     {
         anchors.left: parent.left
         anchors.top: parent.top
         anchors.topMargin: AppTheme.margin * app.scale
-        anchors.right: parent.right
+        //anchors.right: parent.right
+        width: parent.width
+        height: width * 0.75
         //fillMode: Image.PreserveAspectFit
         source: "qrc:/resources/img/back_waves.png"
     }
@@ -100,6 +134,7 @@ Window
     Page_TankData
     {
         id: page_TankData
+        objectName: "page_TankData"
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         anchors.verticalCenterOffset: AppTheme.rowHeightMin * app.scale

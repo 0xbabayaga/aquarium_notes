@@ -8,15 +8,6 @@ Item
 {
     id: page_Main
 
-    ListModel
-    {
-        id: tmpParamModel
-        ListElement { name: "Salinity";     value: "33.5ppm";    }
-        ListElement { name: "Ca";           value: "397mg\\l";     }
-        ListElement { name: "kH";           value: "7.7dKH";     }
-        ListElement { name: "pH";           value: "8.2";     }
-    }
-
     Text
     {
         id: textTankName
@@ -27,7 +18,7 @@ Item
         font.family: AppTheme.fontFamily
         font.pixelSize: AppTheme.fontSuperBigSize * app.scale
         color: AppTheme.blueColor
-        text: tanksListmodel.get(0).name;
+        text: tanksList.model[0].name
     }
 
     TanksList
@@ -36,78 +27,64 @@ Item
         anchors.top: parent.top
         anchors.topMargin: AppTheme.rowHeightMin * app.scale * 2
         anchors.horizontalCenter: parent.horizontalCenter
-        model: tanksListModel
+        model: app.getTankListModel()
         onSigCurrentIndexChanged:
         {
-            textTankName.text = tanksListModel.get(id).name
+            textTankName.text = model[id].name
+            app.sigTankSelected(currentIndex)
         }
     }
 
-    Rectangle
+    Flickable
     {
-        id: rectDataContainer
+        id: flickableContainer
         anchors.top:tanksList.bottom
         anchors.margins: AppTheme.margin * app.scale
-        anchors.topMargin: AppTheme.rowHeight * app.scale * 2
+        anchors.topMargin: AppTheme.compHeight * app.scale * 3
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        color: "#00000000"
+        anchors.bottomMargin: AppTheme.rowHeight * app.scale
 
-        Text
+        contentWidth: width
+        contentHeight: 700 * app.scale
+        clip: true
+
+        CurrentParamsMainTable
         {
-            id: textCurrentLabel
-            anchors.top: parent.top
+            id: currParamsMainTable
+            anchors.left: parent.left
             anchors.right: parent.right
-            verticalAlignment: Text.AlignVCenter
-            font.family: AppTheme.fontFamily
-            font.pixelSize: AppTheme.fontBigSize * app.scale
-            color: AppTheme.greyColor
-            text: "[" + qsTr("CURRENT") + "]"
+            anchors.top: parent.top
+            model: curParamsModel
+            height: 300
         }
 
-        ListView
+        CurrrentActivities
         {
-            id: paramListView
-            anchors.fill: parent
-            anchors.topMargin: textCurrentLabel.height
-            spacing: 0
-            model: tmpParamModel
-            delegate: Rectangle
+            id: currActivities
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: currParamsMainTable.bottom
+            anchors.topMargin: AppTheme.padding * app.scale
+            height: 200
+        }
+
+        ScrollBar.vertical: ScrollBar
+        {
+            policy: ScrollBar.AlwaysOn
+            parent: flickableContainer.parent
+            anchors.top: flickableContainer.top
+            anchors.left: flickableContainer.right
+            anchors.leftMargin: AppTheme.padding * app.scale
+            anchors.bottom: flickableContainer.bottom
+
+            contentItem: Rectangle
             {
-                width: parent.width
-                height: AppTheme.rowHeight * app.scale
-                color: "#00000000"
-
-                Text
-                {
-                    anchors.left: parent.left
-                    anchors.verticalCenter: parent.verticalCenter
-                    verticalAlignment: Text.AlignVCenter
-                    font.family: AppTheme.fontFamily
-                    font.pixelSize: AppTheme.fontBigSize * app.scale
-                    color: AppTheme.blueColor
-                    text: name
-                }
-
-                Text
-                {
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    verticalAlignment: Text.AlignVCenter
-                    font.family: AppTheme.fontFamily
-                    font.pixelSize: AppTheme.fontBigSize * app.scale
-                    color: AppTheme.greyColor
-                    text: value
-                }
-
-                Rectangle
-                {
-                    width: parent.width
-                    height: 1 * app.scale
-                    anchors.bottom: parent.bottom
-                    color: ((index + 1) === paramListView.model.count) ? "#00000000" : AppTheme.shideColor
-                }
+                implicitWidth: 2
+                implicitHeight: 100
+                radius: width / 2
+                color: AppTheme.hideColor
             }
         }
     }
@@ -118,12 +95,12 @@ Item
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
         anchors.bottomMargin: AppTheme.margin * app.scale
-        bText: qsTr("Show more")
+        bText: qsTr("DETAILS")
 
         onSigButtonClicked:
         {
-            page_TankData.showPage(true, tanksList.model[tanksList.currentIndex].name,
-                                   tanksList.model[tanksList.currentIndex].type)
+            page_TankData.showPage(true, app.getTankListModel()[tanksList.currentIndex].name,
+                                   app.getTankListModel()[tanksList.currentIndex].type)
         }
     }
 }

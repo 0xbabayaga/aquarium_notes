@@ -3,10 +3,9 @@ import "../"
 
 Item
 {
-    id: standardButton
-    width: 100 * app.scale
-    height: AppTheme.compHeight * app.scale
-    property alias bText: buttonText.text
+    id: iconButton
+    width: AppTheme.rowHeightMin * app.scale
+    height: AppTheme.rowHeightMin * app.scale
 
     signal sigButtonClicked()
 
@@ -16,31 +15,22 @@ Item
 
         anchors.fill: parent
         radius: width/2
-        //color: "#00000000"
-        //border.width: 1 * app.scale
-        //border.color: AppTheme.blueColor
         color: AppTheme.blueColor
-        //border.width: 1 * app.scale
-        //border.color: AppTheme.blueColor
 
-        Text
+        Image
         {
-            id: buttonText
-            text: qsTr("Ok")
-            wrapMode: Text.WordWrap
-            anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
-            horizontalAlignment: Text.Center
-            //color: AppTheme.blueColor
-            color: AppTheme.whiteColor
-            font.pixelSize: AppTheme.fontSmallSize * app.scale
-            font.family: AppTheme.fontFamily
+            anchors.verticalCenter: parent.verticalCenter
+            width: AppTheme.rowHeight / 2 * app.scale
+            height: width
+            source: "qrc:/resources/img/icon_plus.png"
+            mipmap: true
         }
 
         MouseArea
         {
             anchors.fill: parent
-            onClicked: standardButton.sigButtonClicked()
+            onClicked: iconButton.sigButtonClicked()
             onPressed: scaleAnimation2.start()
         }
     }
