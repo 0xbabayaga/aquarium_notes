@@ -57,7 +57,7 @@ Item
             anchors.right: parent.right
             anchors.top: parent.top
             model: curParamsModel
-            height: 300
+            height: 300 * app.scale
         }
 
         CurrrentActivities
@@ -67,7 +67,7 @@ Item
             anchors.right: parent.right
             anchors.top: currParamsMainTable.bottom
             anchors.topMargin: AppTheme.padding * app.scale
-            height: 200
+            height: 200 * app.scale
         }
 
         ScrollBar.vertical: ScrollBar
