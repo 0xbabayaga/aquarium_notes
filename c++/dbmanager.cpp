@@ -27,6 +27,7 @@ DBManager::DBManager(QQmlApplicationEngine *engine, QObject *parent) : QObject(p
     db.setDatabaseName(dbFileLink);
     db.open();
 
+    qDebug() << dbFileLink;
 
     if (initRequired == true)
         initDB();
@@ -35,33 +36,70 @@ DBManager::DBManager(QQmlApplicationEngine *engine, QObject *parent) : QObject(p
 
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateAccount(QString, QString, QString)), this, SLOT(onGuiUserCreate(QString, QString, QString)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateTank(QString, int, int, int, int)), this, SLOT(onGuiTankCreate(QString, int, int, int, int)));
+    connect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecord(int, int, double)), this, SLOT(onGuiAddRecord(int, int, double)));
+    connect(qmlEngine->rootObjects().first(), SIGNAL(sigTankSelected(int)), this, SLOT(onGuiTankSelected(int)));
 
-    curUser = getCurrentUser();
+    curSelectedObjs.lastSmpId = getLastSmpId();
+    setLastSmpId(curSelectedObjs.lastSmpId);
 
-    if (curUser != nullptr)
-    {
-        getUserTanksList(curUser->man_id);
-
-        if (listOfUserTanks.size() > 0)
-        {
-            setInitialDialogStage(AppDef::AppInit_Completed, curUser->uname);
-
-            qmlEngine->rootContext()->setContextProperty("tanksListModel", QVariant::fromValue(listOfUserTanks));
-        }
-        else
-            setInitialDialogStage(AppDef::AppInit_UserExist, curUser->uname);
-    }
+    if (getParamsList() == true)
+        qmlEngine->rootContext()->setContextProperty("paramsModel", QVariant::fromValue(paramsGuiList));
     else
-        setInitialDialogStage(AppDef::AppInit_NoData, "User");
+        qDebug() << "Cannot read Parameter list !!!";
+
+    getCurrentObjs();
 }
 
 DBManager::~DBManager()
 {
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateAccount(QString, QString, QString)), this, SLOT(onUserCreate(QString, QString, QString)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateTank(QString, int, int, int, int)), this, SLOT(onGuiTankCreate(QString, int, int, int, int)));
+    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecord(int, int, float)), this, SLOT(onGuiAddRecord(int, int, float)));
+    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigTankSelected(int)), this, SLOT(onGuiTankSelected(int)));
 
-    if (curUser != nullptr)
-        delete curUser;
+    if (curSelectedObjs.user != nullptr)
+        delete curSelectedObjs.user;
+}
+
+bool DBManager::getCurrentObjs()
+{
+    getCurrentUser();
+
+    if (curSelectedObjs.user != nullptr)
+    {
+        getUserTanksList();
+
+        if (curSelectedObjs.listOfUserTanks.size() > 0)
+        {
+            setInitialDialogStage(AppDef::AppInit_Completed, curSelectedObjs.user->uname);
+
+            qmlEngine->rootContext()->setContextProperty("tanksListModel", QVariant::fromValue(curSelectedObjs.listOfUserTanks));
+
+            curSelectedObjs.tankIdx = 0;
+
+            getLatestParams();
+
+            setCurrentValuesModel();
+
+            return true;
+        }
+        else
+            setInitialDialogStage(AppDef::AppInit_UserExist, curSelectedObjs.user->uname);
+    }
+    else
+        setInitialDialogStage(AppDef::AppInit_NoData, "User");
+
+    return false;
+}
+
+TankObj *DBManager::currentTankSelected()
+{
+    TankObj *obj = nullptr;
+
+    if (curSelectedObjs.listOfUserTanks.size() > curSelectedObjs.tankIdx)
+        obj = (TankObj*) curSelectedObjs.listOfUserTanks.at(curSelectedObjs.tankIdx);
+
+    return obj;
 }
 
 void DBManager::setInitialDialogStage(int stage, QString name)
@@ -77,6 +115,22 @@ void DBManager::setInitialDialogStage(int stage, QString name)
     }
 }
 
+void DBManager::setLastSmpId(int id)
+{
+    QObject *obj = nullptr;
+
+    obj = qmlEngine->rootObjects().first();
+
+    if (obj != nullptr)
+    {
+        obj->setProperty("lastSmpId", id);
+    }
+}
+
+void DBManager::setCurrentValuesModel()
+{
+    qmlEngine->rootContext()->setContextProperty("curParamsModel", QVariant::fromValue(curSelectedObjs.listOfCurrValues));
+}
 
 void DBManager::onGuiUserCreate(QString uname, QString upass, QString email)
 {
@@ -84,8 +138,8 @@ void DBManager::onGuiUserCreate(QString uname, QString upass, QString email)
 
     if (createUser(uname, upass, "123", email) == true)
     {
-        curUser = getCurrentUser();
-        setInitialDialogStage(AppDef::AppInit_UserExist, curUser->uname);
+        getCurrentUser();
+        setInitialDialogStage(AppDef::AppInit_UserExist, curSelectedObjs.user->uname);
     }
 }
 
@@ -93,44 +147,183 @@ void DBManager::onGuiTankCreate(QString name, int type, int l, int w, int h)
 {
     qDebug() << "onGuiTankCreate";
 
-    if (createTank(name, curUser->man_id, type, l, w, h) == true)
+    if (createTank(name, curSelectedObjs.user->man_id, type, l, w, h) == true)
     {
-        setInitialDialogStage(AppDef::AppInit_Completed, curUser->uname);
+        setInitialDialogStage(AppDef::AppInit_Completed, curSelectedObjs.user->uname);
     }
 }
 
-UserObj *DBManager::getCurrentUser()
+void DBManager::onGuiAddRecord(int smpId, int paramId, double value)
+{
+    if (addParamRecord(smpId, paramId, value) == true)
+    {
+        getLatestParams();
+        setCurrentValuesModel();
+    }
+}
+
+void DBManager::onGuiTankSelected(int tankIdx)
+{
+    curSelectedObjs.tankIdx = tankIdx;
+
+    getLatestParams();
+
+    setCurrentValuesModel();
+}
+
+bool DBManager::getParamsList()
 {
     bool res = false;
+    QSqlQuery query("SELECT * FROM DICTTABLE");
+    ParamObj *obj = nullptr;
+    int i = 0;
+\
+    paramsGuiList.clear();
+
+    while (query.next())
+    {
+        if (i > 0)
+        {
+            obj = new ParamObj(&query);
+            paramsGuiList.append(obj);
+            res = true;
+        }
+
+        i++;
+    }
+
+    return res;
+}
+
+bool DBManager::getLatestParams()
+{
+    bool found = false;
+    LastDataParamRecObj *recObj = nullptr;
+    QList<int> smpIdList;
+    QSqlQuery query0("SELECT SMP_ID FROM LOGTABLE WHERE TANK_ID='"+currentTankSelected()->tankId()+"' ORDER BY SMP_ID DESC");
+
+    smpIdList.clear();
+
+    while (query0.next())
+    {
+        found = false;
+
+        for (int i = 0; i < smpIdList.size(); i++)
+        {
+            if (query0.value(0).toInt() == smpIdList.at(i))
+            {
+                found = true;
+                break;
+            }
+        }
+
+        if (found == false)
+        {
+            smpIdList.append(query0.value(0).toInt());
+
+            if (smpIdList.size() > 1)
+                break;
+        }
+    }
+
+    curSelectedObjs.listOfCurrValues.clear();
+
+    if (smpIdList.size() > 0)
+    {
+        QSqlQuery query("SELECT * FROM LOGTABLE "
+                        "WHERE SMP_ID = '"+QString::number(smpIdList.at(0))+"'");
+
+        while (query.next())
+        {
+            recObj = new LastDataParamRecObj(query.value(query.record().indexOf("PARAM_ID")).toInt(),
+                                             query.value(query.record().indexOf("SMP_ID")).toInt(),
+                                             -1,
+                                             query.value(query.record().indexOf("VALUE")).toFloat(),
+                                             -1);
+
+            curSelectedObjs.listOfCurrValues.append(recObj);
+        }
+
+        QSqlQuery query1("SELECT * FROM LOGTABLE "
+                                "WHERE SMP_ID='"+QString::number(smpIdList.at(1))+"'");
+
+        while (query1.next())
+        {
+            found = false;
+
+            for (int i = 0; i < curSelectedObjs.listOfCurrValues.size(); i++)
+            {
+                recObj = (LastDataParamRecObj*) curSelectedObjs.listOfCurrValues.at(i);
+
+                if (query1.value(query1.record().indexOf("PARAM_ID")).toInt() == recObj->paramId())
+                {
+                    recObj->setValuePrev(query1.value(query1.record().indexOf("VALUE")).toFloat());
+                    recObj->setSmpIdPrev(query1.value(query1.record().indexOf("SMP_ID")).toInt());
+
+                    found = true;
+                }
+            }
+
+            if (found == false)
+            {
+                recObj = new LastDataParamRecObj(query1.value(query1.record().indexOf("PARAM_ID")).toInt(),
+                                                 -1,
+                                                 query1.value(query1.record().indexOf("SMP_ID")).toInt(),
+                                                 -1,
+                                                 query1.value(query1.record().indexOf("VALUE")).toFloat());
+
+                curSelectedObjs.listOfCurrValues.append(recObj);
+            }
+        }
+    }
+
+    return false;
+}
+
+int DBManager::getLastSmpId()
+{
+    int id = 0;
+
+    QSqlQuery query("SELECT MAX(ID) FROM LOGTABLE");
+
+    if(query.next())
+        id = query.value(0).toInt();
+
+    return id;
+}
+
+bool DBManager::getCurrentUser()
+{
     QSqlQuery query("SELECT * FROM UTABLE");
-    UserObj *user = nullptr;
 
     while (query.next())
     {
         /* Read only one User */
-        user = new UserObj(&query);
-        break;
+        curSelectedObjs.user = new UserObj(&query);
+        return true;
     }
 
-    return user;
+    return false;
 }
 
-QList<QObject *> *DBManager::getUserTanksList(QString manId)
+bool DBManager::getUserTanksList()
 {
+    bool res = false;
     TankObj *obj = nullptr;
-    QSqlQuery query("SELECT * FROM TANKSTABLE WHERE MAN_ID='"+manId+"'");
+    QSqlQuery query("SELECT * FROM TANKSTABLE WHERE MAN_ID='"+curSelectedObjs.user->man_id+"'");
 
-    listOfUserTanks.clear();
+    curSelectedObjs.listOfUserTanks.clear();
 
     while (query.next())
     {
+        res = true;
         obj = new TankObj(&query);
-        listOfUserTanks.append(obj);
+        curSelectedObjs.listOfUserTanks.append(obj);
 
-        qDebug() << obj->name() << obj->desc() << obj->volume();
+        //qDebug() << obj->name() << obj->desc() << obj->volume();
     }
 
-    return &listOfUserTanks;
+    return res;
 }
 
 bool DBManager::createUser(QString uname, QString upass, QString phone, QString email)
@@ -169,10 +362,11 @@ bool DBManager::createUser(QString uname, QString upass, QString phone, QString 
 
 bool DBManager::createTank(QString name, QString manId, int type, int l, int w, int h)
 {
+    bool res = false;
+
     if (name.length() > 0 && name.length() <= 64)
     {
         QSqlQuery query;
-        bool res = false;
 
         query.prepare("INSERT INTO TANKSTABLE (TANK_ID, MAN_ID, TYPE, NAME, STATUS, L, W, H, DATE_CREATE, DATE_EDIT) "
                       "VALUES (:tank_id, :man_id, :type, :name, :status, :l, :w, :h, :date_create, :date_edit)");
@@ -192,11 +386,36 @@ bool DBManager::createTank(QString name, QString manId, int type, int l, int w, 
 
         if (res == false)
             qDebug() << "Create tank error: " << query.lastError();
-
-        return res;
     }
-    else
-        return false;
+
+    if (res == true)
+        getCurrentObjs();
+
+
+    return res;
+}
+
+bool DBManager::addParamRecord(int smpId, int paramId, double value)
+{
+    QSqlQuery query;
+    bool res = false;
+    TankObj *tank = (TankObj*) curSelectedObjs.listOfUserTanks.at(curSelectedObjs.tankIdx);
+
+    query.prepare("INSERT INTO LOGTABLE (SMP_ID, TANK_ID, PARAM_ID, VALUE, TIMESTAMP) "
+                  "VALUES (:smp_id, :tank_id, :param_id, :value, :tm)");
+
+    query.bindValue(":smp_id", smpId);
+    query.bindValue(":tank_id", tank->tankId());
+    query.bindValue(":param_id", paramId);
+    query.bindValue(":value", value);
+    query.bindValue(":tm", QDateTime::currentSecsSinceEpoch());
+
+    res = query.exec();
+
+    if (res == false)
+        qDebug() << "Add record error: " << query.lastError();
+
+    return res;
 }
 
 QString DBManager::randId()
@@ -220,7 +439,7 @@ bool DBManager::initDB()
     QSqlQuery query;
 
     query.exec("create table UTABLE "
-                "(MAN_ID varchar(32), "
+                "(MAN_ID varchar(16), "
                 "UNAME varchar(64), "
                 "UPASS varchar(128), "
                 "SELECTED integer, "
@@ -234,8 +453,8 @@ bool DBManager::initDB()
     qDebug() << query.lastError();
 
     query.exec("create table TANKSTABLE "
-                "(TANK_ID varchar(32), "
-                "MAN_ID varchar(32), "
+                "(TANK_ID varchar(16), "
+                "MAN_ID varchar(16), "
                 "TYPE integer, "
                 "NAME varchar(64), "
                 "DESC text, "
@@ -250,8 +469,9 @@ bool DBManager::initDB()
     qDebug() << query.lastError();
 
     query.exec("create table LOGTABLE "
-                "(ID integer PRIMARY KEY NOT NULL, "
+                "(ID integer PRIMARY KEY AUTOINCREMENT, "
                 "SMP_ID integer, "
+                "TANK_ID varchar(16), "
                 "PARAM_ID integer, "
                 "VALUE float, "
                 "TIMESTAMP integer)");

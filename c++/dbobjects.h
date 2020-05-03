@@ -8,6 +8,103 @@
 #include <QSqlQuery>
 #include <QVariant>
 
+class LastDataParamRecObj : public QObject
+{
+    Q_OBJECT
+
+    Q_PROPERTY(char paramId READ paramId WRITE setParamId NOTIFY paramIdChanged)
+    Q_PROPERTY(int smpIdNow READ smpIdNow WRITE setSmpIdNow NOTIFY smpIdNowChanged)
+    Q_PROPERTY(int smpIdPrev READ smpIdPrev WRITE setSmpIdPrev NOTIFY smpIdPrevChanged)
+    Q_PROPERTY(float valueNow READ valueNow WRITE setValueNow NOTIFY valueNowChanged)
+    Q_PROPERTY(float valuePrev READ valuePrev WRITE setValuePrev NOTIFY valuePrevChanged)
+
+public:
+    LastDataParamRecObj(char paramId, int idNow, int idPrev, float now, float prev)
+    {
+        _paramId = paramId;
+        _smpIdNow = idNow;
+        _smpIdPrev = idPrev;
+        _valueNow = now;
+        _valuePrev = prev;
+    }
+
+    char paramId()                      {   return _paramId;        }
+    int smpIdNow()                      {   return _smpIdNow;       }
+    int smpIdPrev()                     {   return _smpIdPrev;      }
+    float valueNow()                    {   return _valueNow;       }
+    float valuePrev()                   {   return _valuePrev;      }
+
+    void setParamId(char paramId)       {   _paramId = paramId;     }
+    void setSmpIdNow(int smpIdNow)      {   _smpIdNow = smpIdNow;   }
+    void setSmpIdPrev(int smpIdPrev)    {   _smpIdPrev = smpIdPrev; }
+    void setValueNow(float valueNow)    {   _valueNow = valueNow;   }
+    void setValuePrev(float valuePrev)  {   _valuePrev = valuePrev; }
+
+signals:
+    void paramIdChanged();
+    void smpIdNowChanged();
+    void smpIdPrevChanged();
+    void valueNowChanged();
+    void valuePrevChanged();
+
+protected:
+    char    _paramId;
+    int     _smpIdNow;
+    int     _smpIdPrev;
+    float   _valueNow;
+    float   _valuePrev;
+};
+
+class ParamObj : public QObject
+{
+    Q_OBJECT
+
+    Q_PROPERTY(char paramId READ paramId WRITE setParamId NOTIFY paramIdChanged)
+    Q_PROPERTY(QString shortName READ shortName WRITE setShortName NOTIFY shortNameChanged)
+    Q_PROPERTY(QString fullName READ fullName WRITE setFullName NOTIFY fullNameChanged)
+    Q_PROPERTY(QString unitName READ unitName WRITE setUnitName NOTIFY unitNameChanged)
+    Q_PROPERTY(float value READ value WRITE setValue NOTIFY valueChanged)
+
+public:
+    ParamObj(QSqlQuery *query)
+    {
+        if (query != nullptr)
+        {
+            _paramId = (char) query->value(query->record().indexOf("PARAM_ID")).toInt();
+            _shortName = query->value(query->record().indexOf("SHORT_NAME")).toString();
+            _fullName = query->value(query->record().indexOf("FULL_NAME")).toString();
+            _unitName = query->value(query->record().indexOf("UNIT_NAME")).toString();
+            _value = -1;
+        }
+    }
+
+    char paramId()                  {   return _paramId;        }
+    QString shortName()             {   return _shortName;      }
+    QString fullName()              {   return _fullName;       }
+    QString unitName()              {   return _unitName;       }
+    float value()                   {   return _value;          }
+
+    void setParamId(char paramId)   {   _paramId = paramId;     }
+    void setShortName(QString name) {   _shortName = name;      }
+    void setFullName(QString name)  {   _fullName = name;       }
+    void setUnitName(QString name)  {   _unitName = name;       }
+    void setValue(float value)      {   _value = value;         }
+
+signals:
+    void paramIdChanged();
+    void shortNameChanged();
+    void fullNameChanged();
+    void unitNameChanged();
+    void valueChanged();
+
+protected:
+    char    _paramId;
+    QString _shortName;
+    QString _fullName;
+    QString _unitName;
+    float   _value;
+};
+
 class UserObj
 {
 public:

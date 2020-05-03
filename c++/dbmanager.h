@@ -7,7 +7,7 @@
 #include <QQmlApplicationEngine>
 #include "dbobjects.h"
 
-#define RAND_ID_LENGTH  32
+#define RAND_ID_LENGTH  16
 
 typedef enum
 {
@@ -23,24 +23,51 @@ public:
     explicit DBManager(QQmlApplicationEngine *engine, QObject *parent = nullptr);
     ~DBManager();
 
+    typedef struct
+    {
+        UserObj         *user = nullptr;
+        QList<QObject*> listOfUserTanks;
+        int             tankIdx = 0;
+        int             lastSmpId = 0;
+
+        QList<QObject*> listOfCurrValues;
+    }   UTObj;
+
 private:
     /* Database management */
     bool    initDB();
     bool    createUser(QString uname, QString upass, QString phone, QString email);
     bool    createTank(QString name, QString manId, int type, int l, int w, int h);
-    UserObj *getCurrentUser();
-    QList<QObject*> *getUserTanksList(QString manId);
+    bool    addParamRecord(int smpId, int paramId, double value);
+
+    /* Read basics */
+    bool    getParamsList();
+    int     getLastSmpId();
+    bool    getLatestParams();
+
+    bool    getCurrentUser();
+    bool    getUserTanksList();
+
+    /* Preparation for GUI start */
+    bool    getCurrentObjs();
+
+    /* Utitlity methods */
     QString randId();
+    TankObj *currentTankSelected();
 
 private:
     /* Gui methods */
     void    setInitialDialogStage(int stage, QString name);
+    void    setLastSmpId(int id);
+    void    setCurrentValuesModel();
 
 signals:
 
 public slots:
     void    onGuiUserCreate(QString uname, QString upass, QString email);
     void    onGuiTankCreate(QString name, int type, int l, int w, int h);
+    void    onGuiAddRecord(int smpId, int paramId, double value);
+    void    onGuiTankSelected(int tankIdx);
 
 public:
     const QString   dbFolder = "db";
@@ -50,8 +77,11 @@ private:
     QString         dbFileLink;
     QSqlDatabase    db;
 
-    QList<QObject*> listOfUserTanks;
-    UserObj         *curUser = nullptr;
+    /* Store params enumeration */
+    QList<QObject*> paramsGuiList;
+
+    /* Currently selected objects */
+    UTObj           curSelectedObjs;
 
 private:
     QQmlApplicationEngine   *qmlEngine = nullptr;
