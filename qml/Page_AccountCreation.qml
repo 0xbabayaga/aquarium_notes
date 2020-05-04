@@ -19,8 +19,6 @@ Item
     {
         animationToPage.stop()
 
-        console.log("Staging to ", page)
-
         animationToPage.from = animationToPage.to
         animationToPage.to = app.height * page
 

@@ -18,18 +18,7 @@ Item
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: parent.top
-            height: AppTheme.compHeight * app.scale
             color: "#00000000"
-
-            Text
-            {
-                verticalAlignment: Text.AlignVCenter
-                width: 80 * app.scale
-                font.family: AppTheme.fontFamily
-                font.pixelSize: AppTheme.fontNormalSize * app.scale
-                color: AppTheme.greyColor
-                text: qsTr("CURRENT ACTIVITIES: ")
-            }
         }
     }
 }

@@ -134,8 +134,6 @@ void DBManager::setCurrentValuesModel()
 
 void DBManager::onGuiUserCreate(QString uname, QString upass, QString email)
 {
-    qDebug() << "onGuiUserCreate";
-
     if (createUser(uname, upass, "123", email) == true)
     {
         getCurrentUser();
@@ -145,8 +143,6 @@ void DBManager::onGuiUserCreate(QString uname, QString upass, QString email)
 
 void DBManager::onGuiTankCreate(QString name, int type, int l, int w, int h)
 {
-    qDebug() << "onGuiTankCreate";
-
     if (createTank(name, curSelectedObjs.user->man_id, type, l, w, h) == true)
     {
         setInitialDialogStage(AppDef::AppInit_Completed, curSelectedObjs.user->uname);
@@ -244,35 +240,38 @@ bool DBManager::getLatestParams()
             curSelectedObjs.listOfCurrValues.append(recObj);
         }
 
-        QSqlQuery query1("SELECT * FROM LOGTABLE "
-                                "WHERE SMP_ID='"+QString::number(smpIdList.at(1))+"'");
-
-        while (query1.next())
+        if (smpIdList.size() > 1)
         {
-            found = false;
+            QSqlQuery query1("SELECT * FROM LOGTABLE "
+                                    "WHERE SMP_ID='"+QString::number(smpIdList.at(1))+"'");
 
-            for (int i = 0; i < curSelectedObjs.listOfCurrValues.size(); i++)
+            while (query1.next())
             {
-                recObj = (LastDataParamRecObj*) curSelectedObjs.listOfCurrValues.at(i);
+                found = false;
 
-                if (query1.value(query1.record().indexOf("PARAM_ID")).toInt() == recObj->paramId())
+                for (int i = 0; i < curSelectedObjs.listOfCurrValues.size(); i++)
                 {
-                    recObj->setValuePrev(query1.value(query1.record().indexOf("VALUE")).toFloat());
-                    recObj->setSmpIdPrev(query1.value(query1.record().indexOf("SMP_ID")).toInt());
+                    recObj = (LastDataParamRecObj*) curSelectedObjs.listOfCurrValues.at(i);
 
-                    found = true;
+                    if (query1.value(query1.record().indexOf("PARAM_ID")).toInt() == recObj->paramId())
+                    {
+                        recObj->setValuePrev(query1.value(query1.record().indexOf("VALUE")).toFloat());
+                        recObj->setSmpIdPrev(query1.value(query1.record().indexOf("SMP_ID")).toInt());
+
+                        found = true;
+                    }
                 }
-            }
 
-            if (found == false)
-            {
-                recObj = new LastDataParamRecObj(query1.value(query1.record().indexOf("PARAM_ID")).toInt(),
-                                                 -1,
-                                                 query1.value(query1.record().indexOf("SMP_ID")).toInt(),
-                                                 -1,
-                                                 query1.value(query1.record().indexOf("VALUE")).toFloat());
+                if (found == false)
+                {
+                    recObj = new LastDataParamRecObj(query1.value(query1.record().indexOf("PARAM_ID")).toInt(),
+                                                     -1,
+                                                     query1.value(query1.record().indexOf("SMP_ID")).toInt(),
+                                                     -1,
+                                                     query1.value(query1.record().indexOf("VALUE")).toFloat());
 
-                curSelectedObjs.listOfCurrValues.append(recObj);
+                    curSelectedObjs.listOfCurrValues.append(recObj);
+                }
             }
         }
     }
@@ -319,8 +318,6 @@ bool DBManager::getUserTanksList()
         res = true;
         obj = new TankObj(&query);
         curSelectedObjs.listOfUserTanks.append(obj);
-
-        //qDebug() << obj->name() << obj->desc() << obj->volume();
     }
 
     return res;

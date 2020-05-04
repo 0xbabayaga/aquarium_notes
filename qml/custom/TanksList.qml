@@ -36,7 +36,7 @@ Item
                 {
                     id: rect
                     anchors.fill: parent
-                    radius: AppTheme.radius/2 * app.scale
+                    //radius: AppTheme.radius/2 * app.scale
                     color: AppTheme.whiteColor
                     clip: true
                 }
@@ -82,7 +82,7 @@ Item
                         height: parent.width/3
                         //fillMode: Image.PreserveAspectFit
                         anchors.bottom: parent.bottom
-                        source: (type === 0) ? "qrc:/resources/img/wave_blue.png" : "qrc:/resources/img/wave_green.png"
+                        source: (type === 0) ? "qrc:/resources/img/wave_blue_2.png" : "qrc:/resources/img/wave_green_2.png"
                         mipmap: true
                     }
 
@@ -93,7 +93,7 @@ Item
                         anchors.left: parent.left
                         anchors.bottom: parent.bottom
                         anchors.bottomMargin: AppTheme.padding/2 * app.scale
-                        text: volume + "L"
+                        text: Math.ceil(volume) + "L"
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontNormalSize * app.scale
                         color: AppTheme.whiteColor

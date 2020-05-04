@@ -65,6 +65,7 @@ Item
                 Text
                 {
                     verticalAlignment: Text.AlignVCenter
+                    height: AppTheme.compHeight * app.scale
                     width: 75 * app.scale
                     font.family: AppTheme.fontFamily
                     font.pixelSize: AppTheme.fontBigSize * app.scale
@@ -75,6 +76,7 @@ Item
                 Text
                 {
                     verticalAlignment: Text.AlignVCenter
+                    height: AppTheme.compHeight * app.scale
                     width: 50 * app.scale
                     font.family: AppTheme.fontFamily
                     font.pixelSize: AppTheme.fontNormalSize * app.scale
@@ -84,6 +86,7 @@ Item
 
                 Text
                 {
+                    height: AppTheme.compHeight * app.scale
                     width: 65 * app.scale
                     verticalAlignment: Text.AlignVCenter
                     font.family: AppTheme.fontFamily
@@ -95,6 +98,7 @@ Item
 
                 Text
                 {
+                    height: AppTheme.compHeight * app.scale
                     width: 65 * app.scale
                     verticalAlignment: Text.AlignVCenter
                     font.family: AppTheme.fontFamily
@@ -106,6 +110,7 @@ Item
 
                 Text
                 {
+                    height: AppTheme.compHeight * app.scale
                     width: 40 * app.scale
                     verticalAlignment: Text.AlignVCenter
                     horizontalAlignment: Text.AlignRight
@@ -137,6 +142,7 @@ Item
 
                     Text
                     {
+                        height: AppTheme.compHeight * app.scale
                         verticalAlignment: Text.AlignVCenter
                         width: 90 * app.scale
                         font.family: AppTheme.fontFamily
@@ -147,6 +153,7 @@ Item
 
                     Text
                     {
+                        height: AppTheme.compHeight * app.scale
                         verticalAlignment: Text.AlignBottom
                         width: 55 * app.scale
                         font.family: AppTheme.fontFamily
@@ -157,6 +164,7 @@ Item
 
                     Text
                     {
+                        height: AppTheme.compHeight * app.scale
                         width: 60 * app.scale
                         verticalAlignment: Text.AlignVCenter
                         font.family: AppTheme.fontFamily
@@ -167,6 +175,7 @@ Item
 
                     Text
                     {
+                        height: AppTheme.compHeight * app.scale
                         width: 60 * app.scale
                         verticalAlignment: Text.AlignVCenter
                         font.family: AppTheme.fontFamily
@@ -177,6 +186,7 @@ Item
 
                     Text
                     {
+                        height: AppTheme.compHeight * app.scale
                         width: 40 * app.scale
                         verticalAlignment: Text.AlignVCenter
                         horizontalAlignment: Text.AlignRight

@@ -9,6 +9,13 @@ Item
 
     property alias model: curParamsListView.model
 
+    onModelChanged: currParamsMainTable.height = (model.length + 1) * AppTheme.compHeight * app.scale
+
+    Behavior on height
+    {
+        NumberAnimation { duration: 200; easing.type: Easing.InOutQuad }
+    }
+
     function formattedValue(val)
     {
         var str = ""
@@ -48,31 +55,10 @@ Item
         anchors.fill: parent
         color: "#00000000"
 
-        Rectangle
-        {
-            id: rectDataHeader
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.top: parent.top
-            height: AppTheme.compHeight * app.scale
-            color: "#00000000"
-
-            Text
-            {
-                verticalAlignment: Text.AlignVCenter
-                width: 80 * app.scale
-                font.family: AppTheme.fontFamily
-                font.pixelSize: AppTheme.fontNormalSize * app.scale
-                color: AppTheme.greyColor
-                text: qsTr("CURRENT PARAMETERS: ")
-            }
-        }
-
         ListView
         {
             id: curParamsListView
             anchors.fill: parent
-            anchors.topMargin: AppTheme.compHeight * app.scale
             spacing: 0
 
             delegate: Rectangle

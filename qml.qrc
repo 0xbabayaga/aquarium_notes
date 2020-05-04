@@ -21,5 +21,7 @@
         <file>qml/custom/CurrentParamsTable.qml</file>
         <file>qml/custom/CurrentParamsMainTable.qml</file>
         <file>qml/custom/CurrrentActivities.qml</file>
+        <file>resources/img/wave_blue_2.png</file>
+        <file>resources/img/wave_green_2.png</file>
     </qresource>
 </RCC>

@@ -50,14 +50,56 @@ Item
         contentHeight: 700 * app.scale
         clip: true
 
+        Rectangle
+        {
+            id: rectMainTableHeader
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
+            height: AppTheme.compHeight * app.scale
+            color: "#00000000"
+
+            Text
+            {
+                verticalAlignment: Text.AlignVCenter
+                height: parent.height
+                width: 80 * app.scale
+                font.family: AppTheme.fontFamily
+                font.pixelSize: AppTheme.fontNormalSize * app.scale
+                color: AppTheme.greyColor
+                text: qsTr("CURRENT PARAMETERS: ")
+            }
+        }
+
         CurrentParamsMainTable
         {
             id: currParamsMainTable
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.top: parent.top
+            anchors.top: rectMainTableHeader.bottom
             model: curParamsModel
             height: 300 * app.scale
+        }
+
+        Rectangle
+        {
+            id: rectActivitiesTableHeader
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: currParamsMainTable.bottom
+            anchors.topMargin: AppTheme.compHeight * app.scale
+            height: AppTheme.compHeight * app.scale
+            color: "#00000000"
+
+            Text
+            {
+                verticalAlignment: Text.AlignVCenter
+                width: 80 * app.scale
+                font.family: AppTheme.fontFamily
+                font.pixelSize: AppTheme.fontNormalSize * app.scale
+                color: AppTheme.greyColor
+                text: qsTr("CURRENT ACTIVITIES: ")
+            }
         }
 
         CurrrentActivities
@@ -65,7 +107,7 @@ Item
             id: currActivities
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.top: currParamsMainTable.bottom
+            anchors.top: rectActivitiesTableHeader.bottom
             anchors.topMargin: AppTheme.padding * app.scale
             height: 200 * app.scale
         }
