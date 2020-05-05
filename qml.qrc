@@ -23,5 +23,7 @@
         <file>qml/custom/CurrrentActivities.qml</file>
         <file>resources/img/wave_blue_2.png</file>
         <file>resources/img/wave_green_2.png</file>
+        <file>qml/custom/UrlButton.qml</file>
+        <file>qml/custom/SwitchButton.qml</file>
     </qresource>
 </RCC>

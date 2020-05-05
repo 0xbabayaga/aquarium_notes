@@ -38,14 +38,10 @@ DBManager::DBManager(QQmlApplicationEngine *engine, QObject *parent) : QObject(p
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateTank(QString, int, int, int, int)), this, SLOT(onGuiTankCreate(QString, int, int, int, int)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecord(int, int, double)), this, SLOT(onGuiAddRecord(int, int, double)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigTankSelected(int)), this, SLOT(onGuiTankSelected(int)));
+    connect(qmlEngine->rootObjects().first(), SIGNAL(sigPersonalParamStateChanged(int, bool)), this, SLOT(onGuiPersonalParamStateChanged(int, bool)));
 
     curSelectedObjs.lastSmpId = getLastSmpId();
     setLastSmpId(curSelectedObjs.lastSmpId);
-
-    if (getParamsList() == true)
-        qmlEngine->rootContext()->setContextProperty("paramsModel", QVariant::fromValue(paramsGuiList));
-    else
-        qDebug() << "Cannot read Parameter list !!!";
 
     getCurrentObjs();
 }
@@ -56,6 +52,7 @@ DBManager::~DBManager()
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateTank(QString, int, int, int, int)), this, SLOT(onGuiTankCreate(QString, int, int, int, int)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecord(int, int, float)), this, SLOT(onGuiAddRecord(int, int, float)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigTankSelected(int)), this, SLOT(onGuiTankSelected(int)));
+    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigPersonalParamStateChanged(int, bool)), this, SLOT(onGuiPersonalParamStateChanged(int, bool)));
 
     if (curSelectedObjs.user != nullptr)
         delete curSelectedObjs.user;
@@ -73,13 +70,13 @@ bool DBManager::getCurrentObjs()
         {
             setInitialDialogStage(AppDef::AppInit_Completed, curSelectedObjs.user->uname);
 
-            qmlEngine->rootContext()->setContextProperty("tanksListModel", QVariant::fromValue(curSelectedObjs.listOfUserTanks));
-
             curSelectedObjs.tankIdx = 0;
 
-            getLatestParams();
+            qmlEngine->rootContext()->setContextProperty("tanksListModel", QVariant::fromValue(curSelectedObjs.listOfUserTanks));
 
-            setCurrentValuesModel();
+            getParamsList(currentTankSelected()->tankId());
+
+            getLatestParams();
 
             return true;
         }
@@ -127,11 +124,6 @@ void DBManager::setLastSmpId(int id)
     }
 }
 
-void DBManager::setCurrentValuesModel()
-{
-    qmlEngine->rootContext()->setContextProperty("curParamsModel", QVariant::fromValue(curSelectedObjs.listOfCurrValues));
-}
-
 void DBManager::onGuiUserCreate(QString uname, QString upass, QString email)
 {
     if (createUser(uname, upass, "123", email) == true)
@@ -154,7 +146,6 @@ void DBManager::onGuiAddRecord(int smpId, int paramId, double value)
     if (addParamRecord(smpId, paramId, value) == true)
     {
         getLatestParams();
-        setCurrentValuesModel();
     }
 }
 
@@ -163,8 +154,11 @@ void DBManager::onGuiTankSelected(int tankIdx)
     curSelectedObjs.tankIdx = tankIdx;
 
     getLatestParams();
+}
 
-    setCurrentValuesModel();
+void DBManager::onGuiPersonalParamStateChanged(int paramId, bool en)
+{
+    editPersonalParamState(currentTankSelected()->tankId(), paramId, en);
 }
 
 bool DBManager::getParamsList()
@@ -173,7 +167,7 @@ bool DBManager::getParamsList()
     QSqlQuery query("SELECT * FROM DICTTABLE");
     ParamObj *obj = nullptr;
     int i = 0;
-\
+
     paramsGuiList.clear();
 
     while (query.next())
@@ -187,6 +181,45 @@ bool DBManager::getParamsList()
 
         i++;
     }
+
+    return res;
+}
+
+bool DBManager::getParamsList(QString tankId)
+{
+    bool res = false;
+    QSqlQuery query("SELECT * FROM DICTTABLE");
+    QSqlQuery queryPersonal("SELECT * FROM PERSONALPARAMTABLE WHERE TANK_ID = '"+tankId+"'");
+    ParamObj *obj = nullptr;
+    QMap<int, bool> mapPersonal;
+    int i = 0;
+
+    mapPersonal.clear();
+
+    while (queryPersonal.next())
+    {
+        mapPersonal.insert(queryPersonal.value(queryPersonal.record().indexOf("PARAM_ID")).toInt(),
+                           queryPersonal.value(queryPersonal.record().indexOf("ENABLED")).toBool());
+    }
+
+    paramsGuiList.clear();
+
+    while (query.next())
+    {
+        if (i > 0)
+        {
+            obj = new ParamObj(&query);
+            obj->setEn(mapPersonal[obj->paramId()]);
+
+            paramsGuiList.append(obj);
+
+            res = true;
+        }
+
+        i++;
+    }
+
+    qmlEngine->rootContext()->setContextProperty("allParamsListModel", QVariant::fromValue(paramsGuiList));
 
     return res;
 }
@@ -276,6 +309,8 @@ bool DBManager::getLatestParams()
         }
     }
 
+    qmlEngine->rootContext()->setContextProperty("curValuesListModel", QVariant::fromValue(curSelectedObjs.listOfCurrValues));
+
     return false;
 }
 
@@ -364,11 +399,12 @@ bool DBManager::createTank(QString name, QString manId, int type, int l, int w, 
     if (name.length() > 0 && name.length() <= 64)
     {
         QSqlQuery query;
+        QString tankId = randId();
 
         query.prepare("INSERT INTO TANKSTABLE (TANK_ID, MAN_ID, TYPE, NAME, STATUS, L, W, H, DATE_CREATE, DATE_EDIT) "
                       "VALUES (:tank_id, :man_id, :type, :name, :status, :l, :w, :h, :date_create, :date_edit)");
 
-        query.bindValue(":tank_id", randId());
+        query.bindValue(":tank_id", tankId);
         query.bindValue(":man_id", manId);
         query.bindValue(":type", type);
         query.bindValue(":name", name);
@@ -383,13 +419,45 @@ bool DBManager::createTank(QString name, QString manId, int type, int l, int w, 
 
         if (res == false)
             qDebug() << "Create tank error: " << query.lastError();
+        else
+        {
+            res = createTankDefaultParamSet(tankId);
+        }
     }
 
     if (res == true)
         getCurrentObjs();
 
-
     return res;
+}
+
+bool DBManager::createTankDefaultParamSet(QString tankId)
+{
+    if (tankId.length() == RAND_ID_LENGTH)
+    {
+        QSqlQuery query;
+        ParamObj *obj = nullptr;
+
+        for (int i = 0; i < paramsGuiList.size(); i++)
+        {
+            obj = (ParamObj*) paramsGuiList.at(i);
+
+            query.prepare("INSERT INTO PERSONALPARAMTABLE (PARAM_ID, TANK_ID, ENABLED) "
+                          "VALUES (:param_id, :tank_id, :enabled)");
+
+            query.bindValue(":param_id", obj->paramId());
+            query.bindValue(":tank_id", tankId);
+            query.bindValue(":enabled", 1);
+
+            if (query.exec() != true)
+            {
+                qDebug() << query.lastError();
+                return false;
+            }
+        }
+    }
+
+    return true;
 }
 
 bool DBManager::addParamRecord(int smpId, int paramId, double value)
@@ -411,6 +479,23 @@ bool DBManager::addParamRecord(int smpId, int paramId, double value)
 
     if (res == false)
         qDebug() << "Add record error: " << query.lastError();
+
+    return res;
+}
+
+bool DBManager::editPersonalParamState(QString tankId, int paramId, bool en)
+{
+    QSqlQuery query;
+    bool res = false;
+
+    res = query.exec("UPDATE PERSONALPARAMTABLE SET ENABLED = '"+QString::number(en)+"' WHERE "
+                     "TANK_ID = '" +tankId+ "' AND PARAM_ID = '" +QString::number(paramId)+"'");
+
+    if (res == false)
+    {
+        qDebug() << "Update personal param: " << query.lastQuery();
+        qDebug() << "Update personal param: " << query.lastError();
+    }
 
     return res;
 }
@@ -533,6 +618,14 @@ bool DBManager::initDB()
                "VALUES (23, 'Orp', 'ORP', 'ppm')");
 
     qDebug() << query.lastError();
+
+    query.exec("create table PERSONALPARAMTABLE "
+                "(PARAM_ID integer, "
+                "TANK_ID varchar(16), "
+                "ENABLED integer)");
+
+    qDebug() << query.lastError();
+
 
     return true;
 }

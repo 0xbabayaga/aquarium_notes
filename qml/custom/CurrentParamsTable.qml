@@ -7,7 +7,7 @@ Item
 {
     id: currentParamsTable
 
-    property alias model: curParamsListView.model
+    property alias model: curValuesListView.model
 
     function formattedValue(val)
     {
@@ -92,7 +92,7 @@ Item
                     font.family: AppTheme.fontFamily
                     font.pixelSize: AppTheme.fontBigNormalSize * app.scale
                     color: AppTheme.greyColor
-                    visible: (curParamsListView.model.length > 0)
+                    visible: (curValuesListView.model.length > 0)
                     text: "[" + qsTr("current") + "]"
                 }
 
@@ -104,7 +104,7 @@ Item
                     font.family: AppTheme.fontFamily
                     font.pixelSize: AppTheme.fontBigNormalSize * app.scale
                     color: AppTheme.greyColor
-                    visible: (curParamsListView.model.length > 0)
+                    visible: (curValuesListView.model.length > 0)
                     text: "[" + qsTr("previous") + "]"
                 }
 
@@ -124,7 +124,7 @@ Item
 
         ListView
         {
-            id: curParamsListView
+            id: curValuesListView
             anchors.fill: parent
             anchors.topMargin: AppTheme.compHeight * app.scale
             spacing: 0
@@ -154,7 +154,7 @@ Item
                     Text
                     {
                         height: AppTheme.compHeight * app.scale
-                        verticalAlignment: Text.AlignBottom
+                        verticalAlignment: Text.AlignVCenter
                         width: 55 * app.scale
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontNormalSize * app.scale
@@ -202,7 +202,7 @@ Item
                     width: parent.width
                     height: 1 * app.scale
                     anchors.bottom: parent.bottom
-                    color: ((index + 1) === curParamsListView.model.count) ? "#00000000" : AppTheme.shideColor
+                    color: ((index + 1) === curValuesListView.model.count) ? "#00000000" : AppTheme.shideColor
                 }
             }
         }

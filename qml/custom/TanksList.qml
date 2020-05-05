@@ -9,8 +9,6 @@ Item
     height: 96 * app.scale
     width: (model.length > 2) ? app.width + AppTheme.margin * app.scale * 4 : 360 * app.scale
 
-    onModelChanged: console.log("tanks = ", view.model.length)
-
     property alias model: view.model
     property alias currentIndex: view.currentIndex
 

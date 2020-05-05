@@ -17,14 +17,7 @@ Window
     ListView
     {
         id: tmpParamList
-        model: paramsModel
-        visible: false
-    }
-
-    ListView
-    {
-        id: tmpTankList
-        model: tanksListModel
+        model: allParamsListModel
         visible: false
     }
 
@@ -36,17 +29,16 @@ Window
     signal sigCreateTank(string name, int type, int l, int w, int h)
     signal sigAddRecord(int smpId, int paramId, double value)
     signal sigTankSelected(int tankIdx)
+    signal sigPersonalParamStateChanged(int paramId, bool en)
 
-    function getParamsModel() { return paramsModel   }
-    function getTankListModel() { return tanksListModel   }
-
+    function getAllParamsListModel() { return allParamsListModel    }
 
     function getParamById(id)
     {
-        for (var i = 0; i < paramsModel.length; i++)
+        for (var i = 0; i < allParamsListModel.length; i++)
         {
-            if (paramsModel[i].paramId === id)
-                return paramsModel[i]
+            if (allParamsListModel[i].paramId === id)
+                return allParamsListModel[i]
         }
 
         return 0
@@ -57,10 +49,8 @@ Window
         anchors.left: parent.left
         anchors.top: parent.top
         anchors.topMargin: AppTheme.margin * app.scale
-        //anchors.right: parent.right
         width: parent.width
         height: width * 0.75
-        //fillMode: Image.PreserveAspectFit
         source: "qrc:/resources/img/back_waves.png"
     }
 

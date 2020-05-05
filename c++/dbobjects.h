@@ -63,6 +63,7 @@ class ParamObj : public QObject
     Q_PROPERTY(QString shortName READ shortName WRITE setShortName NOTIFY shortNameChanged)
     Q_PROPERTY(QString fullName READ fullName WRITE setFullName NOTIFY fullNameChanged)
     Q_PROPERTY(QString unitName READ unitName WRITE setUnitName NOTIFY unitNameChanged)
+    Q_PROPERTY(bool en READ en WRITE setEn NOTIFY enChanged)
     Q_PROPERTY(float value READ value WRITE setValue NOTIFY valueChanged)
 
 public:
@@ -75,6 +76,7 @@ public:
             _fullName = query->value(query->record().indexOf("FULL_NAME")).toString();
             _unitName = query->value(query->record().indexOf("UNIT_NAME")).toString();
             _value = -1;
+            _en = true;
         }
     }
 
@@ -83,12 +85,14 @@ public:
     QString fullName()              {   return _fullName;       }
     QString unitName()              {   return _unitName;       }
     float value()                   {   return _value;          }
+    bool en()                       {   return _en;             }
 
     void setParamId(char paramId)   {   _paramId = paramId;     }
     void setShortName(QString name) {   _shortName = name;      }
     void setFullName(QString name)  {   _fullName = name;       }
     void setUnitName(QString name)  {   _unitName = name;       }
     void setValue(float value)      {   _value = value;         }
+    void setEn(bool en)             {   _en = en;               }
 
 signals:
     void paramIdChanged();
@@ -96,6 +100,7 @@ signals:
     void fullNameChanged();
     void unitNameChanged();
     void valueChanged();
+    void enChanged();
 
 protected:
     char    _paramId;
@@ -103,6 +108,7 @@ protected:
     QString _fullName;
     QString _unitName;
     float   _value;
+    bool    _en;
 };
 
 class UserObj

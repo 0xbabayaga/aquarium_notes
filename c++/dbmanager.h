@@ -38,10 +38,13 @@ private:
     bool    initDB();
     bool    createUser(QString uname, QString upass, QString phone, QString email);
     bool    createTank(QString name, QString manId, int type, int l, int w, int h);
+    bool    createTankDefaultParamSet(QString tankId);
     bool    addParamRecord(int smpId, int paramId, double value);
+    bool    editPersonalParamState(QString tankId, int paramId, bool en);
 
     /* Read basics */
     bool    getParamsList();
+    bool    getParamsList(QString tankId);
     int     getLastSmpId();
     bool    getLatestParams();
 
@@ -59,7 +62,6 @@ private:
     /* Gui methods */
     void    setInitialDialogStage(int stage, QString name);
     void    setLastSmpId(int id);
-    void    setCurrentValuesModel();
 
 signals:
 
@@ -68,6 +70,7 @@ public slots:
     void    onGuiTankCreate(QString name, int type, int l, int w, int h);
     void    onGuiAddRecord(int smpId, int paramId, double value);
     void    onGuiTankSelected(int tankIdx);
+    void    onGuiPersonalParamStateChanged(int paramId, bool en);
 
 public:
     const QString   dbFolder = "db";

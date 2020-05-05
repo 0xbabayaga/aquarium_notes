@@ -27,7 +27,7 @@ Item
         anchors.top: parent.top
         anchors.topMargin: AppTheme.rowHeightMin * app.scale * 2
         anchors.horizontalCenter: parent.horizontalCenter
-        model: app.getTankListModel()
+        model: tanksListModel
         onSigCurrentIndexChanged:
         {
             textTankName.text = model[id].name
@@ -77,7 +77,7 @@ Item
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: rectMainTableHeader.bottom
-            model: curParamsModel
+            model: curValuesListModel
             height: 300 * app.scale
         }
 
@@ -141,8 +141,8 @@ Item
 
         onSigButtonClicked:
         {
-            page_TankData.showPage(true, app.getTankListModel()[tanksList.currentIndex].name,
-                                   app.getTankListModel()[tanksList.currentIndex].type)
+            page_TankData.showPage(true, tanksListModel[tanksList.currentIndex].name,
+                                   tanksListModel[tanksList.currentIndex].type)
         }
     }
 }

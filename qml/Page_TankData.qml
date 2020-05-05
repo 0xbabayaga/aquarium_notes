@@ -2,6 +2,7 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtGraphicalEffects 1.12
 import "custom"
+import ".."
 
 Item
 {
@@ -33,13 +34,31 @@ Item
         scaleAnimation.start()
     }
 
+    function savePersonalParams(isSave)
+    {
+        if (isSave === true)
+        {
+            for (var i = 0; i < personalParamsListView.model.length; i++)
+            {
+                app.sigPersonalParamStateChanged(personalParamsListView.model[i].paramId,
+                                                 personalParamsListView.model[i].en)
+            }
+        }
+
+        rectPersonalParamsDialog.opacity = 0
+        rectAddRecordDialog.opacity = 1
+
+        addRecordListView.model = app.getAllParamsListModel()
+    }
+
     function addLogRecord(isAdd)
     {
         if (isAdd === true)
         {
             for (var i = 0; i < addRecordListView.model.length; i++)
             {
-                if (addRecordListView.model[i].value !== -1)
+                if (addRecordListView.model[i].en === true &&
+                    addRecordListView.model[i].value !== -1)
                 {
                     app.sigAddRecord(app.lastSmpId,
                                      addRecordListView.model[i].paramId,
@@ -51,6 +70,7 @@ Item
         }
 
         rectAddRecordDialog.opacity = 0
+        rectPersonalParamsDialog.opacity = 0
         rectDataContainer.opacity = 1
     }
 
@@ -99,8 +119,6 @@ Item
             anchors.topMargin: -(AppTheme.rowHeightMin - AppTheme.margin) * app.scale
             width: parent.width
             height: width * 0.75
-            //anchors.right: parent.right
-            //fillMode: Image.PreserveAspectFit
             source: "qrc:/resources/img/back_waves.png"
             opacity: 0.3
         }
@@ -162,7 +180,7 @@ Item
 
             Behavior on opacity
             {
-                NumberAnimation {   duration: 400 }
+                NumberAnimation {   duration: 200 }
             }
 
             CurrentParamsTable
@@ -171,14 +189,14 @@ Item
                 anchors.top: parent.top
                 anchors.left: parent.left
                 anchors.right: parent.right
-                height: 400 * app.scale
-                model: curParamsModel
+                model: curValuesListModel
+                height: 300 * app.scale
             }
 
             Rectangle
             {
                 anchors.fill: paramsTable
-                visible: (curParamsModel.length === 0)
+                visible: (curValuesListModel.count === 0)
                 color: "#00000000"
 
                 Text
@@ -224,11 +242,12 @@ Item
 
             Behavior on opacity
             {
-                NumberAnimation {   duration: 400 }
+                NumberAnimation {   duration: 200 }
             }
 
             Text
             {
+                id: textHeader
                 anchors.top: parent.top
                 anchors.left: parent.left
                 verticalAlignment: Text.AlignVCenter
@@ -239,28 +258,50 @@ Item
                 text: qsTr("Add record:")
             }
 
+            UrlButton
+            {
+                id: buttonSetParams
+                anchors.left: parent.left
+                anchors.top: textHeader.bottom
+                anchors.topMargin: AppTheme.padding * app.scale
+                buttonText: "Edit params"
+
+                onSigButtonClicked:
+                {
+                    rectAddRecordDialog.opacity = 0
+                    rectPersonalParamsDialog.opacity = 1
+                }
+            }
+
             ListView
             {
                 id: addRecordListView
                 anchors.fill: parent
-                anchors.topMargin: AppTheme.compHeight * app.scale
+                anchors.topMargin: AppTheme.compHeight * 2 * app.scale
                 anchors.bottomMargin: AppTheme.rowHeight * 2 * app.scale
                 spacing: 0
-                model: app.getParamsModel()
+                model: app.getAllParamsListModel()
                 clip: true
 
                 delegate: Rectangle
                 {
                     width: parent.width
-                    height: AppTheme.rowHeightMin * app.scale
+                    height: (en === true) ? AppTheme.rowHeightMin * app.scale : 0
+                    visible: en
                     color: "#00000000"
+
+                    Behavior on height
+                    {
+                        NumberAnimation { duration: 200}
+                    }
 
                     Text
                     {
-                        anchors.verticalCenter: parent.verticalCenter
                         anchors.left: parent.left
+                        anchors.verticalCenter: parent.verticalCenter
                         verticalAlignment: Text.AlignVCenter
                         width: 100 * app.scale
+                        height: parent.height
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontNormalSize * app.scale
                         color: AppTheme.blueColor
@@ -271,6 +312,7 @@ Item
                     {
                         id: textInputValue
                         anchors.right: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
                         placeholderText: "0"
                         width: 100 * app.scale
                         maximumLength: 4
@@ -312,8 +354,8 @@ Item
             StandardButton
             {
                 id: buttonCancel
-                anchors.top: addRecordListView.bottom
-                anchors.topMargin: AppTheme.margin * app.scale
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: AppTheme.margin * app.scale
                 anchors.left: parent.left
                 bText: qsTr("CANCEL")
 
@@ -323,12 +365,139 @@ Item
             StandardButton
             {
                 id: buttonAdd
-                anchors.top: addRecordListView.bottom
-                anchors.topMargin: AppTheme.margin * app.scale
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: AppTheme.margin * app.scale
                 anchors.right: parent.right
                 bText: qsTr("ADD")
 
                 onSigButtonClicked: addLogRecord(true)
+            }
+        }
+
+
+        Rectangle
+        {
+            id: rectPersonalParamsDialog
+            anchors.fill: parent
+            anchors.leftMargin: AppTheme.padding * 2 * app.scale
+            anchors.rightMargin: AppTheme.padding * 2 * app.scale
+            anchors.topMargin: AppTheme.rowHeight * 2 * app.scale
+            anchors.bottomMargin: AppTheme.padding * app.scale
+            color: "#00000020"
+            opacity: 0
+            visible: (opacity === 0) ? false : true
+
+            Behavior on opacity
+            {
+                NumberAnimation {   duration: 200 }
+            }
+
+            Text
+            {
+                id: textListOfParamsHeader
+                anchors.top: parent.top
+                anchors.left: parent.left
+                verticalAlignment: Text.AlignVCenter
+                width: 100 * app.scale
+                font.family: AppTheme.fontFamily
+                font.pixelSize: AppTheme.fontBigSize * app.scale
+                color: AppTheme.blueColor
+                text: qsTr("List of params:")
+            }
+
+            Text
+            {
+                anchors.top: textListOfParamsHeader.bottom
+                anchors.topMargin: AppTheme.padding * app.scale
+                anchors.left: parent.left
+                verticalAlignment: Text.AlignVCenter
+                width: 100 * app.scale
+                font.family: AppTheme.fontFamily
+                font.pixelSize: AppTheme.fontSmallSize * app.scale
+                color: AppTheme.greyColor
+                text: qsTr("Please select a set of parameters for monitoring")
+            }
+
+            ListView
+            {
+                id: personalParamsListView
+                anchors.fill: parent
+                anchors.topMargin: AppTheme.compHeight * 2 * app.scale
+                anchors.bottomMargin: AppTheme.rowHeight * 2 * app.scale
+                spacing: 0
+                model: app.getAllParamsListModel()
+                clip: true
+
+                delegate: Rectangle
+                {
+                    width: parent.width
+                    height: AppTheme.rowHeightMin * app.scale
+                    color: "#00000000"
+
+                    Text
+                    {
+                        id: textFullName
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: parent.left
+                        verticalAlignment: Text.AlignVCenter
+                        width: 100 * app.scale
+                        font.family: AppTheme.fontFamily
+                        font.pixelSize: AppTheme.fontNormalSize * app.scale
+                        color: en ? AppTheme.blueColor : AppTheme.greyColor
+                        text: fullName
+                    }
+
+                    SwitchButton
+                    {
+                        anchors.right: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
+                        checked: en
+                        onCheckedChanged: {
+                            en = checked
+                            textFullName.color = en ? AppTheme.blueColor : AppTheme.greyColor
+                        }
+                    }
+                }
+
+                ScrollBar.vertical: ScrollBar
+                {
+                    policy: ScrollBar.AlwaysOn
+                    parent: personalParamsListView.parent
+                    anchors.top: personalParamsListView.top
+                    anchors.left: personalParamsListView.right
+                    anchors.leftMargin: AppTheme.padding * app.scale
+                    anchors.bottom: personalParamsListView.bottom
+
+                    contentItem: Rectangle
+                    {
+                        implicitWidth: 2
+                        implicitHeight: 100
+                        radius: width / 2
+                        color: AppTheme.hideColor
+                    }
+                }
+            }
+
+            StandardButton
+            {
+                id: buttonBack
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: AppTheme.margin * app.scale
+                anchors.left: parent.left
+                bText: qsTr("CANCEL")
+
+                onSigButtonClicked: savePersonalParams(false)
+            }
+
+            StandardButton
+            {
+                id: buttonSave
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: AppTheme.margin * app.scale
+                anchors.right: parent.right
+                bText: qsTr("SAVE")
+
+                onSigButtonClicked: savePersonalParams(true)
             }
         }
     }
