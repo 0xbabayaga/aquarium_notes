@@ -60,6 +60,8 @@ DBManager::~DBManager()
 
 bool DBManager::getCurrentObjs()
 {
+    getParamsList();
+
     getCurrentUser();
 
     if (curSelectedObjs.user != nullptr)

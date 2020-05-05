@@ -26,6 +26,7 @@ Item
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignLeft
         color: enabled ? AppTheme.blueColor : AppTheme.hideColor
+        focus: true
 
         Text
         {

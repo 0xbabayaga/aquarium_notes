@@ -11,9 +11,22 @@ Item
     width: app.width
     height: app.height
 
-    function showPage(vis, tankName, tankType)
+    function showPage(vis, tankParams)
     {
+        var tankName
+        var tankDesc
+        var tankType
+        var tankVol
+
         scaleAnimation.stop()
+
+        if (tankParams !== 0)
+        {
+            tankName = tankParams[0]
+            tankDesc = tankParams[1]
+            tankType = tankParams[2]
+            tankVol = tankParams[3]
+        }
 
         if (vis === true)
         {
@@ -21,6 +34,7 @@ Item
             scaleAnimation.from = 0
             scaleAnimation.to = 1
 
+            textTankVol.text = tankVol + "L"
             textTankName.text = tankName
             textTankName.color = (tankType === 0) ? AppTheme.blueColor : AppTheme.greenColor
             arrowOverlay.color = textTankName.color
@@ -123,49 +137,73 @@ Item
             opacity: 0.3
         }
 
-        Image
+
+        Rectangle
         {
-            id: imgArrowBack
+            id: rectHeaderContainer
             anchors.left: parent.left
             anchors.leftMargin: AppTheme.padding * app.scale
-            anchors.top: parent.top
-            anchors.topMargin: AppTheme.padding * app.scale
-            height: AppTheme.compHeight * app.scale
-            width: height
-            fillMode: Image.PreserveAspectFit
-            mipmap: true
-            source: "qrc:/resources/img/icon_arrow_left.png"
-
-            ColorOverlay
-            {
-                id: arrowOverlay
-                anchors.fill: imgArrowBack
-                source: imgArrowBack
-                color: AppTheme.blueColor
-            }
-
-            MouseArea
-            {
-                anchors.fill: parent
-                onClicked:
-                {
-                    addLogRecord(false)
-                    showPage(false, "")
-                }
-            }
-        }
-
-        Text
-        {
-            id: textTankName
             anchors.right: parent.right
             anchors.rightMargin: AppTheme.padding * app.scale
+            anchors.top: parent.top
             height: AppTheme.rowHeight * app.scale
-            verticalAlignment: Text.AlignVCenter
-            font.family: AppTheme.fontFamily
-            font.pixelSize: AppTheme.fontBigSize * app.scale
-            color: AppTheme.blueColor
-            text: qsTr("Not defined")
+            color: "#00000000"
+
+            Image
+            {
+                id: imgArrowBack
+                anchors.left: parent.left
+                anchors.verticalCenter: parent.verticalCenter
+                height: AppTheme.compHeight * app.scale
+                width: height
+                fillMode: Image.PreserveAspectFit
+                mipmap: true
+                source: "qrc:/resources/img/icon_arrow_left.png"
+
+                ColorOverlay
+                {
+                    id: arrowOverlay
+                    anchors.fill: imgArrowBack
+                    source: imgArrowBack
+                    color: AppTheme.blueColor
+                }
+
+                MouseArea
+                {
+                    anchors.fill: parent
+                    onClicked:
+                    {
+                        addLogRecord(false)
+                        showPage(false, "")
+                    }
+                }
+            }
+
+            Text
+            {
+                id: textTankName
+                anchors.right: parent.right
+                anchors.verticalCenter: parent.verticalCenter
+                height: AppTheme.compHeight * app.scale
+                verticalAlignment: Text.AlignVCenter
+                font.family: AppTheme.fontFamily
+                font.pixelSize: AppTheme.fontBigSize * app.scale
+                color: AppTheme.blueColor
+                text: qsTr("Not defined")
+            }
+
+            Text
+            {
+                id: textTankVol
+                anchors.top: textTankName.bottom
+                anchors.right: parent.right
+                height: AppTheme.rowHeight * app.scale
+                verticalAlignment: Text.AlignTop
+                font.family: AppTheme.fontFamily
+                font.pixelSize: AppTheme.fontNormalSize * app.scale
+                color: AppTheme.greyColor
+                text: qsTr("Not defined")
+            }
         }
 
         Rectangle
@@ -196,7 +234,7 @@ Item
             Rectangle
             {
                 anchors.fill: paramsTable
-                visible: (curValuesListModel.count === 0)
+                visible: (curValuesListModel.length === 0)
                 color: "#00000000"
 
                 Text
@@ -224,6 +262,8 @@ Item
                 {
                     rectAddRecordDialog.opacity = 1
                     rectDataContainer.opacity = 0
+                    addRecordListView.model = 0
+                    addRecordListView.model = app.getAllParamsListModel()
                 }
             }
         }

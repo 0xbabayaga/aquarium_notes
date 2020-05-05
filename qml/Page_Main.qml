@@ -141,8 +141,12 @@ Item
 
         onSigButtonClicked:
         {
-            page_TankData.showPage(true, tanksListModel[tanksList.currentIndex].name,
-                                   tanksListModel[tanksList.currentIndex].type)
+            var tankParams = [tanksListModel[tanksList.currentIndex].name,
+                              tanksListModel[tanksList.currentIndex].desc,
+                              tanksListModel[tanksList.currentIndex].type,
+                              tanksListModel[tanksList.currentIndex].volume];
+
+            page_TankData.showPage(true, tankParams)
         }
     }
 }

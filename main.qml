@@ -124,7 +124,6 @@ Window
     Page_TankData
     {
         id: page_TankData
-        objectName: "page_TankData"
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         anchors.verticalCenterOffset: AppTheme.rowHeightMin * app.scale

@@ -161,6 +161,8 @@ Item
                         id: textUserName
                         placeholderText: qsTr("User name")
                         width: parent.width
+                        focus: true
+                        KeyNavigation.tab: textUserEmail
                     }
 
                     Item { height: 1; width: 1;}
@@ -170,6 +172,8 @@ Item
                         id: textUserEmail
                         placeholderText: qsTr("User email")
                         width: parent.width
+                        focus: true
+                        KeyNavigation.tab: textUserPass
                     }
 
                     Item { height: 1; width: 1;}
@@ -179,6 +183,8 @@ Item
                         id: textUserPass
                         placeholderText: qsTr("User password")
                         width: parent.width
+                        focus: true
+                        KeyNavigation.tab: buttonCancel
                     }
 
                     Item { height: 1; width: 1;}
@@ -196,6 +202,8 @@ Item
                             anchors.left: parent.left
                             width: 130 * app.scale
                             bText: qsTr("CANCEL")
+                            focus: true
+                            KeyNavigation.tab: buttonCreate
 
                             onSigButtonClicked: page_AccountCreation.openAccountDialog(0)
                         }
@@ -206,6 +214,8 @@ Item
                             anchors.right: parent.right
                             width: 130 * app.scale
                             bText: qsTr("CREATE")
+                            focus: true
+                            KeyNavigation.tab: textUserName
 
                             onSigButtonClicked:
                             {
