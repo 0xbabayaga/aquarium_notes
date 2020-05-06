@@ -31,15 +31,6 @@ Item
         animationToPage.start()
     }
 
-    ListModel
-    {
-        id: tankTypesModel
-
-        ListElement {   name: "Reef aquarium";      desc:   ""  }
-        ListElement {   name: "Fresh aquarium";     desc:   ""  }
-        ListElement {   name: "Cichlid aquarium";   desc:   ""  }
-    }
-
     Rectangle
     {
         id: rectContainer
@@ -408,7 +399,7 @@ Item
                         id: comboTankType
                         propertyName: qsTr("Select a tank type:");
                         width: parent.width
-                        model: tankTypesModel
+                        model: aquariumTypesListModel
                     }
 
                     Item { height: 1; width: 1;}
