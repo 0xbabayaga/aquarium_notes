@@ -25,7 +25,7 @@ Item
             tankName = tankParams[0]
             tankDesc = tankParams[1]
             tankType = tankParams[2]
-            tankVol = tankParams[3]
+            tankVol = Math.ceil(tankParams[3])
         }
 
         if (vis === true)
@@ -36,7 +36,7 @@ Item
 
             textTankVol.text = tankVol + "L"
             textTankName.text = tankName
-            textTankName.color = (tankType === 0) ? AppTheme.blueColor : AppTheme.greenColor
+            textTankName.color = (tankType < 4) ? AppTheme.blueColor : AppTheme.greenColor
             arrowOverlay.color = textTankName.color
         }
         else

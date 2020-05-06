@@ -63,8 +63,7 @@ Item
     Text
     {
         id: textArea
-        //text: listView.model[listView.currentIndex].name
-        text: listView.model.get(listView.currentIndex).name
+        text: listView.model[listView.currentIndex].name
         width: comboList.width
         height: comboList.height
         font.family: AppTheme.fontFamily
@@ -229,6 +228,7 @@ Item
                                 opacity: (index === listView.currentIndex) ? AppTheme.opacityEnabled : AppTheme.opacityDisabled
                             }
 
+                            /*
                             Text
                             {
                                 anchors.verticalCenter: parent.verticalCenter
@@ -241,6 +241,7 @@ Item
                                 text: desc //formattedTime(param1)
                                 opacity: (index === listView.currentIndex) ? AppTheme.opacityEnabled : AppTheme.opacityDisabled
                             }
+                            */
 
                             Rectangle
                             {

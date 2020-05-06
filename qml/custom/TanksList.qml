@@ -68,7 +68,7 @@ Item
                         text: name
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontSmallSize * app.scale
-                        color: (type === 0) ? AppTheme.blueColor : AppTheme.greenColor
+                        color: (type < 4) ? AppTheme.blueColor : AppTheme.greenColor
                         verticalAlignment: Text.AlignTop
                         height: AppTheme.compHeight * app.scale
                     }
@@ -80,7 +80,7 @@ Item
                         height: parent.width/3
                         //fillMode: Image.PreserveAspectFit
                         anchors.bottom: parent.bottom
-                        source: (type === 0) ? "qrc:/resources/img/wave_blue_2.png" : "qrc:/resources/img/wave_green_2.png"
+                        source: (type < 4) ? "qrc:/resources/img/wave_blue_2.png" : "qrc:/resources/img/wave_green_2.png"
                         mipmap: true
                     }
 
