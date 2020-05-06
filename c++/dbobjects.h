@@ -8,6 +8,19 @@
 #include <QSqlQuery>
 #include <QVariant>
 
+typedef enum
+{
+    Reef_Fish = 0,
+    Reef_SoftCoral = 1,
+    Reef_MixedCoral = 2,
+    Reef_SPSCoral = 3,
+    Fresh_Cihlids = 4,
+    Fresh_Discus = 5,
+    Fresh_LowScape = 6,
+    Fresh_FullScape = 7,
+    EndOfList = Fresh_FullScape + 1
+}   AquariumType;
+
 class LastDataParamRecObj : public QObject
 {
     Q_OBJECT
@@ -65,17 +78,27 @@ class ParamObj : public QObject
     Q_PROPERTY(QString unitName READ unitName WRITE setUnitName NOTIFY unitNameChanged)
     Q_PROPERTY(bool en READ en WRITE setEn NOTIFY enChanged)
     Q_PROPERTY(float value READ value WRITE setValue NOTIFY valueChanged)
+    Q_PROPERTY(float min READ min WRITE setMin NOTIFY minChanged)
+    Q_PROPERTY(float max READ max WRITE setMax NOTIFY maxChanged)
 
 public:
-    ParamObj(QSqlQuery *query)
+    ParamObj(QSqlQuery *query, AquariumType type)
     {
+        QString min = "MIN_" + QString::number(type);
+        QString max = "MAX_" + QString::number(type);
+
+
         if (query != nullptr)
         {
             _paramId = (char) query->value(query->record().indexOf("PARAM_ID")).toInt();
             _shortName = query->value(query->record().indexOf("SHORT_NAME")).toString();
             _fullName = query->value(query->record().indexOf("FULL_NAME")).toString();
             _unitName = query->value(query->record().indexOf("UNIT_NAME")).toString();
+            _min = query->value(query->record().indexOf(min)).toFloat();
+            _max = query->value(query->record().indexOf(max)).toFloat();
             _value = -1;
+            _min = -1;
+            _max = -1;
             _en = true;
         }
     }
@@ -85,6 +108,8 @@ public:
     QString fullName()              {   return _fullName;       }
     QString unitName()              {   return _unitName;       }
     float value()                   {   return _value;          }
+    float min()                     {   return _min;            }
+    float max()                     {   return _max;            }
     bool en()                       {   return _en;             }
 
     void setParamId(char paramId)   {   _paramId = paramId;     }
@@ -92,6 +117,8 @@ public:
     void setFullName(QString name)  {   _fullName = name;       }
     void setUnitName(QString name)  {   _unitName = name;       }
     void setValue(float value)      {   _value = value;         }
+    void setMin(float min)          {   _min = min;             }
+    void setMax(float max)          {   _max = max;             }
     void setEn(bool en)             {   _en = en;               }
 
 signals:
@@ -100,6 +127,8 @@ signals:
     void fullNameChanged();
     void unitNameChanged();
     void valueChanged();
+    void minChanged();
+    void maxChanged();
     void enChanged();
 
 protected:
@@ -108,6 +137,8 @@ protected:
     QString _fullName;
     QString _unitName;
     float   _value;
+    float   _min;
+    float   _max;
     bool    _en;
 };
 
@@ -142,6 +173,36 @@ public:
     int         selected = 0;
     int         date_create = 0;
     int         date_edit = 0;
+};
+
+class TankTypeObj : public QObject
+{
+    Q_OBJECT
+
+    Q_PROPERTY(int type READ type WRITE setType NOTIFY typeChanged)
+    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
+
+public:
+    TankTypeObj(int type, QString name)
+    {
+        _type = type;
+        _name = name;
+    }
+
+public:
+    int type()                      {   return _type;       }
+    QString name()                  {   return _name;       }
+
+    void setType(int type)          {   _type = type;       }
+    void setName(QString name)      {   _name = name;       }
+
+signals:
+    void typeChanged();
+    void nameChanged();
+
+protected:
+    int _type;
+    QString _name;
 };
 
 class TankObj : public QObject

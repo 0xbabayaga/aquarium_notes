@@ -12,6 +12,18 @@
 #include "AppDefs.h"
 #include "dbobjects.h"
 
+const static QString aquariumTypeNames[AquariumType::EndOfList] =
+{
+    QString("Fish Reef"),           /* 0 */
+    QString("Soft Coral Reef"),     /* 1 */
+    QString("Mixed Reef"),          /* 2 */
+    QString("SPS Reef"),            /* 3 */
+    QString("Cyhlids"),             /* 4 */
+    QString("Discus aquarium"),     /* 5 */
+    QString("Fresh aquarium"),      /* 6 */
+    QString("Fresh aquarium high")  /* 7 */
+};
+
 DBManager::DBManager(QQmlApplicationEngine *engine, QObject *parent) : QObject(parent)
 {
     bool initRequired = false;
@@ -33,6 +45,17 @@ DBManager::DBManager(QQmlApplicationEngine *engine, QObject *parent) : QObject(p
         initDB();
 
     qmlEngine = engine;
+
+    aquariumTypeList.clear();
+
+    for (int i = 0; i < AquariumType::EndOfList; i++)
+    {
+        TankTypeObj *obj = new TankTypeObj(i, getAquariumTypeString((AquariumType)i));
+        aquariumTypeList.append(obj);
+    }
+
+    qmlEngine->rootContext()->setContextProperty("aquariumTypesListModel", QVariant::fromValue(aquariumTypeList));
+
 
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateAccount(QString, QString, QString)), this, SLOT(onGuiUserCreate(QString, QString, QString)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateTank(QString, int, int, int, int)), this, SLOT(onGuiTankCreate(QString, int, int, int, int)));
@@ -60,7 +83,7 @@ DBManager::~DBManager()
 
 bool DBManager::getCurrentObjs()
 {
-    getParamsList();
+    //getParamsList();
 
     getCurrentUser();
 
@@ -76,7 +99,7 @@ bool DBManager::getCurrentObjs()
 
             qmlEngine->rootContext()->setContextProperty("tanksListModel", QVariant::fromValue(curSelectedObjs.listOfUserTanks));
 
-            getParamsList(currentTankSelected()->tankId());
+            getParamsList(currentTankSelected()->tankId(), (AquariumType) currentTankSelected()->type());
 
             getLatestParams();
 
@@ -163,6 +186,7 @@ void DBManager::onGuiPersonalParamStateChanged(int paramId, bool en)
     editPersonalParamState(currentTankSelected()->tankId(), paramId, en);
 }
 
+/*
 bool DBManager::getParamsList()
 {
     bool res = false;
@@ -186,15 +210,15 @@ bool DBManager::getParamsList()
 
     return res;
 }
+*/
 
-bool DBManager::getParamsList(QString tankId)
+bool DBManager::getParamsList(QString tankId, AquariumType type)
 {
     bool res = false;
     QSqlQuery query("SELECT * FROM DICT_TABLE");
     QSqlQuery queryPersonal("SELECT * FROM PERSONAL_PARAM_TABLE WHERE TANK_ID = '"+tankId+"'");
     ParamObj *obj = nullptr;
     QMap<int, bool> mapPersonal;
-    int i = 0;
 
     mapPersonal.clear();
 
@@ -208,17 +232,12 @@ bool DBManager::getParamsList(QString tankId)
 
     while (query.next())
     {
-        if (i > 0)
-        {
-            obj = new ParamObj(&query);
-            obj->setEn(mapPersonal[obj->paramId()]);
+        obj = new ParamObj(&query, type);
+        obj->setEn(mapPersonal[obj->paramId()]);
 
-            paramsGuiList.append(obj);
+        paramsGuiList.append(obj);
 
-            res = true;
-        }
-
-        i++;
+        res = true;
     }
 
     qmlEngine->rootContext()->setContextProperty("allParamsListModel", QVariant::fromValue(paramsGuiList));
@@ -572,110 +591,122 @@ bool DBManager::initDB()
 
     qDebug() << query.lastError();
 
+    /* Limits count must match DbManager::AquariumType */
     query.exec("create table DICT_TABLE "
                 "(PARAM_ID integer, "
                 "SHORT_NAME varchar(8), "
                 "FULL_NAME varchar(32), "
                 "UNIT_NAME varchar(8), "
-                "MIN_LIMIT text,"
-                "MAX_LIMIT text)");
+                "MIN_1 float,"
+                "MAX_1 float,"
+                "MIN_2 float,"
+                "MAX_2 float,"
+                "MIN_3 float,"
+                "MAX_3 float,"
+                "MIN_4 float,"
+                "MAX_4 float,"
+                "MIN_5 float,"
+                "MAX_5 float,"
+                "MIN_6 float,"
+                "MAX_6 float,"
+                "MIN_7 float,"
+                "MAX_7 float,"
+                "MIN_8 float,"
+                "MAX_8 float)");
 
     qDebug() << query.lastError();
 
-    query.exec("INSERT INTO DICT_TABLE (PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_LIMIT, MAX_LIMIT) "
-               "VALUES (0, '-', '-', '-', '', '')");
-    query.exec("INSERT INTO DICT_TABLE (PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_LIMIT, MAX_LIMIT) "
-               "VALUES (1, 'Temp.', 'Temperature', '°C', "
-               "'25.0 25.0 25.0 25.0 25.0 25.0 25.0 25.0',"
-               "'29.0 29.0 29.0 29.0 29.0 29.0 29.0 29.0')");
-    query.exec("INSERT INTO DICT_TABLE (PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_LIMIT, MAX_LIMIT) "
-               "VALUES (2, 'Sal.', 'Salinity', 'ppm',"
-               "'31.0 33.0 33.0 33.0 0 0 0 0',"
-               "'33.0 35.0 35.0 35.0 0 0 0 0')");
-    query.exec("INSERT INTO DICT_TABLE (PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_LIMIT, MAX_LIMIT) "
-               "VALUES (3, 'Ca', 'Calcium', 'ppm',"
-               "'350 350 350 350 0 0 0 0',"
-               "'500 500 500 500 0 0 0 0')");
-    query.exec("INSERT INTO DICT_TABLE (PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_LIMIT, MAX_LIMIT) "
-               "VALUES (4, 'pH', 'pH', 'ppm',"
-               "'0 0 0 0 0 0 0 0',"
-               "'0 0 0 0 0 0 0 0')");
-    query.exec("INSERT INTO DICT_TABLE (PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_LIMIT, MAX_LIMIT) "
-               "VALUES (5, 'kH', 'kH', 'ppm',"
-               "'0 0 0 0 0 0 0 0',"
-               "'0 0 0 0 0 0 0 0')");
-    query.exec("INSERT INTO DICT_TABLE (PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_LIMIT, MAX_LIMIT) "
-               "VALUES (6, 'gH', 'gH', 'dKh',"
-               "'0 0 0 0 0 0 0 0',"
-               "'0 0 0 0 0 0 0 0')");
-    query.exec("INSERT INTO DICT_TABLE (PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_LIMIT, MAX_LIMIT) "
-               "VALUES (7, 'Po4', 'Phosphates', 'ppm',"
-               "'0 0 0 0 0 0 0 0',"
-               "'0 0 0 0 0 0 0 0')");
-    query.exec("INSERT INTO DICT_TABLE (PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_LIMIT, MAX_LIMIT) "
-               "VALUES (8, 'No2', 'Nitrite', 'ppm',"
-               "'0 0 0 0 0 0 0 0',"
-               "'0 0 0 0 0 0 0 0')");
-    query.exec("INSERT INTO DICT_TABLE (PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_LIMIT, MAX_LIMIT) "
-               "VALUES (9, 'No3', 'Nitrate', 'ppm',"
-               "'0 0 0 0 0 0 0 0',"
-               "'0 0 0 0 0 0 0 0')");
-    query.exec("INSERT INTO DICT_TABLE (PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_LIMIT, MAX_LIMIT) "
-               "VALUES (10, 'Nh3', 'Ammonia', 'ppm',"
-               "'0 0 0 0 0 0 0 0',"
-               "'0 0 0 0 0 0 0 0')");
-    query.exec("INSERT INTO DICT_TABLE (PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_LIMIT, MAX_LIMIT) "
-               "VALUES (11, 'Co2', 'Carbon', 'ppm',"
-               "'0 0 0 0 0 0 0 0',"
-               "'0 0 0 0 0 0 0 0')");
-    query.exec("INSERT INTO DICT_TABLE (PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_LIMIT, MAX_LIMIT) "
-               "VALUES (12, 'O2', 'Oxigen', 'ppm',"
-               "'0 0 0 0 0 0 0 0',"
-               "'0 0 0 0 0 0 0 0')");
-    query.exec("INSERT INTO DICT_TABLE (PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_LIMIT, MAX_LIMIT) "
-               "VALUES (13, 'Mg', 'Magnesium', 'ppm', "
-               "'0 0 0 0 0 0 0 0',"
-               "'0 0 0 0 0 0 0 0')");
-    query.exec("INSERT INTO DICT_TABLE (PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_LIMIT, MAX_LIMIT) "
-               "VALUES (14, 'Si', 'Silicates', 'ppm',"
-               "'0 0 0 0 0 0 0 0',"
-               "'0 0 0 0 0 0 0 0')");
-    query.exec("INSERT INTO DICT_TABLE (PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_LIMIT, MAX_LIMIT) "
-               "VALUES (15, 'K', 'Potassium', 'ppm',"
-               "'0 0 0 0 0 0 0 0',"
-               "'0 0 0 0 0 0 0 0')");
-    query.exec("INSERT INTO DICT_TABLE (PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_LIMIT, MAX_LIMIT) "
-               "VALUES (16, 'I', 'Iodine', 'ppm',"
-               "'0 0 0 0 0 0 0 0',"
-               "'0 0 0 0 0 0 0 0')");
-    query.exec("INSERT INTO DICT_TABLE (PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_LIMIT, MAX_LIMIT) "
-               "VALUES (17, 'Sr', 'Strontium', 'ppm',"
-               "'0 0 0 0 0 0 0 0',"
-               "'0 0 0 0 0 0 0 0')");
-    query.exec("INSERT INTO DICT_TABLE (PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_LIMIT, MAX_LIMIT) "
-               "VALUES (18, 'Fe', 'Ferrum', 'ppm',"
-               "'0 0 0 0 0 0 0 0',"
-               "'0 0 0 0 0 0 0 0')");
-    query.exec("INSERT INTO DICT_TABLE (PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_LIMIT, MAX_LIMIT) "
-               "VALUES (19, 'Cu', 'Cuprum', 'ppm',"
-               "'0 0 0 0 0 0 0 0',"
-               "'0 0 0 0 0 0 0 0')");
-    query.exec("INSERT INTO DICT_TABLE (PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_LIMIT, MAX_LIMIT) "
-               "VALUES (20, 'B', 'Boron', 'ppm',"
-               "'0 0 0 0 0 0 0 0',"
-               "'0 0 0 0 0 0 0 0')");
-    query.exec("INSERT INTO DICT_TABLE (PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_LIMIT, MAX_LIMIT) "
-               "VALUES (21, 'Mo', 'Molybdenum', 'ppm',"
-               "'0 0 0 0 0 0 0 0',"
-               "'0 0 0 0 0 0 0 0')");
-    query.exec("INSERT INTO DICT_TABLE (PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_LIMIT, MAX_LIMIT) "
-               "VALUES (22, 'Cl', 'Clorine', 'ppm',"
-               "'0 0 0 0 0 0 0 0',"
-               "'0 0 0 0 0 0 0 0')");
-    query.exec("INSERT INTO DICT_TABLE (PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_LIMIT, MAX_LIMIT) "
-               "VALUES (23, 'Orp', 'ORP', 'ppm',"
-               "'0 0 0 0 0 0 0 0',"
-               "'0 0 0 0 0 0 0 0')");
+    query.exec("INSERT INTO DICT_TABLE "
+               "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
+               "VALUES (1, 'TEMP', 'Temperature', '°C', 25.0, 29.0, 25.0, 29.0, 25.0, 29.0, 25.0, 29.0, 0, 0, 0, 0, 0, 0, 0, 0)");
+
+    query.exec("INSERT INTO DICT_TABLE "
+               "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
+               "VALUES (2, 'SAL', 'Salinity', 'ppm', 33.0, 35.0, 33.0, 35.0, 33.0, 35.0, 33.0, 35.0, 0, 0, 0, 0, 0, 0, 0, 0)");
+
+    query.exec("INSERT INTO DICT_TABLE "
+               "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
+               "VALUES (3, 'CA', 'Calcium', 'ppm', 350, 500, 350, 500, 350, 500, 350, 500, 0, 0, 0, 0, 0, 0, 0, 0)");
+
+    query.exec("INSERT INTO DICT_TABLE "
+               "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
+               "VALUES (4, 'PH', 'pH', 'ppm', 8.0, 8.5, 8.0, 8.5, 8.0, 8.5, 8.0, 8.5, 0, 0, 0, 0, 0, 0, 0, 0)");
+
+    query.exec("INSERT INTO DICT_TABLE "
+               "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
+               "VALUES (5, 'KH', 'kH', 'ppm', 6.0, 9.0, 6.0, 9.0, 6.0, 9.0, 6.0, 9.0, 0, 0, 0, 0, 0, 0, 0, 0)");
+
+    query.exec("INSERT INTO DICT_TABLE "
+               "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
+               "VALUES (6, 'GH', 'gH', 'dKh', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)");
+
+    query.exec("INSERT INTO DICT_TABLE "
+               "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
+               "VALUES (7, 'PO4', 'Phosphates', 'ppm', 0, 0.5, 0, 0.5, 0, 0.5, 0, 0.5, 0, 0, 0, 0, 0, 0, 0, 0)");
+
+    query.exec("INSERT INTO DICT_TABLE "
+               "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
+               "VALUES (8, 'NO2', 'Nitrite', 'ppm', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)");
+
+    query.exec("INSERT INTO DICT_TABLE "
+               "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
+               "VALUES (9, 'NO3', 'Nitrate', 'ppm', 0, 10, 0, 10, 0, 10, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0)");
+
+    query.exec("INSERT INTO DICT_TABLE "
+               "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
+               "VALUES (10, 'NH3', 'Ammonia', 'ppm', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)");
+
+    query.exec("INSERT INTO DICT_TABLE "
+               "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
+               "VALUES (11, 'CO2', 'Carbon', 'ppm, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0')");
+
+    query.exec("INSERT INTO DICT_TABLE "
+               "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
+               "VALUES (12, 'O2', 'Oxigen', 'ppm', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0");
+
+    query.exec("INSERT INTO DICT_TABLE "
+               "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
+               "VALUES (13, 'MG', 'Magnesium', 'ppm', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)");
+
+    query.exec("INSERT INTO DICT_TABLE "
+               "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
+               "VALUES (14, 'SI', 'Silicates', 'ppm', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)");
+
+    query.exec("INSERT INTO DICT_TABLE "
+               "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
+               "VALUES (15, 'K', 'Potassium', 'ppm', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)");
+
+    query.exec("INSERT INTO DICT_TABLE "
+               "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
+               "VALUES (16, 'I', 'Iodine', 'ppm', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)");
+
+    query.exec("INSERT INTO DICT_TABLE "
+               "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
+               "VALUES (17, 'SR', 'Strontium', 'ppm', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)");
+
+    query.exec("INSERT INTO DICT_TABLE "
+               "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
+               "VALUES (18, 'FE', 'Ferrum', 'ppm', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)");
+
+    query.exec("INSERT INTO DICT_TABLE "
+               "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
+               "VALUES (19, 'CU', 'Cuprum', 'ppm', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)");
+
+    query.exec("INSERT INTO DICT_TABLE "
+               "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
+               "VALUES (20, 'B', 'Boron', 'ppm', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)");
+
+    query.exec("INSERT INTO DICT_TABLE "
+               "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
+               "VALUES (21, 'MO', 'Molybdenum', 'ppm', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)");
+
+    query.exec("INSERT INTO DICT_TABLE "
+               "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
+               "VALUES (22, 'CL', 'Clorine', 'ppm', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)");
+
+    query.exec("INSERT INTO DICT_TABLE "
+               "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
+               "VALUES (23, 'ORP', 'ORP', 'ppm', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)");
 
     qDebug() << query.lastError();
 
@@ -688,4 +719,12 @@ bool DBManager::initDB()
 
 
     return true;
+}
+
+QString DBManager::getAquariumTypeString(AquariumType type)
+{
+    if (type < EndOfList)
+        return aquariumTypeNames[type];
+    else
+        return QString("");
 }

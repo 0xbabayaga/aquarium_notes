@@ -33,6 +33,9 @@ public:
         QList<QObject*> listOfCurrValues;
     }   UTObj;
 
+public:
+    static QString getAquariumTypeString(AquariumType type);
+
 private:
     /* Database management */
     bool    initDB();
@@ -43,8 +46,8 @@ private:
     bool    editPersonalParamState(QString tankId, int paramId, bool en);
 
     /* Read basics */
-    bool    getParamsList();
-    bool    getParamsList(QString tankId);
+    //bool    getParamsList();
+    bool    getParamsList(QString tankId, AquariumType type);
     int     getLastSmpId();
     bool    getLatestParams();
 
@@ -82,6 +85,8 @@ private:
 
     /* Store params enumeration */
     QList<QObject*> paramsGuiList;
+
+    QList<QObject*> aquariumTypeList;
 
     /* Currently selected objects */
     UTObj           curSelectedObjs;
