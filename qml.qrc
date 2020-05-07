@@ -25,5 +25,6 @@
         <file>resources/img/wave_green_2.png</file>
         <file>qml/custom/UrlButton.qml</file>
         <file>qml/custom/SwitchButton.qml</file>
+        <file>resources/img/reef.jpg</file>
     </qresource>
 </RCC>

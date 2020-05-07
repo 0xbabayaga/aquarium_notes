@@ -50,6 +50,13 @@ Item
         return str
     }
 
+    function formattedValueStatus(val, min, max)
+    {
+        var str = ""
+
+        //if ()
+    }
+
     Rectangle
     {
         anchors.fill: parent

@@ -75,6 +75,18 @@ Item
 
                     Image
                     {
+                        id: imgPhoto
+                        width: parent.width
+                        height: parent.height
+                        //fillMode: Image.PreserveAspectFit
+                        anchors.bottom: parent.bottom
+                        source: "qrc:/resources/img/reef.jpg"
+                        mipmap: true
+                        opacity: 0.7
+                    }
+
+                    Image
+                    {
                         id: imgWave
                         width: parent.width
                         height: parent.width/3
@@ -82,6 +94,7 @@ Item
                         anchors.bottom: parent.bottom
                         source: (type < 4) ? "qrc:/resources/img/wave_blue_2.png" : "qrc:/resources/img/wave_green_2.png"
                         mipmap: true
+                        opacity: 0.8
                     }
 
                     Text
