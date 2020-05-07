@@ -97,8 +97,6 @@ public:
             _min = query->value(query->record().indexOf(min)).toFloat();
             _max = query->value(query->record().indexOf(max)).toFloat();
             _value = -1;
-            _min = -1;
-            _max = -1;
             _en = true;
         }
     }

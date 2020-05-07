@@ -41,7 +41,7 @@ private:
     bool    initDB();
     bool    createUser(QString uname, QString upass, QString phone, QString email);
     bool    createTank(QString name, QString manId, int type, int l, int w, int h);
-    bool    createTankDefaultParamSet(QString tankId);
+    bool    createTankDefaultParamSet(QString tankId, AquariumType type);
     bool    addParamRecord(int smpId, int paramId, double value);
     bool    editPersonalParamState(QString tankId, int paramId, bool en);
 

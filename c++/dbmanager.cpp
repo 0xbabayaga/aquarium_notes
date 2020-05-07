@@ -442,7 +442,7 @@ bool DBManager::createTank(QString name, QString manId, int type, int l, int w, 
             qDebug() << "Create tank error: " << query.lastError();
         else
         {
-            res = createTankDefaultParamSet(tankId);
+            res = createTankDefaultParamSet(tankId, (AquariumType) type);
         }
     }
 
@@ -452,12 +452,24 @@ bool DBManager::createTank(QString name, QString manId, int type, int l, int w, 
     return res;
 }
 
-bool DBManager::createTankDefaultParamSet(QString tankId)
+bool DBManager::createTankDefaultParamSet(QString tankId, AquariumType type)
 {
     if (tankId.length() == RAND_ID_LENGTH)
     {
         QSqlQuery query;
+        QSqlQuery q0("SELECT * FROM DICT_TABLE");
         ParamObj *obj = nullptr;
+        bool res = false;
+
+        paramsGuiList.clear();
+
+        while (q0.next())
+        {
+            obj = new ParamObj(&q0, type);
+            paramsGuiList.append(obj);
+
+            qDebug() << obj->paramId() << obj->fullName() << obj->min() << obj->max();
+        }
 
         for (int i = 0; i < paramsGuiList.size(); i++)
         {
