@@ -44,6 +44,18 @@ Window
         return 0
     }
 
+    function printDate(tm)
+    {
+        var date = new Date(tm * 1000)
+        var day = "0" + date.getDate()
+        var month = "0" + date.getMonth()
+        var year = date.getFullYear()
+
+        var formattedDate = day.substr(-2) + '.' + month.substr(-2) + '.' + year
+
+        return formattedDate
+    }
+
     Image
     {
         anchors.left: parent.left

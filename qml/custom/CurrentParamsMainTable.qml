@@ -56,11 +56,9 @@ Item
         var max = app.getParamById(paramId).max
 
         if (val >= min && val <= max)
-            return "#AA00FF00"
-        else if (val < min)
-            return "#AA0000FF"
+            return "#A000C000"
         else
-            return "#AAFF0000"
+            return "#A0C00000"
     }
 
     Rectangle
@@ -68,10 +66,43 @@ Item
         anchors.fill: parent
         color: "#00000000"
 
+        Rectangle
+        {
+            id: rectMainTableHeader
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
+            height: AppTheme.compHeight * app.scale
+            color: "#00000000"
+
+            Text
+            {
+                verticalAlignment: Text.AlignVCenter
+                height: parent.height
+                width: 80 * app.scale
+                font.family: AppTheme.fontFamily
+                font.pixelSize: AppTheme.fontNormalSize * app.scale
+                color: AppTheme.greyColor
+                text: qsTr("LAST MEASURED: ")
+            }
+
+            Text
+            {
+                anchors.right: parent.right
+                verticalAlignment: Text.AlignVCenter
+                height: parent.height
+                font.family: AppTheme.fontFamily
+                font.pixelSize: AppTheme.fontNormalSize * app.scale
+                color: AppTheme.greyColor
+                text: "[" +app.printDate(curParamsListView.model[0].dtNow)+ "]"
+            }
+        }
+
         ListView
         {
             id: curParamsListView
             anchors.fill: parent
+            anchors.topMargin: rectMainTableHeader.height
             spacing: 0
 
             delegate: Rectangle
@@ -89,7 +120,7 @@ Item
                     {
                         verticalAlignment: Text.AlignVCenter
                         height: AppTheme.compHeight * app.scale
-                        width: 120 * app.scale
+                        width: 140 * app.scale
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontNormalSize * app.scale
                         color: AppTheme.blueColor
@@ -109,7 +140,7 @@ Item
 
                     Text
                     {
-                        width: 50 * app.scale
+                        width: 60 * app.scale
                         height: AppTheme.compHeight * app.scale
                         verticalAlignment: Text.AlignVCenter
                         font.family: AppTheme.fontFamily
@@ -121,7 +152,7 @@ Item
                     Rectangle
                     {
                         anchors.verticalCenter: parent.verticalCenter
-                        width: 10 * app.scale
+                        width: 12 * app.scale
                         height: width
                         radius: height/2
                         color: formattedColor(paramId, valueNow) //AppTheme.hideColor

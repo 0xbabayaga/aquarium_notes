@@ -30,15 +30,19 @@ class LastDataParamRecObj : public QObject
     Q_PROPERTY(int smpIdPrev READ smpIdPrev WRITE setSmpIdPrev NOTIFY smpIdPrevChanged)
     Q_PROPERTY(float valueNow READ valueNow WRITE setValueNow NOTIFY valueNowChanged)
     Q_PROPERTY(float valuePrev READ valuePrev WRITE setValuePrev NOTIFY valuePrevChanged)
+    Q_PROPERTY(unsigned int dtNow READ dtNow WRITE setDtNow NOTIFY dtNowChanged)
+    Q_PROPERTY(unsigned int dtPrev READ dtPrev WRITE setDtPrev NOTIFY dtPrevChanged)
 
 public:
-    LastDataParamRecObj(char paramId, int idNow, int idPrev, float now, float prev)
+    LastDataParamRecObj(char paramId, int idNow, int idPrev, float now, float prev, unsigned int dtNow, unsigned int dtPrev)
     {
         _paramId = paramId;
         _smpIdNow = idNow;
         _smpIdPrev = idPrev;
         _valueNow = now;
         _valuePrev = prev;
+        _dtNow = dtNow;
+        _dtPrev = dtPrev;
     }
 
     char paramId()                      {   return _paramId;        }
@@ -46,12 +50,16 @@ public:
     int smpIdPrev()                     {   return _smpIdPrev;      }
     float valueNow()                    {   return _valueNow;       }
     float valuePrev()                   {   return _valuePrev;      }
+    unsigned int dtNow()                {   return _dtNow;          }
+    unsigned int dtPrev()               {   return _dtPrev;         }
 
     void setParamId(char paramId)       {   _paramId = paramId;     }
     void setSmpIdNow(int smpIdNow)      {   _smpIdNow = smpIdNow;   }
     void setSmpIdPrev(int smpIdPrev)    {   _smpIdPrev = smpIdPrev; }
     void setValueNow(float valueNow)    {   _valueNow = valueNow;   }
     void setValuePrev(float valuePrev)  {   _valuePrev = valuePrev; }
+    void setDtNow(unsigned int dt)      {   _dtNow = dt;            }
+    void setDtPrev(unsigned int dt)     {   _dtPrev = dt;           }
 
 signals:
     void paramIdChanged();
@@ -59,13 +67,17 @@ signals:
     void smpIdPrevChanged();
     void valueNowChanged();
     void valuePrevChanged();
+    void dtNowChanged();
+    void dtPrevChanged();
 
 protected:
-    char    _paramId;
-    int     _smpIdNow;
-    int     _smpIdPrev;
-    float   _valueNow;
-    float   _valuePrev;
+    char            _paramId;
+    int             _smpIdNow;
+    int             _smpIdPrev;
+    float           _valueNow;
+    float           _valuePrev;
+    unsigned int    _dtNow;
+    unsigned int    _dtPrev;
 };
 
 class ParamObj : public QObject
