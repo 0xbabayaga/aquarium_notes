@@ -50,11 +50,17 @@ Item
         return str
     }
 
-    function formattedValueStatus(val, min, max)
+    function formattedColor(paramId, val)
     {
-        var str = ""
+        var min = app.getParamById(paramId).min
+        var max = app.getParamById(paramId).max
 
-        //if ()
+        if (val >= min && val <= max)
+            return "#AA00FF00"
+        else if (val < min)
+            return "#AA0000FF"
+        else
+            return "#AAFF0000"
     }
 
     Rectangle
@@ -112,15 +118,13 @@ Item
                         text: formattedValue(valueNow)
                     }
 
-                    Text
+                    Rectangle
                     {
-                        width: 60 * app.scale
-                        height: AppTheme.compHeight * app.scale
-                        verticalAlignment: Text.AlignVCenter
-                        font.family: AppTheme.fontFamily
-                        font.pixelSize: AppTheme.fontNormalSize * app.scale
-                        color: AppTheme.greyColor
-                        text: (valueNow === -1) ? "-" : "Good"
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 10 * app.scale
+                        height: width
+                        radius: height/2
+                        color: formattedColor(paramId, valueNow) //AppTheme.hideColor
                     }
                 }
 

@@ -15,6 +15,14 @@ Item
     property alias maximumLength: textArea.maximumLength
     property alias validator: textArea.validator
 
+    onFocusChanged:
+    {
+        if (focus === true)
+        {
+            textArea.forceActiveFocus()
+            rectUnderLine.color = AppTheme.blueColor
+        }
+    }
 
     TextInput
     {
@@ -26,7 +34,6 @@ Item
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignLeft
         color: enabled ? AppTheme.blueColor : AppTheme.hideColor
-        focus: true
 
         Text
         {

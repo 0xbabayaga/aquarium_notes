@@ -270,7 +270,11 @@ Item
                         anchors.horizontalCenter: parent.horizontalCenter
                         bText: qsTr("CREATE")
 
-                        onSigButtonClicked: stage = AppInitEnum.AppInit_CreateTank
+                        onSigButtonClicked:
+                        {
+                            stage = AppInitEnum.AppInit_CreateTank
+                            textTankName.forceActiveFocus()
+                        }
                      }
                 }
             }
@@ -313,6 +317,8 @@ Item
                         id: textTankName
                         placeholderText: qsTr("Tank name")
                         width: parent.width
+                        focus: false
+                        KeyNavigation.tab: textTankL
                     }
 
                     Item { height: 1; width: 1;}
@@ -334,6 +340,8 @@ Item
                             width: (parent.width - rectRow.unitWidth * 3) / 3
                             maximumLength: 4
                             validator : RegExpValidator { regExp : /[0-9]+[0-9]+/ }
+                            focus: true
+                            KeyNavigation.tab: textTankW
 
                             Text
                             {
@@ -355,6 +363,8 @@ Item
                             width: (parent.width - rectRow.unitWidth * 3) / 3
                             maximumLength: 4
                             validator : RegExpValidator { regExp : /[0-9]+[0-9]+/ }
+                            focus: true
+                            KeyNavigation.tab: textTankH
 
                             Text
                             {
@@ -372,11 +382,12 @@ Item
                         {
                             id: textTankH
                             anchors.right: parent.right
-                            //anchors.rightMargin: unitWidth
                             placeholderText: qsTr("50")
                             width: (parent.width - rectRow.unitWidth * 3) / 3
                             maximumLength: 4
                             validator : RegExpValidator { regExp : /[0-9]+[0-9]+/ }
+                            focus: true
+                            KeyNavigation.tab: comboTankType
 
                             Text
                             {
@@ -400,6 +411,7 @@ Item
                         propertyName: qsTr("Select a tank type:");
                         width: parent.width
                         model: aquariumTypesListModel
+                        KeyNavigation.tab: buttonCancel2
                     }
 
                     Item { height: 1; width: 1;}
@@ -417,6 +429,7 @@ Item
                             anchors.left: parent.left
                             width: 130 * app.scale
                             bText: qsTr("CANCEL")
+                            KeyNavigation.tab: buttonCreate2
 
                             onSigButtonClicked: page_AccountCreation.openAccountDialog(2)
                         }
@@ -427,6 +440,7 @@ Item
                             anchors.right: parent.right
                             width: 130 * app.scale
                             bText: qsTr("CREATE")
+                            KeyNavigation.tab: textTankName
 
                             onSigButtonClicked:
                             {
