@@ -1,8 +1,11 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
+import QtQuick.Dialogs 1.0
+import QtQuick.Window 2.12
 import QtGraphicalEffects 1.12
 import "custom"
 import AppInitEnum 1.0
+//import ANotes.PermissionManager 1.0
 
 Item
 {
@@ -213,8 +216,6 @@ Item
                                 app.sigCreateAccount(textUserName.text,
                                                      textUserPass.text,
                                                      textUserEmail.text)
-
-                                //page_AccountCreation.openAccountDialog(2)
                             }
                         }
                     }
@@ -274,6 +275,7 @@ Item
                         {
                             stage = AppInitEnum.AppInit_CreateTank
                             textTankName.forceActiveFocus()
+                            app.sigDebug()
                         }
                      }
                 }
@@ -411,10 +413,42 @@ Item
                         propertyName: qsTr("Select a tank type:");
                         width: parent.width
                         model: aquariumTypesListModel
-                        KeyNavigation.tab: buttonCancel2
+                        KeyNavigation.tab: textFileName
                     }
 
                     Item { height: 1; width: 1;}
+
+                    //PermissionManager
+                    //{
+                    //    id: pm
+                    //}
+
+                    TextInput
+                    {
+                        id: textFileName
+                        placeholderText: qsTr("image")
+                        width: parent.width
+                        focus: false
+                        KeyNavigation.tab: buttonCancel2
+
+                        MouseArea
+                        {
+                            anchors.fill: parent
+                            onClicked:
+                            {
+                                //var res = pm.requestPermissions()
+
+                                //console.log("Permissions  = ", res)
+
+                                //if (res === true)
+                                {
+                                    imageGallery.showList(true)
+                                }
+                            }
+
+                        }
+                    }
+
                     Item { height: 1; width: 1;}
                     Item { height: 1; width: 1;}
 
@@ -448,12 +482,33 @@ Item
                                                   comboTankType.currentIndex,
                                                   textTankL.text,
                                                   textTankW.text,
-                                                  textTankH.text)
+                                                  textTankH.text,
+                                                  textFileName.text)
                             }
                         }
                     }
                 }
             }
         }
+    }
+
+
+    ImageGalleryDialog
+    {
+        id: imageGallery
+        propertyName: qsTr("Select an image:");
+        width: parent.width
+        model: imageGalleryListModel
+
+        onCurrentIndexChanged: textFileName.text = imageGalleryListModel[currentIndex].fileLink
+    }
+
+
+    FileDialog
+    {
+        id: fileDialog
+        title: "Please choose a file"
+        nameFilters: [ "Image files (*.jpg)" ]
+        onAccepted: console.log(fileDialog.fileUrl)
     }
 }

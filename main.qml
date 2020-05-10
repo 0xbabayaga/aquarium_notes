@@ -26,10 +26,11 @@ Window
     height: 720
 
     signal sigCreateAccount(string uname, string upass, string umail)
-    signal sigCreateTank(string name, int type, int l, int w, int h)
+    signal sigCreateTank(string name, int type, int l, int w, int h, string img)
     signal sigAddRecord(int smpId, int paramId, double value)
     signal sigTankSelected(int tankIdx)
     signal sigPersonalParamStateChanged(int paramId, bool en)
+    signal sigDebug()
 
     function getAllParamsListModel() { return allParamsListModel    }
 
@@ -49,9 +50,9 @@ Window
         var date = new Date(tm * 1000)
         var day = "0" + date.getDate()
         var month = "0" + date.getMonth()
-        var year = date.getFullYear()
+        var year = "0" + date.getYear()
 
-        var formattedDate = day.substr(-2) + '.' + month.substr(-2) + '.' + year
+        var formattedDate = day.substr(-2) + '.' + month.substr(-2) + '.' + year.substr(-2)
 
         return formattedDate
     }

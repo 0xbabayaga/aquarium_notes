@@ -4,6 +4,7 @@
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QDir>
+#include <QFile>
 #include <QStandardPaths>
 #include <QQmlContext>
 #include <QDateTime>
@@ -11,6 +12,7 @@
 #include <QList>
 #include "AppDefs.h"
 #include "dbobjects.h"
+#include <QtAndroidExtras>
 
 const static QString aquariumTypeNames[AquariumType::EndOfList] =
 {
@@ -22,6 +24,28 @@ const static QString aquariumTypeNames[AquariumType::EndOfList] =
     QString("Discus aquarium"),     /* 5 */
     QString("Fresh aquarium"),      /* 6 */
     QString("Fresh aquarium high")  /* 7 */
+};
+
+const static QMap<QString, QString> paramTranslationMap = {
+    {"TEMP", "Temperature"},
+    {"SAL", "Salinity"},
+    {"CA", "Calcium"},
+    {"PH", "pH"},
+    {"KH", "kH"},
+    {"GH", "gH"},
+    {"PO4", "Phosphates"},
+    {"NO2", "Nitrite"},
+    {"NO3", "Nitrate"},
+    {"NH3", "Ammonia"},
+    {"MG", "Magnesium"},
+    {"SI", "Silicates"},
+    {"K", "Potassium"},
+    {"I", "Iodine"},
+    {"SR", "Strontium"},
+    {"FE", "Ferrum"},
+    {"B", "Boron"},
+    {"MO", "Molybdenum"},
+    {"ORP", "ORP"}
 };
 
 DBManager::DBManager(QQmlApplicationEngine *engine, QObject *parent) : QObject(parent)
@@ -56,17 +80,32 @@ DBManager::DBManager(QQmlApplicationEngine *engine, QObject *parent) : QObject(p
 
     qmlEngine->rootContext()->setContextProperty("aquariumTypesListModel", QVariant::fromValue(aquariumTypeList));
 
-
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateAccount(QString, QString, QString)), this, SLOT(onGuiUserCreate(QString, QString, QString)));
-    connect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateTank(QString, int, int, int, int)), this, SLOT(onGuiTankCreate(QString, int, int, int, int)));
+    connect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateTank(QString, int, int, int, int, QString)), this, SLOT(onGuiTankCreate(QString, int, int, int, int, QString)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecord(int, int, double)), this, SLOT(onGuiAddRecord(int, int, double)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigTankSelected(int)), this, SLOT(onGuiTankSelected(int)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigPersonalParamStateChanged(int, bool)), this, SLOT(onGuiPersonalParamStateChanged(int, bool)));
+    connect(qmlEngine->rootObjects().first(), SIGNAL(sigDebug()), this, SLOT(onGuiDebug()));
 
     curSelectedObjs.lastSmpId = getLastSmpId();
     setLastSmpId(curSelectedObjs.lastSmpId);
 
     getCurrentObjs();
+
+    QtAndroid::PermissionResult r = QtAndroid::checkPermission("android.permission.READ_EXTERNAL_STORAGE");
+
+    if(r == QtAndroid::PermissionResult::Denied)
+    {
+        QtAndroid::requestPermissionsSync( QStringList() << "android.permission.READ_EXTERNAL_STORAGE" );
+
+        r = QtAndroid::checkPermission("android.permission.READ_EXTERNAL_STORAGE");
+
+    }
+
+    if(r == QtAndroid::PermissionResult::Denied)
+        qDebug() << "Android perms DENIED ";
+    else
+        qDebug() << "Android perms GRANTED ";
 }
 
 DBManager::~DBManager()
@@ -81,10 +120,17 @@ DBManager::~DBManager()
         delete curSelectedObjs.user;
 }
 
+void DBManager::onGuiDebug()
+{
+    qDebug() << "Reloading";
+
+    imageGallery = new ImageGallery();
+
+    qmlEngine->rootContext()->setContextProperty("imageGalleryListModel", QVariant::fromValue(imageGallery->getGalleryObjList()));
+}
+
 bool DBManager::getCurrentObjs()
 {
-    //getParamsList();
-
     getCurrentUser();
 
     if (curSelectedObjs.user != nullptr)
@@ -158,9 +204,9 @@ void DBManager::onGuiUserCreate(QString uname, QString upass, QString email)
     }
 }
 
-void DBManager::onGuiTankCreate(QString name, int type, int l, int w, int h)
+void DBManager::onGuiTankCreate(QString name, int type, int l, int w, int h, QString imgFile)
 {
-    if (createTank(name, curSelectedObjs.user->man_id, type, l, w, h) == true)
+    if (createTank(name, curSelectedObjs.user->man_id, type, l, w, h, imgFile) == true)
     {
         setInitialDialogStage(AppDef::AppInit_Completed, curSelectedObjs.user->uname);
     }
@@ -185,32 +231,6 @@ void DBManager::onGuiPersonalParamStateChanged(int paramId, bool en)
 {
     editPersonalParamState(currentTankSelected()->tankId(), paramId, en);
 }
-
-/*
-bool DBManager::getParamsList()
-{
-    bool res = false;
-    QSqlQuery query("SELECT * FROM DICT_TABLE");
-    ParamObj *obj = nullptr;
-    int i = 0;
-
-    paramsGuiList.clear();
-
-    while (query.next())
-    {
-        if (i > 0)
-        {
-            obj = new ParamObj(&query);
-            paramsGuiList.append(obj);
-            res = true;
-        }
-
-        i++;
-    }
-
-    return res;
-}
-*/
 
 bool DBManager::getParamsList(QString tankId, AquariumType type)
 {
@@ -238,6 +258,13 @@ bool DBManager::getParamsList(QString tankId, AquariumType type)
         paramsGuiList.append(obj);
 
         res = true;
+    }
+
+    for (int i = 0; i < paramsGuiList.size(); i++)
+    {
+        obj = (ParamObj*) paramsGuiList.at(i);
+
+        obj->setFullName(paramTranslationMap[obj->shortName()]);
     }
 
     qmlEngine->rootContext()->setContextProperty("allParamsListModel", QVariant::fromValue(paramsGuiList));
@@ -289,7 +316,9 @@ bool DBManager::getLatestParams()
                                              query.value(query.record().indexOf("SMP_ID")).toInt(),
                                              -1,
                                              query.value(query.record().indexOf("VALUE")).toFloat(),
-                                             -1);
+                                             -1,
+                                             (unsigned int)query.value(query.record().indexOf("TIMESTAMP")).toInt(),
+                                             0);
 
             curSelectedObjs.listOfCurrValues.append(recObj);
         }
@@ -311,6 +340,7 @@ bool DBManager::getLatestParams()
                     {
                         recObj->setValuePrev(query1.value(query1.record().indexOf("VALUE")).toFloat());
                         recObj->setSmpIdPrev(query1.value(query1.record().indexOf("SMP_ID")).toInt());
+                        recObj->setDtPrev((unsigned int)query1.value(query1.record().indexOf("TIMESTAMP")).toInt());
 
                         found = true;
                     }
@@ -322,7 +352,9 @@ bool DBManager::getLatestParams()
                                                      -1,
                                                      query1.value(query1.record().indexOf("SMP_ID")).toInt(),
                                                      -1,
-                                                     query1.value(query1.record().indexOf("VALUE")).toFloat());
+                                                     query1.value(query1.record().indexOf("VALUE")).toFloat(),
+                                                     0,
+                                                     (unsigned int)query.value(query.record().indexOf("TIMESTAMP")).toInt());
 
                     curSelectedObjs.listOfCurrValues.append(recObj);
                 }
@@ -413,22 +445,46 @@ bool DBManager::createUser(QString uname, QString upass, QString phone, QString 
         return false;
 }
 
-bool DBManager::createTank(QString name, QString manId, int type, int l, int w, int h)
+bool DBManager::createTank(QString name, QString manId, int type, int l, int w, int h, QString imgFile)
 {
     bool res = false;
+    QFile *file = nullptr;
+    QString img = "";
 
     if (name.length() > 0 && name.length() <= 64)
     {
         QSqlQuery query;
         QString tankId = randId();
 
-        query.prepare("INSERT INTO TANKS_TABLE (TANK_ID, MAN_ID, TYPE, NAME, STATUS, L, W, H, DATE_CREATE, DATE_EDIT) "
-                      "VALUES (:tank_id, :man_id, :type, :name, :status, :l, :w, :h, :date_create, :date_edit)");
+        if (imgFile != "")
+        {
+            qDebug() << "IMG: " << imgFile;
+
+            file = new QFile(imgFile.replace("file:///", ""));
+
+            if (file->exists() == true && file->open(QFile::OpenModeFlag::ReadOnly) == true)
+            {
+                qDebug() << "Found ";
+
+                QByteArray bin = file->readAll();
+                file->close();
+
+                qDebug() << "Size = " << bin.size();
+
+                img = QString(bin.toBase64());
+            }
+
+            delete file;
+        }
+
+        query.prepare("INSERT INTO TANKS_TABLE (TANK_ID, MAN_ID, TYPE, IMG, NAME, STATUS, L, W, H, DATE_CREATE, DATE_EDIT) "
+                      "VALUES (:tank_id, :man_id, :type, :img, :name, :status, :l, :w, :h, :date_create, :date_edit)");
 
         query.bindValue(":tank_id", tankId);
         query.bindValue(":man_id", manId);
         query.bindValue(":type", type);
         query.bindValue(":name", name);
+        query.bindValue(":img", img);
         query.bindValue(":status", UStatus_Enabled);
         query.bindValue(":l", l);
         query.bindValue(":w", w);
@@ -634,7 +690,7 @@ bool DBManager::initDB()
 
     query.exec("INSERT INTO DICT_TABLE "
                "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
-               "VALUES (2, 'SAL', 'Salinity', 'ppm', 26.6, 33.2, 30.6, 34.5, 33.0, 35.0, 34.0, 35.0, -1, -1, -1, -1, -1, -1, -1, -1)");
+               "VALUES (2, 'SAL', 'Salinity', 'ppt', 26.6, 33.2, 30.6, 34.5, 33.0, 35.0, 34.0, 35.0, -1, -1, -1, -1, -1, -1, -1, -1)");
 
     query.exec("INSERT INTO DICT_TABLE "
                "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"

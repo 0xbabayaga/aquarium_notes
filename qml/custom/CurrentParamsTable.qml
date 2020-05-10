@@ -66,7 +66,7 @@ Item
                 {
                     verticalAlignment: Text.AlignVCenter
                     height: AppTheme.compHeight * app.scale
-                    width: 75 * app.scale
+                    width: 100 * app.scale
                     font.family: AppTheme.fontFamily
                     font.pixelSize: AppTheme.fontBigSize * app.scale
                     color: AppTheme.blueColor
@@ -93,7 +93,7 @@ Item
                     font.pixelSize: AppTheme.fontBigNormalSize * app.scale
                     color: AppTheme.greyColor
                     visible: (curValuesListView.model.length > 0)
-                    text: "[" + qsTr("current") + "]"
+                    text: "[" +app.printDate(curValuesListView.model[0].dtNow)+ "]"
                 }
 
                 Text
@@ -105,7 +105,7 @@ Item
                     font.pixelSize: AppTheme.fontBigNormalSize * app.scale
                     color: AppTheme.greyColor
                     visible: (curValuesListView.model.length > 0)
-                    text: "[" + qsTr("previous") + "]"
+                    text: "[" +app.printDate(curValuesListView.model[0].dtPrev)+ "]"
                 }
 
                 Text
@@ -144,11 +144,11 @@ Item
                     {
                         height: AppTheme.compHeight * app.scale
                         verticalAlignment: Text.AlignVCenter
-                        width: 90 * app.scale
+                        width: 120 * app.scale
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontNormalSize * app.scale
                         color: AppTheme.blueColor
-                        text: app.getParamById(paramId).shortName
+                        text: app.getParamById(paramId).fullName
                     }
 
                     Text
@@ -165,7 +165,7 @@ Item
                     Text
                     {
                         height: AppTheme.compHeight * app.scale
-                        width: 60 * app.scale
+                        width: 55 * app.scale
                         verticalAlignment: Text.AlignVCenter
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontNormalSize * app.scale
@@ -176,7 +176,7 @@ Item
                     Text
                     {
                         height: AppTheme.compHeight * app.scale
-                        width: 60 * app.scale
+                        width: 45 * app.scale
                         verticalAlignment: Text.AlignVCenter
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontNormalSize * app.scale
@@ -187,7 +187,7 @@ Item
                     Text
                     {
                         height: AppTheme.compHeight * app.scale
-                        width: 40 * app.scale
+                        width: 30 * app.scale
                         verticalAlignment: Text.AlignVCenter
                         horizontalAlignment: Text.AlignRight
                         font.family: AppTheme.fontFamily

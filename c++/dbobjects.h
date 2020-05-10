@@ -224,6 +224,7 @@ class TankObj : public QObject
     Q_PROPERTY(QString desc READ desc WRITE setDesc NOTIFY descChanged)
     Q_PROPERTY(float volume READ volume WRITE setVolume NOTIFY volumeChanged)
     Q_PROPERTY(int type READ type WRITE setType NOTIFY typeChanged)
+    Q_PROPERTY(QString img READ img WRITE setImg NOTIFY imgChanged)
 
 public:
     TankObj(QSqlQuery *query)
@@ -254,12 +255,14 @@ public:
     QString desc()                  {   return _desc;           }
     float volume()                  {   return tankVolume();    }
     int type()                      {   return _type;           }
+    QString img()                   {   return _img;            }
 
     void setTankId(QString tankId)  {   _tank_id = tankId;      }
     void setName(QString name)      {   _name = name;           }
     void setDesc(QString desc)      {   _desc = desc;           }
     void setVolume(float vol)       {   _l = _w;                }
     void setType(int type)          {   _type = type;           }
+    void setImg(QString img)        {   _img = img;             }
 
 signals:
     void tankIdChanged();
@@ -267,6 +270,7 @@ signals:
     void descChanged();
     void volumeChanged();
     void typeChanged();
+    void imgChanged();
 
 protected:
     QString     _tank_id;

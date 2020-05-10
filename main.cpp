@@ -7,6 +7,8 @@ int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
 
+    //qmlRegisterType<PermissionManager>("ANotes.PermissionManager", 1, 0, "PermissionManager");
+
     AppDef::declareQML();
 
     app.setOrganizationName("ANotes");

@@ -78,11 +78,10 @@ Item
                         id: imgPhoto
                         width: parent.width
                         height: parent.height
-                        //fillMode: Image.PreserveAspectFit
                         anchors.bottom: parent.bottom
-                        source: "qrc:/resources/img/reef.jpg"
+                        source: "data:image/jpg;base64," + img
                         mipmap: true
-                        opacity: 0.7
+                        opacity: 0.87
                     }
 
                     Image

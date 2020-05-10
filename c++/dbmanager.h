@@ -6,6 +6,7 @@
 #include <QDir>
 #include <QQmlApplicationEngine>
 #include "dbobjects.h"
+#include "imagegallery.h"
 
 #define RAND_ID_LENGTH  16
 
@@ -40,7 +41,7 @@ private:
     /* Database management */
     bool    initDB();
     bool    createUser(QString uname, QString upass, QString phone, QString email);
-    bool    createTank(QString name, QString manId, int type, int l, int w, int h);
+    bool    createTank(QString name, QString manId, int type, int l, int w, int h, QString imgFile);
     bool    createTankDefaultParamSet(QString tankId, AquariumType type);
     bool    addParamRecord(int smpId, int paramId, double value);
     bool    editPersonalParamState(QString tankId, int paramId, bool en);
@@ -70,10 +71,11 @@ signals:
 
 public slots:
     void    onGuiUserCreate(QString uname, QString upass, QString email);
-    void    onGuiTankCreate(QString name, int type, int l, int w, int h);
+    void    onGuiTankCreate(QString name, int type, int l, int w, int h, QString imgFile);
     void    onGuiAddRecord(int smpId, int paramId, double value);
     void    onGuiTankSelected(int tankIdx);
     void    onGuiPersonalParamStateChanged(int paramId, bool en);
+    void    onGuiDebug();
 
 public:
     const QString   dbFolder = "db";
@@ -82,6 +84,7 @@ public:
 private:
     QString         dbFileLink;
     QSqlDatabase    db;
+    ImageGallery    *imageGallery;
 
     /* Store params enumeration */
     QList<QObject*> paramsGuiList;
