@@ -1,5 +1,7 @@
 QT += quick
 QT += sql
+QT += androidextras
+QT += core
 
 CONFIG += c++11
 
@@ -16,6 +18,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         c++/dbmanager.cpp \
+        c++/imagegallery.cpp \
         main.cpp
 
 RESOURCES += qml.qrc
@@ -32,9 +35,33 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
-    qml/qmldir
+    android/AndroidManifest.xml \
+    android/build.gradle \
+    android/gradle/wrapper/gradle-wrapper.jar \
+    android/gradle/wrapper/gradle-wrapper.properties \
+    android/gradlew \
+    android/gradlew.bat \
+    android/res/values/libs.xml \
+    qml/qmldir \
+#    android/AndroidManifest.xml \
+#    android/gradle/wrapper/gradle-wrapper.jar \
+#    android/gradlew \
+#    android/res/values/libs.xml \
+#    android/build.gradle \
+#    android/gradle/wrapper/gradle-wrapper.properties \
+#    android/gradlew.bat \
+#    android/src/org/qtproject/example/QtAndroidGallery.java
+
+#ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 
 HEADERS += \
     c++/AppDefs.h \
     c++/dbmanager.h \
-    c++/dbobjects.h
+    c++/dbobjects.h \
+    c++/galleryobjects.h \
+    c++/imagegallery.h
+
+contains(ANDROID_TARGET_ARCH,armeabi-v7a) {
+    ANDROID_PACKAGE_SOURCE_DIR = \
+        $$PWD/android
+}
