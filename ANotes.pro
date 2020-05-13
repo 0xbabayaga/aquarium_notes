@@ -1,7 +1,7 @@
 QT += quick
 QT += sql
-QT += androidextras
 QT += core
+android: QT += androidextras
 
 CONFIG += c++11
 

@@ -10,9 +10,13 @@
 #include <QDateTime>
 #include <QDebug>
 #include <QList>
+#include <QStringList>
 #include "AppDefs.h"
 #include "dbobjects.h"
+
+#ifndef  Q_OS_WIN
 #include <QtAndroidExtras>
+#endif
 
 const static QString aquariumTypeNames[AquariumType::EndOfList] =
 {
@@ -47,6 +51,8 @@ const static QMap<QString, QString> paramTranslationMap = {
     {"MO", "Molybdenum"},
     {"ORP", "ORP"}
 };
+
+const static QStringList permissions = { "android.permission.READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE" };
 
 DBManager::DBManager(QQmlApplicationEngine *engine, QObject *parent) : QObject(parent)
 {
@@ -92,20 +98,20 @@ DBManager::DBManager(QQmlApplicationEngine *engine, QObject *parent) : QObject(p
 
     getCurrentObjs();
 
-    QtAndroid::PermissionResult r = QtAndroid::checkPermission("android.permission.READ_EXTERNAL_STORAGE");
+#ifndef Q_OS_WIN
 
-    if(r == QtAndroid::PermissionResult::Denied)
+    for (int i = 0; i < permissions.size(); i++)
     {
-        QtAndroid::requestPermissionsSync( QStringList() << "android.permission.READ_EXTERNAL_STORAGE" );
+        QtAndroid::PermissionResult r = QtAndroid::checkPermission(permissions.at(i));
 
-        r = QtAndroid::checkPermission("android.permission.READ_EXTERNAL_STORAGE");
+        QtAndroid::requestPermissionsSync( QStringList() << permissions.at(i) );
 
+        r = QtAndroid::checkPermission(permissions.at(i));
+
+         qDebug() << "Permission " << permissions.at(i) << ((r == QtAndroid::PermissionResult::Denied) ? " DENIED" : " GRANTED ");
     }
 
-    if(r == QtAndroid::PermissionResult::Denied)
-        qDebug() << "Android perms DENIED ";
-    else
-        qDebug() << "Android perms GRANTED ";
+#endif
 }
 
 DBManager::~DBManager()
