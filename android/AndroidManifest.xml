@@ -12,7 +12,7 @@
 
     <supports-screens android:largeScreens="true" android:normalScreens="true" android:anyDensity="true" android:smallScreens="true"/>
 
-    <application android:hardwareAccelerated="true" android:name="org.qtproject.qt5.android.bindings.QtApplication" android:label="Aquarium Notes">
+    <application android:hardwareAccelerated="true" android:requestLegacyExternalStorage="false" android:name="org.qtproject.qt5.android.bindings.QtApplication" android:label="Aquarium Notes">
         <activity android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|layoutDirection|locale|fontScale|keyboard|keyboardHidden|navigation|mcc|mnc|density" android:name="org.qtproject.qt5.android.bindings.QtActivity" android:label="Aquarium Notes" android:screenOrientation="unspecified" android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -85,8 +85,6 @@
 
     </application>
 
-<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 </manifest>
