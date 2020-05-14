@@ -38,6 +38,8 @@ Item
             textTankName.text = tankName
             textTankName.color = (tankType < 4) ? AppTheme.blueColor : AppTheme.greenColor
             arrowOverlay.color = textTankName.color
+
+            imgTank.source = "data:image/jpg;base64," + tankParams[4]
         }
         else
         {
@@ -179,13 +181,46 @@ Item
                 }
             }
 
+            Image
+            {
+                id: imgTank
+                anchors.right: parent.right
+                anchors.top: parent.top
+                anchors.topMargin: AppTheme.padding * app.scale
+                height: AppTheme.rowHeight * app.scale
+                width: height
+                mipmap: true
+                source: ""
+
+                fillMode: Image.PreserveAspectCrop
+                layer.enabled: true
+                layer.effect: OpacityMask
+                {
+                    maskSource: imgTankMask
+                }
+            }
+
+            Rectangle
+            {
+                id: imgTankMask
+                anchors.right: parent.right
+                anchors.top: parent.top
+                anchors.topMargin: AppTheme.padding * app.scale
+                height: AppTheme.rowHeight * app.scale
+                width: height
+                radius: height/2
+                visible: false
+            }
+
             Text
             {
                 id: textTankName
-                anchors.right: parent.right
+                anchors.right: imgTank.left
+                anchors.rightMargin: AppTheme.padding * app.scale
                 anchors.verticalCenter: parent.verticalCenter
                 height: AppTheme.compHeight * app.scale
                 verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignRight
                 font.family: AppTheme.fontFamily
                 font.pixelSize: AppTheme.fontBigSize * app.scale
                 color: AppTheme.blueColor
@@ -196,9 +231,11 @@ Item
             {
                 id: textTankVol
                 anchors.top: textTankName.bottom
-                anchors.right: parent.right
+                anchors.right: imgTank.left
+                anchors.rightMargin: AppTheme.padding * app.scale
                 height: AppTheme.rowHeight * app.scale
                 verticalAlignment: Text.AlignTop
+                horizontalAlignment: Text.AlignRight
                 font.family: AppTheme.fontFamily
                 font.pixelSize: AppTheme.fontNormalSize * app.scale
                 color: AppTheme.greyColor

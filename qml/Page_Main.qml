@@ -123,7 +123,8 @@ Item
             var tankParams = [tanksListModel[tanksList.currentIndex].name,
                               tanksListModel[tanksList.currentIndex].desc,
                               tanksListModel[tanksList.currentIndex].type,
-                              tanksListModel[tanksList.currentIndex].volume];
+                              tanksListModel[tanksList.currentIndex].volume,
+                              tanksListModel[tanksList.currentIndex].img];
 
             page_TankData.showPage(true, tankParams)
         }

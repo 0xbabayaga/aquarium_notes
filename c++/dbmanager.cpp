@@ -14,8 +14,9 @@
 #include "AppDefs.h"
 #include "dbobjects.h"
 
-#ifndef  Q_OS_WIN
+#ifdef  Q_OS_ANDROID
 #include <QtAndroidExtras>
+const static QStringList permissions = { "android.permission.READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE" };
 #endif
 
 const static QString aquariumTypeNames[AquariumType::EndOfList] =
@@ -30,29 +31,28 @@ const static QString aquariumTypeNames[AquariumType::EndOfList] =
     QString("Fresh aquarium high")  /* 7 */
 };
 
-const static QMap<QString, QString> paramTranslationMap = {
-    {"TEMP", "Temperature"},
-    {"SAL", "Salinity"},
-    {"CA", "Calcium"},
-    {"PH", "pH"},
-    {"KH", "kH"},
-    {"GH", "gH"},
-    {"PO4", "Phosphates"},
-    {"NO2", "Nitrite"},
-    {"NO3", "Nitrate"},
-    {"NH3", "Ammonia"},
-    {"MG", "Magnesium"},
-    {"SI", "Silicates"},
-    {"K", "Potassium"},
-    {"I", "Iodine"},
-    {"SR", "Strontium"},
-    {"FE", "Ferrum"},
-    {"B", "Boron"},
-    {"MO", "Molybdenum"},
-    {"ORP", "ORP"}
+const static QMap<QString, QString> paramTranslationMap =
+{
+    {   "TEMP",     "Temperature"   },
+    {   "SAL",      "Salinity"      },
+    {   "CA",   "Calcium"           },
+    {   "PH",   "pH"                },
+    {   "KH",   "kH"                },
+    {   "GH",   "gH"                },
+    {   "PO4",  "Phosphates"        },
+    {   "NO2",  "Nitrite"           },
+    {   "NO3",  "Nitrate"           },
+    {   "NH3",  "Ammonia"           },
+    {   "MG",   "Magnesium"         },
+    {   "SI",   "Silicates"         },
+    {   "K",    "Potassium"         },
+    {   "I",    "Iodine"            },
+    {   "SR",   "Strontium"         },
+    {   "FE",   "Ferrum"            },
+    {   "B",    "Boron"             },
+    {   "MO",   "Molybdenum"        },
+    {   "ORP",  "ORP"               }
 };
-
-const static QStringList permissions = { "android.permission.READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE" };
 
 DBManager::DBManager(QQmlApplicationEngine *engine, QObject *parent) : QObject(parent)
 {
@@ -91,15 +91,13 @@ DBManager::DBManager(QQmlApplicationEngine *engine, QObject *parent) : QObject(p
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecord(int, int, double)), this, SLOT(onGuiAddRecord(int, int, double)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigTankSelected(int)), this, SLOT(onGuiTankSelected(int)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigPersonalParamStateChanged(int, bool)), this, SLOT(onGuiPersonalParamStateChanged(int, bool)));
-    connect(qmlEngine->rootObjects().first(), SIGNAL(sigDebug()), this, SLOT(onGuiDebug()));
 
     curSelectedObjs.lastSmpId = getLastSmpId();
     setLastSmpId(curSelectedObjs.lastSmpId);
 
     getCurrentObjs();
 
-#ifndef Q_OS_WIN
-
+#ifdef Q_OS_ANDROID
     for (int i = 0; i < permissions.size(); i++)
     {
         QtAndroid::PermissionResult r = QtAndroid::checkPermission(permissions.at(i));
@@ -108,10 +106,13 @@ DBManager::DBManager(QQmlApplicationEngine *engine, QObject *parent) : QObject(p
 
         r = QtAndroid::checkPermission(permissions.at(i));
 
-         qDebug() << "Permission " << permissions.at(i) << ((r == QtAndroid::PermissionResult::Denied) ? " DENIED" : " GRANTED ");
+        qDebug() << "Permission " << permissions.at(i) << ((r == QtAndroid::PermissionResult::Denied) ? " DENIED" : " GRANTED ");
     }
-
 #endif
+
+    imageGallery = new ImageGallery();
+    qmlEngine->rootContext()->setContextProperty("imageGalleryListModel", QVariant::fromValue(imageGallery->getGalleryObjList()));
+
 }
 
 DBManager::~DBManager()
@@ -124,15 +125,6 @@ DBManager::~DBManager()
 
     if (curSelectedObjs.user != nullptr)
         delete curSelectedObjs.user;
-}
-
-void DBManager::onGuiDebug()
-{
-    qDebug() << "Reloading";
-
-    imageGallery = new ImageGallery();
-
-    qmlEngine->rootContext()->setContextProperty("imageGalleryListModel", QVariant::fromValue(imageGallery->getGalleryObjList()));
 }
 
 bool DBManager::getCurrentObjs()
