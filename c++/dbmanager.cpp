@@ -89,6 +89,7 @@ DBManager::DBManager(QQmlApplicationEngine *engine, QObject *parent) : QObject(p
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateAccount(QString, QString, QString)), this, SLOT(onGuiUserCreate(QString, QString, QString)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateTank(QString, int, int, int, int, QString)), this, SLOT(onGuiTankCreate(QString, int, int, int, int, QString)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecord(int, int, double)), this, SLOT(onGuiAddRecord(int, int, double)));
+    connect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecordNotes(int, QString, QString)), this, SLOT(onGuiAddRecordNote(int, QString, QString)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigTankSelected(int)), this, SLOT(onGuiTankSelected(int)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigPersonalParamStateChanged(int, bool)), this, SLOT(onGuiPersonalParamStateChanged(int, bool)));
 
@@ -120,6 +121,7 @@ DBManager::~DBManager()
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateAccount(QString, QString, QString)), this, SLOT(onUserCreate(QString, QString, QString)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateTank(QString, int, int, int, int)), this, SLOT(onGuiTankCreate(QString, int, int, int, int)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecord(int, int, float)), this, SLOT(onGuiAddRecord(int, int, float)));
+    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecordNotes(int, QString, QString)), this, SLOT(onGuiAddRecordNote(int, QString, QString)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigTankSelected(int)), this, SLOT(onGuiTankSelected(int)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigPersonalParamStateChanged(int, bool)), this, SLOT(onGuiPersonalParamStateChanged(int, bool)));
 
@@ -215,6 +217,14 @@ void DBManager::onGuiAddRecord(int smpId, int paramId, double value)
     if (addParamRecord(smpId, paramId, value) == true)
     {
         getLatestParams();
+    }
+}
+
+void DBManager::onGuiAddRecordNote(int smpId, QString note, QString imageLink)
+{
+    if (addNoteRecord(smpId, note, imageLink) == true)
+    {
+
     }
 }
 
@@ -403,6 +413,7 @@ bool DBManager::getUserTanksList()
     {
         res = true;
         obj = new TankObj(&query);
+        obj->setTypeName(aquariumTypeNames[obj->type()]);
         curSelectedObjs.listOfUserTanks.append(obj);
     }
 
@@ -566,6 +577,30 @@ bool DBManager::addParamRecord(int smpId, int paramId, double value)
 
     if (res == false)
         qDebug() << "Add record error: " << query.lastError();
+
+    return res;
+}
+
+bool DBManager::addNoteRecord(int smpId, QString note, QString imageLink)
+{
+    QSqlQuery query;
+    bool res = false;
+    TankObj *tank = (TankObj*) curSelectedObjs.listOfUserTanks.at(curSelectedObjs.tankIdx);
+
+    query.prepare("INSERT INTO HISTORY_NOTES_TABLE (SMP_ID, TANK_ID, TEXT, IMAGEDATA, IMAGELINK, TIMESTAMP) "
+                  "VALUES (:smp_id, :tank_id, :text, :imagedata, :imagelink, :tm)");
+
+    query.bindValue(":smp_id", smpId);
+    query.bindValue(":tank_id", tank->tankId());
+    query.bindValue(":text", note);
+    query.bindValue(":imagedata", "");
+    query.bindValue(":imagelink", imageLink);
+    query.bindValue(":tm", QDateTime::currentSecsSinceEpoch());
+
+    res = query.exec();
+
+    if (res == false)
+        qDebug() << "Add Note record error: " << query.lastError();
 
     return res;
 }

@@ -17,6 +17,7 @@ Item
         var tankDesc
         var tankType
         var tankVol
+        var tankTypeName
 
         scaleAnimation.stop()
 
@@ -25,7 +26,8 @@ Item
             tankName = tankParams[0]
             tankDesc = tankParams[1]
             tankType = tankParams[2]
-            tankVol = Math.ceil(tankParams[3])
+            tankTypeName = tankParams[3]
+            tankVol = Math.ceil(tankParams[4])
         }
 
         if (vis === true)
@@ -37,9 +39,11 @@ Item
             textTankVol.text = tankVol + "L"
             textTankName.text = tankName
             textTankName.color = (tankType < 4) ? AppTheme.blueColor : AppTheme.greenColor
-            arrowOverlay.color = textTankName.color
+            textTankVol.color = textTankName.color
+            textTankType.text = "["+ tankTypeName +"]"
+            //arrowOverlay.color = textTankName.color
 
-            imgTank.source = "data:image/jpg;base64," + tankParams[4]
+            imgTank.source = "data:image/jpg;base64," + tankParams[5]
         }
         else
         {
@@ -82,12 +86,28 @@ Item
                 }
             }
 
+            if (textNote.text.length > 0 || imagesList.getSelectedImageLink().length > 0)
+                sigAddRecordNotes(app.lastSmpId,
+                                  textNote.text,
+                                  imagesList.getSelectedImageLink())
+
             app.lastSmpId++
         }
 
         rectAddRecordDialog.opacity = 0
         rectPersonalParamsDialog.opacity = 0
         rectDataContainer.opacity = 1
+    }
+
+    function getParamListRealCount()
+    {
+        var size = 0
+
+        for (var i = 0; i < addRecordListView.model.length; i++)
+            if (addRecordListView.model[i].en === true)
+                size++;
+
+        return size
     }
 
     ScaleAnimator
@@ -139,7 +159,6 @@ Item
             opacity: 0.3
         }
 
-
         Rectangle
         {
             id: rectHeaderContainer
@@ -151,33 +170,19 @@ Item
             height: AppTheme.rowHeight * app.scale
             color: "#00000000"
 
-            Image
+            IconSimpleButton
             {
                 id: imgArrowBack
                 anchors.left: parent.left
-                anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenter: imgTank.verticalCenter
                 height: AppTheme.compHeight * app.scale
                 width: height
-                fillMode: Image.PreserveAspectFit
-                mipmap: true
-                source: "qrc:/resources/img/icon_arrow_left.png"
+                image: "qrc:/resources/img/icon_arrow_left.png"
 
-                ColorOverlay
+                onSigButtonClicked:
                 {
-                    id: arrowOverlay
-                    anchors.fill: imgArrowBack
-                    source: imgArrowBack
-                    color: AppTheme.blueColor
-                }
-
-                MouseArea
-                {
-                    anchors.fill: parent
-                    onClicked:
-                    {
-                        addLogRecord(false)
-                        showPage(false, "")
-                    }
+                    addLogRecord(false)
+                    showPage(false, "")
                 }
             }
 
@@ -232,6 +237,21 @@ Item
                 id: textTankVol
                 anchors.top: textTankName.bottom
                 anchors.right: imgTank.left
+                anchors.rightMargin: AppTheme.padding * app.scale
+                height: AppTheme.rowHeight * app.scale
+                verticalAlignment: Text.AlignTop
+                horizontalAlignment: Text.AlignRight
+                font.family: AppTheme.fontFamily
+                font.pixelSize: AppTheme.fontNormalSize * app.scale
+                color: AppTheme.blueColor
+                text: qsTr("Not defined")
+            }
+
+            Text
+            {
+                id: textTankType
+                anchors.top: textTankName.bottom
+                anchors.right: textTankVol.left
                 anchors.rightMargin: AppTheme.padding * app.scale
                 height: AppTheme.rowHeight * app.scale
                 verticalAlignment: Text.AlignTop
@@ -350,78 +370,123 @@ Item
                 }
             }
 
-            ListView
+            Flickable
             {
-                id: addRecordListView
+                id: flickableContainer
                 anchors.fill: parent
                 anchors.topMargin: AppTheme.compHeight * 2 * app.scale
                 anchors.bottomMargin: AppTheme.rowHeight * 2 * app.scale
-                spacing: 0
-                model: app.getAllParamsListModel()
+                contentWidth: width
+                contentHeight: addRecordListView.model.length * AppTheme.rowHeightMin * app.scale
                 clip: true
 
-                delegate: Rectangle
+                ListView
                 {
-                    width: parent.width
-                    height: (en === true) ? AppTheme.rowHeightMin * app.scale : 0
-                    visible: en
-                    color: "#00000000"
+                    id: addRecordListView
+                    anchors.top: parent.top
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    height: model.length * AppTheme.rowHeightMin * app.scale
+                    spacing: 0
+                    model: app.getAllParamsListModel()
+                    clip: true
+                    interactive: false
 
-                    Behavior on height
+                    onModelChanged:
                     {
-                        NumberAnimation { duration: 200}
+                        height = getParamListRealCount() * AppTheme.rowHeightMin * app.scale
+                        flickableContainer.contentHeight = addRecordListView.height
+                        flickableContainer.contentHeight += AppTheme.rowHeightMin * 3 * app.scale
                     }
 
-                    Text
+                    delegate: Rectangle
                     {
-                        anchors.left: parent.left
-                        anchors.verticalCenter: parent.verticalCenter
-                        verticalAlignment: Text.AlignVCenter
-                        width: 100 * app.scale
-                        height: parent.height
-                        font.family: AppTheme.fontFamily
-                        font.pixelSize: AppTheme.fontNormalSize * app.scale
-                        color: AppTheme.blueColor
-                        text: fullName
-                    }
+                        width: parent.width
+                        height: (en === true) ? AppTheme.rowHeightMin * app.scale : 0
+                        visible: en
+                        color: "#00000000"
 
-                    TextInput
-                    {
-                        id: textInputValue
-                        anchors.right: parent.right
-                        anchors.verticalCenter: parent.verticalCenter
-                        placeholderText: "0"
-                        width: 100 * app.scale
-                        maximumLength: 4
-
-                        onTextChanged: value = textInputValue.text
+                        Behavior on height
+                        {
+                            NumberAnimation { duration: 200}
+                        }
 
                         Text
                         {
+                            anchors.left: parent.left
                             anchors.verticalCenter: parent.verticalCenter
-                            anchors.right: parent.right
                             verticalAlignment: Text.AlignVCenter
+                            width: 100 * app.scale
+                            height: parent.height
                             font.family: AppTheme.fontFamily
                             font.pixelSize: AppTheme.fontNormalSize * app.scale
-                            color: AppTheme.greyColor
-                            text: unitName
+                            color: AppTheme.blueColor
+                            text: fullName
+                        }
+
+                        TextInput
+                        {
+                            id: textInputValue
+                            anchors.right: parent.right
+                            anchors.verticalCenter: parent.verticalCenter
+                            placeholderText: "0"
+                            width: 100 * app.scale
+                            maximumLength: 4
+
+                            onTextChanged: value = textInputValue.text
+
+                            Text
+                            {
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.right: parent.right
+                                verticalAlignment: Text.AlignVCenter
+                                font.family: AppTheme.fontFamily
+                                font.pixelSize: AppTheme.fontNormalSize * app.scale
+                                color: AppTheme.greyColor
+                                text: unitName
+                            }
                         }
                     }
                 }
 
+                TextInput
+                {
+                    id: textNote
+                    anchors.top: addRecordListView.bottom
+                    anchors.topMargin: AppTheme.padding * app.scale
+                    placeholderText: qsTr("Add notes")
+                    width: parent.width
+                    maximumLength: 256
+                    //focus: false
+                    //KeyNavigation.tab: textTankL
+                }
+
+                ImageList
+                {
+                    id: imagesList
+                    anchors.top: textNote.bottom
+                    anchors.topMargin: AppTheme.margin * app.scale
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    width: parent.width
+                    propertyName: qsTr("Attach a photo")
+                    model: imageGalleryListModel
+                }
+
+
                 ScrollBar.vertical: ScrollBar
                 {
                     policy: ScrollBar.AlwaysOn
-                    parent: addRecordListView.parent
-                    anchors.top: addRecordListView.top
-                    anchors.left: addRecordListView.right
+                    parent: flickableContainer.parent
+                    anchors.top: flickableContainer.top
+                    anchors.left: flickableContainer.right
                     anchors.leftMargin: AppTheme.padding * app.scale
-                    anchors.bottom: addRecordListView.bottom
+                    anchors.bottom: flickableContainer.bottom
 
                     contentItem: Rectangle
                     {
-                        implicitWidth: 2
-                        implicitHeight: 100
+                        implicitWidth: 2 * app.scale
+                        implicitHeight: 100 * app.scale
                         radius: width / 2
                         color: AppTheme.hideColor
                     }

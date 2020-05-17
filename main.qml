@@ -28,6 +28,7 @@ Window
     signal sigCreateAccount(string uname, string upass, string umail)
     signal sigCreateTank(string name, int type, int l, int w, int h, string img)
     signal sigAddRecord(int smpId, int paramId, double value)
+    signal sigAddRecordNotes(int smpId, string note, string imageLink)
     signal sigTankSelected(int tankIdx)
     signal sigPersonalParamStateChanged(int paramId, bool en)
     signal sigDebug()
@@ -52,7 +53,8 @@ Window
         var month = "0" + date.getMonth()
         var year = "0" + date.getYear()
 
-        var formattedDate = day.substr(-2) + '.' + month.substr(-2) + '.' + year.substr(-2)
+        //var formattedDate = day.substr(-2) + '.' + month.substr(-2) + '.' + year.substr(-2)
+        var formattedDate = day.substr(-2) + '/' + month.substr(-2)
 
         return formattedDate
     }
