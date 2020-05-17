@@ -413,40 +413,17 @@ Item
                         propertyName: qsTr("Select a tank type:");
                         width: parent.width
                         model: aquariumTypesListModel
-                        KeyNavigation.tab: textFileName
+                        //KeyNavigation.tab: textFileName
                     }
 
                     Item { height: 1; width: 1;}
 
-                    //PermissionManager
-                    //{
-                    //    id: pm
-                    //}
-
-                    TextInput
+                    ImageList
                     {
-                        id: textFileName
-                        placeholderText: qsTr("image")
+                        id: imagesList
                         width: parent.width
-                        focus: false
-                        KeyNavigation.tab: buttonCancel2
-
-                        MouseArea
-                        {
-                            anchors.fill: parent
-                            onClicked:
-                            {
-                                //var res = pm.requestPermissions()
-
-                                //console.log("Permissions  = ", res)
-
-                                //if (res === true)
-                                {
-                                    imageGallery.showList(true)
-                                }
-                            }
-
-                        }
+                        propertyName: qsTr("Select a photo:")
+                        model: imageGalleryListModel
                     }
 
                     Item { height: 1; width: 1;}
@@ -483,32 +460,12 @@ Item
                                                   textTankL.text,
                                                   textTankW.text,
                                                   textTankH.text,
-                                                  textFileName.text)
+                                                  imagesList.getSelectedImageLink())
                             }
                         }
                     }
                 }
             }
         }
-    }
-
-
-    ImageGalleryDialog
-    {
-        id: imageGallery
-        propertyName: qsTr("Select an image:");
-        width: parent.width
-        model: imageGalleryListModel
-
-        onCurrentIndexChanged: textFileName.text = imageGalleryListModel[currentIndex].fileLink
-    }
-
-
-    FileDialog
-    {
-        id: fileDialog
-        title: "Please choose a file"
-        nameFilters: [ "Image files (*.jpg)" ]
-        onAccepted: console.log(fileDialog.fileUrl)
     }
 }

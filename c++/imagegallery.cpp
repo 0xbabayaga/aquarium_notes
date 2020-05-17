@@ -15,6 +15,7 @@ const static QStringList folderToSearch = { "/storage/emulated/0/DCIM", "/storag
 ImageGallery::ImageGallery()
 {
     int count = 0;
+    ImgObj *img = nullptr;
 
     galleryList.clear();
 
@@ -25,9 +26,12 @@ ImageGallery::ImageGallery()
 
         qDebug() << "Looking in :" << folderToSearch.at(i);
 
+        img = new ImgObj("");
+        galleryList.append(img);
+
         while (it.hasNext())
         {
-            ImgObj *img = new ImgObj(it.next());
+            img = new ImgObj(it.next());
             galleryList.append(img);
 
             qDebug() << img->fileLink();

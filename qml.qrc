@@ -26,6 +26,7 @@
         <file>qml/custom/UrlButton.qml</file>
         <file>qml/custom/SwitchButton.qml</file>
         <file>resources/img/reef.jpg</file>
-        <file>qml/custom/ImageGalleryDialog.qml</file>
+        <file>qml/custom/ImageList.qml</file>
+        <file>qml/custom/IconSimpleButton.qml</file>
     </qresource>
 </RCC>

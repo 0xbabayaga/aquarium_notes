@@ -1,6 +1,8 @@
+QT += qml
 QT += quick
 QT += sql
 QT += core
+QT += charts
 android: QT += androidextras
 
 CONFIG += c++11

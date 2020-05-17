@@ -6,9 +6,9 @@ import "../"
 
 Item
 {
-    id: imageGalleryDialog
+    id: imageList
     width: 150 * app.scale
-    height: AppTheme.compHeight * app.scale
+    height: AppTheme.rowHeightMin * app.scale
     opacity: enabled ? AppTheme.opacityEnabled : AppTheme.opacityDisabled
 
     signal sigSelectedIndexChanged(int id)
@@ -17,6 +17,11 @@ Item
     property alias propertyName: textPropertyName.text
     property alias model: listView.model
     property int yOffset: 200 * app.scale
+
+    function getSelectedImageLink()
+    {
+        return listView.model[listView.currentIndex].fileLink
+    }
 
     function showList(vis)
     {
@@ -35,6 +40,83 @@ Item
         }
 
         rectListOpacityAnimation.start()
+    }
+
+    Rectangle
+    {
+        id: rectImageContainer
+        anchors.top: imageList.top
+        anchors.left: imageList.left
+        height: AppTheme.rowHeightMin * app.scale
+        width: height
+        radius: height/2
+        color: AppTheme.hideColor
+        clip: true
+
+        Image
+        {
+            id: imgSelected
+            anchors.fill: parent
+            source: ""
+            mipmap: true
+            layer.enabled: true
+            layer.effect: OpacityMask
+            {
+                maskSource: imgTankMask
+            }
+        }
+
+        Rectangle
+        {
+            id: imgTankMask
+            anchors.fill: parent
+            radius: height/2
+            visible: false
+        }
+    }
+
+    Text
+    {
+        id: textSelectImage
+        anchors.left: parent.left
+        anchors.leftMargin: rectImageContainer.width + AppTheme.padding * app.scale
+        anchors.verticalCenter: parent.verticalCenter
+        font.family: AppTheme.fontFamily
+        font.pixelSize: AppTheme.fontNormalSize * app.scale
+        color: AppTheme.blueColor
+        text: textPropertyName.text
+    }
+
+    Image
+    {
+        id: img
+        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
+        width: 27 * app.scale
+        height: 27 * app.scale
+        source: "qrc:/resources/img/icon_arrow_left.png"
+        mipmap: true
+        transformOrigin: Item.Center
+        rotation: 180
+
+        MouseArea
+        {
+            anchors.fill: parent
+
+            onClicked:
+            {
+                showList(true)
+            }
+        }
+    }
+
+    ColorOverlay
+    {
+        anchors.fill: img
+        source: img
+        color: AppTheme.blueColor
+        transformOrigin: Item.Center
+        rotation: 180
     }
 
     Rectangle
@@ -61,7 +143,11 @@ Item
             onFinished: if (to === 0) rectList.visible = false
         }
 
-        MouseArea { anchors.fill: parent }
+        MouseArea
+        {
+            anchors.fill: parent
+            onClicked: showList(false)
+        }
 
         Rectangle
         {
@@ -160,6 +246,7 @@ Item
                         {
                             showList(false)
                             sigSelectedIndexChanged(currentIndex)
+                            imgSelected.source = "file:///" + listView.model[currentIndex].fileLink
                         }
 
                         ScrollBar.vertical: ScrollBar

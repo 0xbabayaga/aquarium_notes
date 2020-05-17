@@ -66,7 +66,7 @@ Item
                 {
                     verticalAlignment: Text.AlignVCenter
                     height: AppTheme.compHeight * app.scale
-                    width: 100 * app.scale
+                    width: 125 * app.scale
                     font.family: AppTheme.fontFamily
                     font.pixelSize: AppTheme.fontBigSize * app.scale
                     color: AppTheme.blueColor
@@ -77,7 +77,7 @@ Item
                 {
                     verticalAlignment: Text.AlignVCenter
                     height: AppTheme.compHeight * app.scale
-                    width: 50 * app.scale
+                    width: 40 * app.scale
                     font.family: AppTheme.fontFamily
                     font.pixelSize: AppTheme.fontNormalSize * app.scale
                     color: AppTheme.greyColor
@@ -87,7 +87,7 @@ Item
                 Text
                 {
                     height: AppTheme.compHeight * app.scale
-                    width: 65 * app.scale
+                    width: 55 * app.scale
                     verticalAlignment: Text.AlignVCenter
                     font.family: AppTheme.fontFamily
                     font.pixelSize: AppTheme.fontBigNormalSize * app.scale
