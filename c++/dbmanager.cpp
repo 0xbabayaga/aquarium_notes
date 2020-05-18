@@ -28,7 +28,7 @@ const static QString aquariumTypeNames[AquariumType::EndOfList] =
     QString("Cyhlids"),             /* 4 */
     QString("Discus aquarium"),     /* 5 */
     QString("Fresh aquarium"),      /* 6 */
-    QString("Fresh aquarium high")  /* 7 */
+    QString("Fresh scape")          /* 7 */
 };
 
 const static QMap<QString, QString> paramTranslationMap =

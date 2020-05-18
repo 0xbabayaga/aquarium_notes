@@ -39,10 +39,11 @@ Item
     {
         id: flickableContainer
         anchors.top:tanksList.bottom
-        anchors.margins: AppTheme.margin * app.scale
         anchors.topMargin: AppTheme.compHeight * app.scale * 3
         anchors.left: parent.left
+        anchors.leftMargin: AppTheme.padding * app.scale
         anchors.right: parent.right
+        anchors.rightMargin: AppTheme.padding * app.scale
         anchors.bottom: parent.bottom
         anchors.bottomMargin: AppTheme.rowHeight * app.scale
 

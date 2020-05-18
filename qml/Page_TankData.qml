@@ -148,6 +148,8 @@ Item
         radius: AppTheme.radius * 2 * app.scale
         color: AppTheme.whiteColor
 
+        MouseArea   {   anchors.fill: parent    }
+
         Image
         {
             anchors.left: parent.left
@@ -267,8 +269,8 @@ Item
         {
             id: rectDataContainer
             anchors.fill: parent
-            anchors.leftMargin: AppTheme.padding * 2 * app.scale
-            anchors.rightMargin: AppTheme.padding * 2 * app.scale
+            anchors.leftMargin: AppTheme.padding * app.scale
+            anchors.rightMargin: AppTheme.padding * app.scale
             anchors.topMargin: AppTheme.rowHeight * 2 * app.scale
             anchors.bottomMargin: AppTheme.padding * app.scale
             color: "#00002000"
@@ -348,6 +350,7 @@ Item
                 anchors.top: parent.top
                 anchors.left: parent.left
                 verticalAlignment: Text.AlignVCenter
+                height: AppTheme.rowHeightMin * app.scale
                 width: 100 * app.scale
                 font.family: AppTheme.fontFamily
                 font.pixelSize: AppTheme.fontBigSize * app.scale
@@ -358,10 +361,10 @@ Item
             UrlButton
             {
                 id: buttonSetParams
-                anchors.left: parent.left
-                anchors.top: textHeader.bottom
-                anchors.topMargin: AppTheme.padding * app.scale
+                anchors.right: parent.right
+                anchors.bottom: textHeader.bottom
                 buttonText: "Edit params"
+                width: 80 * app.scale
 
                 onSigButtonClicked:
                 {
@@ -375,7 +378,7 @@ Item
                 id: flickableContainer
                 anchors.fill: parent
                 anchors.topMargin: AppTheme.compHeight * 2 * app.scale
-                anchors.bottomMargin: AppTheme.rowHeight * 2 * app.scale
+                anchors.bottomMargin: AppTheme.rowHeightMin * 2 * app.scale
                 contentWidth: width
                 contentHeight: addRecordListView.model.length * AppTheme.rowHeightMin * app.scale
                 clip: true

@@ -19,13 +19,14 @@ Item
         Text
         {
             id: text
-            text: "[ " + buttonText + " ]"
+            //text: "[ " + buttonText + " ]"
+            text: buttonText
             wrapMode: Text.WordWrap
             height: parent.height
             anchors.verticalCenter: parent.verticalCenter
             horizontalAlignment: Text.Center
             color: AppTheme.greyColor
-            //font.underline: true
+            font.underline: true
             font.pixelSize: AppTheme.fontNormalSize * app.scale
             font.family: AppTheme.fontFamily
         }

@@ -60,6 +60,7 @@ Item
             Row
             {
                 anchors.left: parent.left
+                anchors.leftMargin: AppTheme.padding * app.scale
                 anchors.right: parent.right
 
                 Text
@@ -77,35 +78,43 @@ Item
                 {
                     verticalAlignment: Text.AlignVCenter
                     height: AppTheme.compHeight * app.scale
-                    width: 40 * app.scale
+                    width: 35 * app.scale
                     font.family: AppTheme.fontFamily
                     font.pixelSize: AppTheme.fontNormalSize * app.scale
                     color: AppTheme.greyColor
                     text: ""
                 }
 
-                Text
+                Rectangle
                 {
                     height: AppTheme.compHeight * app.scale
                     width: 55 * app.scale
-                    verticalAlignment: Text.AlignVCenter
-                    font.family: AppTheme.fontFamily
-                    font.pixelSize: AppTheme.fontBigNormalSize * app.scale
-                    color: AppTheme.greyColor
-                    visible: (curValuesListView.model.length > 0)
-                    text: "[" +app.printDate(curValuesListView.model[0].dtNow)+ "]"
+                    color: AppTheme.blueColor
+
+                    Text
+                    {
+                        anchors.fill: parent
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                        font.family: AppTheme.fontFamily
+                        font.pixelSize: AppTheme.fontBigNormalSize * app.scale
+                        color: AppTheme.whiteColor
+                        visible: (curValuesListView.model.length > 0)
+                        text: app.printDate(curValuesListView.model[0].dtNow)
+                    }
                 }
 
                 Text
                 {
                     height: AppTheme.compHeight * app.scale
-                    width: 65 * app.scale
+                    width: 60 * app.scale
+                    horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                     font.family: AppTheme.fontFamily
                     font.pixelSize: AppTheme.fontBigNormalSize * app.scale
                     color: AppTheme.greyColor
                     visible: (curValuesListView.model.length > 0)
-                    text: "[" +app.printDate(curValuesListView.model[0].dtPrev)+ "]"
+                    text: app.printDate(curValuesListView.model[0].dtPrev)
                 }
 
                 Text
@@ -128,23 +137,25 @@ Item
             anchors.fill: parent
             anchors.topMargin: AppTheme.compHeight * app.scale
             spacing: 0
+            interactive: false
 
             delegate: Rectangle
             {
                 width: parent.width
                 height: AppTheme.compHeight * app.scale
-                color: "#00000000"
+                color: (index%2 === 0) ? "#2000adbc" : "#0000adbc"
 
                 Row
                 {
                     anchors.left: parent.left
+                    anchors.leftMargin: AppTheme.padding * app.scale
                     anchors.right: parent.right
 
                     Text
                     {
                         height: AppTheme.compHeight * app.scale
                         verticalAlignment: Text.AlignVCenter
-                        width: 120 * app.scale
+                        width: 110 * app.scale
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontNormalSize * app.scale
                         color: AppTheme.blueColor
@@ -155,7 +166,7 @@ Item
                     {
                         height: AppTheme.compHeight * app.scale
                         verticalAlignment: Text.AlignVCenter
-                        width: 55 * app.scale
+                        width: 50 * app.scale
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontNormalSize * app.scale
                         color: AppTheme.greyColor
@@ -166,17 +177,44 @@ Item
                     {
                         height: AppTheme.compHeight * app.scale
                         width: 55 * app.scale
+                        horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontNormalSize * app.scale
                         color: AppTheme.blueColor
                         text: formattedValue(valueNow)
+
+                        Rectangle
+                        {
+                            anchors.left: parent.left
+                            width: 1 * app.scale
+                            height: parent.height
+                            color: AppTheme.blueColor
+                        }
+
+                        Rectangle
+                        {
+                            anchors.right: parent.right
+                            width: 1 * app.scale
+                            height: parent.height
+                            color: AppTheme.blueColor
+                        }
+
+                        Rectangle
+                        {
+                            anchors.bottom: parent.bottom
+                            height: 1 * app.scale
+                            width: parent.width
+                            color: AppTheme.blueColor
+                            visible: (index === curValuesListView.model.length - 1)
+                        }
                     }
 
                     Text
                     {
                         height: AppTheme.compHeight * app.scale
-                        width: 45 * app.scale
+                        width: 55 * app.scale
+                        horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontNormalSize * app.scale
@@ -197,6 +235,7 @@ Item
                     }
                 }
 
+                /*
                 Rectangle
                 {
                     width: parent.width
@@ -204,6 +243,7 @@ Item
                     anchors.bottom: parent.bottom
                     color: ((index + 1) === curValuesListView.model.count) ? "#00000000" : AppTheme.shideColor
                 }
+                */
             }
         }
     }

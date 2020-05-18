@@ -19,7 +19,7 @@ QtObject
     property string fontFamily: "Century Gothic"
 
     property color whiteColor: "#ffffff"
-    property color blueColor: "#00adbc"
+    property color blueColor: "#00a7b8"
     property color greenColor: "#00c082"
     property color hideColor: "#20000000"
     property color greyColor: "#aaaaaa"
@@ -29,6 +29,7 @@ QtObject
     property color lightBlueColor: "#e9feff"
     property color lightGreenColor: "#e7fef2"
 
+    property int fontSuperSmallSize: 12
     property int fontSmallSize: 14
     property int fontNormalSize: 16
     property int fontBigSize: 22

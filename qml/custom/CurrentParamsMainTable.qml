@@ -109,11 +109,13 @@ Item
             {
                 width: parent.width
                 height: AppTheme.compHeight * app.scale
-                color: "#00000000"
+                //color: "#00000000"
+                color: (index%2 === 0) ? "#2000adbc" : "#0000adbc"
 
                 Row
                 {
                     anchors.left: parent.left
+                    anchors.leftMargin: AppTheme.padding * app.scale
                     anchors.right: parent.right
 
                     Text
@@ -131,7 +133,7 @@ Item
                     {
                         verticalAlignment: Text.AlignVCenter
                         height: AppTheme.compHeight * app.scale
-                        width: 80 * app.scale
+                        width: 50 * app.scale
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontNormalSize * app.scale
                         color: AppTheme.greyColor
@@ -140,11 +142,13 @@ Item
 
                     Text
                     {
-                        width: 60 * app.scale
+                        width: 90 * app.scale
                         height: AppTheme.compHeight * app.scale
+                        horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontNormalSize * app.scale
+                        font.bold: true
                         color: AppTheme.blueColor
                         text: formattedValue(valueNow)
                     }
