@@ -134,10 +134,14 @@ Item
         ListView
         {
             id: curValuesListView
-            anchors.fill: parent
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
             anchors.topMargin: AppTheme.compHeight * app.scale
             spacing: 0
             interactive: false
+
+            onModelChanged: height = curValuesListView.model.length * AppTheme.compHeight * app.scale
 
             delegate: Rectangle
             {
@@ -245,6 +249,33 @@ Item
                 }
                 */
             }
+        }
+
+        Text
+        {
+            anchors.top: curValuesListView.bottom
+            anchors.topMargin: AppTheme.padding * app.scale
+            anchors.left: parent.left
+            height: AppTheme.compHeight * app.scale
+            verticalAlignment: Text.AlignVCenter
+            font.family: AppTheme.fontFamily
+            font.pixelSize: AppTheme.fontNormalSize * app.scale
+            color: AppTheme.blueColor
+            text: "Note found"
+        }
+
+        Text
+        {
+            id: textNote
+            anchors.top: curValuesListView.bottom
+            anchors.topMargin: AppTheme.padding * app.scale
+            anchors.left: parent.left
+            height: AppTheme.compHeight * app.scale
+            verticalAlignment: Text.AlignVCenter
+            font.family: AppTheme.fontFamily
+            font.pixelSize: AppTheme.fontNormalSize * app.scale
+            color: AppTheme.greyColor
+            text: "Note found"
         }
     }
 }

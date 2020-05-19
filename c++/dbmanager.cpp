@@ -315,8 +315,12 @@ bool DBManager::getLatestParams()
 
     if (smpIdList.size() > 0)
     {
-        QSqlQuery query("SELECT * FROM HISTORY_VALUE_TABLE "
-                        "WHERE SMP_ID = '"+QString::number(smpIdList.at(0))+"'");
+        QSqlQuery query("SELECT v.SMP_ID, v.TANK_ID, v.PARAM_ID, v.VALUE, v.TIMESTAMP "
+                        "FROM HISTORY_VALUE_TABLE v "
+                        "WHERE v.SMP_ID = '"+QString::number(smpIdList.at(0))+"' "
+                        "LEFT JOIN HISTORY_NOTES_TABLE n ON n.SMP_ID = v.SMP_ID");
+
+        qDebug() << "getLatestParams() = " << query.record();
 
         while (query.next())
         {
@@ -326,7 +330,9 @@ bool DBManager::getLatestParams()
                                              query.value(query.record().indexOf("VALUE")).toFloat(),
                                              -1,
                                              (unsigned int)query.value(query.record().indexOf("TIMESTAMP")).toInt(),
-                                             0);
+                                             0,
+                                             "",
+                                             "");
 
             curSelectedObjs.listOfCurrValues.append(recObj);
         }
@@ -362,7 +368,7 @@ bool DBManager::getLatestParams()
                                                      -1,
                                                      query1.value(query1.record().indexOf("VALUE")).toFloat(),
                                                      0,
-                                                     (unsigned int)query.value(query.record().indexOf("TIMESTAMP")).toInt());
+                                                     (unsigned int)query.value(query.record().indexOf("TIMESTAMP")).toInt(), "", "");
 
                     curSelectedObjs.listOfCurrValues.append(recObj);
                 }
