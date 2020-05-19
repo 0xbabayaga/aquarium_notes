@@ -315,12 +315,10 @@ bool DBManager::getLatestParams()
 
     if (smpIdList.size() > 0)
     {
-        QSqlQuery query("SELECT v.SMP_ID, v.TANK_ID, v.PARAM_ID, v.VALUE, v.TIMESTAMP "
+        QSqlQuery query("SELECT v.SMP_ID, v.TANK_ID, v.PARAM_ID, v.VALUE, v.TIMESTAMP, n.TEXT, n.IMAGELINK "
                         "FROM HISTORY_VALUE_TABLE v "
-                        "WHERE v.SMP_ID = '"+QString::number(smpIdList.at(0))+"' "
-                        "LEFT JOIN HISTORY_NOTES_TABLE n ON n.SMP_ID = v.SMP_ID");
-
-        qDebug() << "getLatestParams() = " << query.record();
+                        "LEFT JOIN HISTORY_NOTES_TABLE n ON n.SMP_ID = v.SMP_ID "
+                        "WHERE v.SMP_ID = '"+QString::number(smpIdList.at(0))+"'");
 
         while (query.next())
         {
@@ -331,16 +329,22 @@ bool DBManager::getLatestParams()
                                              -1,
                                              (unsigned int)query.value(query.record().indexOf("TIMESTAMP")).toInt(),
                                              0,
-                                             "",
-                                             "");
+                                             query.value(query.record().indexOf("TEXT")).toString(),
+                                             query.value(query.record().indexOf("IMAGELINK")).toString());
+
+            //qDebug() << "TEXT = " << query.value(query.record().indexOf("TEXT")).toString();
+            //qDebug() << "IMAGELINK = " << query.value(query.record().indexOf("IMAGELINK")).toString();
 
             curSelectedObjs.listOfCurrValues.append(recObj);
         }
 
         if (smpIdList.size() > 1)
         {
-            QSqlQuery query1("SELECT * FROM HISTORY_VALUE_TABLE "
-                                    "WHERE SMP_ID='"+QString::number(smpIdList.at(1))+"'");
+            QSqlQuery query1("SELECT v.SMP_ID, v.TANK_ID, v.PARAM_ID, v.VALUE, v.TIMESTAMP, n.TEXT, n.IMAGELINK "
+                             "FROM HISTORY_VALUE_TABLE v "
+                             "LEFT JOIN HISTORY_NOTES_TABLE n ON n.SMP_ID = v.SMP_ID "
+                             "WHERE v.SMP_ID = '"+QString::number(smpIdList.at(1))+"'");
+
 
             while (query1.next())
             {
@@ -368,7 +372,9 @@ bool DBManager::getLatestParams()
                                                      -1,
                                                      query1.value(query1.record().indexOf("VALUE")).toFloat(),
                                                      0,
-                                                     (unsigned int)query.value(query.record().indexOf("TIMESTAMP")).toInt(), "", "");
+                                                     (unsigned int)query.value(query.record().indexOf("TIMESTAMP")).toInt(),
+                                                     query.value(query.record().indexOf("TEXT")).toString(),
+                                                     query.value(query.record().indexOf("IMAGELINK")).toString());
 
                     curSelectedObjs.listOfCurrValues.append(recObj);
                 }

@@ -70,9 +70,10 @@ Item
         {
             id: rectMainTableHeader
             anchors.left: parent.left
+            anchors.leftMargin: AppTheme.padding * app.scale
             anchors.right: parent.right
             anchors.top: parent.top
-            height: AppTheme.compHeight * app.scale
+            height: AppTheme.rowHeightMin * app.scale
             color: "#00000000"
 
             Text
@@ -83,12 +84,14 @@ Item
                 font.family: AppTheme.fontFamily
                 font.pixelSize: AppTheme.fontNormalSize * app.scale
                 color: AppTheme.greyColor
-                text: qsTr("LAST MEASURED: ")
+                text: qsTr("LAST MEASURED") + " [" +app.printDate(curParamsListView.model[0].dtNow)+ "]"
             }
 
+            /*
             Text
             {
                 anchors.right: parent.right
+                anchors.rightMargin: AppTheme.padding * app.scale
                 verticalAlignment: Text.AlignVCenter
                 height: parent.height
                 font.family: AppTheme.fontFamily
@@ -96,6 +99,7 @@ Item
                 color: AppTheme.greyColor
                 text: "[" +app.printDate(curParamsListView.model[0].dtNow)+ "]"
             }
+            */
         }
 
         ListView
@@ -148,7 +152,7 @@ Item
                         verticalAlignment: Text.AlignVCenter
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontNormalSize * app.scale
-                        font.bold: true
+                        //font.bold: true
                         color: AppTheme.blueColor
                         text: formattedValue(valueNow)
                     }

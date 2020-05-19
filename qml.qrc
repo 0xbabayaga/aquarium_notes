@@ -28,5 +28,6 @@
         <file>resources/img/reef.jpg</file>
         <file>qml/custom/ImageList.qml</file>
         <file>qml/custom/IconSimpleButton.qml</file>
+        <file>resources/img/icon_arrow_right.png</file>
     </qresource>
 </RCC>

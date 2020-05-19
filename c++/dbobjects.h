@@ -45,8 +45,8 @@ public:
         _valuePrev = prev;
         _dtNow = dtNow;
         _dtPrev = dtPrev;
-        _note = "";
-        _imgLink = "";
+        _note = note;
+        _imgLink = img;
     }
 
     char paramId()                      {   return _paramId;        }

@@ -90,6 +90,7 @@ Item
                     height: AppTheme.compHeight * app.scale
                     width: 55 * app.scale
                     color: AppTheme.blueColor
+                    visible: (curValuesListView.model.length !== 0)
 
                     Text
                     {
@@ -147,7 +148,7 @@ Item
             {
                 width: parent.width
                 height: AppTheme.compHeight * app.scale
-                color: (index%2 === 0) ? "#2000adbc" : "#0000adbc"
+                color: (index%2 === 0) ? AppTheme.backLightBlueColor : "#00000000"
 
                 Row
                 {
@@ -251,31 +252,84 @@ Item
             }
         }
 
-        Text
+        Rectangle
         {
+            id: rectNoteFound
             anchors.top: curValuesListView.bottom
             anchors.topMargin: AppTheme.padding * app.scale
             anchors.left: parent.left
-            height: AppTheme.compHeight * app.scale
-            verticalAlignment: Text.AlignVCenter
-            font.family: AppTheme.fontFamily
-            font.pixelSize: AppTheme.fontNormalSize * app.scale
-            color: AppTheme.blueColor
-            text: "Note found"
-        }
+            anchors.right: parent.right
+            height: AppTheme.rowHeight * app.scale
+            color: AppTheme.backLightBlueColor
+            visible: (curValuesListView.model.length !== 0 && curValuesListView.model[0].note.length > 0)
+            //color: "#00000000"
 
-        Text
-        {
-            id: textNote
-            anchors.top: curValuesListView.bottom
-            anchors.topMargin: AppTheme.padding * app.scale
-            anchors.left: parent.left
-            height: AppTheme.compHeight * app.scale
-            verticalAlignment: Text.AlignVCenter
-            font.family: AppTheme.fontFamily
-            font.pixelSize: AppTheme.fontNormalSize * app.scale
-            color: AppTheme.greyColor
-            text: "Note found"
+            /*
+            Text
+            {
+                id: textNoteHeader
+                anchors.top: curValuesListView.bottom
+                anchors.topMargin: AppTheme.padding * app.scale
+                anchors.right: parent.right
+                anchors.rightMargin: AppTheme.padding * app.scale
+                height: AppTheme.compHeight * app.scale
+                verticalAlignment: Text.AlignVCenter
+                font.family: AppTheme.fontFamily
+                font.pixelSize: AppTheme.fontNormalSize * app.scale
+                color: AppTheme.greyColor
+                text: qsTr("NOTE")
+            }
+            */
+
+            Image
+            {
+                id: imgNotePhoto
+                anchors.top: parent.top
+                anchors.topMargin: AppTheme.padding/2 * app.scale
+                anchors.left: parent.left
+                anchors.leftMargin: AppTheme.padding * app.scale
+                height: AppTheme.rowHeightMin * app.scale
+                width: height
+                mipmap: true
+                source: (curValuesListView.model[0].imgLink) ? "file:///"+curValuesListView.model[0].imgLink : ""
+
+                fillMode: Image.PreserveAspectCrop
+                layer.enabled: true
+                layer.effect: OpacityMask
+                {
+                    maskSource: imgNotePhotoMask
+                }
+            }
+
+            Rectangle
+            {
+                id: imgNotePhotoMask
+                anchors.left: parent.left
+                anchors.top: parent.top
+                anchors.topMargin: AppTheme.compHeight * app.scale
+                height: AppTheme.rowHeight * app.scale
+                width: height
+                radius: AppTheme.radius * app.scale
+                visible: false
+            }
+
+            Text
+            {
+                id: textNote
+                anchors.top: parent.top
+                anchors.topMargin: AppTheme.padding/2 * app.scale
+                anchors.left: imgNotePhoto.right
+                anchors.leftMargin: AppTheme.padding * app.scale
+                anchors.right: parent.right
+                anchors.rightMargin: AppTheme.padding * app.scale
+                height: AppTheme.compHeight * app.scale
+                verticalAlignment: Text.AlignVCenter
+                font.family: AppTheme.fontFamily
+                font.pixelSize: AppTheme.fontSmallSize * app.scale
+                color: AppTheme.greyColor
+                text: curValuesListView.model[0].note
+                wrapMode: Text.WordWrap
+            }
         }
     }
 }

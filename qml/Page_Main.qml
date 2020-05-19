@@ -45,7 +45,7 @@ Item
         anchors.right: parent.right
         anchors.rightMargin: AppTheme.padding * app.scale
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: AppTheme.rowHeight * app.scale
+        //anchors.bottomMargin: AppTheme.rowHeight * app.scale
 
         contentWidth: width
         contentHeight: 700 * app.scale
@@ -61,6 +61,32 @@ Item
             height: 300 * app.scale
         }
 
+        IconSimpleButton
+        {
+            id: buttonDetails
+            anchors.top: currParamsMainTable.top
+            anchors.topMargin: AppTheme.padding / 2 * app.scale
+            anchors.right: parent.right
+            anchors.rightMargin: AppTheme.padding / 2 * app.scale
+            anchors.verticalCenter: imgTank.verticalCenter
+            height: AppTheme.compHeight * app.scale
+            width: height
+            image: "qrc:/resources/img/icon_arrow_right.png"
+
+            onSigButtonClicked:
+            {
+                var tankParams = [tanksListModel[tanksList.currentIndex].name,
+                                  tanksListModel[tanksList.currentIndex].desc,
+                                  tanksListModel[tanksList.currentIndex].type,
+                                  tanksListModel[tanksList.currentIndex].typeName,
+                                  tanksListModel[tanksList.currentIndex].volume,
+                                  tanksListModel[tanksList.currentIndex].img];
+
+                page_TankData.showPage(true, tankParams)
+            }
+        }
+
+        /*
         Rectangle
         {
             id: rectActivitiesTableHeader
@@ -82,6 +108,7 @@ Item
             }
         }
 
+
         CurrrentActivities
         {
             id: currActivities
@@ -91,6 +118,7 @@ Item
             anchors.topMargin: AppTheme.padding * app.scale
             height: 200 * app.scale
         }
+        */
 
         ScrollBar.vertical: ScrollBar
         {
@@ -111,6 +139,7 @@ Item
         }
     }
 
+    /*
     StandardButton
     {
         id: butShowMore
@@ -131,4 +160,5 @@ Item
             page_TankData.showPage(true, tankParams)
         }
     }
+    */
 }

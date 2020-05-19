@@ -230,7 +230,7 @@ Item
                                 Image
                                 {
                                     anchors.fill: parent
-                                    source: "file:///" + fileLink
+                                    source: (fileLink) ? "file:///" + fileLink : ""
                                     //mipmap: true
                                 }
 
