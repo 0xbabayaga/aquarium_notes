@@ -1,4 +1,5 @@
 import QtQuick 2.12
+import QtGraphicalEffects 1.12
 import "../"
 
 Item
@@ -16,12 +17,7 @@ Item
 
         anchors.fill: parent
         radius: width/2
-        //color: "#00000000"
-        //border.width: 1 * app.scale
-        //border.color: AppTheme.blueColor
         color: AppTheme.blueColor
-        //border.width: 1 * app.scale
-        //border.color: AppTheme.blueColor
 
         Text
         {
@@ -31,7 +27,6 @@ Item
             anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
             horizontalAlignment: Text.Center
-            //color: AppTheme.blueColor
             color: AppTheme.whiteColor
             font.pixelSize: AppTheme.fontSmallSize * app.scale
             font.family: AppTheme.fontFamily
@@ -44,6 +39,19 @@ Item
             onPressed: scaleAnimation2.start()
         }
     }
+
+    /*
+    DropShadow
+    {
+        anchors.fill: rectContainer
+        horizontalOffset: 0
+        verticalOffset: -3
+        radius: 16.0
+        samples: 16
+        color: "#40000000"
+        source: rectContainer
+    }
+    */
 
     ScaleAnimator
     {

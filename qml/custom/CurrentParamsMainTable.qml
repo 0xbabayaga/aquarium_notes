@@ -9,7 +9,13 @@ Item
 
     property alias model: curParamsListView.model
 
-    onModelChanged: currParamsMainTable.height = (model.length + 1) * AppTheme.compHeight * app.scale
+    onModelChanged:
+    {
+        if (model.length > 0)
+            textTableHeader.text = qsTr("LAST MEASURED") + " [" +app.printDate(curParamsListView.model[0].dtNow)+ "]"
+
+        currParamsMainTable.height = (model.length + 1) * AppTheme.compHeight * app.scale
+    }
 
     Behavior on height
     {
@@ -78,13 +84,14 @@ Item
 
             Text
             {
+                id: textTableHeader
                 verticalAlignment: Text.AlignVCenter
                 height: parent.height
                 width: 80 * app.scale
                 font.family: AppTheme.fontFamily
                 font.pixelSize: AppTheme.fontNormalSize * app.scale
                 color: AppTheme.greyColor
-                text: qsTr("LAST MEASURED") + " [" +app.printDate(curParamsListView.model[0].dtNow)+ "]"
+                text: qsTr("LAST MEASURED")
             }
 
             /*
@@ -102,19 +109,42 @@ Item
             */
         }
 
+        Rectangle
+        {
+            anchors.fill: parent
+            visible: (curValuesListModel.length === 0)
+            color: "#00000000"
+
+            Text
+            {
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: AppTheme.rowHeight * 2 * app.scale
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                width: 250 * app.scale
+                font.family: AppTheme.fontFamily
+                font.pixelSize: AppTheme.fontBigSize * app.scale
+                wrapMode: Text.WordWrap
+                color: AppTheme.greyColor
+                text: qsTr("No data found for this aquarium")
+            }
+        }
+
         ListView
         {
             id: curParamsListView
             anchors.fill: parent
             anchors.topMargin: rectMainTableHeader.height
             spacing: 0
+            interactive: false
 
             delegate: Rectangle
             {
                 width: parent.width
                 height: AppTheme.compHeight * app.scale
                 //color: "#00000000"
-                color: (index%2 === 0) ? "#2000adbc" : "#0000adbc"
+                color: (index%2 === 0) ? AppTheme.backLightBlueColor : "#00000000"
 
                 Row
                 {

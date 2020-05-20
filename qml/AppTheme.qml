@@ -26,7 +26,7 @@ QtObject
     property color greyDarkColor: "#808080"
     property color shideColor: "#20bababa"
 
-    property color backLightBlueColor: "#2000adbc"
+    property color backLightBlueColor: "#1000adbc"
     property color lightBlueColor: "#e9feff"
     property color lightGreenColor: "#e7fef2"
 
