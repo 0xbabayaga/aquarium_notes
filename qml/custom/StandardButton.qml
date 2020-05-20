@@ -19,39 +19,53 @@ Item
         radius: width/2
         color: AppTheme.blueColor
 
-        Text
+        Rectangle
         {
-            id: buttonText
-            text: qsTr("Ok")
-            wrapMode: Text.WordWrap
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.horizontalCenter: parent.horizontalCenter
-            horizontalAlignment: Text.Center
-            color: AppTheme.whiteColor
-            font.pixelSize: AppTheme.fontSmallSize * app.scale
-            font.family: AppTheme.fontFamily
-        }
-
-        MouseArea
-        {
+            id: rectContainerShadow
             anchors.fill: parent
-            onClicked: standardButton.sigButtonClicked()
-            onPressed: scaleAnimation2.start()
+            radius: width/2
+            color: AppTheme.blueColor
+        }
+
+        DropShadow
+        {
+            anchors.fill: rectContainerShadow
+            horizontalOffset: 0
+            verticalOffset: 0
+            radius: 14.0
+            samples: 20
+            color: "#40000000"
+            source: rectContainerShadow
+        }
+
+        Rectangle
+        {
+            id: rectCont
+            anchors.fill: parent
+            radius: width/2
+            color: AppTheme.blueColor
+
+            Text
+            {
+                id: buttonText
+                text: qsTr("Ok")
+                wrapMode: Text.WordWrap
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+                horizontalAlignment: Text.Center
+                color: AppTheme.whiteColor
+                font.pixelSize: AppTheme.fontSmallSize * app.scale
+                font.family: AppTheme.fontFamily
+            }
+
+            MouseArea
+            {
+                anchors.fill: parent
+                onClicked: standardButton.sigButtonClicked()
+                onPressed: scaleAnimation2.start()
+            }
         }
     }
-
-    /*
-    DropShadow
-    {
-        anchors.fill: rectContainer
-        horizontalOffset: 0
-        verticalOffset: -3
-        radius: 16.0
-        samples: 16
-        color: "#40000000"
-        source: rectContainer
-    }
-    */
 
     ScaleAnimator
     {
