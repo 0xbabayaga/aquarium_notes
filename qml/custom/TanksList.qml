@@ -43,10 +43,10 @@ Item
                 {
                     anchors.fill: rect
                     horizontalOffset: 0
-                    verticalOffset: -3
+                    verticalOffset: 0
                     radius: 16.0
                     samples: 16
-                    color: "#40000000"
+                    color: "#60000000"
                     source: rect
                 }
 

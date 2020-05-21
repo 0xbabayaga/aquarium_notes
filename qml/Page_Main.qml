@@ -114,13 +114,13 @@ Item
         }
     }
 
-/*
+
     IconSimpleButton
     {
         id: buttonDetails
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: AppTheme.margin * app.scale
+        anchors.right: parent.right
+        anchors.rightMargin: AppTheme.margin * app.scale
+        anchors.top: flickableContainer.top
         height: AppTheme.compHeight * app.scale
         width: height
         image: "qrc:/resources/img/icon_arrow_right.png"
@@ -137,8 +137,8 @@ Item
             page_TankData.showPage(true, tankParams)
         }
     }
-    */
 
+    /*
     StandardButton
     {
         id: butShowMore
@@ -159,4 +159,5 @@ Item
             page_TankData.showPage(true, tankParams)
         }
     }
+    */
 }
