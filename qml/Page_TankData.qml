@@ -11,6 +11,14 @@ Item
     width: app.width
     height: app.height
 
+    ListModel
+    {
+        id: modelTabs
+        ListElement { tab: qsTr("HISTORY") }
+        ListElement { tab: qsTr("GRAPHS") }
+        ListElement { tab: qsTr("ACTION") }
+    }
+
     function showPage(vis, tankParams)
     {
         var tankName
@@ -265,73 +273,14 @@ Item
             }
         }
 
-        Rectangle
+        PagesTabList
         {
-            id: rectTabsContainer
+            id: pageTabsList
             anchors.left: parent.left
-            anchors.leftMargin: AppTheme.padding * app.scale
             anchors.right: parent.right
-            anchors.rightMargin: AppTheme.padding * app.scale
             anchors.top: parent.top
             anchors.topMargin: AppTheme.rowHeightMin * 2 * app.scale
-            height: AppTheme.rowHeight * app.scale
-            color: "#00000000"
-
-            ListModel
-            {
-                id: modelTabs
-                ListElement { tab: qsTr("HISTORY") }
-                ListElement { tab: qsTr("GRAPHS") }
-                ListElement { tab: qsTr("ACTION") }
-            }
-
-            ListView
-            {
-                id: listTab
-                anchors.top: parent.top
-                anchors.left: parent.left
-                anchors.right: parent.right
-                height: AppTheme.rowHeight * app.scale
-                model:modelTabs
-                orientation: ListView.Horizontal
-                spacing: AppTheme.rowSpacing
-
-                property int cellWidth: 110 * app.scale
-
-                highlightRangeMode: ListView.StrictlyEnforceRange
-                //preferredHighlightBegin: (width - cellWidth) / 2
-                //preferredHighlightEnd: (width + cellWidth) / 2
-
-                delegate: Component
-                {
-                    Rectangle
-                    {
-                        width: listTab.cellWidth
-                        height: AppTheme.rowHeight/2 * app.scale
-                        color: "#00000000"
-
-                        Text
-                        {
-                            anchors.fill: parent
-                            color: AppTheme.blueColor
-                            font.pixelSize: (listTab.currentIndex === index) ? AppTheme.fontBigSize * app.scale : AppTheme.fontNormalSize * app.scale
-                            font.family: AppTheme.fontFamily
-                            verticalAlignment: Text.AlignVCenter
-                            horizontalAlignment: Text.AlignHCenter
-                            text: tab
-
-                            MouseArea
-                            {
-                                anchors.fill: parent
-                                onClicked:
-                                {
-                                    listTab.currentIndex = index
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            model: modelTabs
         }
 
 
