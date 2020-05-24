@@ -46,7 +46,7 @@ Item
                         text: tab
                         font.family: AppTheme.fontFamily
                         //font.pixelSize: AppTheme.fontNormalSize * app.scale
-                        font.pixelSize: (index === currentIndex) ? AppTheme.fontBigSize : AppTheme.fontNormalSize
+                        font.pixelSize: (index === currentIndex) ? AppTheme.fontBigSize * app.scale : AppTheme.fontNormalSize * app.scale
                         color: AppTheme.blueColor
                         verticalAlignment: Text.AlignVCenter
                         height: AppTheme.compHeight * app.scale

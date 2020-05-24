@@ -14,12 +14,25 @@ Item
         if (model.length > 0)
             textTableHeader.text = qsTr("LAST MEASURED") + " [" +app.printDate(curParamsListView.model[0].dtNow)+ "]"
 
-        currParamsMainTable.height = (model.length + 1) * AppTheme.compHeight * app.scale
+        currParamsMainTable.height = (currentParamsTable.realModelLength() + 1) * AppTheme.compHeight * app.scale
     }
 
     Behavior on height
     {
         NumberAnimation { duration: 200; easing.type: Easing.InOutQuad }
+    }
+
+    function realModelLength()
+    {
+        var size = 0
+
+        for (var i = 0; i < curParamsListView.model.length; i++)
+        {
+            if (model[i].en === true)
+                size++
+        }
+
+        return size
     }
 
     function formattedValue(val)
@@ -62,9 +75,9 @@ Item
         var max = app.getParamById(paramId).max
 
         if (val >= min && val <= max)
-            return "#A000C000"
+            return AppTheme.positiveChangesColor
         else
-            return "#A0C00000"
+            return AppTheme.negativeChangesColor
     }
 
     Rectangle
@@ -112,7 +125,7 @@ Item
         Rectangle
         {
             anchors.fill: parent
-            visible: (curValuesListModel.length === 0)
+            visible: (currentParamsTable.realModelLength() === 0)
             color: "#00000000"
 
             Text
@@ -142,8 +155,8 @@ Item
             delegate: Rectangle
             {
                 width: parent.width
-                height: AppTheme.compHeight * app.scale
-                //color: "#00000000"
+                height: en ? AppTheme.compHeight * app.scale : 0
+                visible: en
                 color: (index%2 === 0) ? AppTheme.backLightBlueColor : "#00000000"
 
                 Row
@@ -202,7 +215,7 @@ Item
                     width: parent.width
                     height: 1 * app.scale
                     anchors.bottom: parent.bottom
-                    color: ((index + 1) === curParamsListView.model.count) ? "#00000000" : AppTheme.shideColor
+                    color: ((index + 1) === currentParamsTable.realModelLength()) ? "#00000000" : AppTheme.shideColor
                 }
             }
         }

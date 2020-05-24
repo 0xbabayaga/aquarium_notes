@@ -30,5 +30,8 @@
         <file>qml/custom/IconSimpleButton.qml</file>
         <file>resources/img/icon_arrow_right.png</file>
         <file>qml/custom/PagesTabList.qml</file>
+        <file>qml/Tab_Current.qml</file>
+        <file>qml/Tab_Graph.qml</file>
+        <file>qml/Tab_Action.qml</file>
     </qresource>
 </RCC>

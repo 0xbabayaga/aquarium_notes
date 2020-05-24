@@ -9,6 +9,19 @@ Item
 
     property alias model: curValuesListView.model
 
+    function realModelLength()
+    {
+        var size = 0
+
+        for (var i = 0; i < curValuesListView.model.length; i++)
+        {
+            if (model[i].en === true)
+                size++
+        }
+
+        return size
+    }
+
     function formattedValue(val)
     {
         var str = ""
@@ -43,6 +56,58 @@ Item
         return str
     }
 
+    function formattedColor(paramId, val)
+    {
+        var min = app.getParamById(paramId).min
+        var max = app.getParamById(paramId).max
+
+        if (val >= min && val <= max)
+            return AppTheme.positiveChangesColor
+        else
+            return AppTheme.negativeChangesColor
+    }
+
+    function paramProgressState(paramId, val, prevVal)
+    {
+        var min = app.getParamById(paramId).min
+        var max = app.getParamById(paramId).max
+        var color = ""
+        var sign = ""
+
+        if (val !== -1 && prevVal !== -1)
+        {
+            if (val > prevVal)
+            {
+                sign = "🡕"
+
+                if (val > 0.75 * (max - min) + min)
+                    color = AppTheme.negativeChangesColor
+                else if (val < 0.25 * (max - min) + min)
+                    color = AppTheme.negativeChangesColor
+                else
+                    color = AppTheme.positiveChangesColor
+            }
+            else if (val < prevVal)
+            {
+                sign = "🡗"
+
+                if (val > 0.25 * (max - min) + min)
+                    color = AppTheme.positiveChangesColor
+                else
+                    color = AppTheme.negativeChangesColor
+            }
+            else
+            {
+                sign = "-"
+                color = AppTheme.greyColor
+            }
+
+            return [sign, color]
+        }
+        else
+            return ["-", AppTheme.greyColor]
+    }
+
     Rectangle
     {
         anchors.fill: parent
@@ -67,7 +132,7 @@ Item
                 {
                     verticalAlignment: Text.AlignVCenter
                     height: AppTheme.compHeight * app.scale
-                    width: 125 * app.scale
+                    width: 135 * app.scale
                     font.family: AppTheme.fontFamily
                     font.pixelSize: AppTheme.fontBigSize * app.scale
                     color: AppTheme.blueColor
@@ -88,9 +153,9 @@ Item
                 Rectangle
                 {
                     height: AppTheme.compHeight * app.scale
-                    width: 55 * app.scale
+                    width: 60 * app.scale
                     color: AppTheme.blueColor
-                    visible: (curValuesListView.model.length !== 0)
+                    visible: (realModelLength() !== 0)
 
                     Text
                     {
@@ -108,13 +173,13 @@ Item
                 Text
                 {
                     height: AppTheme.compHeight * app.scale
-                    width: 60 * app.scale
+                    width: 65 * app.scale
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                     font.family: AppTheme.fontFamily
                     font.pixelSize: AppTheme.fontBigNormalSize * app.scale
                     color: AppTheme.greyColor
-                    visible: (curValuesListView.model.length > 0)
+                    visible: (realModelLength() > 0)
                     text: app.printDate(curValuesListView.model[0].dtPrev)
                 }
 
@@ -142,12 +207,13 @@ Item
             spacing: 0
             interactive: false
 
-            onModelChanged: height = curValuesListView.model.length * AppTheme.compHeight * app.scale
+            onModelChanged: height = realModelLength() * AppTheme.compHeight * app.scale
 
             delegate: Rectangle
             {
                 width: parent.width
-                height: AppTheme.compHeight * app.scale
+                height: en ? AppTheme.compHeight * app.scale : 0
+                visible: en
                 color: (index%2 === 0) ? AppTheme.backLightBlueColor : "#00000000"
 
                 Row
@@ -160,7 +226,7 @@ Item
                     {
                         height: AppTheme.compHeight * app.scale
                         verticalAlignment: Text.AlignVCenter
-                        width: 110 * app.scale
+                        width: 120 * app.scale
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontNormalSize * app.scale
                         color: AppTheme.blueColor
@@ -181,12 +247,13 @@ Item
                     Text
                     {
                         height: AppTheme.compHeight * app.scale
-                        width: 55 * app.scale
+                        width: 60 * app.scale
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontNormalSize * app.scale
-                        color: AppTheme.blueColor
+                        //font.bold: true
+                        color: formattedColor(paramId, valueNow) //AppTheme.blueColor
                         text: formattedValue(valueNow)
 
                         Rectangle
@@ -211,7 +278,7 @@ Item
                             height: 1 * app.scale
                             width: parent.width
                             color: AppTheme.blueColor
-                            visible: (index === curValuesListView.model.length - 1)
+                            visible: (index === currentParamsTable.realModelLength() - 1)
                         }
                     }
 
@@ -224,7 +291,8 @@ Item
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontNormalSize * app.scale
                         color: AppTheme.greyColor
-                        text: formattedValue(valuePrev)
+                        //text: formattedValue(valuePrev)
+                        text: formattedDiffValue(valuePrev, valueNow)
                     }
 
                     Text
@@ -232,11 +300,13 @@ Item
                         height: AppTheme.compHeight * app.scale
                         width: 30 * app.scale
                         verticalAlignment: Text.AlignVCenter
-                        horizontalAlignment: Text.AlignRight
+                        horizontalAlignment: Text.AlignHCenter
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontNormalSize * app.scale
-                        color: AppTheme.blueColor
-                        text: formattedDiffValue(valuePrev, valueNow)
+                        font.bold: true
+                        color: paramProgressState(paramId, valueNow, valuePrev)[1]
+                        //text: formattedDiffValue(valuePrev, valueNow)
+                        text: paramProgressState(paramId, valueNow, valuePrev)[0]
                     }
                 }
 
@@ -261,7 +331,7 @@ Item
             anchors.right: parent.right
             height: AppTheme.rowHeight * app.scale
             color: AppTheme.backLightBlueColor
-            visible: (curValuesListView.model.length !== 0 && curValuesListView.model[0].note.length > 0)
+            visible: (realModelLength() !== 0 && curValuesListView.model[0].note.length > 0)
             //color: "#00000000"
 
             /*

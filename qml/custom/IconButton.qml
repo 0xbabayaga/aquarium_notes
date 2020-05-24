@@ -1,4 +1,5 @@
 import QtQuick 2.12
+import QtGraphicalEffects 1.12
 import "../"
 
 Item
@@ -12,26 +13,50 @@ Item
     Rectangle
     {
         id: rectContainer
-
         anchors.fill: parent
         radius: width/2
-        color: AppTheme.blueColor
 
-        Image
+        Rectangle
         {
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-            width: AppTheme.rowHeight / 2 * app.scale
-            height: width
-            source: "qrc:/resources/img/icon_plus.png"
-            mipmap: true
+            id: rectContainerShadow
+            anchors.fill: parent
+            radius: width/2
+            color: AppTheme.blueColor
         }
 
-        MouseArea
+        DropShadow
         {
-            anchors.fill: parent
-            onClicked: iconButton.sigButtonClicked()
-            onPressed: scaleAnimation2.start()
+            anchors.fill: rectContainerShadow
+            horizontalOffset: 0
+            verticalOffset: 2 * app.scale
+            radius: 14.0 * app.scale
+            samples: 20
+            color: "#40000000"
+            source: rectContainerShadow
+        }
+
+        Rectangle
+        {
+            anchors.fill: rectContainerShadow
+            radius: width/2
+            color: AppTheme.blueColor
+
+            Image
+            {
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                width: AppTheme.rowHeight / 2 * app.scale
+                height: width
+                source: "qrc:/resources/img/icon_plus.png"
+                mipmap: true
+            }
+
+            MouseArea
+            {
+                anchors.fill: parent
+                onClicked: iconButton.sigButtonClicked()
+                onPressed: scaleAnimation2.start()
+            }
         }
     }
 
