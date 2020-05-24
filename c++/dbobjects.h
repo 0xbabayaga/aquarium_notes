@@ -34,6 +34,7 @@ class LastDataParamRecObj : public QObject
     Q_PROPERTY(unsigned int dtPrev READ dtPrev WRITE setDtPrev NOTIFY dtPrevChanged)
     Q_PROPERTY(QString note READ note WRITE setNote NOTIFY noteChanged)
     Q_PROPERTY(QString imgLink READ imgLink WRITE setImgLink NOTIFY imgLinkChanged)
+    Q_PROPERTY(bool en READ en WRITE setEn NOTIFY enChanged)
 
 public:
     LastDataParamRecObj(char paramId, int idNow, int idPrev, float now, float prev, unsigned int dtNow, unsigned int dtPrev, QString note, QString img)
@@ -47,6 +48,7 @@ public:
         _dtPrev = dtPrev;
         _note = note;
         _imgLink = img;
+        _en = true;
     }
 
     char paramId()                      {   return _paramId;        }
@@ -58,6 +60,7 @@ public:
     unsigned int dtPrev()               {   return _dtPrev;         }
     QString note()                      {   return _note;           }
     QString imgLink()                   {   return _imgLink;        }
+    bool    en()                        {   return _en;             }
 
     void setParamId(char paramId)       {   _paramId = paramId;     }
     void setSmpIdNow(int smpIdNow)      {   _smpIdNow = smpIdNow;   }
@@ -68,6 +71,7 @@ public:
     void setDtPrev(unsigned int dt)     {   _dtPrev = dt;           }
     void setNote(QString note)          {   _note = note;           }
     void setImgLink(QString link)       {   _imgLink = link;        }
+    void setEn(bool en)                 {   _en = en;               }
 
 signals:
     void paramIdChanged();
@@ -79,6 +83,7 @@ signals:
     void dtPrevChanged();
     void noteChanged();
     void imgLinkChanged();
+    void enChanged();
 
 protected:
     char            _paramId;
@@ -90,6 +95,7 @@ protected:
     unsigned int    _dtPrev;
     QString         _note;
     QString         _imgLink;
+    bool            _en;
 };
 
 class ParamObj : public QObject

@@ -89,6 +89,7 @@ private:
 
     /* Store params enumeration */
     QList<QObject*> paramsGuiList;
+    QMap<int, bool> mapPersonal;
 
     QList<QObject*> aquariumTypeList;
 

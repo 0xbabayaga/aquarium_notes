@@ -246,7 +246,6 @@ bool DBManager::getParamsList(QString tankId, AquariumType type)
     QSqlQuery query("SELECT * FROM DICT_TABLE");
     QSqlQuery queryPersonal("SELECT * FROM PERSONAL_PARAM_TABLE WHERE TANK_ID = '"+tankId+"'");
     ParamObj *obj = nullptr;
-    QMap<int, bool> mapPersonal;
 
     mapPersonal.clear();
 
@@ -332,6 +331,9 @@ bool DBManager::getLatestParams()
                                              query.value(query.record().indexOf("TEXT")).toString(),
                                              query.value(query.record().indexOf("IMAGELINK")).toString());
 
+            if (mapPersonal.size() > 0)
+                recObj->setEn(mapPersonal[recObj->paramId()]);
+
             //qDebug() << "TEXT = " << query.value(query.record().indexOf("TEXT")).toString();
             //qDebug() << "IMAGELINK = " << query.value(query.record().indexOf("IMAGELINK")).toString();
 
@@ -354,6 +356,9 @@ bool DBManager::getLatestParams()
                 {
                     recObj = (LastDataParamRecObj*) curSelectedObjs.listOfCurrValues.at(i);
 
+                    if (mapPersonal.size() > 0)
+                        recObj->setEn(mapPersonal[recObj->paramId()]);
+
                     if (query1.value(query1.record().indexOf("PARAM_ID")).toInt() == recObj->paramId())
                     {
                         recObj->setValuePrev(query1.value(query1.record().indexOf("VALUE")).toFloat());
@@ -375,6 +380,9 @@ bool DBManager::getLatestParams()
                                                      (unsigned int)query.value(query.record().indexOf("TIMESTAMP")).toInt(),
                                                      query.value(query.record().indexOf("TEXT")).toString(),
                                                      query.value(query.record().indexOf("IMAGELINK")).toString());
+
+                    if (mapPersonal.size() > 0)
+                        recObj->setEn(mapPersonal[recObj->paramId()]);
 
                     curSelectedObjs.listOfCurrValues.append(recObj);
                 }
@@ -735,7 +743,7 @@ bool DBManager::initDB()
 
     query.exec("INSERT INTO DICT_TABLE "
                "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
-               "VALUES (2, 'SAL', 'Salinity', 'ppt', 26.6, 33.2, 30.6, 34.5, 33.0, 35.0, 34.0, 35.0, -1, -1, -1, -1, -1, -1, -1, -1)");
+               "VALUES (2, 'SAL', 'Salinity', 'ppt', 26.6, 33.2, 30.6, 35, 33.0, 35.0, 34.0, 35.0, -1, -1, -1, -1, -1, -1, -1, -1)");
 
     query.exec("INSERT INTO DICT_TABLE "
                "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
