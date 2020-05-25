@@ -54,7 +54,7 @@ const static QMap<QString, QString> paramTranslationMap =
     {   "ORP",  "ORP"               }
 };
 
-DBManager::DBManager(QQmlApplicationEngine *engine, QObject *parent) : QObject(parent)
+DBManager::DBManager(QQuickView *v, QObject *parent) : QObject(parent)
 {
     bool initRequired = false;
 
@@ -74,7 +74,8 @@ DBManager::DBManager(QQmlApplicationEngine *engine, QObject *parent) : QObject(p
     if (initRequired == true)
         initDB();
 
-    qmlEngine = engine;
+    view = v;
+    root = (QObject*) view->rootObject();
 
     aquariumTypeList.clear();
 
@@ -84,14 +85,14 @@ DBManager::DBManager(QQmlApplicationEngine *engine, QObject *parent) : QObject(p
         aquariumTypeList.append(obj);
     }
 
-    qmlEngine->rootContext()->setContextProperty("aquariumTypesListModel", QVariant::fromValue(aquariumTypeList));
+    view->rootContext()->setContextProperty("aquariumTypesListModel", QVariant::fromValue(aquariumTypeList));
 
-    connect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateAccount(QString, QString, QString)), this, SLOT(onGuiUserCreate(QString, QString, QString)));
-    connect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateTank(QString, int, int, int, int, QString)), this, SLOT(onGuiTankCreate(QString, int, int, int, int, QString)));
-    connect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecord(int, int, double)), this, SLOT(onGuiAddRecord(int, int, double)));
-    connect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecordNotes(int, QString, QString)), this, SLOT(onGuiAddRecordNote(int, QString, QString)));
-    connect(qmlEngine->rootObjects().first(), SIGNAL(sigTankSelected(int)), this, SLOT(onGuiTankSelected(int)));
-    connect(qmlEngine->rootObjects().first(), SIGNAL(sigPersonalParamStateChanged(int, bool)), this, SLOT(onGuiPersonalParamStateChanged(int, bool)));
+    connect(root, SIGNAL(sigCreateAccount(QString, QString, QString)), this, SLOT(onGuiUserCreate(QString, QString, QString)));
+    connect(root, SIGNAL(sigCreateTank(QString, int, int, int, int, QString)), this, SLOT(onGuiTankCreate(QString, int, int, int, int, QString)));
+    connect(root, SIGNAL(sigAddRecord(int, int, double)), this, SLOT(onGuiAddRecord(int, int, double)));
+    connect(root, SIGNAL(sigAddRecordNotes(int, QString, QString)), this, SLOT(onGuiAddRecordNote(int, QString, QString)));
+    connect(root, SIGNAL(sigTankSelected(int)), this, SLOT(onGuiTankSelected(int)));
+    connect(root, SIGNAL(sigPersonalParamStateChanged(int, bool)), this, SLOT(onGuiPersonalParamStateChanged(int, bool)));
 
     curSelectedObjs.lastSmpId = getLastSmpId();
     setLastSmpId(curSelectedObjs.lastSmpId);
@@ -112,18 +113,18 @@ DBManager::DBManager(QQmlApplicationEngine *engine, QObject *parent) : QObject(p
 #endif
 
     imageGallery = new ImageGallery();
-    qmlEngine->rootContext()->setContextProperty("imageGalleryListModel", QVariant::fromValue(imageGallery->getGalleryObjList()));
+    root->setProperty("imageGalleryListModel", QVariant::fromValue(imageGallery->getGalleryObjList()));
 
 }
 
 DBManager::~DBManager()
 {
-    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateAccount(QString, QString, QString)), this, SLOT(onUserCreate(QString, QString, QString)));
-    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateTank(QString, int, int, int, int)), this, SLOT(onGuiTankCreate(QString, int, int, int, int)));
-    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecord(int, int, float)), this, SLOT(onGuiAddRecord(int, int, float)));
-    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecordNotes(int, QString, QString)), this, SLOT(onGuiAddRecordNote(int, QString, QString)));
-    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigTankSelected(int)), this, SLOT(onGuiTankSelected(int)));
-    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigPersonalParamStateChanged(int, bool)), this, SLOT(onGuiPersonalParamStateChanged(int, bool)));
+    disconnect(root, SIGNAL(sigCreateAccount(QString, QString, QString)), this, SLOT(onUserCreate(QString, QString, QString)));
+    disconnect(root, SIGNAL(sigCreateTank(QString, int, int, int, int)), this, SLOT(onGuiTankCreate(QString, int, int, int, int)));
+    disconnect(root, SIGNAL(sigAddRecord(int, int, float)), this, SLOT(onGuiAddRecord(int, int, float)));
+    disconnect(root, SIGNAL(sigAddRecordNotes(int, QString, QString)), this, SLOT(onGuiAddRecordNote(int, QString, QString)));
+    disconnect(root, SIGNAL(sigTankSelected(int)), this, SLOT(onGuiTankSelected(int)));
+    disconnect(root, SIGNAL(sigPersonalParamStateChanged(int, bool)), this, SLOT(onGuiPersonalParamStateChanged(int, bool)));
 
     if (curSelectedObjs.user != nullptr)
         delete curSelectedObjs.user;
@@ -143,7 +144,7 @@ bool DBManager::getCurrentObjs()
 
             curSelectedObjs.tankIdx = 0;
 
-            qmlEngine->rootContext()->setContextProperty("tanksListModel", QVariant::fromValue(curSelectedObjs.listOfUserTanks));
+            view->rootContext()->setContextProperty("tanksListModel", QVariant::fromValue(curSelectedObjs.listOfUserTanks));
 
             getParamsList(currentTankSelected()->tankId(), (AquariumType) currentTankSelected()->type());
 
@@ -174,7 +175,7 @@ void DBManager::setInitialDialogStage(int stage, QString name)
 {
     QObject *obj = nullptr;
 
-    obj = qmlEngine->rootObjects().first()->findChild<QObject*>("page_AccountCreation");
+    obj = root->findChild<QObject*>("page_AccountCreation");
 
     if (obj != nullptr)
     {
@@ -187,7 +188,7 @@ void DBManager::setLastSmpId(int id)
 {
     QObject *obj = nullptr;
 
-    obj = qmlEngine->rootObjects().first();
+    obj = root;
 
     if (obj != nullptr)
     {
@@ -274,7 +275,7 @@ bool DBManager::getParamsList(QString tankId, AquariumType type)
         obj->setFullName(paramTranslationMap[obj->shortName()]);
     }
 
-    qmlEngine->rootContext()->setContextProperty("allParamsListModel", QVariant::fromValue(paramsGuiList));
+    view->rootContext()->setContextProperty("allParamsListModel", QVariant::fromValue(paramsGuiList));
 
     return res;
 }
@@ -390,7 +391,7 @@ bool DBManager::getLatestParams()
         }
     }
 
-    qmlEngine->rootContext()->setContextProperty("curValuesListModel", QVariant::fromValue(curSelectedObjs.listOfCurrValues));
+    view->rootContext()->setContextProperty("curValuesListModel", QVariant::fromValue(curSelectedObjs.listOfCurrValues));
 
     return false;
 }

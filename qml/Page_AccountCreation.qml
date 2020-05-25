@@ -5,7 +5,6 @@ import QtQuick.Window 2.12
 import QtGraphicalEffects 1.12
 import "custom"
 import AppInitEnum 1.0
-//import ANotes.PermissionManager 1.0
 
 Item
 {
