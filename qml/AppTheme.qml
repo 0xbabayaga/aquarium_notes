@@ -16,7 +16,7 @@ QtObject
     property int rowHeight: 64
     property int compHeight: 32
 
-    property string fontFamily: "Century Gothic"
+    //property string fontFamily: "Century Gothic"
 
     property color whiteColor: "#ffffff"
     property color blueColor: "#00a7b8"
@@ -38,4 +38,8 @@ QtObject
     property int fontNormalSize: 16
     property int fontBigSize: 22
     property int fontSuperBigSize: 32
+
+    property FontLoader appFont: FontLoader { source: "qrc:/resources/font/Century.otf" }
+
+    property string fontFamily: appFont.name
 }
