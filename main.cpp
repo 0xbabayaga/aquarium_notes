@@ -1,14 +1,13 @@
-#include <QApplication>
-#include <QQuickView>
+#include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include "c++/dbmanager.h"
 #include "c++/AppDefs.h"
-#include <QDebug>
 
 int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
-    QQuickView viewer;
+    QGuiApplication app(argc, argv);
+
+    //qmlRegisterType<PermissionManager>("ANotes.PermissionManager", 1, 0, "PermissionManager");
 
     AppDef::declareQML();
 
@@ -16,26 +15,17 @@ int main(int argc, char *argv[])
     app.setOrganizationDomain("org.anotes.com");
     app.setApplicationName("AquariumNotes");
 
-
-
-#ifdef Q_OS_WIN
-    QString extraImportPath(QStringLiteral("%1/../../../../%2"));
-#else
-    QString extraImportPath(QStringLiteral("%1/../../../%2"));
-#endif
-
+    QQmlApplicationEngine engine;
     const QUrl url(QStringLiteral("qrc:/main.qml"));
+    QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
+                     &app, [url](QObject *obj, const QUrl &objUrl) {
+        if (!obj && url == objUrl)
+            QCoreApplication::exit(-1);
+    }, Qt::QueuedConnection);
+    engine.load(url);
 
-    viewer.engine()->addImportPath(extraImportPath.arg(QGuiApplication::applicationDirPath(),
-                                          QString::fromLatin1("qml")));
-    QObject::connect(viewer.engine(), &QQmlEngine::quit, &viewer, &QWindow::close);
+    DBManager *dbMan = new DBManager(&engine);
 
-    viewer.setSource(url);
-    //viewer.setResizeMode(QQuickView::SizeRootObjectToView);
-
-    DBManager *dbMan = new DBManager(&viewer);
-
-    viewer.show();
 
     return app.exec();
 }

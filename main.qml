@@ -2,11 +2,10 @@ import QtQuick 2.12
 import QtQuick.Window 2.12
 import QtQuick.Controls 2.12
 import QtGraphicalEffects 1.12
-import QtCharts 2.3
 import "qml"
 import "qml/custom"
 
-Item
+Window
 {
     id: app
     objectName: "app"

@@ -5,7 +5,6 @@
 #include <QSqlDatabase>
 #include <QDir>
 #include <QQmlApplicationEngine>
-#include <QQuickView>
 #include "dbobjects.h"
 #include "imagegallery.h"
 
@@ -22,7 +21,7 @@ class DBManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit DBManager(QQuickView *v, QObject *parent = nullptr);
+    explicit DBManager(QQmlApplicationEngine *engine, QObject *parent = nullptr);
     ~DBManager();
 
     typedef struct
@@ -98,8 +97,7 @@ private:
     UTObj           curSelectedObjs;
 
 private:
-    QQuickView      *view = nullptr;
-    QObject         *root = nullptr;
+    QQmlApplicationEngine   *qmlEngine = nullptr;
 };
 
 #endif // DBMANAGER_H
