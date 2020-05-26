@@ -50,6 +50,7 @@ private:
     /* Read basics */
     //bool    getParamsList();
     bool    getParamsList(QString tankId, AquariumType type);
+    bool    getHistoryParams(QString tankId);
     int     getLastSmpId();
     bool    getLatestParams();
 

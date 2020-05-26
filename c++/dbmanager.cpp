@@ -149,6 +149,8 @@ bool DBManager::getCurrentObjs()
 
             getLatestParams();
 
+            getHistoryParams(currentTankSelected()->tankId());
+
             return true;
         }
         else
@@ -391,6 +393,59 @@ bool DBManager::getLatestParams()
     }
 
     qmlEngine->rootContext()->setContextProperty("curValuesListModel", QVariant::fromValue(curSelectedObjs.listOfCurrValues));
+
+    return false;
+}
+
+bool DBManager::getHistoryParams(QString tankId)
+{
+    QList<int> idList;
+    bool found = false;
+
+    idList.clear();
+
+    QSqlQuery qId("SELECT SMP_ID FROM HISTORY_VALUE_TABLE "
+                  "WHERE TANK_ID = '"+tankId+"'");
+
+    while (qId.next())
+    {
+        found = false;
+
+        for (int i = 0; i < idList.size(); i++)
+        {
+            if (idList.at(i) == qId.value(0).toInt())
+                found = true;
+        }
+
+        if (found == false)
+            idList.append(qId.value(0).toInt());
+    }
+
+
+    QVariantList list;
+    list << 10 << QColor(Qt::green) << "bottles";
+
+    QVariantMap map;
+    map.insert("language", "QML");
+    map.insert("released", QDate(2010, 9, 21));
+
+    for (int i = 0; i < idList.size(); i++)
+    {
+        QSqlQuery qParams("SELECT PARAM_ID, VALUE, TIMESTAMP FROM HISTORY_VALUE_TABLE "
+                          "WHERE SMP_ID = '"+QString::number(idList.at(i))+"'");
+
+        // TIMESTAMP:PARAM_ID/VALUE
+
+        while (qParams.next())
+        {
+
+        }
+    }
+
+
+    //QMetaObject::invokeMethod(view.rootObject(), "readValues",
+    //                       Q_ARG(QVariant, QVariant::fromValue(list)),
+    //                        Q_ARG(QVariant, QVariant::fromValue(map)));
 
     return false;
 }
