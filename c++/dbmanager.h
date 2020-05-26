@@ -68,6 +68,9 @@ private:
     /* Gui methods */
     void    setInitialDialogStage(int stage, QString name);
     void    setLastSmpId(int id);
+    /* Gui diagram drawing */
+    void    drawAxis(int xMin, int xMax, float yMin, float yMax);
+    void    drawCurve(int paramId, QVariantMap points);
 
 signals:
 

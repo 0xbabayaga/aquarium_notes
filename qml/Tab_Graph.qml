@@ -9,19 +9,26 @@ import ".."
 Item
 {
     id: tab_Graph
+    objectName: "tab_Graph"
 
     property var ctx: null
 
-    function readValues(anArray, anObject)
+    function drawAxis(xMin, xMax, yMin, yMax)
     {
-        for (var i = 0; i < anArray.length; i++)
-            console.log("Array item:", anArray[i])
-
-        for (var prop in anObject)
+        if (ctx !== null)
         {
-            console.log("Object item:", prop, "=", anObject[prop])
+            ctx.setLimits(xMin, xMax, yMin, yMax)
+            //canvas.requestPaint()
         }
     }
+
+    function drawCurve(name, points)
+    {
+        ctx.drawGrid()
+        ctx.drawCurve(points)
+        canvas.requestPaint()
+    }
+
 
     Rectangle
     {
@@ -41,7 +48,7 @@ Item
                 if (ctx === null)
                     ctx = new Diagrams.DiagramView(canvas.getContext('2d'), canvas.width, canvas.height)
 
-                ctx.draw()
+                //ctx.draw()
             }
         }
     }

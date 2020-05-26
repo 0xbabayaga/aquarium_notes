@@ -197,6 +197,37 @@ void DBManager::setLastSmpId(int id)
     }
 }
 
+void DBManager::drawAxis(int xMin, int xMax, float yMin, float yMax)
+{
+    QObject *obj = nullptr;
+
+    obj = qmlEngine->rootObjects().first()->findChild<QObject*>("tab_Graph");
+
+    if (obj != nullptr)
+        QMetaObject::invokeMethod(obj, "drawAxis",
+                                  Q_ARG(QVariant, xMin),
+                                  Q_ARG(QVariant, xMax),
+                                  Q_ARG(QVariant, yMin),
+                                  Q_ARG(QVariant, yMax));
+    else
+        qDebug() << "tab_Graph not found!";
+}
+
+void DBManager::drawCurve(int paramId, QVariantMap points)
+{
+    QObject *obj = nullptr;
+
+    obj = qmlEngine->rootObjects().first()->findChild<QObject*>("tab_Graph");
+
+    if (obj != nullptr)
+        QMetaObject::invokeMethod(obj, "drawCurve",
+                                  Q_ARG(QVariant, paramId),
+                                  Q_ARG(QVariant, QVariant::fromValue(points)));
+    else
+        qDebug() << "tab_Graph not found!";
+}
+
+
 void DBManager::onGuiUserCreate(QString uname, QString upass, QString email)
 {
     if (createUser(uname, upass, "123", email) == true)
@@ -235,6 +266,8 @@ void DBManager::onGuiTankSelected(int tankIdx)
     curSelectedObjs.tankIdx = tankIdx;
 
     getLatestParams();
+
+    getHistoryParams(currentTankSelected()->tankId());
 }
 
 void DBManager::onGuiPersonalParamStateChanged(int paramId, bool en)
@@ -336,9 +369,6 @@ bool DBManager::getLatestParams()
             if (mapPersonal.size() > 0)
                 recObj->setEn(mapPersonal[recObj->paramId()]);
 
-            //qDebug() << "TEXT = " << query.value(query.record().indexOf("TEXT")).toString();
-            //qDebug() << "IMAGELINK = " << query.value(query.record().indexOf("IMAGELINK")).toString();
-
             curSelectedObjs.listOfCurrValues.append(recObj);
         }
 
@@ -400,11 +430,16 @@ bool DBManager::getLatestParams()
 bool DBManager::getHistoryParams(QString tankId)
 {
     QList<int> idList;
+    QVariantMap points;
+    QList<QVariantMap> curveList;
     bool found = false;
+    int xMin = INT_MAX, xMax = INT_MIN;
+    float yMin = __FLT_MAX__, yMax = __FLT_MIN__;
 
     idList.clear();
+    curveList.clear();
 
-    QSqlQuery qId("SELECT SMP_ID FROM HISTORY_VALUE_TABLE "
+    QSqlQuery qId("SELECT PARAM_ID FROM HISTORY_VALUE_TABLE "
                   "WHERE TANK_ID = '"+tankId+"'");
 
     while (qId.next())
@@ -421,31 +456,45 @@ bool DBManager::getHistoryParams(QString tankId)
             idList.append(qId.value(0).toInt());
     }
 
-
-    QVariantList list;
-    list << 10 << QColor(Qt::green) << "bottles";
-
-    QVariantMap map;
-    map.insert("language", "QML");
-    map.insert("released", QDate(2010, 9, 21));
-
     for (int i = 0; i < idList.size(); i++)
     {
-        QSqlQuery qParams("SELECT PARAM_ID, VALUE, TIMESTAMP FROM HISTORY_VALUE_TABLE "
-                          "WHERE SMP_ID = '"+QString::number(idList.at(i))+"'");
+        QSqlQuery qParams("SELECT VALUE, TIMESTAMP FROM HISTORY_VALUE_TABLE "
+                          "WHERE PARAM_ID = '"+QString::number(idList.at(i))+"'");
 
-        // TIMESTAMP:PARAM_ID/VALUE
+        points.clear();
 
         while (qParams.next())
-        {
+            points.insert(QString::number(qParams.value(1).toInt()), qParams.value(0).toFloat());
 
-        }
+        curveList.append(points);
     }
 
 
-    //QMetaObject::invokeMethod(view.rootObject(), "readValues",
-    //                       Q_ARG(QVariant, QVariant::fromValue(list)),
-    //                        Q_ARG(QVariant, QVariant::fromValue(map)));
+    for (int i = 0; i < curveList.size(); i++)
+    {
+        for (QVariantMap::const_iterator it = curveList.at(i).begin(); it != curveList.at(i).end(); it++)
+        {
+            if (it.key().toInt() < xMin)
+                xMin = it.key().toInt();
+
+            if (it.value().toFloat() < yMin)
+                yMin = it.value().toFloat();
+
+            if (it.key().toInt() > xMax)
+                xMax = it.key().toInt();
+
+            if (it.value().toFloat() > yMax)
+                yMax = it.value().toFloat();
+        }
+    }
+
+    drawAxis(xMin, xMax, yMin, yMax);
+
+    for (int i = 5; i < curveList.size(); i++)
+    {
+        drawCurve(idList.at(i), curveList.at(i));
+        break;
+    }
 
     return false;
 }
