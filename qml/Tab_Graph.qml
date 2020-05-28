@@ -12,20 +12,20 @@ Item
     objectName: "tab_Graph"
 
     property var ctx: null
+    property int diagramHeight: 50 * app.scale
 
-    function drawAxis(xMin, xMax, yMin, yMax)
+    function drawAxis(xMin, xMax, curvesCount)
     {
         if (ctx !== null)
         {
-            ctx.setLimits(xMin, xMax, yMin, yMax)
-            //canvas.requestPaint()
+            canvas.height = diagramHeight * curvesCount
+            ctx.setDiagramParams(xMin, xMax, canvas.width, canvas.height, diagramHeight)
         }
     }
 
-    function drawCurve(name, points)
+    function drawCurve(name, yMin, yMax, points)
     {
-        ctx.drawGrid()
-        ctx.drawCurve(points)
+        ctx.drawCurve(yMin, yMax, points)
         canvas.requestPaint()
     }
 
@@ -41,14 +41,12 @@ Item
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.right: parent.right
-            height: 300 * app.scale
+            height: diagramHeight
 
             onPaint:
             {
                 if (ctx === null)
                     ctx = new Diagrams.DiagramView(canvas.getContext('2d'), canvas.width, canvas.height)
-
-                //ctx.draw()
             }
         }
     }

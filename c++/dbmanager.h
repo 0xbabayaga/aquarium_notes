@@ -10,6 +10,9 @@
 
 #define RAND_ID_LENGTH  16
 
+#define DIAGRAMM_DRAW_GAP_TOP       0.2  //Means +20% of full scale
+#define DIAGRAMM_DRAW_GAP_BOTTOM    0.2  //Means +20% of full scale
+
 typedef enum
 {
     UStatus_Disabled = 0,
@@ -69,8 +72,8 @@ private:
     void    setInitialDialogStage(int stage, QString name);
     void    setLastSmpId(int id);
     /* Gui diagram drawing */
-    void    drawAxis(int xMin, int xMax, float yMin, float yMax);
-    void    drawCurve(int paramId, QVariantMap points);
+    void    drawTimeAxis(int xMin, int xMax, int curvesCount);
+    void    drawCurve(int paramId, float yMin, float yMax, QVariantMap points);
 
 signals:
 

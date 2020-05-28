@@ -197,7 +197,7 @@ void DBManager::setLastSmpId(int id)
     }
 }
 
-void DBManager::drawAxis(int xMin, int xMax, float yMin, float yMax)
+void DBManager::drawTimeAxis(int xMin, int xMax, int curvesCount)
 {
     QObject *obj = nullptr;
 
@@ -207,13 +207,12 @@ void DBManager::drawAxis(int xMin, int xMax, float yMin, float yMax)
         QMetaObject::invokeMethod(obj, "drawAxis",
                                   Q_ARG(QVariant, xMin),
                                   Q_ARG(QVariant, xMax),
-                                  Q_ARG(QVariant, yMin),
-                                  Q_ARG(QVariant, yMax));
+                                  Q_ARG(QVariant, curvesCount));
     else
         qDebug() << "tab_Graph not found!";
 }
 
-void DBManager::drawCurve(int paramId, QVariantMap points)
+void DBManager::drawCurve(int paramId, float yMin, float yMax, QVariantMap points)
 {
     QObject *obj = nullptr;
 
@@ -222,6 +221,8 @@ void DBManager::drawCurve(int paramId, QVariantMap points)
     if (obj != nullptr)
         QMetaObject::invokeMethod(obj, "drawCurve",
                                   Q_ARG(QVariant, paramId),
+                                  Q_ARG(QVariant, yMin),
+                                  Q_ARG(QVariant, yMax),
                                   Q_ARG(QVariant, QVariant::fromValue(points)));
     else
         qDebug() << "tab_Graph not found!";
@@ -472,28 +473,44 @@ bool DBManager::getHistoryParams(QString tankId)
 
     for (int i = 0; i < curveList.size(); i++)
     {
+        /* Looking for min max Dates */
         for (QVariantMap::const_iterator it = curveList.at(i).begin(); it != curveList.at(i).end(); it++)
         {
             if (it.key().toInt() < xMin)
                 xMin = it.key().toInt();
 
-            if (it.value().toFloat() < yMin)
-                yMin = it.value().toFloat();
-
             if (it.key().toInt() > xMax)
                 xMax = it.key().toInt();
+        }
+    }
+
+    drawTimeAxis(xMin, xMax, curveList.size());
+
+    for (int i = 0; i < curveList.size(); i++)
+    {
+        yMin = __FLT_MAX__;
+        yMax = __FLT_MIN__;
+
+        /* Looking for min\max for current curve */
+        for (QVariantMap::const_iterator it = curveList.at(i).begin(); it != curveList.at(i).end(); it++)
+        {
+            if (it.value().toFloat() < yMin)
+                yMin = it.value().toFloat();
 
             if (it.value().toFloat() > yMax)
                 yMax = it.value().toFloat();
         }
-    }
 
-    drawAxis(xMin, xMax, yMin, yMax);
+        if (yMin > 0)
+            yMin -= yMin * DIAGRAMM_DRAW_GAP_BOTTOM;
 
-    for (int i = 5; i < curveList.size(); i++)
-    {
-        drawCurve(idList.at(i), curveList.at(i));
-        break;
+        if (yMax > 0)
+            yMax += yMax * DIAGRAMM_DRAW_GAP_TOP;
+
+        drawCurve(idList.at(i), yMin, yMax, curveList.at(i));
+
+        //if (i == 2)
+        //break;
     }
 
     return false;
