@@ -14,68 +14,42 @@ function DiagramView(ctx, width, height)
     this.yMin = 0
     this.yMax = 0
     this.stepX = 0
-
-    this.curveCnt = 0
-    this.diagramHeight = 0
+    this.name = ""
 
     this.leftMargin = 16
     this.rightMargin = 16
     this.bottomMargin = 16
     this.topMargin = 16
 
-    this.dWidth = 0
-    this.dHeight = 0
-    this.yTop = 0
+    this.drawWidth = 0
+    this.drawHeight = 0
 }
 
-DiagramView.prototype.init = function(width, height)
+DiagramView.prototype.init = function()
 {
-    this.width = width
-    this.height = height
-
-    this.dWidth = this.width - this.leftMargin - this.rightMargin
-    this.dHeight = this.height - this.bottomMargin - this.topMargin
-    this.yTop = this.height - this.bottomMargin
+    this.drawWidth = this.width - this.leftMargin - this.rightMargin
+    this.drawHeight = this.height - this.bottomMargin - this.topMargin
 }
 
-DiagramView.prototype.printDate = function(tm)
+DiagramView.prototype.setDiagramParams = function(xMin, xMax)
 {
-    var date = new Date(tm * 1000)
-    var day = "0" + date.getDate()
-    var month = "0" + date.getMonth()
-    var year = "0" + date.getYear()
-
-    var formattedDate = day.substr(-2) + '/' + month.substr(-2)
-
-    return formattedDate
-}
-
-DiagramView.prototype.setDiagramParams = function(xMin, xMax, width, height, diagramHeight)
-{
-    this.init(width, height)
+    this.init()
 
     this.xMin = xMin
     this.xMax = xMax
-    this.stepX = (this.xMax - this.xMin) / this.dWidth
-    this.diagramHeight = diagramHeight
-    this.curveCnt = 0
+    this.stepX = (this.xMax - this.xMin) / this.drawWidth
 
     this.ctx.clearRect(0, 0, this.width, this.height);
 }
 
-DiagramView.prototype.draw = function()
-{
-    this.drawGrid()
-}
-
 DiagramView.prototype.drawGrid = function()
 {
-    var yShift = this.curveCnt * this.diagramHeight
+    var yShift = 0
 
     this.ctx.fillStyle = "#2000ADbC"
-    this.ctx.fillRect(this.leftMargin, yShift, this.dWidth, this.diagramHeight);
+    this.ctx.fillRect(this.leftMargin, yShift, this.drawWidth, this.drawHeight);
 
-    yShift += this.diagramHeight
+    yShift += this.drawHeight
 
     this.ctx.beginPath()
 
@@ -93,18 +67,18 @@ DiagramView.prototype.drawGrid = function()
     this.ctx.stroke()
 }
 
-DiagramView.prototype.drawCurve = function(yMin, yMax, points)
+DiagramView.prototype.drawCurve = function(name, xMin, xMax, yMin, yMax, points)
 {
     var curveStart = 1
     var x = 0
     var y = 0
     var yScale = 1
 
+    this.setDiagramParams(xMin, xMax)
+
     this.drawGrid()
 
-    yScale = this.diagramHeight / (yMax - yMin)
-
-    console.log("CURVE #", this.curveCnt, "scale =",  yScale)
+    yScale = this.drawHeight / (yMax - yMin)
 
     this.ctx.beginPath()
 
@@ -114,7 +88,7 @@ DiagramView.prototype.drawCurve = function(yMin, yMax, points)
     for (var pt in points)
     {
         x = this.leftMargin + (parseInt(pt) - this.xMin) / this.stepX
-        y = (this.curveCnt + 1) * this.diagramHeight - parseFloat(points[pt]) * yScale
+        y = this.drawHeight - parseFloat(points[pt]) * yScale
 
         console.log("CURVE #", this.curveCnt, x, y)
 
@@ -138,3 +112,14 @@ DiagramView.prototype.drawCurve = function(yMin, yMax, points)
     this.curveCnt++
 }
 
+DiagramView.prototype.printDate = function(tm)
+{
+    var date = new Date(tm * 1000)
+    var day = "0" + date.getDate()
+    var month = "0" + date.getMonth()
+    var year = "0" + date.getYear()
+
+    var formattedDate = day.substr(-2) + '/' + month.substr(-2)
+
+    return formattedDate
+}

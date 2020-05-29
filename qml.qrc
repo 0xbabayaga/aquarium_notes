@@ -35,5 +35,6 @@
         <file>qml/Tab_Action.qml</file>
         <file>resources/font/Century.otf</file>
         <file>js/diagrams.js</file>
+        <file>qml/custom/DiagramView.qml</file>
     </qresource>
 </RCC>

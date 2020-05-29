@@ -73,7 +73,7 @@ private:
     void    setLastSmpId(int id);
     /* Gui diagram drawing */
     void    drawTimeAxis(int xMin, int xMax, int curvesCount);
-    void    drawCurve(int paramId, float yMin, float yMax, QVariantMap points);
+    void    drawCurve(int paramId, int xMin, int xMax, float yMin, float yMax, QVariantMap points);
 
 signals:
 

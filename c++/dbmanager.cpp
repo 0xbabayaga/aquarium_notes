@@ -212,7 +212,7 @@ void DBManager::drawTimeAxis(int xMin, int xMax, int curvesCount)
         qDebug() << "tab_Graph not found!";
 }
 
-void DBManager::drawCurve(int paramId, float yMin, float yMax, QVariantMap points)
+void DBManager::drawCurve(int paramId, int xMin, int xMax, float yMin, float yMax, QVariantMap points)
 {
     QObject *obj = nullptr;
 
@@ -221,6 +221,8 @@ void DBManager::drawCurve(int paramId, float yMin, float yMax, QVariantMap point
     if (obj != nullptr)
         QMetaObject::invokeMethod(obj, "drawCurve",
                                   Q_ARG(QVariant, paramId),
+                                  Q_ARG(QVariant, xMin),
+                                  Q_ARG(QVariant, xMax),
                                   Q_ARG(QVariant, yMin),
                                   Q_ARG(QVariant, yMax),
                                   Q_ARG(QVariant, QVariant::fromValue(points)));
@@ -484,9 +486,7 @@ bool DBManager::getHistoryParams(QString tankId)
         }
     }
 
-    drawTimeAxis(xMin, xMax, curveList.size());
-
-    for (int i = 0; i < curveList.size(); i++)
+    for (int i = 5; i < curveList.size(); i++)
     {
         yMin = __FLT_MAX__;
         yMax = __FLT_MIN__;
@@ -507,10 +507,10 @@ bool DBManager::getHistoryParams(QString tankId)
         if (yMax > 0)
             yMax += yMax * DIAGRAMM_DRAW_GAP_TOP;
 
-        drawCurve(idList.at(i), yMin, yMax, curveList.at(i));
+        drawCurve(idList.at(i), xMin, xMax, yMin, yMax, curveList.at(i));
 
         //if (i == 2)
-        //break;
+        break;
     }
 
     return false;

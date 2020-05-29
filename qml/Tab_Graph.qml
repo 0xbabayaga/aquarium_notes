@@ -11,43 +11,58 @@ Item
     id: tab_Graph
     objectName: "tab_Graph"
 
-    property var ctx: null
-    property int diagramHeight: 50 * app.scale
+    property int curveCount: 0
 
-    function drawAxis(xMin, xMax, curvesCount)
+    property var component
+    property var diagram
+
+    function drawCurve(name, xMin, xMax, yMin, yMax, points)
     {
-        if (ctx !== null)
+        component = Qt.createComponent("qrc:/qml/custom/DiagramView.qml");
+
+        if (component.status === Component.Ready)
         {
-            canvas.height = diagramHeight * curvesCount
-            ctx.setDiagramParams(xMin, xMax, canvas.width, canvas.height, diagramHeight)
+            diagram = component.createObject(rectContainer, { "x": 0, "y": curveCount * 100 * app.scale });
+
+            if (diagram === null)
+                console.log("Error creating object")
+
+            delayedTmr.start()
+
+            curveCount++
         }
     }
 
-    function drawCurve(name, yMin, yMax, points)
+    function delayedDraw()
     {
-        ctx.drawCurve(yMin, yMax, points)
-        canvas.requestPaint()
+        console.log("triggered")
+        diagram.drawCurve("asd", 0, 0, 100, 100, 0)
     }
 
+
+    Timer
+    {
+        id: delayedTmr
+        running: false
+        interval: 1000
+        onTriggered: delayedDraw()
+    }
 
     Rectangle
     {
+        id: rectContainer
         anchors.fill: parent
         color: "#00000040"
 
-        Canvas
+        /*
+        DiagramView
         {
-            id: canvas
-            anchors.top: parent.top
+            id: diagramView
             anchors.left: parent.left
             anchors.right: parent.right
-            height: diagramHeight
-
-            onPaint:
-            {
-                if (ctx === null)
-                    ctx = new Diagrams.DiagramView(canvas.getContext('2d'), canvas.width, canvas.height)
-            }
+            anchors.top: parent.top
+            height: 100 * app.scale
         }
+        */
     }
 }
