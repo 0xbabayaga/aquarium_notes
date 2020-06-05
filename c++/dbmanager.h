@@ -10,8 +10,8 @@
 
 #define RAND_ID_LENGTH  16
 
-#define DIAGRAMM_DRAW_GAP_TOP       0.2  //Means +20% of full scale
-#define DIAGRAMM_DRAW_GAP_BOTTOM    0.2  //Means +20% of full scale
+#define DIAGRAMM_DRAW_GAP_TOP       0.05  //Means +5% of full scale
+#define DIAGRAMM_DRAW_GAP_BOTTOM    0.05  //Means +5% of full scale
 
 typedef enum
 {
@@ -72,8 +72,9 @@ private:
     void    setInitialDialogStage(int stage, QString name);
     void    setLastSmpId(int id);
     /* Gui diagram drawing */
-    void    drawTimeAxis(int xMin, int xMax, int curvesCount);
-    void    drawCurve(int paramId, int xMin, int xMax, float yMin, float yMax, QVariantMap points);
+    void    clearDiagrams();
+    void    addDiagram(int num, int paramId, int xMin, int xMax, float yMin, float yMax, QVariantMap points);
+    void    drawDiagrams();
 
 signals:
 
@@ -99,6 +100,7 @@ private:
     QMap<int, bool> mapPersonal;
 
     QList<QObject*> aquariumTypeList;
+    QList<QObject*> pointList;
 
     /* Currently selected objects */
     UTObj           curSelectedObjs;

@@ -24,7 +24,7 @@ ImageGallery::ImageGallery()
     {
         QDirIterator it(folderToSearch.at(i), QStringList() << "*.jpg", QDir::Files, QDirIterator::NoIteratorFlags);
 
-        qDebug() << "Looking in :" << folderToSearch.at(i);
+        //qDebug() << "Looking in :" << folderToSearch.at(i);
 
         img = new ImgObj("");
         galleryList.append(img);
@@ -34,7 +34,7 @@ ImageGallery::ImageGallery()
             img = new ImgObj(it.next());
             galleryList.append(img);
 
-            qDebug() << img->fileLink();
+            //qDebug() << img->fileLink();
 
             count++;
 

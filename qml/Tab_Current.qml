@@ -91,7 +91,7 @@ Item
         Rectangle
         {
             anchors.fill: paramsTable
-            visible: (curValuesListModel.length === 0)
+            visible: (curValuesListModel) ? (curValuesListModel.length === 0) : false
             color: "#00000000"
 
             Text
@@ -176,7 +176,7 @@ Item
             anchors.topMargin: AppTheme.compHeight * 2 * app.scale
             anchors.bottomMargin: AppTheme.rowHeightMin * 2 * app.scale
             contentWidth: width
-            contentHeight: addRecordListView.model.length * AppTheme.rowHeightMin * app.scale
+            contentHeight: (addRecordListView.model) ? addRecordListView.model.length * AppTheme.rowHeightMin * app.scale : 0
             clip: true
 
             ListView
@@ -185,7 +185,7 @@ Item
                 anchors.top: parent.top
                 anchors.left: parent.left
                 anchors.right: parent.right
-                height: model.length * AppTheme.rowHeightMin * app.scale
+                height: (model) ? model.length * AppTheme.rowHeightMin * app.scale : 0
                 spacing: 0
                 model: app.getAllParamsListModel()
                 clip: true

@@ -13,11 +13,12 @@ Item
     {
         var size = 0
 
-        for (var i = 0; i < curValuesListView.model.length; i++)
-        {
-            if (model[i].en === true)
-                size++
-        }
+        if (curValuesListView.model)
+            for (var i = 0; i < curValuesListView.model.length; i++)
+            {
+                if (model[i].en === true)
+                    size++
+            }
 
         return size
     }
@@ -165,8 +166,8 @@ Item
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontBigNormalSize * app.scale
                         color: AppTheme.whiteColor
-                        visible: (curValuesListView.model.length > 0)
-                        text: app.printDate(curValuesListView.model[0].dtNow)
+                        visible: (curValuesListView.model) ? (curValuesListView.model.length > 0) : false
+                        text: (curValuesListView.model) ? app.printDate(curValuesListView.model[0].dtNow) : ""
                     }
                 }
 
@@ -180,7 +181,7 @@ Item
                     font.pixelSize: AppTheme.fontBigNormalSize * app.scale
                     color: AppTheme.greyColor
                     visible: (realModelLength() > 0)
-                    text: app.printDate(curValuesListView.model[0].dtPrev)
+                    text: (curValuesListView.model) ? app.printDate(curValuesListView.model[0].dtPrev) : ""
                 }
 
                 Text
@@ -361,7 +362,7 @@ Item
                 height: AppTheme.rowHeightMin * app.scale
                 width: height
                 mipmap: true
-                source: (curValuesListView.model[0].imgLink) ? "file:///"+curValuesListView.model[0].imgLink : ""
+                source: (curValuesListView.model) ? "file:///"+curValuesListView.model[0].imgLink : ""
 
                 fillMode: Image.PreserveAspectCrop
                 layer.enabled: true
@@ -397,7 +398,7 @@ Item
                 font.family: AppTheme.fontFamily
                 font.pixelSize: AppTheme.fontSmallSize * app.scale
                 color: AppTheme.greyColor
-                text: curValuesListView.model[0].note
+                text: (curValuesListView.model) ? curValuesListView.model[0].note : ""
                 wrapMode: Text.WordWrap
             }
         }

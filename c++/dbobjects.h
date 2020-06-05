@@ -111,6 +111,7 @@ class ParamObj : public QObject
     Q_PROPERTY(float min READ min WRITE setMin NOTIFY minChanged)
     Q_PROPERTY(float max READ max WRITE setMax NOTIFY maxChanged)
     Q_PROPERTY(float max READ max WRITE setMax NOTIFY maxChanged)
+    Q_PROPERTY(QString color READ color WRITE setColor NOTIFY colorChanged)
 
 public:
     ParamObj(QSqlQuery *query, AquariumType type)
@@ -129,6 +130,13 @@ public:
             _max = query->value(query->record().indexOf(max)).toFloat();
             _value = -1;
             _en = true;
+
+            int rec = query->record().indexOf("COLOR");
+
+            if (rec != -1)
+                _color = query->value(rec).toString();
+            else
+                _color = "";
         }
     }
 
@@ -140,6 +148,7 @@ public:
     float min()                     {   return _min;            }
     float max()                     {   return _max;            }
     bool en()                       {   return _en;             }
+    QString color()                 {   return _color;          }
 
     void setParamId(char paramId)   {   _paramId = paramId;     }
     void setShortName(QString name) {   _shortName = name;      }
@@ -149,6 +158,7 @@ public:
     void setMin(float min)          {   _min = min;             }
     void setMax(float max)          {   _max = max;             }
     void setEn(bool en)             {   _en = en;               }
+    void setColor(QString color)    {   _color = color;         }
 
 signals:
     void paramIdChanged();
@@ -159,6 +169,7 @@ signals:
     void minChanged();
     void maxChanged();
     void enChanged();
+    void colorChanged();
 
 protected:
     char    _paramId;
@@ -169,6 +180,36 @@ protected:
     float   _min;
     float   _max;
     bool    _en;
+    QString _color;
+};
+
+class PointObj : public QObject
+{
+    Q_OBJECT
+
+    Q_PROPERTY(int tm READ tm WRITE setTm NOTIFY tmChanged)
+    Q_PROPERTY(float value READ value WRITE setValue NOTIFY valueChanged)
+
+public:
+    PointObj(int tm, float value)
+    {
+        _tm = tm;
+        _value = value;
+    }
+
+    int tm()                        {   return _tm;             }
+    float value()                   {   return _value;          }
+
+    void setTm(int tm)              {   _tm = tm;               }
+    void setValue(float value)      {   _value = value;         }
+
+signals:
+    void tmChanged();
+    void valueChanged();
+
+protected:
+    int     _tm;
+    float   _value;
 };
 
 class UserObj

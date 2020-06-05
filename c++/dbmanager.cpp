@@ -197,29 +197,25 @@ void DBManager::setLastSmpId(int id)
     }
 }
 
-void DBManager::drawTimeAxis(int xMin, int xMax, int curvesCount)
+void DBManager::clearDiagrams()
 {
     QObject *obj = nullptr;
 
     obj = qmlEngine->rootObjects().first()->findChild<QObject*>("tab_Graph");
 
     if (obj != nullptr)
-        QMetaObject::invokeMethod(obj, "drawAxis",
-                                  Q_ARG(QVariant, xMin),
-                                  Q_ARG(QVariant, xMax),
-                                  Q_ARG(QVariant, curvesCount));
-    else
-        qDebug() << "tab_Graph not found!";
+        QMetaObject::invokeMethod(obj, "clearDiagrams");
 }
 
-void DBManager::drawCurve(int paramId, int xMin, int xMax, float yMin, float yMax, QVariantMap points)
+void DBManager::addDiagram(int num, int paramId, int xMin, int xMax, float yMin, float yMax, QVariantMap points)
 {
     QObject *obj = nullptr;
 
     obj = qmlEngine->rootObjects().first()->findChild<QObject*>("tab_Graph");
 
     if (obj != nullptr)
-        QMetaObject::invokeMethod(obj, "drawCurve",
+        QMetaObject::invokeMethod(obj, "addDiagram",
+                                  Q_ARG(QVariant, num),
                                   Q_ARG(QVariant, paramId),
                                   Q_ARG(QVariant, xMin),
                                   Q_ARG(QVariant, xMax),
@@ -228,6 +224,16 @@ void DBManager::drawCurve(int paramId, int xMin, int xMax, float yMin, float yMa
                                   Q_ARG(QVariant, QVariant::fromValue(points)));
     else
         qDebug() << "tab_Graph not found!";
+}
+
+void DBManager::drawDiagrams()
+{
+    QObject *obj = nullptr;
+
+    obj = qmlEngine->rootObjects().first()->findChild<QObject*>("tab_Graph");
+
+    if (obj != nullptr)
+        QMetaObject::invokeMethod(obj, "drawDiagrams");
 }
 
 
@@ -459,6 +465,8 @@ bool DBManager::getHistoryParams(QString tankId)
             idList.append(qId.value(0).toInt());
     }
 
+    pointList.clear();
+
     for (int i = 0; i < idList.size(); i++)
     {
         QSqlQuery qParams("SELECT VALUE, TIMESTAMP FROM HISTORY_VALUE_TABLE "
@@ -467,11 +475,20 @@ bool DBManager::getHistoryParams(QString tankId)
         points.clear();
 
         while (qParams.next())
+        {
+            if (i == 0)
+            {
+                PointObj *pt = new PointObj(qParams.value(1).toInt(), qParams.value(0).toFloat());
+                pointList.append(pt);
+            }
+
             points.insert(QString::number(qParams.value(1).toInt()), qParams.value(0).toFloat());
+        }
 
         curveList.append(points);
     }
 
+    qmlEngine->rootContext()->setContextProperty("graphPointsList", QVariant::fromValue(pointList));
 
     for (int i = 0; i < curveList.size(); i++)
     {
@@ -486,7 +503,9 @@ bool DBManager::getHistoryParams(QString tankId)
         }
     }
 
-    for (int i = 5; i < curveList.size(); i++)
+    clearDiagrams();
+
+    for (int i = 0; i < curveList.size(); i++)
     {
         yMin = __FLT_MAX__;
         yMax = __FLT_MIN__;
@@ -507,11 +526,13 @@ bool DBManager::getHistoryParams(QString tankId)
         if (yMax > 0)
             yMax += yMax * DIAGRAMM_DRAW_GAP_TOP;
 
-        drawCurve(idList.at(i), xMin, xMax, yMin, yMax, curveList.at(i));
+        addDiagram(0, idList.at(i), xMin, xMax, yMin, yMax, curveList.at(i));
 
         //if (i == 2)
-        break;
+        //break;
     }
+
+    drawDiagrams();
 
     return false;
 }

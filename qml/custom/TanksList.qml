@@ -7,7 +7,7 @@ Item
 {
     id: tanksList
     height: 96 * app.scale
-    width: (model.length > 2) ? app.width + AppTheme.margin * app.scale * 4 : 360 * app.scale
+    width: (model) ? ((model.length > 2) ? app.width + AppTheme.margin * app.scale * 4 : 360 * app.scale) : app.width
 
     property alias model: view.model
     property alias currentIndex: view.currentIndex
@@ -64,7 +64,7 @@ Item
                         width: parent.width
                         height: parent.height
                         anchors.bottom: parent.bottom
-                        source: "data:image/jpg;base64," + img
+                        source: (img.length > 0) ? "data:image/jpg;base64," + img : ""
                         mipmap: true
                         opacity: 0.87
                     }

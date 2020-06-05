@@ -8,17 +8,27 @@ Item
 {
     id: diagramView
     width: app.width
-    height: 100 * app.scale
+    height: 128
 
     property var ctx: null
 
-    function drawCurve(name, xMin, xMax, yMin, yMax, points)
+    function add(num, id, height, xMin, xMax, yMin, yMax, points)
     {
+        diagramView.height = height
+
         if (ctx === null)
-            ctx = new Diagrams.DiagramView(canvas.getContext('2d'), canvas.width, canvas.height)
+            ctx = new Diagrams.DiagramView(app.scale)
 
-        ctx.drawCurve(name, xMin, xMax, yMin, yMax, points)
+        ctx.setCurve(num, app.getParamById(id).shortName, app.getParamById(id).unitName, app.getParamById(id).color, xMin, xMax, yMin, yMax, points)
+    }
 
+    function setCurrentPoint(currentPoint)
+    {
+        ctx.setCurrentPoint(currentPoint)
+    }
+
+    function draw()
+    {
         canvas.requestPaint()
     }
 
@@ -27,15 +37,28 @@ Item
         anchors.fill: parent
         color: "#00000040"
 
-        Canvas
+        Rectangle
         {
-            id: canvas
+            id: rectContainerShadow
             anchors.fill: parent
+            color: "#00000000"
+        }
 
-            onPaint:
+        Rectangle
+        {
+            anchors.fill: rectContainerShadow
+            color: "#00000000"
+
+            Canvas
             {
-                if (ctx === null)
-                    ctx = new Diagrams.DiagramView(canvas.getContext('2d'), canvas.width, canvas.height)
+                id: canvas
+                anchors.fill: parent
+
+                onPaint:
+                {
+                    ctx.init(canvas.getContext('2d'), canvas.width, canvas.height)
+                    ctx.draw()
+                }
             }
         }
     }

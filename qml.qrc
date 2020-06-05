@@ -36,5 +36,6 @@
         <file>resources/font/Century.otf</file>
         <file>js/diagrams.js</file>
         <file>qml/custom/DiagramView.qml</file>
+        <file>qml/custom/PointList.qml</file>
     </qresource>
 </RCC>

@@ -26,10 +26,13 @@ Item
     {
         var size = 0
 
-        for (var i = 0; i < curParamsListView.model.length; i++)
+        if (curParamsListView.model)
         {
-            if (model[i].en === true)
-                size++
+            for (var i = 0; i < curParamsListView.model.length; i++)
+            {
+                if (model[i].en === true)
+                    size++
+            }
         }
 
         return size

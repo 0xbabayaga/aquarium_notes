@@ -246,7 +246,9 @@ Item
                         {
                             showList(false)
                             sigSelectedIndexChanged(currentIndex)
-                            imgSelected.source = "file:///" + listView.model[currentIndex].fileLink
+
+                            if (listView.model[currentIndex].fileLink.length > 0)
+                                imgSelected.source = "file:///" + listView.model[currentIndex].fileLink
                         }
 
                         ScrollBar.vertical: ScrollBar
