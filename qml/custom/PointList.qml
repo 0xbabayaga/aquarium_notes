@@ -79,7 +79,7 @@ Item
                 PathAttribute { name: "iconOrder"; value: 0 }
                 PathLine {x: view.width/2; y: view.height/2 }
                 PathAttribute { name: "iconScale"; value: 2 }
-                PathAttribute { name: "iconOpacity"; value: 1 }
+                PathAttribute { name: "iconOpacity"; value: 1.5 }
                 PathLine {x: view.width; y: view.height/2 }
             }
 

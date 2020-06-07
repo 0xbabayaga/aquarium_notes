@@ -11,20 +11,30 @@ Item
     height: 128
 
     property var ctx: null
+    property int curnesCnt: 0
 
-    function add(num, id, height, xMin, xMax, yMin, yMax, points)
+    function add(id, height, xMin, xMax, yMin, yMax, points)
     {
-        diagramView.height = height
+        curnesCnt++
+
+        diagramView.height = height * curnesCnt
 
         if (ctx === null)
-            ctx = new Diagrams.DiagramView(app.scale)
+            ctx = new Diagrams.DiagramView(app.scale, height)
 
-        ctx.setCurve(num, app.getParamById(id).shortName, app.getParamById(id).unitName, app.getParamById(id).color, xMin, xMax, yMin, yMax, points)
+        ctx.addCurve(app.getParamById(id).shortName, app.getParamById(id).unitName, app.getParamById(id).color, xMin, xMax, yMin, yMax, points)
+    }
+
+    function reset()
+    {
+        if (ctx !== null)
+            ctx.reset()
     }
 
     function setCurrentPoint(currentPoint)
     {
         ctx.setCurrentPoint(currentPoint)
+        canvas.requestPaint()
     }
 
     function draw()
@@ -37,28 +47,15 @@ Item
         anchors.fill: parent
         color: "#00000040"
 
-        Rectangle
+        Canvas
         {
-            id: rectContainerShadow
+            id: canvas
             anchors.fill: parent
-            color: "#00000000"
-        }
 
-        Rectangle
-        {
-            anchors.fill: rectContainerShadow
-            color: "#00000000"
-
-            Canvas
+            onPaint:
             {
-                id: canvas
-                anchors.fill: parent
-
-                onPaint:
-                {
-                    ctx.init(canvas.getContext('2d'), canvas.width, canvas.height)
-                    ctx.draw()
-                }
+                ctx.init(canvas.getContext('2d'), canvas.width, canvas.height)
+                ctx.draw()
             }
         }
     }

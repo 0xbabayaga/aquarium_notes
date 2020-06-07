@@ -1,5 +1,5 @@
 var gridColor       = "#40000000"
-var textColor       = "#70000000"
+var textColor       = "#40000000"
 var blueColor       = "#00ADBC"
 var orangeColor     = "#EE6000"
 var greenColor      = "#00BB20"
@@ -17,7 +17,7 @@ var appScale        = 1
 
 var gradientColors = [blueColor, orangeColor, greenColor, rBlueColor, yellowColor]
 
-function DiagramView(scale)
+function DiagramView(scale, oneDiagHeight)
 {
     this.ctx = 0
     this.width = 0
@@ -29,6 +29,9 @@ function DiagramView(scale)
     this.rightMargin = 32 * appScale
     this.bottomMargin = 32 * appScale
     this.topMargin = 16 * appScale
+    this.oneDiagHeight = oneDiagHeight
+    this.drawWidth = 0
+    this.drawHeight = 0
 
     axisFont = parseInt(10 * appScale) + "px sans-serif"
     axisSelFont = parseInt(14 * appScale) + "px sans-serif"
@@ -37,9 +40,7 @@ function DiagramView(scale)
     ptSelectedSize = 5 * appScale
     lineWidth = 2 * appScale
 
-    this.drawWidth = 0
-    this.drawHeight = 0
-
+    this.curvesCnt = 0
     this.xMin = []
     this.xMax = []
     this.yMin = []
@@ -59,59 +60,70 @@ DiagramView.prototype.init = function(ctx, width, height)
     this.height = height
 
     this.drawWidth = this.width - this.leftMargin - this.rightMargin
-    this.drawHeight = this.height - this.bottomMargin - this.topMargin
+    this.drawHeight = this.oneDiagHeight - this.bottomMargin - this.topMargin
 
     this.stepX = (this.xMax[0] - this.xMin[0]) / this.drawWidth
 }
 
+DiagramView.prototype.reset = function()
+{
+    this.curvesCnt = 0
+}
 
 DiagramView.prototype.setCurrentPoint = function(currentPoint)
 {
     this.currPt = currentPoint
 }
 
-DiagramView.prototype.setCurve = function(num, name, unit, color, xMin, xMax, yMin, yMax, points)
+DiagramView.prototype.addCurve = function(name, unit, color, xMin, xMax, yMin, yMax, points)
 {
-    this.xMin[num] = xMin
-    this.xMax[num] = xMax
-    this.yMin[num] = yMin
-    this.yMax[num] = yMax
-    this.name[num] = name
-    this.unit[num] = unit
-    this.color[num] = color
+    this.xMin[this.curvesCnt] = xMin
+    this.xMax[this.curvesCnt] = xMax
+    this.yMin[this.curvesCnt] = yMin
+    this.yMax[this.curvesCnt] = yMax
+    this.name[this.curvesCnt] = name
+    this.unit[this.curvesCnt] = unit
+    this.color[this.curvesCnt] = color
     this.points.push(points)
+    this.curvesCnt++
 }
 
-DiagramView.prototype.drawGrid = function()
+DiagramView.prototype.drawGrid = function(num)
 {
-    var yShift = 0
     var pt1 = 0, pt2 = 0, ptc = 0
+    var text = ""
 
-    console.log("drawGrid")
-
-    this.ctx.clearRect(0, 0, this.width, this.height)
-
-    yShift += this.drawHeight
+    /*
+    this.ctx.shadowColor = "#40000000"
+    this.ctx.shadowBlur = 10
+    this.ctx.fillStyle = "#D0FFFFFF"
+    this.ctx.fillRect(this.leftMargin, this.oneDiagHeight * num, this.drawWidth, this.drawHeight)
+    this.ctx.shadowColor = "#00000000"
+    this.ctx.shadowBlur = 0
+    */
 
     this.ctx.beginPath()
     this.ctx.strokeStyle = gridColor
     this.ctx.lineWidth   = 0.5 * appScale
-    this.ctx.moveTo(this.width - this.rightMargin, yShift)
-    this.ctx.lineTo(this.leftMargin, yShift)
-    this.ctx.moveTo(this.width - this.rightMargin, yShift/2)
-    this.ctx.lineTo(this.leftMargin, yShift/2)
-    this.ctx.moveTo(this.width - this.rightMargin, 0)
-    this.ctx.lineTo(this.leftMargin, 0)
+    this.ctx.moveTo(this.width - this.rightMargin, this.oneDiagHeight * num + this.drawHeight)
+    this.ctx.lineTo(this.leftMargin, this.oneDiagHeight * num + this.drawHeight)
+    this.ctx.moveTo(this.width - this.rightMargin, this.oneDiagHeight * num + this.drawHeight/2)
+    this.ctx.lineTo(this.leftMargin, this.oneDiagHeight * num + this.drawHeight/2)
+    this.ctx.moveTo(this.width - this.rightMargin, this.oneDiagHeight * num)
+    this.ctx.lineTo(this.leftMargin, this.oneDiagHeight * num)
     this.ctx.stroke()
     this.ctx.closePath()
 
     this.ctx.font = labelFont
-    this.ctx.fillStyle = this.getCurveColor(0)
-    this.ctx.fillText(this.name, this.width - this.rightMargin - this.getTextWidth(this.name), this.topMargin)
+    this.ctx.fillStyle = this.getCurveColor(num)
+    text = this.name[num]
+    this.ctx.fillText(this.name[num],
+                      this.width - this.rightMargin - this.getTextWidth(text),
+                      this.topMargin + this.oneDiagHeight * num)
 
     var i = 0
 
-    for (var pt in this.points[0])
+    for (var pt in this.points[num])
     {
         if (pt1 === 0)
             pt1 = pt
@@ -124,16 +136,28 @@ DiagramView.prototype.drawGrid = function()
         i++
     }
 
-    this.ctx.fillText(this.printVal(this.points[0][pt]) + this.unit[0], this.leftMargin, this.topMargin)
+    text = this.printVal(this.points[num][ptc])
+    this.ctx.fillText(text,
+                      this.leftMargin,
+                      this.topMargin + this.oneDiagHeight * num)
 
     this.ctx.font = axisFont
-    this.ctx.fillStyle = gridColor
-    this.ctx.fillText(this.printDate(parseInt(pt1)), this.leftMargin, this.drawHeight + 10 * appScale)
-    this.ctx.fillText(this.printDate(parseInt(pt2)), this.width - this.rightMargin - this.getTextWidth(this.printDate(parseInt(pt2))), this.drawHeight + 10 * appScale)
+    this.ctx.fillStyle = textColor
 
-    this.ctx.font = axisSelFont
-    this.ctx.fillStyle = this.getCurveColor(0)
-    this.ctx.fillText(this.printDate(parseInt(ptc)), this.leftMargin + this.drawWidth/2 - this.getTextWidth(this.printDate(ptc)), this.drawHeight + 14 * appScale)
+    text = this.printDate(parseInt(pt1))
+    this.ctx.fillText(text,
+                      this.leftMargin,
+                      this.oneDiagHeight * num + this.drawHeight + 10 * appScale)
+
+    text = this.printDate(parseInt(pt2))
+    this.ctx.fillText(text,
+                      this.width - this.rightMargin - this.getTextWidth(text),
+                      this.oneDiagHeight * num + this.drawHeight + 10 * appScale)
+
+    text = this.unit[num]
+    this.ctx.fillText(text,
+                      this.width - this.rightMargin - this.getTextWidth(text),
+                      this.topMargin + this.oneDiagHeight * num + 10 * appScale)
 }
 
 DiagramView.prototype.drawCurve = function(num)
@@ -146,39 +170,49 @@ DiagramView.prototype.drawCurve = function(num)
     var pt
     var minY = this.getScaleMin(this.yMin[num])
     var maxY = this.getScaleMax(this.yMax[num])
+    var text = ""
 
     yScale = this.drawHeight / (maxY - minY)
 
     this.ctx.font = axisFont
-    this.ctx.fillStyle = gridColor
-    this.ctx.fillText(this.printVal(minY), this.leftMargin - 20 * appScale, this.drawHeight)
-    this.ctx.fillText(this.printVal((maxY + minY)/2), this.leftMargin - 20 * appScale, this.drawHeight/2)
-    this.ctx.fillText(this.printVal(maxY), this.leftMargin - 20 * appScale, 8)
+    this.ctx.fillStyle = textColor
+
+    text = this.printVal(maxY)
+    this.ctx.fillText(text, this.leftMargin - this.getTextWidth(text) - 4 * appScale,
+                            this.oneDiagHeight * num + 8 * app.scale)
+
+    text = this.printVal((maxY + minY)/2)
+    this.ctx.fillText(text, this.leftMargin - this.getTextWidth(text) - 4 * appScale,
+                            this.oneDiagHeight * num + this.drawHeight/2 + 8 * appScale/2)
+
+    text = this.printVal(minY)
+    this.ctx.fillText(text, this.leftMargin - this.getTextWidth(text) - 4 * appScale,
+                            this.oneDiagHeight * num + this.drawHeight + 8 * appScale/2)
 
     var grd = this.ctx.createLinearGradient(0, this.drawHeight, 0, 0)
     //grd.addColorStop(0, "#00000000")
     grd.addColorStop(1, this.getCurveGradientColor(num))
     grd.addColorStop(1, this.getCurveGradientColor(num))
-
+/*
     this.ctx.beginPath()
     this.ctx.fillStyle = grd
     this.ctx.strokeStyle = "#00000000"
     this.ctx.lineWidth   = 1 * appScale
 
-    this.ctx.moveTo(this.leftMargin, this.drawHeight)
+    this.ctx.moveTo(this.leftMargin, this.oneDiagHeight * num + this.drawHeight)
 
     for (pt in this.points[num])
     {
         x = this.leftMargin + (parseInt(pt) - this.xMin[num]) / this.stepX
-        y = this.drawHeight - parseFloat(this.points[num][pt] - minY) * yScale
+        y = this.oneDiagHeight * num + this.drawHeight - parseFloat(this.points[num][pt] - minY) * yScale
 
         this.ctx.lineTo(x, y)
     }
 
-    this.ctx.lineTo(this.width - this.rightMargin, this.drawHeight)
+    this.ctx.lineTo(this.width - this.rightMargin, this.oneDiagHeight * num + this.drawHeight)
     this.ctx.closePath()
     this.ctx.fill()
-
+*/
 
     this.ctx.beginPath()
     this.ctx.strokeStyle = this.getCurveColor(num)
@@ -188,7 +222,7 @@ DiagramView.prototype.drawCurve = function(num)
     for (pt in this.points[num])
     {
         x = this.leftMargin + (parseInt(pt) - this.xMin[num]) / this.stepX
-        y = this.drawHeight - parseFloat(this.points[num][pt] - minY) * yScale
+        y = this.oneDiagHeight * num + this.drawHeight - parseFloat(this.points[num][pt] - minY) * yScale
 
         if (curveStart === 1)
         {
@@ -204,7 +238,7 @@ DiagramView.prototype.drawCurve = function(num)
     for (pt in this.points[num])
     {
         x = this.leftMargin + (parseInt(pt) - this.xMin[num]) / this.stepX
-        y = this.drawHeight - parseFloat(this.points[num][pt] - minY) * yScale
+        y = this.oneDiagHeight * num + this.drawHeight - parseFloat(this.points[num][pt] - minY) * yScale
 
         this.ctx.beginPath()
 
@@ -221,15 +255,17 @@ DiagramView.prototype.drawCurve = function(num)
 
         i++
     }
-
 }
 
 DiagramView.prototype.draw = function()
 {
-    this.drawGrid()
+    this.ctx.clearRect(0, 0, this.width, this.height)
 
-    for (var i = 0; i < this.xMin.length; i++)
+    for (var i = 0; i < this.curvesCnt; i++)
+    {
+        this.drawGrid(i)
         this.drawCurve(i)
+    }
 }
 
 DiagramView.prototype.getScaleMin = function(val)
@@ -243,9 +279,9 @@ DiagramView.prototype.getScaleMin = function(val)
     else if (val > 10)
         val = val - val % 1
     else if (val > 1)
-        val = val - ((val * 1) % 1)/1
+        val = Math.round(val * 10)/10
     else if (val > 0.1)
-        val = val - ((val * 10) % 1)/10
+        val = Math.round(val * 100)/100
 
     return val
 }
@@ -261,9 +297,9 @@ DiagramView.prototype.getScaleMax = function(val)
     else if (val > 10)
         val = this.getScaleMin(val) + 1
     else if (val > 1)
-        val = this.getScaleMin(val) + 0.1
+        val = this.getScaleMin(val) + 1/10
     else if (val > 0.1)
-        val = this.getScaleMin(val) + 0.01
+        val = this.getScaleMin(val) + 1/100
 
     return val
 }
@@ -310,7 +346,7 @@ DiagramView.prototype.getCurveColor = function(num)
     //if (this.color[num].length > 0)
     //    color = "#A0" + this.color[num].substr(-6)
     //else
-        color = "#A0" + blueColor.substr(-6)
+        color = "#F0" + blueColor.substr(-6)
 
     return  color
 }

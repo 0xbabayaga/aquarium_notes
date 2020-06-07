@@ -149,7 +149,7 @@ bool DBManager::getCurrentObjs()
 
             getLatestParams();
 
-            getHistoryParams(currentTankSelected()->tankId());
+            getHistoryParams();
 
             return true;
         }
@@ -259,6 +259,7 @@ void DBManager::onGuiAddRecord(int smpId, int paramId, double value)
     if (addParamRecord(smpId, paramId, value) == true)
     {
         getLatestParams();
+        getHistoryParams();
     }
 }
 
@@ -266,7 +267,8 @@ void DBManager::onGuiAddRecordNote(int smpId, QString note, QString imageLink)
 {
     if (addNoteRecord(smpId, note, imageLink) == true)
     {
-
+        getLatestParams();
+        getHistoryParams();
     }
 }
 
@@ -275,8 +277,7 @@ void DBManager::onGuiTankSelected(int tankIdx)
     curSelectedObjs.tankIdx = tankIdx;
 
     getLatestParams();
-
-    getHistoryParams(currentTankSelected()->tankId());
+    getHistoryParams();
 }
 
 void DBManager::onGuiPersonalParamStateChanged(int paramId, bool en)
@@ -436,7 +437,7 @@ bool DBManager::getLatestParams()
     return false;
 }
 
-bool DBManager::getHistoryParams(QString tankId)
+bool DBManager::getHistoryParams()
 {
     QList<int> idList;
     QVariantMap points;
@@ -449,7 +450,7 @@ bool DBManager::getHistoryParams(QString tankId)
     curveList.clear();
 
     QSqlQuery qId("SELECT PARAM_ID FROM HISTORY_VALUE_TABLE "
-                  "WHERE TANK_ID = '"+tankId+"'");
+                  "WHERE TANK_ID = '"+currentTankSelected()->tankId()+"'");
 
     while (qId.next())
     {
