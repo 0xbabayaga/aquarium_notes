@@ -11,7 +11,7 @@ Item
     id: tab_Graph
     objectName: "tab_Graph"
 
-    property int graphHeight: 128 * app.scale
+    property int graphHeight: 100 * app.scale
 
     function clearDiagrams()
     {
@@ -30,6 +30,7 @@ Item
     function addDiagram(num, name, xMin, xMax, yMin, yMax, points)
     {
         diagrams.add(name, tab_Graph.graphHeight, xMin, xMax, yMin, yMax, points)
+        flickableContainer.contentHeight = diagrams.curnesCnt * tab_Graph.graphHeight
     }
 
     Flickable

@@ -1,5 +1,5 @@
-var gridColor       = "#40000000"
-var textColor       = "#40000000"
+var gridColor       = "#50000000"
+var textColor       = "#50000000"
 var blueColor       = "#00ADBC"
 var orangeColor     = "#EE6000"
 var greenColor      = "#00BB20"
@@ -35,7 +35,7 @@ function DiagramView(scale, oneDiagHeight)
 
     axisFont = parseInt(10 * appScale) + "px sans-serif"
     axisSelFont = parseInt(14 * appScale) + "px sans-serif"
-    labelFont = parseInt(14 * appScale) + "px sans-serif"
+    labelFont = parseInt(16 * appScale) + "px sans-serif"
     ptNormalSize = 1 * appScale
     ptSelectedSize = 5 * appScale
     lineWidth = 2 * appScale
@@ -93,15 +93,6 @@ DiagramView.prototype.drawGrid = function(num)
     var pt1 = 0, pt2 = 0, ptc = 0
     var text = ""
 
-    /*
-    this.ctx.shadowColor = "#40000000"
-    this.ctx.shadowBlur = 10
-    this.ctx.fillStyle = "#D0FFFFFF"
-    this.ctx.fillRect(this.leftMargin, this.oneDiagHeight * num, this.drawWidth, this.drawHeight)
-    this.ctx.shadowColor = "#00000000"
-    this.ctx.shadowBlur = 0
-    */
-
     this.ctx.beginPath()
     this.ctx.strokeStyle = gridColor
     this.ctx.lineWidth   = 0.5 * appScale
@@ -117,9 +108,9 @@ DiagramView.prototype.drawGrid = function(num)
     this.ctx.font = labelFont
     this.ctx.fillStyle = this.getCurveColor(num)
     text = this.name[num]
-    this.ctx.fillText(this.name[num],
-                      this.width - this.rightMargin - this.getTextWidth(text),
-                      this.topMargin + this.oneDiagHeight * num)
+    //this.ctx.fillText(this.name[num],
+    //                  this.width - this.rightMargin - this.getTextWidth(text),
+    //                  this.topMargin + this.oneDiagHeight * num)
 
     var i = 0
 
@@ -136,10 +127,16 @@ DiagramView.prototype.drawGrid = function(num)
         i++
     }
 
-    text = this.printVal(this.points[num][ptc])
+    this.ctx.fillStyle = semiBlueColor
+    this.ctx.fillRect(this.width/2 - 40 * appScale, this.drawHeight + 1 * appScale + this.oneDiagHeight * num, 80 * appScale, 32 * appScale)
+
+
+    text = this.printVal(this.points[num][ptc]) + " " + this.unit[num]
+    this.ctx.fillStyle = blueColor
+    this.ctx.font = labelFont
     this.ctx.fillText(text,
-                      this.leftMargin,
-                      this.topMargin + this.oneDiagHeight * num)
+                      this.width/2 - this.getTextWidth(text)/2,
+                      this.drawHeight + this.oneDiagHeight * num + 20 * appScale)
 
     this.ctx.font = axisFont
     this.ctx.fillStyle = textColor
@@ -155,9 +152,9 @@ DiagramView.prototype.drawGrid = function(num)
                       this.oneDiagHeight * num + this.drawHeight + 10 * appScale)
 
     text = this.unit[num]
-    this.ctx.fillText(text,
-                      this.width - this.rightMargin - this.getTextWidth(text),
-                      this.topMargin + this.oneDiagHeight * num + 10 * appScale)
+    //this.ctx.fillText(text,
+    //                  this.width - this.rightMargin - this.getTextWidth(text),
+    //                  this.topMargin + this.oneDiagHeight * num + 10 * appScale)
 }
 
 DiagramView.prototype.drawCurve = function(num)

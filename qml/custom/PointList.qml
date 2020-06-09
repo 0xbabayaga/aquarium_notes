@@ -42,7 +42,7 @@ Item
                         text: app.printDate(tm)
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontSize * app.scale
-                        color: AppTheme.blueColor
+                        color: (currentIndex === index) ? AppTheme.whiteColor : AppTheme.blueColor
                         verticalAlignment: Text.AlignVCenter
                         height: pointList.height * app.scale
                     }
@@ -58,6 +58,16 @@ Item
                     }
                 }
             }
+        }
+
+        Rectangle
+        {
+            anchors.top: parent.top
+            anchors.topMargin: AppTheme.padding * app.scale
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: 80 * app.scale
+            height: AppTheme.compHeight * app.scale
+            color: AppTheme.blueColor
         }
 
         PathView
@@ -78,7 +88,7 @@ Item
                 PathAttribute { name: "iconScale"; value: 0.75 }
                 PathAttribute { name: "iconOrder"; value: 0 }
                 PathLine {x: view.width/2; y: view.height/2 }
-                PathAttribute { name: "iconScale"; value: 2 }
+                PathAttribute { name: "iconScale"; value: 1.5 }
                 PathAttribute { name: "iconOpacity"; value: 1.5 }
                 PathLine {x: view.width; y: view.height/2 }
             }
