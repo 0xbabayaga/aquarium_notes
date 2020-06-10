@@ -10,8 +10,8 @@
 
 #define RAND_ID_LENGTH  16
 
-#define DIAGRAMM_DRAW_GAP_TOP       0.05  //Means +5% of full scale
-#define DIAGRAMM_DRAW_GAP_BOTTOM    0.05  //Means +5% of full scale
+#define DIAGRAMM_DRAW_GAP_TOP       0.20  //Means +20% of full scale
+#define DIAGRAMM_DRAW_GAP_BOTTOM    0.20  //Means +20% of full scale
 
 typedef enum
 {

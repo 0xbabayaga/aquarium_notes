@@ -1,4 +1,4 @@
-var gridColor       = "#50000000"
+var gridColor       = "#20000000"
 var textColor       = "#50000000"
 var blueColor       = "#00ADBC"
 var orangeColor     = "#EE6000"
@@ -27,7 +27,7 @@ function DiagramView(scale, oneDiagHeight)
 
     this.leftMargin = 32 * appScale
     this.rightMargin = 32 * appScale
-    this.bottomMargin = 32 * appScale
+    this.bottomMargin = 16 * appScale
     this.topMargin = 16 * appScale
     this.oneDiagHeight = oneDiagHeight
     this.drawWidth = 0
@@ -92,16 +92,30 @@ DiagramView.prototype.drawGrid = function(num)
 {
     var pt1 = 0, pt2 = 0, ptc = 0
     var text = ""
+    var x = this.leftMargin
 
     this.ctx.beginPath()
     this.ctx.strokeStyle = gridColor
     this.ctx.lineWidth   = 0.5 * appScale
-    this.ctx.moveTo(this.width - this.rightMargin, this.oneDiagHeight * num + this.drawHeight)
-    this.ctx.lineTo(this.leftMargin, this.oneDiagHeight * num + this.drawHeight)
-    this.ctx.moveTo(this.width - this.rightMargin, this.oneDiagHeight * num + this.drawHeight/2)
-    this.ctx.lineTo(this.leftMargin, this.oneDiagHeight * num + this.drawHeight/2)
-    this.ctx.moveTo(this.width - this.rightMargin, this.oneDiagHeight * num)
-    this.ctx.lineTo(this.leftMargin, this.oneDiagHeight * num)
+
+    for (var i = 0; i < 5; i++)
+    {
+        this.ctx.moveTo(this.width - this.rightMargin, this.oneDiagHeight * num + this.drawHeight/4 * i)
+        this.ctx.lineTo(this.leftMargin, this.oneDiagHeight * num + this.drawHeight/4 * i)
+    }
+
+
+    while (x < (this.width - this.rightMargin))
+    {
+        x += 2*86400/this.stepX
+        this.ctx.moveTo(x, this.oneDiagHeight * num + this.drawHeight)
+        this.ctx.lineTo(x, this.oneDiagHeight * num)
+    }
+
+    //this.ctx.moveTo(this.width - this.rightMargin, this.oneDiagHeight * num + this.drawHeight/2)
+    //this.ctx.lineTo(this.leftMargin, this.oneDiagHeight * num + this.drawHeight/2)
+    //this.ctx.moveTo(this.width - this.rightMargin, this.oneDiagHeight * num)
+    //this.ctx.lineTo(this.leftMargin, this.oneDiagHeight * num)
     this.ctx.stroke()
     this.ctx.closePath()
 
@@ -127,16 +141,16 @@ DiagramView.prototype.drawGrid = function(num)
         i++
     }
 
-    this.ctx.fillStyle = semiBlueColor
-    this.ctx.fillRect(this.width/2 - 40 * appScale, this.drawHeight + 1 * appScale + this.oneDiagHeight * num, 80 * appScale, 32 * appScale)
+    //this.ctx.fillStyle = semiBlueColor
+    //this.ctx.fillRect(this.width/2 - 40 * appScale, this.drawHeight + 1 * appScale + this.oneDiagHeight * num, 80 * appScale, 32 * appScale)
 
 
-    text = this.printVal(this.points[num][ptc]) + " " + this.unit[num]
+    //text = this.printVal(this.points[num][ptc]) + " " + this.unit[num]
     this.ctx.fillStyle = blueColor
     this.ctx.font = labelFont
-    this.ctx.fillText(text,
-                      this.width/2 - this.getTextWidth(text)/2,
-                      this.drawHeight + this.oneDiagHeight * num + 20 * appScale)
+    //this.ctx.fillText(text,
+    //                  this.width/2 - this.getTextWidth(text)/2,
+    //                  this.drawHeight + this.oneDiagHeight * num + 20 * appScale)
 
     this.ctx.font = axisFont
     this.ctx.fillStyle = textColor

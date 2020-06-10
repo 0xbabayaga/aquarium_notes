@@ -511,6 +511,23 @@ bool DBManager::getHistoryParams()
         yMin = __FLT_MAX__;
         yMax = __FLT_MIN__;
 
+        /*
+        for(int n = 0; n < paramsGuiList.size(); n++)
+        {
+            ParamObj *obj = (ParamObj*) paramsGuiList.at(n);
+
+            if (idList.at(i) == obj->paramId())
+            {
+                yMin = obj->min() - (obj->max() - obj->min());
+
+                if (yMin < 0)
+                    yMin = 0;
+
+                yMax = obj->max() + (obj->max() - obj->min());
+            }
+        }
+        */
+
         /* Looking for min\max for current curve */
         for (QVariantMap::const_iterator it = curveList.at(i).begin(); it != curveList.at(i).end(); it++)
         {
@@ -522,10 +539,15 @@ bool DBManager::getHistoryParams()
         }
 
         if (yMin > 0)
-            yMin -= yMin * DIAGRAMM_DRAW_GAP_BOTTOM;
+            yMin -= (yMax - yMin) * DIAGRAMM_DRAW_GAP_BOTTOM;
+
+        if (yMin < 0.1)
+            yMin = 0;
 
         if (yMax > 0)
-            yMax += yMax * DIAGRAMM_DRAW_GAP_TOP;
+            yMax += (yMax - yMin) * DIAGRAMM_DRAW_GAP_TOP;
+
+        qDebug() << "ParamID = " << idList.at(i) << " Min = " << yMin << " Max = " << yMax;
 
         addDiagram(0, idList.at(i), xMin, xMax, yMin, yMax, curveList.at(i));
 
