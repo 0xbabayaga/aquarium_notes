@@ -134,8 +134,6 @@ Item
                 id: imgArrowBack
                 anchors.left: parent.left
                 anchors.verticalCenter: imgTank.verticalCenter
-                height: AppTheme.compHeight * app.scale
-                width: height
                 image: "qrc:/resources/img/icon_arrow_left.png"
 
                 onSigButtonClicked:

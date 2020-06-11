@@ -547,12 +547,7 @@ bool DBManager::getHistoryParams()
         if (yMax > 0)
             yMax += (yMax - yMin) * DIAGRAMM_DRAW_GAP_TOP;
 
-        qDebug() << "ParamID = " << idList.at(i) << " Min = " << yMin << " Max = " << yMax;
-
         addDiagram(0, idList.at(i), xMin, xMax, yMin, yMax, curveList.at(i));
-
-        //if (i == 2)
-        //break;
     }
 
     drawDiagrams();

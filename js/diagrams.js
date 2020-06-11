@@ -191,26 +191,35 @@ DiagramView.prototype.drawCurve = function(num)
 
     yScale = this.drawHeight / (maxY - minY)
 
-    this.ctx.save()
-    this.ctx.beginPath()
-    this.ctx.strokeStyle = greenColor
-    this.ctx.lineWidth   = 1 * appScale
-    this.ctx.setLineDash([1])
-
-    if (this.lMin[num] !== 0)
+    if (this.lMin[num] > 0 && this.lMin[num] > minY)
     {
+        this.ctx.beginPath()
+        this.ctx.lineWidth   = 1 * appScale
+        this.ctx.setLineDash([4,4])
+
+        this.ctx.strokeStyle = blueColor
         y = this.oneDiagHeight * num + this.drawHeight - parseFloat(this.lMin[num] - minY) * yScale
         this.ctx.moveTo(this.leftMargin, y)
         this.ctx.lineTo(this.leftMargin + this.drawWidth, y)
+
+        this.ctx.stroke()
+        this.ctx.closePath()
     }
 
-    y = this.oneDiagHeight * num + this.drawHeight - parseFloat(this.lMax[num] - minY) * yScale
-    this.ctx.moveTo(this.leftMargin, y)
-    this.ctx.lineTo(this.leftMargin + this.drawWidth, y)
+    if (this.lMax[num] < maxY)
+    {
+        this.ctx.beginPath()
+        this.ctx.lineWidth   = 1 * appScale
+        this.ctx.setLineDash([4,4])
 
-    this.ctx.stroke()
-    this.ctx.closePath()
-    this.ctx.restore()
+        this.ctx.strokeStyle = orangeColor
+        y = this.oneDiagHeight * num + this.drawHeight - parseFloat(this.lMax[num] - minY) * yScale
+        this.ctx.moveTo(this.leftMargin, y)
+        this.ctx.lineTo(this.leftMargin + this.drawWidth, y)
+
+        this.ctx.stroke()
+        this.ctx.closePath()
+    }
 
     this.ctx.font = axisFont
     this.ctx.fillStyle = textColor

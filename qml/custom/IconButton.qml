@@ -29,7 +29,7 @@ Item
             anchors.fill: rectContainerShadow
             horizontalOffset: 0
             verticalOffset: 2 * app.scale
-            radius: 14.0 * app.scale
+            radius: 8.0 * app.scale
             samples: 20
             color: "#40000000"
             source: rectContainerShadow

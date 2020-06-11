@@ -61,40 +61,6 @@ Item
             height: 300 * app.scale
         }
 
-        /*
-        Rectangle
-        {
-            id: rectActivitiesTableHeader
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.top: currParamsMainTable.bottom
-            anchors.topMargin: AppTheme.compHeight * app.scale
-            height: AppTheme.compHeight * app.scale
-            color: "#00000000"
-
-            Text
-            {
-                verticalAlignment: Text.AlignVCenter
-                width: 80 * app.scale
-                font.family: AppTheme.fontFamily
-                font.pixelSize: AppTheme.fontNormalSize * app.scale
-                color: AppTheme.greyColor
-                text: qsTr("CURRENT ACTIVITIES: ")
-            }
-        }
-
-
-        CurrrentActivities
-        {
-            id: currActivities
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.top: rectActivitiesTableHeader.bottom
-            anchors.topMargin: AppTheme.padding * app.scale
-            height: 200 * app.scale
-        }
-        */
-
         ScrollBar.vertical: ScrollBar
         {
             policy: ScrollBar.AlwaysOn
@@ -119,10 +85,8 @@ Item
     {
         id: buttonDetails
         anchors.right: parent.right
-        anchors.rightMargin: AppTheme.margin * app.scale
+        anchors.rightMargin: AppTheme.padding * app.scale
         anchors.top: flickableContainer.top
-        height: AppTheme.compHeight * app.scale
-        width: height
         image: "qrc:/resources/img/icon_arrow_right.png"
 
         onSigButtonClicked:

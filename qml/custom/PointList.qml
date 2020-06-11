@@ -44,7 +44,7 @@ Item
                         font.pixelSize: AppTheme.fontSize * app.scale
                         color: (currentIndex === index) ? AppTheme.whiteColor : AppTheme.blueColor
                         verticalAlignment: Text.AlignVCenter
-                        height: pointList.height * app.scale
+                        height: parent.height
                     }
 
                     MouseArea

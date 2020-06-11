@@ -42,8 +42,16 @@ Item
         MouseArea
         {
             anchors.fill: parent
-            onClicked: iconSimpleButton.sigButtonClicked()
-            onPressed: scaleAnimation2.start()
+            onPressed:
+            {
+                scaleAnimation2.start()
+                rectContainer.color = AppTheme.shideColor
+            }
+            onReleased:
+            {
+                rectContainer.color = "#00000000"
+                iconSimpleButton.sigButtonClicked()
+            }
         }
     }
 

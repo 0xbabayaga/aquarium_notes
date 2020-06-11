@@ -212,14 +212,6 @@ Item
                         color: formattedColor(paramId, valueNow) //AppTheme.hideColor
                     }
                 }
-
-                Rectangle
-                {
-                    width: parent.width
-                    height: 1 * app.scale
-                    anchors.bottom: parent.bottom
-                    color: ((index + 1) === currentParamsTable.realModelLength()) ? "#00000000" : AppTheme.shideColor
-                }
             }
         }
     }
