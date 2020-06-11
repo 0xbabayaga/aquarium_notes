@@ -27,9 +27,9 @@ Item
     {
     }
 
-    function addDiagram(num, name, xMin, xMax, yMin, yMax, points)
+    function addDiagram(num, paramId, xMin, xMax, yMin, yMax, points)
     {
-        diagrams.add(name, tab_Graph.graphHeight, xMin, xMax, yMin, yMax, points)
+        diagrams.add(paramId, tab_Graph.graphHeight, xMin, xMax, yMin, yMax, points)
         flickableContainer.contentHeight = diagrams.curnesCnt * tab_Graph.graphHeight
     }
 

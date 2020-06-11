@@ -22,7 +22,13 @@ Item
         if (ctx === null)
             ctx = new Diagrams.DiagramView(app.scale, height)
 
-        ctx.addCurve(app.getParamById(id).shortName, app.getParamById(id).unitName, app.getParamById(id).color, xMin, xMax, yMin, yMax, points)
+        ctx.addCurve(app.getParamById(id).shortName,
+                     app.getParamById(id).unitName,
+                     app.getParamById(id).color,
+                     xMin, xMax,
+                     yMin, yMax,
+                     app.getParamById(id).min, app.getParamById(id).max,
+                     points)
     }
 
     function reset()

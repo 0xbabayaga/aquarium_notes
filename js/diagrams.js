@@ -46,6 +46,8 @@ function DiagramView(scale, oneDiagHeight)
     this.xMax = []
     this.yMin = []
     this.yMax = []
+    this.lMin = []
+    this.lMax = []
     this.stepX = 0
     this.name = []
     this.unit = []
@@ -76,12 +78,14 @@ DiagramView.prototype.setCurrentPoint = function(currentPoint)
     this.currPt = currentPoint
 }
 
-DiagramView.prototype.addCurve = function(name, unit, color, xMin, xMax, yMin, yMax, points)
+DiagramView.prototype.addCurve = function(name, unit, color, xMin, xMax, yMin, yMax, lMin, lMax, points)
 {
     this.xMin[this.curvesCnt] = xMin
     this.xMax[this.curvesCnt] = xMax
     this.yMin[this.curvesCnt] = yMin
     this.yMax[this.curvesCnt] = yMax
+    this.lMin[this.curvesCnt] = lMin
+    this.lMax[this.curvesCnt] = lMax
     this.name[this.curvesCnt] = name
     this.unit[this.curvesCnt] = unit
     this.color[this.curvesCnt] = color
@@ -187,6 +191,27 @@ DiagramView.prototype.drawCurve = function(num)
 
     yScale = this.drawHeight / (maxY - minY)
 
+    this.ctx.save()
+    this.ctx.beginPath()
+    this.ctx.strokeStyle = greenColor
+    this.ctx.lineWidth   = 1 * appScale
+    this.ctx.setLineDash([1])
+
+    if (this.lMin[num] !== 0)
+    {
+        y = this.oneDiagHeight * num + this.drawHeight - parseFloat(this.lMin[num] - minY) * yScale
+        this.ctx.moveTo(this.leftMargin, y)
+        this.ctx.lineTo(this.leftMargin + this.drawWidth, y)
+    }
+
+    y = this.oneDiagHeight * num + this.drawHeight - parseFloat(this.lMax[num] - minY) * yScale
+    this.ctx.moveTo(this.leftMargin, y)
+    this.ctx.lineTo(this.leftMargin + this.drawWidth, y)
+
+    this.ctx.stroke()
+    this.ctx.closePath()
+    this.ctx.restore()
+
     this.ctx.font = axisFont
     this.ctx.fillStyle = textColor
 
@@ -206,7 +231,8 @@ DiagramView.prototype.drawCurve = function(num)
     //grd.addColorStop(0, "#00000000")
     grd.addColorStop(1, this.getCurveGradientColor(num))
     grd.addColorStop(1, this.getCurveGradientColor(num))
-/*
+
+    /*
     this.ctx.beginPath()
     this.ctx.fillStyle = grd
     this.ctx.strokeStyle = "#00000000"
@@ -225,12 +251,13 @@ DiagramView.prototype.drawCurve = function(num)
     this.ctx.lineTo(this.width - this.rightMargin, this.oneDiagHeight * num + this.drawHeight)
     this.ctx.closePath()
     this.ctx.fill()
-*/
+    */
 
     this.ctx.beginPath()
     this.ctx.strokeStyle = this.getCurveColor(num)
     this.ctx.fillStyle = textColor
     this.ctx.lineWidth   = 2 * appScale
+    this.ctx.setLineDash([1000])
 
     for (pt in this.points[num])
     {
