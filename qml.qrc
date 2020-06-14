@@ -37,5 +37,8 @@
         <file>js/diagrams.js</file>
         <file>qml/custom/DiagramView.qml</file>
         <file>qml/custom/PointList.qml</file>
+        <file>qml/custom/DatePicker.qml</file>
+        <file>resources/img/icon_ok.png</file>
+        <file>resources/img/icon_cancel.png</file>
     </qresource>
 </RCC>

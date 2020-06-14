@@ -31,6 +31,7 @@ Window
     signal sigAddRecordNotes(int smpId, string note, string imageLink)
     signal sigTankSelected(int tankIdx)
     signal sigPersonalParamStateChanged(int paramId, bool en)
+    signal sigRefreshData()
     signal sigDebug()
 
     function getAllParamsListModel() { return allParamsListModel    }

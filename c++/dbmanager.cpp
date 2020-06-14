@@ -92,6 +92,7 @@ DBManager::DBManager(QQmlApplicationEngine *engine, QObject *parent) : QObject(p
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecordNotes(int, QString, QString)), this, SLOT(onGuiAddRecordNote(int, QString, QString)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigTankSelected(int)), this, SLOT(onGuiTankSelected(int)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigPersonalParamStateChanged(int, bool)), this, SLOT(onGuiPersonalParamStateChanged(int, bool)));
+    connect(qmlEngine->rootObjects().first(), SIGNAL(sigRefreshData()), this, SLOT(onGuiRefreshData()));
 
     curSelectedObjs.lastSmpId = getLastSmpId();
     setLastSmpId(curSelectedObjs.lastSmpId);
@@ -124,6 +125,7 @@ DBManager::~DBManager()
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecordNotes(int, QString, QString)), this, SLOT(onGuiAddRecordNote(int, QString, QString)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigTankSelected(int)), this, SLOT(onGuiTankSelected(int)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigPersonalParamStateChanged(int, bool)), this, SLOT(onGuiPersonalParamStateChanged(int, bool)));
+    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigRefreshData()), this, SLOT(onGuiRefreshData()));
 
     if (curSelectedObjs.user != nullptr)
         delete curSelectedObjs.user;
@@ -256,11 +258,20 @@ void DBManager::onGuiTankCreate(QString name, int type, int l, int w, int h, QSt
 
 void DBManager::onGuiAddRecord(int smpId, int paramId, double value)
 {
-    if (addParamRecord(smpId, paramId, value) == true)
-    {
-        getLatestParams();
-        getHistoryParams();
-    }
+    addParamRecord(smpId, paramId, value);
+    //{
+        //getLatestParams();
+        //getHistoryParams();
+    //}
+}
+
+void DBManager::onGuiRefreshData()
+{
+    getLatestParams();
+    getHistoryParams();
+
+    curSelectedObjs.lastSmpId = getLastSmpId();
+    setLastSmpId(curSelectedObjs.lastSmpId);
 }
 
 void DBManager::onGuiAddRecordNote(int smpId, QString note, QString imageLink)

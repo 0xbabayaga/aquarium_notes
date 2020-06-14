@@ -85,6 +85,7 @@ public slots:
     void    onGuiAddRecordNote(int smpId, QString notes, QString imageLink);
     void    onGuiTankSelected(int tankIdx);
     void    onGuiPersonalParamStateChanged(int paramId, bool en);
+    void    onGuiRefreshData();
 
 public:
     const QString   dbFolder = "db";

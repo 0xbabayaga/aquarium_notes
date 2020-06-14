@@ -47,6 +47,8 @@ Item
                                   imagesList.getSelectedImageLink())
 
             app.lastSmpId++
+
+            sigRefreshData()
         }
 
         rectAddRecordDialog.opacity = 0
@@ -108,7 +110,7 @@ Item
             }
         }
 
-        IconButton
+        IconSimpleButton
         {
             id: addRecordButton
             anchors.horizontalCenter: parent.horizontalCenter

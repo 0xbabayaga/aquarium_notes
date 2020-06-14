@@ -18,7 +18,12 @@ Item
 
         anchors.fill: parent
         radius: width/2
-        color: "#00000000"
+        color: AppTheme.backLightBlueColor
+
+        Behavior on color
+        {
+            NumberAnimation {   duration: 200 }
+        }
 
         Image
         {
@@ -42,16 +47,8 @@ Item
         MouseArea
         {
             anchors.fill: parent
-            onPressed:
-            {
-                scaleAnimation2.start()
-                rectContainer.color = AppTheme.shideColor
-            }
-            onReleased:
-            {
-                rectContainer.color = "#00000000"
-                iconSimpleButton.sigButtonClicked()
-            }
+            onPressed: scaleAnimation2.start()
+            onReleased: iconSimpleButton.sigButtonClicked()
         }
     }
 

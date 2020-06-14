@@ -87,6 +87,7 @@ Item
         anchors.right: parent.right
         anchors.rightMargin: AppTheme.padding * app.scale
         anchors.top: flickableContainer.top
+        anchors.topMargin: -AppTheme.padding * app.scale
         image: "qrc:/resources/img/icon_arrow_right.png"
 
         onSigButtonClicked:

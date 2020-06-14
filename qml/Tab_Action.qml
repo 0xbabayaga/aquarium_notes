@@ -20,7 +20,7 @@ Item
             NumberAnimation {   duration: 200 }
         }
 
-        IconButton
+        IconSimpleButton
         {
             id: addRecordButton
             anchors.horizontalCenter: parent.horizontalCenter
@@ -67,8 +67,8 @@ Item
         Column
         {
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: 100 * app.scale
+            anchors.top: textHeader.bottom
+            anchors.topMargin: AppTheme.margin * app.scale
             height: 300 * app.scale
             width: parent.width
             spacing: AppTheme.padding * app.scale
@@ -87,10 +87,38 @@ Item
             TextInput
             {
                 id: textPeriod
-                placeholderText: qsTr("Period")
+                placeholderText: qsTr("Description")
                 width: parent.width
                 focus: true
                 KeyNavigation.tab: textUserEmail
+            }
+
+            Item { height: 1; width: 1;}
+
+            ListModel
+            {
+                id: periodslistModel
+                ListElement {   name: qsTr("One shot")      }
+                ListElement {   name: qsTr("Every day")     }
+                ListElement {   name: qsTr("Every week")    }
+                ListElement {   name: qsTr("Every month")   }
+            }
+
+            ComboList
+            {
+                id: comboPeriod
+                propertyName: qsTr("Select a period:");
+                width: parent.width
+                model: periodslistModel
+                enabled: buttonPeriodicEnable.checked
+            }
+
+            Item { height: 1; width: 1;}
+
+            DatePicker
+            {
+                id: datePicker
+                width: parent.width
             }
         }
 
@@ -100,7 +128,7 @@ Item
             anchors.bottom: parent.bottom
             anchors.bottomMargin: AppTheme.margin * app.scale
             anchors.left: parent.left
-            image: "qrc:/resources/img/icon_arrow_left.png"
+            image: "qrc:/resources/img/icon_cancel.png"
 
             onSigButtonClicked:
             {
@@ -115,7 +143,7 @@ Item
             anchors.bottom: parent.bottom
             anchors.bottomMargin: AppTheme.margin * app.scale
             anchors.right: parent.right
-            image: "qrc:/resources/img/icon_plus.png"
+            image: "qrc:/resources/img/icon_ok.png"
 
             onSigButtonClicked:
             {
