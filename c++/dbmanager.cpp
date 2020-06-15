@@ -259,19 +259,15 @@ void DBManager::onGuiTankCreate(QString name, int type, int l, int w, int h, QSt
 void DBManager::onGuiAddRecord(int smpId, int paramId, double value)
 {
     addParamRecord(smpId, paramId, value);
-    //{
-        //getLatestParams();
-        //getHistoryParams();
-    //}
 }
 
 void DBManager::onGuiRefreshData()
 {
-    getLatestParams();
-    getHistoryParams();
-
     curSelectedObjs.lastSmpId = getLastSmpId();
     setLastSmpId(curSelectedObjs.lastSmpId);
+
+    getLatestParams();
+    getHistoryParams();
 }
 
 void DBManager::onGuiAddRecordNote(int smpId, QString note, QString imageLink)
@@ -994,6 +990,18 @@ bool DBManager::initDB()
                 "(PARAM_ID integer, "
                 "TANK_ID varchar(16), "
                 "ENABLED integer)");
+
+    qDebug() << query.lastError();
+
+
+    query.exec("create table ACTIONS_TABLE "
+               "(ACT_ID integer,"
+               "TANK_ID varchar(16),"
+               "TYPE integer,"
+               "NAME text,"
+               "DESC text,"
+               "PERIOD integer,"
+               "TIMESTAMP integer)");
 
     qDebug() << query.lastError();
 
