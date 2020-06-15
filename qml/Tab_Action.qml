@@ -115,6 +115,15 @@ Item
 
             Item { height: 1; width: 1;}
 
+            Text
+            {
+                verticalAlignment: Text.AlignVCenter
+                font.family: AppTheme.fontFamily
+                font.pixelSize: AppTheme.fontSmallSize * app.scale
+                color: AppTheme.greyColor
+                text: qsTr("Start date")
+            }
+
             DatePicker
             {
                 id: datePicker
