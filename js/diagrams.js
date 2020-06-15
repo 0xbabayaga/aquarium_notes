@@ -71,6 +71,7 @@ DiagramView.prototype.init = function(ctx, width, height)
 DiagramView.prototype.reset = function()
 {
     this.curvesCnt = 0
+    this.points = []
 }
 
 DiagramView.prototype.setCurrentPoint = function(currentPoint)
@@ -98,12 +99,13 @@ DiagramView.prototype.drawGrid = function(num)
     var pt1 = 0, pt2 = 0, ptc = 0
     var text = ""
     var x = this.leftMargin
+    var i = 0
 
     this.ctx.beginPath()
     this.ctx.strokeStyle = gridColor
     this.ctx.lineWidth   = 0.5 * appScale
 
-    for (var i = 0; i < 5; i++)
+    for (i = 0; i < 5; i++)
     {
         this.ctx.moveTo(this.width - this.rightMargin, this.oneDiagHeight * num + this.drawHeight/4 * i)
         this.ctx.lineTo(this.leftMargin, this.oneDiagHeight * num + this.drawHeight/4 * i)
@@ -126,11 +128,8 @@ DiagramView.prototype.drawGrid = function(num)
     this.ctx.font = labelFont
     this.ctx.fillStyle = this.getCurveColor(num)
     text = this.name[num]
-    //this.ctx.fillText(this.name[num],
-    //                  this.width - this.rightMargin - this.getTextWidth(text),
-    //                  this.topMargin + this.oneDiagHeight * num)
 
-    var i = 0
+    i = 0
 
     for (var pt in this.points[num])
     {
