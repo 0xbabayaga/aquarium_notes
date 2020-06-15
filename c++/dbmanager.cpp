@@ -90,6 +90,7 @@ DBManager::DBManager(QQmlApplicationEngine *engine, QObject *parent) : QObject(p
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateTank(QString, int, int, int, int, QString)), this, SLOT(onGuiTankCreate(QString, int, int, int, int, QString)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecord(int, int, double)), this, SLOT(onGuiAddRecord(int, int, double)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecordNotes(int, QString, QString)), this, SLOT(onGuiAddRecordNote(int, QString, QString)));
+    connect(qmlEngine->rootObjects().first(), SIGNAL(sigAddAction(QString, QString, int, int, int)), this, SLOT(onGuiAddActionRecord(QString, QString, int, int, int)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigTankSelected(int)), this, SLOT(onGuiTankSelected(int)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigPersonalParamStateChanged(int, bool)), this, SLOT(onGuiPersonalParamStateChanged(int, bool)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigRefreshData()), this, SLOT(onGuiRefreshData()));
@@ -123,6 +124,7 @@ DBManager::~DBManager()
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateTank(QString, int, int, int, int)), this, SLOT(onGuiTankCreate(QString, int, int, int, int)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecord(int, int, float)), this, SLOT(onGuiAddRecord(int, int, float)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecordNotes(int, QString, QString)), this, SLOT(onGuiAddRecordNote(int, QString, QString)));
+    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigAddAction(QString, QString, int, int, int)), this, SLOT(onGuiAddActionRecord(QString, QString, int, int, int)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigTankSelected(int)), this, SLOT(onGuiTankSelected(int)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigPersonalParamStateChanged(int, bool)), this, SLOT(onGuiPersonalParamStateChanged(int, bool)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigRefreshData()), this, SLOT(onGuiRefreshData()));
@@ -276,6 +278,14 @@ void DBManager::onGuiAddRecordNote(int smpId, QString note, QString imageLink)
     {
         getLatestParams();
         getHistoryParams();
+    }
+}
+
+void DBManager::onGuiAddActionRecord(QString name, QString desc, int type, int period, int tm)
+{
+    if (addActionRecord(currentTankSelected()->tankId(), name, desc, type, period, tm) == true)
+    {
+
     }
 }
 
@@ -792,6 +802,30 @@ bool DBManager::addNoteRecord(int smpId, QString note, QString imageLink)
     return res;
 }
 
+bool DBManager::addActionRecord(QString tankId, QString name, QString desc, int type, int period, int tm)
+{
+    QSqlQuery query;
+    bool res = false;
+
+    query.prepare("INSERT INTO ACTIONS_TABLE (TANK_ID, TYPE, NAME, DESC, PERIOD, EN, TIMESTAMP) "
+                  "VALUES (:tank_id, :type, :name, :desc, :period, :en, :tm)");
+
+    query.bindValue(":tank_id", tankId);
+    query.bindValue(":type", type);
+    query.bindValue(":name", name);
+    query.bindValue(":desc", desc);
+    query.bindValue(":period", period);
+    query.bindValue(":en", 1);
+    query.bindValue(":tm", tm);
+
+    res = query.exec();
+
+    if (res == false)
+        qDebug() << "Add Action record error: " << query.lastError();
+
+    return res;
+}
+
 bool DBManager::editPersonalParamState(QString tankId, int paramId, bool en)
 {
     QSqlQuery query;
@@ -994,13 +1028,14 @@ bool DBManager::initDB()
     qDebug() << query.lastError();
 
 
-    query.exec("create table ACTIONS_TABLE "
-               "(ACT_ID integer,"
+    query.exec("CREATE TABLE IF NOT EXISTS ACTIONS_TABLE "
+               "(ID integer PRIMARY KEY AUTOINCREMENT,"
                "TANK_ID varchar(16),"
                "TYPE integer,"
                "NAME text,"
                "DESC text,"
                "PERIOD integer,"
+               "EN integer,"
                "TIMESTAMP integer)");
 
     qDebug() << query.lastError();

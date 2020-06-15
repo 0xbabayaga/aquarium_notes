@@ -48,6 +48,7 @@ private:
     bool    createTankDefaultParamSet(QString tankId, AquariumType type);
     bool    addParamRecord(int smpId, int paramId, double value);
     bool    addNoteRecord(int smpId, QString note, QString imageLink);
+    bool    addActionRecord(QString tankId, QString name, QString desc, int type, int period, int tm);
     bool    editPersonalParamState(QString tankId, int paramId, bool en);
 
     /* Read basics */
@@ -83,6 +84,7 @@ public slots:
     void    onGuiTankCreate(QString name, int type, int l, int w, int h, QString imgFile);
     void    onGuiAddRecord(int smpId, int paramId, double value);
     void    onGuiAddRecordNote(int smpId, QString notes, QString imageLink);
+    void    onGuiAddActionRecord(QString name, QString desc, int type, int period, int tm);
     void    onGuiTankSelected(int tankIdx);
     void    onGuiPersonalParamStateChanged(int paramId, bool en);
     void    onGuiRefreshData();

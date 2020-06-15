@@ -5,7 +5,6 @@ import QtGraphicalEffects 1.12
 import Qt.labs.calendar 1.0
 import "../"
 
-
 Item
 {
     id: datePicker
@@ -16,6 +15,7 @@ Item
     property var months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
     property var weekNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 
+    property alias title: textHeader.text
     property double cellSize: AppTheme.compHeight * app.scale
     property int fontSizePx: AppTheme.fontSmallSize * app.scale
     property var date: new Date(calendar.currentYear, calendar.currentMonth, calendar.currentDay)
@@ -24,10 +24,19 @@ Item
     signal sigOk()
     signal sigCancel()
 
+    function getLinuxDate()
+    {
+        var dd = "0" + calendar.currentDay
+        var mm = "0" + (calendar.currentMonth + 1)
+
+        return calendar.currentYear + "/" + mm.substr(-2) + "/" + dd.substr(-2)
+    }
+
     function setCurrentDate()
     {
+        var dd = "0" + calendar.currentDay
         datePicker.date = new Date(calendar.currentYear, calendar.currentMonth, calendar.currentDay)
-        textDateTime.text = months[calendar.currentMonth ]+ " - " + calendar.currentDay + " - " + calendar.currentYear
+        textDateTime.text = dd.substr(-2) + " " + months[calendar.currentMonth]+ " " + calendar.currentYear
     }
 
     function showList(vis)
@@ -155,10 +164,25 @@ Item
                     anchors.topMargin: AppTheme.margin * app.scale
                     color: "#00000000"
 
+                    Text
+                    {
+                        id: textHeader
+                        anchors.top: parent.top
+                        anchors.left: parent.left
+                        verticalAlignment: Text.AlignVCenter
+                        height: AppTheme.compHeight * app.scale
+                        width: 100 * app.scale
+                        font.family: AppTheme.fontFamily
+                        font.pixelSize: AppTheme.fontNormalSize * app.scale
+                        color: AppTheme.greyColor
+                        text: qsTr("Select a date:")
+                    }
+
                     ListView
                     {
                         id: calendar
-                        anchors.top: parent.top
+                        anchors.top: textHeader.bottom
+                        anchors.topMargin: AppTheme.padding * app.scale
                         anchors.left: parent.left
                         anchors.right: parent.right
                         height: AppTheme.compHeight * app.scale * 8

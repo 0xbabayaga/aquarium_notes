@@ -9,6 +9,23 @@ Item
 {
     id: tab_Action
 
+    function addAction()
+    {
+        var dt = Math.round(new Date(datePicker.getLinuxDate() + " " + timePicker.getLinuxTime()).getTime()/1000)
+
+        console.log("DATETIME: ", datePicker.getLinuxDate() + " " + timePicker.getLinuxTime())
+        console.log("DT:", dt)
+
+        if (textActionName.text.length > 0 &&
+            textDesc.text.length)
+        {
+            app.sigAddAction(textActionName.text, textDesc.text, 0, comboPeriod.currentIndex, dt)
+
+            rectAddActionDialog.opacity = 0
+            rectDataContainer.opacity = 1
+        }
+    }
+
     Rectangle
     {
         id: rectDataContainer
@@ -79,21 +96,21 @@ Item
                 placeholderText: qsTr("Action name")
                 width: parent.width
                 focus: true
-                KeyNavigation.tab: textUserEmail
+                //KeyNavigation.tab: textUserEmail
             }
 
-            Item { height: 1; width: 1;}
+            //Item { height: 1; width: 1;}
 
             TextInput
             {
-                id: textPeriod
+                id: textDesc
                 placeholderText: qsTr("Description")
                 width: parent.width
                 focus: true
-                KeyNavigation.tab: textUserEmail
+                //KeyNavigation.tab: textUserEmail
             }
 
-            Item { height: 1; width: 1;}
+            //Item { height: 1; width: 1;}
 
             ListModel
             {
@@ -110,10 +127,9 @@ Item
                 propertyName: qsTr("Select a period:");
                 width: parent.width
                 model: periodslistModel
-                enabled: buttonPeriodicEnable.checked
             }
 
-            Item { height: 1; width: 1;}
+            //Item { height: 1; width: 1;}
 
             Text
             {
@@ -121,13 +137,21 @@ Item
                 font.family: AppTheme.fontFamily
                 font.pixelSize: AppTheme.fontSmallSize * app.scale
                 color: AppTheme.greyColor
-                text: qsTr("Start date")
+                text: qsTr("Start Date/Time")
             }
 
             DatePicker
             {
                 id: datePicker
                 width: parent.width
+                title: qsTr("Select a start date:")
+            }
+
+            TimePicker
+            {
+                id: timePicker
+                width: parent.width
+                title: qsTr("Select a start time:")
             }
         }
 
@@ -154,11 +178,7 @@ Item
             anchors.right: parent.right
             image: "qrc:/resources/img/icon_ok.png"
 
-            onSigButtonClicked:
-            {
-                rectAddActionDialog.opacity = 0
-                rectDataContainer.opacity = 1
-            }
+            onSigButtonClicked: addAction()
         }
     }
 }
