@@ -9,12 +9,12 @@ Item
 {
     id: tab_Action
 
+    property var days: ["Monday", "Tuesday", "Wensday", "Thursday", "Friday", "Saturday", "Sunday"]
+    property var months: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
     function addAction()
     {
         var dt = Math.round(new Date(datePicker.getLinuxDate() + " " + timePicker.getLinuxTime()).getTime()/1000)
-
-        console.log("DATETIME: ", datePicker.getLinuxDate() + " " + timePicker.getLinuxTime())
-        console.log("DT:", dt)
 
         if (textActionName.text.length > 0 &&
             textDesc.text.length)
@@ -26,10 +26,24 @@ Item
         }
     }
 
+    function printDay(tm)
+    {
+        var date = new Date(tm * 1000)
+        return days[date.getDay()]
+    }
+
+    function printShortDate(tm)
+    {
+        var date = new Date(tm * 1000)
+        return months[date.getMonth()] + " " + date.getDate()
+    }
+
     Rectangle
     {
         id: rectDataContainer
         anchors.fill: parent
+        anchors.leftMargin: AppTheme.padding * app.scale
+        anchors.rightMargin: AppTheme.padding * app.scale
         color: "#00000000"
 
         Behavior on opacity
@@ -37,60 +51,93 @@ Item
             NumberAnimation {   duration: 200 }
         }
 
+        Text
+        {
+            anchors.left: parent.left
+            anchors.leftMargin: AppTheme.padding * app.scale
+            height: AppTheme.compHeight * app.scale
+            verticalAlignment: Text.AlignVCenter
+            width: 120 * app.scale
+            font.family: AppTheme.fontFamily
+            font.pixelSize: AppTheme.fontBigSize * app.scale
+            color: AppTheme.blueColor
+            text: qsTr("This week:")
+        }
+
         ListView
         {
             id: actionList
             anchors.top: parent.top
+            anchors.topMargin: AppTheme.margin * app.scale
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.topMargin: AppTheme.compHeight * app.scale
             anchors.bottom: parent.bottom
             anchors.bottomMargin: AppTheme.margin * 2 * app.scale
-            spacing: 0
-            interactive: false
+            spacing: AppTheme.padding * app.scale
             model: actionsListModel
 
             delegate: Rectangle
             {
                 width: parent.width
-                height: en ? AppTheme.rowHeight * app.scale : 0
-                visible: en
-                color: (index%2 === 0) ? AppTheme.backLightBlueColor : "#00000000"
+                height: AppTheme.rowHeight * app.scale * 2
+                color: AppTheme.backLightBlueColor
 
-                Column
+                Rectangle
                 {
-                Text
-                {
-                    height: AppTheme.compHeight * app.scale
-                    verticalAlignment: Text.AlignVCenter
-                    width: 120 * app.scale
-                    font.family: AppTheme.fontFamily
-                    font.pixelSize: AppTheme.fontNormalSize * app.scale
-                    color: AppTheme.blueColor
-                    text: id
-                }
+                    anchors.fill: parent
+                    anchors.leftMargin: AppTheme.padding * app.scale
+                    anchors.rightMargin: AppTheme.padding * app.scale
+                    color: "#00000000"
 
-                Text
-                {
-                    height: AppTheme.compHeight * app.scale
-                    verticalAlignment: Text.AlignVCenter
-                    width: 120 * app.scale
-                    font.family: AppTheme.fontFamily
-                    font.pixelSize: AppTheme.fontNormalSize * app.scale
-                    color: AppTheme.blueColor
-                    text: startDT
-                }
+                    Text
+                    {
+                        anchors.top: parent.top
+                        anchors.left: parent.left
+                        height: AppTheme.compHeight * app.scale
+                        verticalAlignment: Text.AlignVCenter
+                        font.family: AppTheme.fontFamily
+                        font.pixelSize: AppTheme.fontNormalSize * app.scale
+                        color: AppTheme.blueColor
+                        text: name
+                    }
 
-                Text
-                {
-                    height: AppTheme.compHeight * app.scale
-                    verticalAlignment: Text.AlignVCenter
-                    width: 120 * app.scale
-                    font.family: AppTheme.fontFamily
-                    font.pixelSize: AppTheme.fontNormalSize * app.scale
-                    color: AppTheme.blueColor
-                    text: name
-                }
+                    Text
+                    {
+                        anchors.top: parent.top
+                        anchors.right: parent.right
+                        height: AppTheme.compHeight * app.scale
+                        verticalAlignment: Text.AlignVCenter
+                        font.family: AppTheme.fontFamily
+                        font.pixelSize: AppTheme.fontNormalSize * app.scale
+                        color: AppTheme.greyColor
+                        text: printDay(startDT)
+                    }
+
+                    Text
+                    {
+                        anchors.top: parent.top
+                        anchors.topMargin: AppTheme.compHeight * app.scale
+                        anchors.right: parent.right
+                        height: AppTheme.compHeight * app.scale
+                        verticalAlignment: Text.AlignVCenter
+                        font.family: AppTheme.fontFamily
+                        font.pixelSize: AppTheme.fontNormalSize * app.scale
+                        color: AppTheme.greyColor
+                        text: printShortDate(startDT)
+                    }
+
+                    Text
+                    {
+                        anchors.top: parent.top
+                        anchors.topMargin: AppTheme.compHeight * app.scale
+                        anchors.left: parent.left
+                        height: AppTheme.compHeight * app.scale
+                        verticalAlignment: Text.AlignVCenter
+                        font.family: AppTheme.fontFamily
+                        font.pixelSize: AppTheme.fontNormalSize * app.scale
+                        color: AppTheme.greyColor
+                        text: desc
+                    }
                 }
             }
         }
