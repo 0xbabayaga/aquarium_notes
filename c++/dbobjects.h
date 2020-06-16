@@ -21,6 +21,66 @@ typedef enum
     EndOfList = Fresh_FullScape + 1
 }   AquariumType;
 
+class ActionObj : public QObject
+{
+    Q_OBJECT
+
+    Q_PROPERTY(int actId READ actId WRITE setActId NOTIFY actIdChanged)
+    Q_PROPERTY(int type READ type WRITE setType NOTIFY typeChanged)
+    Q_PROPERTY(int period READ period WRITE setPeriod NOTIFY periodChanged)
+    Q_PROPERTY(int startDT READ startDT WRITE setStartDT NOTIFY startDTChanged)
+    Q_PROPERTY(bool en READ en WRITE setEn NOTIFY enChanged)
+    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
+    Q_PROPERTY(QString desc READ desc WRITE setDesc NOTIFY descChanged)
+
+public:
+    ActionObj(int actId, int type, int period, int startDT, bool en, QString name, QString desc)
+    {
+        setActId(actId);
+        setType(type);
+        setPeriod(period);
+        setStartDT(startDT);
+        setEn(en);
+        setName(name);
+        setDesc(desc);
+    }
+
+public:
+    int actId()                 {   return  _actId;     }
+    int type()                  {   return _type;       }
+    int period()                {   return _period;     }
+    int startDT()               {   return _startDT;    }
+    bool en()                   {   return  _en;        }
+    QString name()              {   return _name;       }
+    QString desc()              {   return _desc;       }
+
+    void setActId(int id)       {   _actId = id;        }
+    void setType(int type)      {   _type = type;       }
+    void setPeriod(int p)       {   _period = p;        }
+    void setStartDT(int dt)     {   _startDT = dt;      }
+    void setEn(bool en)         {   _en = en;           }
+    void setName(QString name)  {   _name = name;       }
+    void setDesc(QString desc)  {   _desc = desc;       }
+
+signals:
+    void actIdChanged();
+    void typeChanged();
+    void periodChanged();
+    void startDTChanged();
+    void enChanged();
+    void nameChanged();
+    void descChanged();
+
+protected:
+    int     _actId;
+    int     _type;
+    int     _period;
+    int     _startDT;
+    bool    _en;
+    QString _name;
+    QString _desc;
+};
+
 class LastDataParamRecObj : public QObject
 {
     Q_OBJECT

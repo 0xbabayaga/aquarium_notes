@@ -7,6 +7,7 @@
 #include <QQmlApplicationEngine>
 #include "dbobjects.h"
 #include "imagegallery.h"
+#include "actionlist.h"
 
 #define RAND_ID_LENGTH  16
 
@@ -33,7 +34,6 @@ public:
         QList<QObject*> listOfUserTanks;
         int             tankIdx = 0;
         int             lastSmpId = 0;
-
         QList<QObject*> listOfCurrValues;
     }   UTObj;
 
@@ -57,6 +57,7 @@ private:
     bool    getHistoryParams();
     int     getLastSmpId();
     bool    getLatestParams();
+    bool    getActionCalendar();
 
     bool    getCurrentUser();
     bool    getUserTanksList();
@@ -94,6 +95,7 @@ public:
     const QString   dbFile = "db.db";
 
 private:
+    ActionList      *actionList;
     QString         dbFileLink;
     QSqlDatabase    db;
     ImageGallery    *imageGallery;

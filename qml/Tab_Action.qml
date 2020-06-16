@@ -37,6 +37,64 @@ Item
             NumberAnimation {   duration: 200 }
         }
 
+        ListView
+        {
+            id: actionList
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.topMargin: AppTheme.compHeight * app.scale
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: AppTheme.margin * 2 * app.scale
+            spacing: 0
+            interactive: false
+            model: actionsListModel
+
+            delegate: Rectangle
+            {
+                width: parent.width
+                height: en ? AppTheme.rowHeight * app.scale : 0
+                visible: en
+                color: (index%2 === 0) ? AppTheme.backLightBlueColor : "#00000000"
+
+                Column
+                {
+                Text
+                {
+                    height: AppTheme.compHeight * app.scale
+                    verticalAlignment: Text.AlignVCenter
+                    width: 120 * app.scale
+                    font.family: AppTheme.fontFamily
+                    font.pixelSize: AppTheme.fontNormalSize * app.scale
+                    color: AppTheme.blueColor
+                    text: id
+                }
+
+                Text
+                {
+                    height: AppTheme.compHeight * app.scale
+                    verticalAlignment: Text.AlignVCenter
+                    width: 120 * app.scale
+                    font.family: AppTheme.fontFamily
+                    font.pixelSize: AppTheme.fontNormalSize * app.scale
+                    color: AppTheme.blueColor
+                    text: startDT
+                }
+
+                Text
+                {
+                    height: AppTheme.compHeight * app.scale
+                    verticalAlignment: Text.AlignVCenter
+                    width: 120 * app.scale
+                    font.family: AppTheme.fontFamily
+                    font.pixelSize: AppTheme.fontNormalSize * app.scale
+                    color: AppTheme.blueColor
+                    text: name
+                }
+                }
+            }
+        }
+
         IconSimpleButton
         {
             id: addRecordButton

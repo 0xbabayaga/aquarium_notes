@@ -19,6 +19,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+        c++/actionlist.cpp \
         c++/dbmanager.cpp \
         c++/imagegallery.cpp \
         main.cpp
@@ -58,6 +59,7 @@ DISTFILES += \
 
 HEADERS += \
     c++/AppDefs.h \
+    c++/actionlist.h \
     c++/dbmanager.h \
     c++/dbobjects.h \
     c++/galleryobjects.h \

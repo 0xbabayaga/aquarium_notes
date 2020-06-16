@@ -71,10 +71,12 @@ DBManager::DBManager(QQmlApplicationEngine *engine, QObject *parent) : QObject(p
 
     qDebug() << dbFileLink;
 
-    if (initRequired == true)
+    //if (initRequired == true)
         initDB();
 
     qmlEngine = engine;
+
+    actionList = new ActionList();
 
     aquariumTypeList.clear();
 
@@ -115,7 +117,6 @@ DBManager::DBManager(QQmlApplicationEngine *engine, QObject *parent) : QObject(p
 
     imageGallery = new ImageGallery();
     qmlEngine->rootContext()->setContextProperty("imageGalleryListModel", QVariant::fromValue(imageGallery->getGalleryObjList()));
-
 }
 
 DBManager::~DBManager()
@@ -131,6 +132,9 @@ DBManager::~DBManager()
 
     if (curSelectedObjs.user != nullptr)
         delete curSelectedObjs.user;
+
+    if (actionList != nullptr)
+        delete actionList;
 }
 
 bool DBManager::getCurrentObjs()
@@ -154,6 +158,8 @@ bool DBManager::getCurrentObjs()
             getLatestParams();
 
             getHistoryParams();
+
+            getActionCalendar();
 
             return true;
         }
@@ -300,6 +306,21 @@ void DBManager::onGuiTankSelected(int tankIdx)
 void DBManager::onGuiPersonalParamStateChanged(int paramId, bool en)
 {
     editPersonalParamState(currentTankSelected()->tankId(), paramId, en);
+}
+
+bool DBManager::getActionCalendar()
+{
+    bool res = false;
+    QSqlQuery query("SELECT * FROM ACTIONS_TABLE WHERE TANK_ID='"+currentTankSelected()->tankId()+"' ORDER BY STARTDATE DESC");
+
+    qDebug() << "calendar " << query.lastError();
+
+    if (actionList->setData(&query, ActionView_ThisWeek) != true)
+        qDebug() << "actionList->setData error";
+
+    qmlEngine->rootContext()->setContextProperty("actionsListModel", QVariant::fromValue(*actionList->getData()));
+
+    return res;
 }
 
 bool DBManager::getParamsList(QString tankId, AquariumType type)
@@ -807,7 +828,7 @@ bool DBManager::addActionRecord(QString tankId, QString name, QString desc, int 
     QSqlQuery query;
     bool res = false;
 
-    query.prepare("INSERT INTO ACTIONS_TABLE (TANK_ID, TYPE, NAME, DESC, PERIOD, EN, TIMESTAMP) "
+    query.prepare("INSERT INTO ACTIONS_TABLE (TANK_ID, TYPE, NAME, DESC, PERIOD, EN, STARTDATE) "
                   "VALUES (:tank_id, :type, :name, :desc, :period, :en, :tm)");
 
     query.bindValue(":tank_id", tankId);
@@ -863,7 +884,7 @@ bool DBManager::initDB()
 {
     QSqlQuery query;
 
-    query.exec("create table USER_TABLE "
+    query.exec("CREATE TABLE IF NOT EXISTS USER_TABLE"
                 "(MAN_ID varchar(16), "
                 "UNAME varchar(64), "
                 "UPASS varchar(128), "
@@ -877,7 +898,7 @@ bool DBManager::initDB()
 
     qDebug() << query.lastError();
 
-    query.exec("create table TANKS_TABLE "
+    query.exec("CREATE TABLE IF NOT EXISTS TANKS_TABLE "
                 "(TANK_ID varchar(16), "
                 "MAN_ID varchar(16), "
                 "TYPE integer, "
@@ -893,7 +914,7 @@ bool DBManager::initDB()
 
     qDebug() << query.lastError();
 
-    query.exec("create table HISTORY_VALUE_TABLE "
+    query.exec("CREATE TABLE IF NOT EXISTS HISTORY_VALUE_TABLE "
                 "(ID integer PRIMARY KEY AUTOINCREMENT, "
                 "SMP_ID integer, "
                 "TANK_ID varchar(16), "
@@ -903,7 +924,7 @@ bool DBManager::initDB()
 
     qDebug() << query.lastError();
 
-    query.exec("create table HISTORY_NOTES_TABLE "
+    query.exec("CREATE TABLE IF NOT EXISTS HISTORY_NOTES_TABLE "
                 "(SMP_ID integer, "
                 "TANK_ID varchar(16), "
                 "TEXT text, "
@@ -914,7 +935,7 @@ bool DBManager::initDB()
     qDebug() << query.lastError();
 
     /* Limits count must match DbManager::AquariumType */
-    query.exec("create table DICT_TABLE "
+    query.exec("CREATE TABLE IF NOT EXISTS DICT_TABLE "
                 "(PARAM_ID integer, "
                 "SHORT_NAME varchar(8), "
                 "FULL_NAME varchar(32), "
@@ -938,89 +959,89 @@ bool DBManager::initDB()
 
     qDebug() << query.lastError();
 
-    query.exec("INSERT INTO DICT_TABLE "
+    query.exec("INSERT OR IGNORE INTO DICT_TABLE "
                "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
                "VALUES (1, 'TEMP', 'Temperature', '°C', 22.2, 25.6, 24.4, 28.3, 24.4, 28.3, 24.4, 28.3, 22.2, 27.8, 24.4, 30, 24.4, 30.0, 24.4, 30.0)");
 
-    query.exec("INSERT INTO DICT_TABLE "
+    query.exec("INSERT OR IGNORE INTO DICT_TABLE "
                "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
                "VALUES (2, 'SAL', 'Salinity', 'ppt', 26.6, 33.2, 30.6, 35, 33.0, 35.0, 34.0, 35.0, -1, -1, -1, -1, -1, -1, -1, -1)");
 
-    query.exec("INSERT INTO DICT_TABLE "
+    query.exec("INSERT OR IGNORE INTO DICT_TABLE "
                "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
                "VALUES (3, 'CA', 'Calcium', 'ppm', 350, 450, 380, 450, 380, 450, 380, 450, -1, -1, -1, -1, -1, -1, -1, -1)");
 
-    query.exec("INSERT INTO DICT_TABLE "
+    query.exec("INSERT OR IGNORE INTO DICT_TABLE "
                "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
                "VALUES (4, 'PH', 'pH', 'ppm', 8.1, 8.4, 8.1, 8.4, 8.1, 8.4, 8.1, 8.4, 7.5, 8.5, 6.0, 7.5, 6.5, 7.5, 6.5, 7.5)");
 
-    query.exec("INSERT INTO DICT_TABLE "
+    query.exec("INSERT OR IGNORE INTO DICT_TABLE "
                "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
                "VALUES (5, 'KH', 'kH', 'ppm', 8.0, 12.0, 8.0, 12.0, 8.0, 12.0, 8.0, 12.0, 10, 18, 3, 8, 4, 8, 4, 8)");
 
-    query.exec("INSERT INTO DICT_TABLE "
+    query.exec("INSERT OR IGNORE INTO DICT_TABLE "
                "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
                "VALUES (6, 'GH', 'gH', 'dKh', -1, -1, -1, -1, -1, -1, -1, -1, 12, 20, 3, 8, 4, 12, 4, 12)");
 
-    query.exec("INSERT INTO DICT_TABLE "
+    query.exec("INSERT OR IGNORE INTO DICT_TABLE "
                "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
                "VALUES (7, 'PO4', 'Phosphates', 'ppm', 0, 0.2, 0, 0.2, 0, 0.05, 0, 0.05, 0, 1, 0, 1, 0, 1, 0, 1)");
 
-    query.exec("INSERT INTO DICT_TABLE "
+    query.exec("INSERT OR IGNORE INTO DICT_TABLE "
                "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
                "VALUES (8, 'NO2', 'Nitrite', 'ppb', 0, 100, 0, 100, 0, 100, 0, 100, -1, -1, -1, -1, -1, -1, -1, -1)");
 
-    query.exec("INSERT INTO DICT_TABLE "
+    query.exec("INSERT OR IGNORE INTO DICT_TABLE "
                "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
                "VALUES (9, 'NO3', 'Nitrate', 'ppm', 0, 30, 0, 10, 0, 1, 0, 1, 0, 50, 0, 30, 0, 50, 0, 50)");
 
-    query.exec("INSERT INTO DICT_TABLE "
+    query.exec("INSERT OR IGNORE INTO DICT_TABLE "
                "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
                "VALUES (10, 'NH3', 'Ammonia', 'ppm', 0, 0.05, 0, 0.05, 0, 0.05, 0, 0.05, 0, 0.05, 0, 0.05, 0, 0.05, 0, 0.05)");
 
-    query.exec("INSERT INTO DICT_TABLE "
+    query.exec("INSERT OR IGNORE INTO DICT_TABLE "
                "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
                "VALUES (11, 'CO2', 'Carbon', 'ppm, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 4, 30, 4, 30')");
 
-    query.exec("INSERT INTO DICT_TABLE "
+    query.exec("INSERT OR IGNORE INTO DICT_TABLE "
                "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
                "VALUES (12, 'MG', 'Magnesium', 'ppm', 1150, 1350, 1250, 1350, 1250, 1350, 1250, 1350, 10, -1, 10, -1, 10, -1, 10, -1)");
 
-    query.exec("INSERT INTO DICT_TABLE "
+    query.exec("INSERT OR IGNORE INTO DICT_TABLE "
                "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
                "VALUES (13, 'SI', 'Silicates', 'ppm', 0, 3, 0.06, 2, 0.06, 2, 0.06, 2, 0, 2, 0, 2, 0, 2, 0, 2)");
 
-    query.exec("INSERT INTO DICT_TABLE "
+    query.exec("INSERT OR IGNORE INTO DICT_TABLE "
                "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
                "VALUES (14, 'K', 'Potassium', 'ppm', 380, 400, 380, 400, 380, 400, 380, 400, 5, 10, 5, 1, 5, 20, 5, 20)");
 
-    query.exec("INSERT INTO DICT_TABLE "
+    query.exec("INSERT OR IGNORE INTO DICT_TABLE "
                "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
                "VALUES (15, 'I', 'Iodine', 'ppm', 0.04, 0.1, 0.06, 0.1, 0.06, 0.1, 0.06, 0.1, -1, -1, -1, -1, -1, -1, -1, -1)");
 
-    query.exec("INSERT INTO DICT_TABLE "
+    query.exec("INSERT OR IGNORE INTO DICT_TABLE "
                "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
                "VALUES (16, 'SR', 'Strontium', 'ppm', 4, 10, 8, 14, 8, 14, 8, 14, -1, -1, -1, -1, -1, -1, -1, -1)");
 
-    query.exec("INSERT INTO DICT_TABLE "
+    query.exec("INSERT OR IGNORE INTO DICT_TABLE "
                "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
                "VALUES (17, 'FE', 'Ferrum', 'ppm', 0.1, 0.3, 0.1, 0.3, 0.1, 0.3, 0.1, 0.3, 0.05, 0.1, 0.05, 0.1, 0.05, 0.1, 0.05, 0.1)");
 
-    query.exec("INSERT INTO DICT_TABLE "
+    query.exec("INSERT OR IGNORE INTO DICT_TABLE "
                "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
                "VALUES (18, 'B', 'Boron', 'ppm', 0, 10, 0, 10, 0, 10, 0, 10, -1, -1, -1, -1, -1, -1, -1, -1)");
 
-    query.exec("INSERT INTO DICT_TABLE "
+    query.exec("INSERT OR IGNORE INTO DICT_TABLE "
                "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
                "VALUES (19, 'MO', 'Molybdenum', 'ppm', 0.03, 0.12, 0.03, 0.12, 0.03, 0.12, 0.03, 0.12, -1, -1, -1, -1, -1, -1, -1, -1)");
 
-    query.exec("INSERT INTO DICT_TABLE "
+    query.exec("INSERT OR IGNORE INTO DICT_TABLE "
                "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
                "VALUES (20, 'ORP', 'ORP', 'mV', 250, 400, 250, 400, 250, 200, 250, 400, -1, -1, -1, -1, -1, -1, -1, -1)");
 
     qDebug() << query.lastError();
 
-    query.exec("create table PERSONAL_PARAM_TABLE "
+    query.exec("CREATE TABLE IF NOT EXISTS PERSONAL_PARAM_TABLE "
                 "(PARAM_ID integer, "
                 "TANK_ID varchar(16), "
                 "ENABLED integer)");
@@ -1036,10 +1057,9 @@ bool DBManager::initDB()
                "DESC text,"
                "PERIOD integer,"
                "EN integer,"
-               "TIMESTAMP integer)");
+               "STARTDATE integer)");
 
     qDebug() << query.lastError();
-
 
     return true;
 }
