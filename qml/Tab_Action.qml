@@ -13,6 +13,31 @@ Item
     property var days: ["Monday", "Tuesday", "Wensday", "Thursday", "Friday", "Saturday", "Sunday"]
     property var months: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
+    function showActionDialog(visible, isEdit, id)
+    {
+        if (visible === true)
+        {
+            rectAddActionDialog.isEdit = isEdit
+
+            if (isEdit === true)
+            {
+                textActionName.text = actionList.model[id].name
+                textDesc.text = actionList.model[id].desc
+                comboPeriod.currentIndex = actionList.model[id].period
+                datePicker.setLinuxDate(actionList.model[id].startDT)
+                timePicker.setLinuxTime(actionList.model[id].startDT)
+            }
+
+            rectAddActionDialog.opacity = 1
+            rectDataContainer.opacity = 0
+        }
+        else
+        {
+            rectAddActionDialog.opacity = 0
+            rectDataContainer.opacity = 1
+        }
+    }
+
     function addAction()
     {
         var dt = Math.round(new Date(datePicker.getLinuxDate() + " " + timePicker.getLinuxTime()).getTime()/1000)
@@ -22,8 +47,20 @@ Item
         {
             app.sigAddAction(textActionName.text, textDesc.text, 0, comboPeriod.currentIndex, dt)
 
-            rectAddActionDialog.opacity = 0
-            rectDataContainer.opacity = 1
+            showActionDialog(false, false, 0)
+        }
+    }
+
+    function editAction()
+    {
+        var dt = Math.round(new Date(datePicker.getLinuxDate() + " " + timePicker.getLinuxTime()).getTime()/1000)
+
+        if (textActionName.text.length > 0 &&
+            textDesc.text.length)
+        {
+            //app.sigAddAction(textActionName.text, textDesc.text, 0, comboPeriod.currentIndex, dt)
+
+            showActionDialog(false, false, 0)
         }
     }
 
@@ -238,10 +275,7 @@ Item
                             anchors.verticalCenter: parent.verticalCenter
                             image: "qrc:/resources/img/icon_edit.png"
 
-                            onSigButtonClicked:
-                            {
-
-                            }
+                            onSigButtonClicked: showActionDialog(true, true, index)
                         }
                     }
                 }
@@ -255,11 +289,7 @@ Item
             anchors.bottom: parent.bottom
             anchors.bottomMargin: AppTheme.margin * app.scale
 
-            onSigButtonClicked:
-            {
-                rectAddActionDialog.opacity = 1
-                rectDataContainer.opacity = 0
-            }
+            onSigButtonClicked: showActionDialog(true, false, 0)
         }
     }
 
@@ -272,6 +302,8 @@ Item
         color: "#00000020"
         opacity: 0
         visible: (opacity === 0) ? false : true
+
+        property bool isEdit: false
 
         Behavior on opacity
         {
@@ -374,11 +406,7 @@ Item
             anchors.left: parent.left
             image: "qrc:/resources/img/icon_cancel.png"
 
-            onSigButtonClicked:
-            {
-                rectAddActionDialog.opacity = 0
-                rectDataContainer.opacity = 1
-            }
+            onSigButtonClicked: showActionDialog(false, false, 0)
         }
 
         IconSimpleButton
@@ -389,7 +417,7 @@ Item
             anchors.right: parent.right
             image: "qrc:/resources/img/icon_ok.png"
 
-            onSigButtonClicked: addAction()
+            onSigButtonClicked: rectAddActionDialog.isEdit ? editAction() : addAction()
         }
     }
 }

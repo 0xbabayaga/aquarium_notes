@@ -32,6 +32,15 @@ Item
         return calendar.currentYear + "/" + mm.substr(-2) + "/" + dd.substr(-2)
     }
 
+    function setLinuxDate(tm)
+    {
+        var date = new Date(tm * 1000)
+        var day = "0" + date.getDate()
+        datePicker.date = date
+        textDateTime.text = day.substr(-2) + " " + months[date.getMonth()]+ " " + date.getFullYear()
+    }
+
+
     function setCurrentDate()
     {
         var dd = "0" + calendar.currentDay

@@ -23,6 +23,17 @@ Item
         textTime.text = hh.substr(-2) + " : " + mm.substr(-2)
     }
 
+    function setLinuxTime(tm)
+    {
+        var date = new Date(tm * 1000)
+        var hh = "0" + date.getHours()
+        var mm = "0" + date.getMinutes()
+
+        hoursTumbler.currentIndex = date.getHours()
+        minutesTumbler.currentIndex = date.getMinutes()
+        textTime.text = hh.substr(-2) + " : " + mm.substr(-2)
+    }
+
     function setTime(hours, minutes)
     {
         hoursTumbler.positionViewAtIndex(hours, ListView.Center)

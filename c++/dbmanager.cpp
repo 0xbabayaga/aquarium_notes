@@ -291,7 +291,7 @@ void DBManager::onGuiAddActionRecord(QString name, QString desc, int type, int p
 {
     if (addActionRecord(currentTankSelected()->tankId(), name, desc, type, period, tm) == true)
     {
-
+        getActionCalendar();
     }
 }
 
