@@ -20,6 +20,40 @@ public:
         AppInit_Completed = AppInit_TankExist
     };
 
+    enum EnumActionRepeat
+    {
+        ActionRepeat_None = 0,
+        ActionRepeat_EveryDay = 1,
+        ActionRepeat_EveryWeek = 2,
+        ActionRepeat_EveryMonth = 3
+    };
+
+    Q_ENUMS(AppInitEnum)
+    Q_ENUMS(EnumActionRepeat)
+
+    static void declareQML()
+    {
+        qmlRegisterType<AppDef>("AppDefs", 1, 0, "AppDefs");
+        //qmlRegisterType<AppDef>("EnumActionRepeat", 1, 0, "EnumActionRepeat");
+    }
+};
+
+/*
+class ActionRepeat : public QObject
+{
+    Q_OBJECT
+
+public:
+    ActionRepeat() : QObject() {}
+
+    enum EnumActionRepeat
+    {
+        ActionRepeat_None = 0,
+        ActionRepeat_EveryDay = 1,
+        ActionRepeat_EveryWeek = 2,
+        ActionRepeat_EveryMonth = 3
+    };
+
     Q_ENUMS(AppInitEnum)
 
     static void declareQML() {  qmlRegisterType<AppDef>("AppInitEnum", 1, 0, "AppInitEnum");     }

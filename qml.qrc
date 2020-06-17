@@ -41,5 +41,7 @@
         <file>resources/img/icon_ok.png</file>
         <file>resources/img/icon_cancel.png</file>
         <file>qml/custom/TimePicker.qml</file>
+        <file>qml/custom/IconSmallSimpleButton.qml</file>
+        <file>resources/img/icon_edit.png</file>
     </qresource>
 </RCC>

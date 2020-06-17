@@ -102,27 +102,4 @@ Item
             page_TankData.showPage(true, tankParams)
         }
     }
-
-    /*
-    StandardButton
-    {
-        id: butShowMore
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: AppTheme.margin * app.scale
-        width: 120 * app.scale
-        bText: qsTr("SEE DETAILS")
-
-        onSigButtonClicked:
-        {
-            var tankParams = [tanksListModel[tanksList.currentIndex].name,
-                              tanksListModel[tanksList.currentIndex].desc,
-                              tanksListModel[tanksList.currentIndex].type,
-                              tanksListModel[tanksList.currentIndex].typeName,
-                              tanksListModel[tanksList.currentIndex].volume,
-                              tanksListModel[tanksList.currentIndex].img];
-            page_TankData.showPage(true, tankParams)
-        }
-    }
-    */
 }

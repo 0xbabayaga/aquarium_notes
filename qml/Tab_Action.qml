@@ -2,6 +2,7 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtGraphicalEffects 1.12
 import "custom"
+import AppDefs 1.0
 import ".."
 
 
@@ -26,6 +27,17 @@ Item
         }
     }
 
+    function printType(period)
+    {
+        switch (period)
+        {
+            case AppDefs.ActionRepeat_EveryDay:     return qsTr("(Daily)");
+            case AppDefs.ActionRepeat_EveryWeek:    return qsTr("(Weekly)");
+            case AppDefs.ActionRepeat_EveryMonth:   return qsTr("(Monthly)");
+            default:                                return "(Undefined)"
+        }
+    }
+
     function printDay(tm)
     {
         var date = new Date(tm * 1000)
@@ -45,6 +57,8 @@ Item
         anchors.leftMargin: AppTheme.padding * app.scale
         anchors.rightMargin: AppTheme.padding * app.scale
         color: "#00000000"
+
+        property int dataWidth: 240 * app.scale
 
         Behavior on opacity
         {
@@ -68,7 +82,7 @@ Item
         {
             id: actionList
             anchors.top: parent.top
-            anchors.topMargin: AppTheme.margin * app.scale
+            anchors.topMargin: AppTheme.margin * 2 * app.scale
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
@@ -79,8 +93,19 @@ Item
             delegate: Rectangle
             {
                 width: parent.width
-                height: AppTheme.rowHeight * app.scale * 2
+                height: (index === actionList.currentIndex) ? AppTheme.rowHeight * app.scale * 2 : AppTheme.rowHeight * app.scale
                 color: AppTheme.backLightBlueColor
+
+                Behavior on height
+                {
+                    NumberAnimation {   duration: 100 }
+                }
+
+                MouseArea
+                {
+                    anchors.fill: parent
+                    onClicked: actionList.currentIndex = index
+                }
 
                 Rectangle
                 {
@@ -89,54 +114,135 @@ Item
                     anchors.rightMargin: AppTheme.padding * app.scale
                     color: "#00000000"
 
-                    Text
+                    Column
                     {
+                        id: columnMainInfo
                         anchors.top: parent.top
                         anchors.left: parent.left
                         height: AppTheme.compHeight * app.scale
-                        verticalAlignment: Text.AlignVCenter
-                        font.family: AppTheme.fontFamily
-                        font.pixelSize: AppTheme.fontNormalSize * app.scale
-                        color: AppTheme.blueColor
-                        text: name
+                        width: rectDataContainer.dataWidth
+
+                        Text
+                        {
+                            height: AppTheme.compHeight * app.scale
+                            verticalAlignment: Text.AlignBottom
+                            font.family: AppTheme.fontFamily
+                            font.pixelSize: AppTheme.fontNormalSize * app.scale
+                            color: AppTheme.blueColor
+                            text: name
+                        }
+
+                        Text
+                        {
+                            height: AppTheme.compHeight * app.scale
+                            verticalAlignment: Text.AlignTop
+                            font.family: AppTheme.fontFamily
+                            font.pixelSize: AppTheme.fontSmallSize * app.scale
+                            color: AppTheme.greyColor
+                            text: printType(period)
+                        }
                     }
 
-                    Text
+                    Column
                     {
                         anchors.top: parent.top
                         anchors.right: parent.right
                         height: AppTheme.compHeight * app.scale
-                        verticalAlignment: Text.AlignVCenter
-                        font.family: AppTheme.fontFamily
-                        font.pixelSize: AppTheme.fontNormalSize * app.scale
-                        color: AppTheme.greyColor
-                        text: printDay(startDT)
+                        width: parent.width - rectDataContainer.dataWidth
+
+                        Text
+                        {
+                            height: AppTheme.compHeight * app.scale
+                            width: parent.width
+                            verticalAlignment: Text.AlignBottom
+                            horizontalAlignment: Text.AlignRight
+                            font.family: AppTheme.fontFamily
+                            font.pixelSize: AppTheme.fontNormalSize * app.scale
+                            color: AppTheme.blueColor
+                            text: printDay(startDT)
+                        }
+
+                        Text
+                        {
+                            height: AppTheme.compHeight * app.scale
+                            width: parent.width
+                            verticalAlignment: Text.AlignTop
+                            horizontalAlignment: Text.AlignRight
+                            font.family: AppTheme.fontFamily
+                            font.pixelSize: AppTheme.fontNormalSize * app.scale
+                            color: AppTheme.greyColor
+                            text: printShortDate(startDT)
+                        }
                     }
 
-                    Text
+                    Rectangle
                     {
-                        anchors.top: parent.top
-                        anchors.topMargin: AppTheme.compHeight * app.scale
-                        anchors.right: parent.right
-                        height: AppTheme.compHeight * app.scale
-                        verticalAlignment: Text.AlignVCenter
-                        font.family: AppTheme.fontFamily
-                        font.pixelSize: AppTheme.fontNormalSize * app.scale
-                        color: AppTheme.greyColor
-                        text: printShortDate(startDT)
-                    }
-
-                    Text
-                    {
-                        anchors.top: parent.top
-                        anchors.topMargin: AppTheme.compHeight * app.scale
                         anchors.left: parent.left
+                        anchors.top: parent.verticalCenter
+                        width: rectDataContainer.dataWidth
+                        height: 1 * app.scale
+                        color: AppTheme.backLightBlueColor
+                        opacity: (index === actionList.currentIndex) ? 1 : 0
+
+                        Behavior on opacity
+                        {
+                            NumberAnimation {   duration: 100   }
+                        }
+
+                        Text
+                        {
+                            anchors.top: parent.top
+                            anchors.topMargin: AppTheme.padding/2 * app.scale
+                            anchors.left: parent.left
+                            width: rectDataContainer.dataWidth
+                            height: AppTheme.compHeight * app.scale
+                            verticalAlignment: Text.AlignTop
+                            font.family: AppTheme.fontFamily
+                            font.pixelSize: AppTheme.fontSmallSize * app.scale
+                            color: AppTheme.greyColor
+                            text: desc
+                            wrapMode: Text.WordWrap
+                        }
+                    }
+
+                    Rectangle
+                    {
+                        anchors.right: parent.right
+                        anchors.rightMargin: -AppTheme.padding * app.scale
+                        anchors.bottom: parent.bottom
+                        //anchors.bottomMargin: AppTheme.padding * app.scale
+                        width: AppTheme.compHeight * 2 * app.scale
                         height: AppTheme.compHeight * app.scale
-                        verticalAlignment: Text.AlignVCenter
-                        font.family: AppTheme.fontFamily
-                        font.pixelSize: AppTheme.fontNormalSize * app.scale
-                        color: AppTheme.greyColor
-                        text: desc
+                        color: "#00000000"
+                        opacity: (index === actionList.currentIndex) ? 1 : 0
+
+                        Behavior on opacity
+                        {
+                            NumberAnimation {   duration: 100   }
+                        }
+
+                        IconSmallSimpleButton
+                        {
+                            anchors.right: parent.right
+                            anchors.verticalCenter: parent.verticalCenter
+
+                            onSigButtonClicked:
+                            {
+
+                            }
+                        }
+
+                        IconSmallSimpleButton
+                        {
+                            anchors.left: parent.left
+                            anchors.verticalCenter: parent.verticalCenter
+                            image: "qrc:/resources/img/icon_edit.png"
+
+                            onSigButtonClicked:
+                            {
+
+                            }
+                        }
                     }
                 }
             }

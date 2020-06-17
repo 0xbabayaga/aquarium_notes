@@ -4,7 +4,7 @@ import QtQuick.Dialogs 1.0
 import QtQuick.Window 2.12
 import QtGraphicalEffects 1.12
 import "custom"
-import AppInitEnum 1.0
+import AppDefs 1.0
 
 Item
 {
@@ -24,7 +24,7 @@ Item
         animationToPage.from = animationToPage.to
         animationToPage.to = app.height * page
 
-        if (page === AppInitEnum.AppInit_Completed)
+        if (page === AppDefs.AppInit_Completed)
         {
             page_AccountCreation.visible = false
             sigAppInitCompleted()
@@ -272,7 +272,7 @@ Item
 
                         onSigButtonClicked:
                         {
-                            stage = AppInitEnum.AppInit_CreateTank
+                            stage = AppDefs.AppInit_CreateTank
                             textTankName.forceActiveFocus()
                             app.sigDebug()
                         }
