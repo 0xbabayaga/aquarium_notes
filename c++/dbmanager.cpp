@@ -311,7 +311,7 @@ void DBManager::onGuiPersonalParamStateChanged(int paramId, bool en)
 bool DBManager::getActionCalendar()
 {
     bool res = false;
-    QSqlQuery query("SELECT * FROM ACTIONS_TABLE WHERE TANK_ID='"+currentTankSelected()->tankId()+"' ORDER BY STARTDATE DESC");
+    QSqlQuery query("SELECT * FROM ACTIONS_TABLE WHERE TANK_ID='"+currentTankSelected()->tankId()+"' ORDER BY STARTDATE ASC");
 
     qDebug() << "calendar " << query.lastError();
 

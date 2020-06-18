@@ -234,7 +234,7 @@ Item
                         width: 100 * app.scale
                         maximumLength: 4
 
-                        onTextChanged: value = textInputValue.text
+                        onTextChanged: value = Number.parseFloat(textInputValue.text)
 
                         Text
                         {

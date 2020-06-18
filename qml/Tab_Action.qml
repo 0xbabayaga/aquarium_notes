@@ -71,7 +71,7 @@ Item
             case AppDefs.ActionRepeat_EveryDay:     return qsTr("(Daily)");
             case AppDefs.ActionRepeat_EveryWeek:    return qsTr("(Weekly)");
             case AppDefs.ActionRepeat_EveryMonth:   return qsTr("(Monthly)");
-            default:                                return "(Undefined)"
+            default:                                return "(Once)"
         }
     }
 
