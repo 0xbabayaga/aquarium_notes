@@ -45,7 +45,6 @@ Item
         anchors.right: parent.right
         anchors.rightMargin: AppTheme.padding * app.scale
         anchors.bottom: parent.bottom
-        //anchors.bottomMargin: AppTheme.rowHeight * app.scale
 
         contentWidth: width
         contentHeight: 700 * app.scale

@@ -28,8 +28,17 @@ public:
         ActionRepeat_EveryMonth = 3
     };
 
+    enum EnumActionViewPeriod
+    {
+        ActionView_None = 0,
+        ActionView_Today = 1,
+        ActionView_ThisWeek = 2,
+        ActionView_ThisMonth = 3
+    };
+
     Q_ENUMS(AppInitEnum)
     Q_ENUMS(EnumActionRepeat)
+    Q_ENUMS(EnumActionViewPeriod)
 
     static void declareQML()
     {

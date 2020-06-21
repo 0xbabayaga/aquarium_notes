@@ -13,7 +13,12 @@ ActionList::~ActionList()
     list.clear();
 }
 
-bool ActionList::setData(QSqlQuery *query, eActionListView viewType)
+void ActionList::setViewPeriod(eActionListView viewType)
+{
+    currView = (eActionListView) (viewType % (ActionView_ThisMonth + 1));
+}
+
+bool ActionList::setData(QSqlQuery *query)
 {
     bool res = false;
     int viewStartDate = 0;
@@ -29,7 +34,7 @@ bool ActionList::setData(QSqlQuery *query, eActionListView viewType)
     viewStartDate = tmNow.toSecsSinceEpoch();
     viewEndDate = viewStartDate;
 
-    switch(viewType)
+    switch(currView)
     {
         case ActionView_ThisWeek:   viewEndDate += 86400 * 7; break;
         case ActionView_ThisMonth:  viewEndDate += 86400 * 30; break;
@@ -94,7 +99,17 @@ bool ActionList::setData(QSqlQuery *query, eActionListView viewType)
         }
     }
 
+    qSort(list.begin(), list.end(), less);
+
     res = true;
 
     return res;
+}
+
+bool ActionList::less(QObject *v1, QObject *v2)
+{
+    ActionObj *a1 = (ActionObj*) v1;
+    ActionObj *a2 = (ActionObj*) v2;
+
+    return a1->startDT() < a2->startDT();
 }

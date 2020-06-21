@@ -93,6 +93,9 @@ DBManager::DBManager(QQmlApplicationEngine *engine, QObject *parent) : QObject(p
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecord(int, int, double)), this, SLOT(onGuiAddRecord(int, int, double)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecordNotes(int, QString, QString)), this, SLOT(onGuiAddRecordNote(int, QString, QString)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigAddAction(QString, QString, int, int, int)), this, SLOT(onGuiAddActionRecord(QString, QString, int, int, int)));
+    connect(qmlEngine->rootObjects().first(), SIGNAL(sigEditAction(int, QString, QString, int, int, int)), this, SLOT(onGuiEditActionRecord(int, QString, QString, int, int, int)));
+    connect(qmlEngine->rootObjects().first(), SIGNAL(sigDeleteAction(int)), this, SLOT(onGuiDeleteActionRecord(int)));
+    connect(qmlEngine->rootObjects().first(), SIGNAL(sigActionViewPeriodChanged(int)), this, SLOT(onGuiActionViewPeriodChanged(int)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigTankSelected(int)), this, SLOT(onGuiTankSelected(int)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigPersonalParamStateChanged(int, bool)), this, SLOT(onGuiPersonalParamStateChanged(int, bool)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigRefreshData()), this, SLOT(onGuiRefreshData()));
@@ -126,6 +129,9 @@ DBManager::~DBManager()
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecord(int, int, float)), this, SLOT(onGuiAddRecord(int, int, float)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecordNotes(int, QString, QString)), this, SLOT(onGuiAddRecordNote(int, QString, QString)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigAddAction(QString, QString, int, int, int)), this, SLOT(onGuiAddActionRecord(QString, QString, int, int, int)));
+    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigEditAction(int, QString, QString, int, int, int)), this, SLOT(onGuiEditActionRecord(int, QString, QString, int, int, int)));
+    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigDeleteAction(int)), this, SLOT(onGuiDeleteActionRecord(int)));
+    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigActionViewPeriodChanged(int)), this, SLOT(onGuiActionViewPeriodChanged(int)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigTankSelected(int)), this, SLOT(onGuiTankSelected(int)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigPersonalParamStateChanged(int, bool)), this, SLOT(onGuiPersonalParamStateChanged(int, bool)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigRefreshData()), this, SLOT(onGuiRefreshData()));
@@ -290,9 +296,25 @@ void DBManager::onGuiAddRecordNote(int smpId, QString note, QString imageLink)
 void DBManager::onGuiAddActionRecord(QString name, QString desc, int type, int period, int tm)
 {
     if (addActionRecord(currentTankSelected()->tankId(), name, desc, type, period, tm) == true)
-    {
         getActionCalendar();
-    }
+}
+
+void DBManager::onGuiEditActionRecord(int id, QString name, QString desc, int type, int period, int tm)
+{
+    if (editActionRecord(id, currentTankSelected()->tankId(), name, desc, type, period, tm) == true)
+        getActionCalendar();
+}
+
+void DBManager::onGuiDeleteActionRecord(int id)
+{
+    if (deleteActionRecord(id, currentTankSelected()->tankId()) == true)
+        getActionCalendar();
+}
+
+void DBManager::onGuiActionViewPeriodChanged(int period)
+{
+    actionList->setViewPeriod((eActionListView)period);
+    getActionCalendar();
 }
 
 void DBManager::onGuiTankSelected(int tankIdx)
@@ -313,9 +335,7 @@ bool DBManager::getActionCalendar()
     bool res = false;
     QSqlQuery query("SELECT * FROM ACTIONS_TABLE WHERE TANK_ID='"+currentTankSelected()->tankId()+"' ORDER BY STARTDATE ASC");
 
-    qDebug() << "calendar " << query.lastError();
-
-    if (actionList->setData(&query, ActionView_ThisWeek) != true)
+    if (actionList->setData(&query) != true)
         qDebug() << "actionList->setData error";
 
     qmlEngine->rootContext()->setContextProperty("actionsListModel", QVariant::fromValue(*actionList->getData()));
@@ -843,6 +863,46 @@ bool DBManager::addActionRecord(QString tankId, QString name, QString desc, int 
 
     if (res == false)
         qDebug() << "Add Action record error: " << query.lastError();
+
+    return res;
+}
+
+bool DBManager::editActionRecord(int id, QString tankId, QString name, QString desc, int type, int period, int tm)
+{
+    QSqlQuery query;
+    bool res = false;
+
+    query.prepare("UPDATE ACTIONS_TABLE SET "
+                  "TYPE = " + QString::number(type) + ", "
+                  "NAME = '" + name + "', "
+                  "DESC = '" + desc + "', "
+                  "PERIOD = " + QString::number(period) + ", "
+                  "EN = 1, "
+                  "STARTDATE = " + QString::number(tm) + " "
+                  "WHERE id = " + QString::number(id) + " AND "
+                  "TANK_ID = '" + tankId + "'");
+
+    res = query.exec();
+
+    if (res == false)
+        qDebug() << "Edit Action record error: " << query.lastError();
+
+    return res;
+}
+
+bool DBManager::deleteActionRecord(int id, QString tankId)
+{
+    QSqlQuery query;
+    bool res = false;
+
+    query.prepare("DELETE FROM ACTIONS_TABLE "
+                  "WHERE ID = " + QString::number(id) + " AND "
+                  "TANK_ID = '" + tankId + "'");
+
+    res = query.exec();
+
+    if (res == false)
+        qDebug() << "Delete Action record error: " << query.lastError();
 
     return res;
 }

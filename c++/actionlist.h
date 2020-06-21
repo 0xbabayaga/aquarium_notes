@@ -28,8 +28,12 @@ public:
     ~ActionList();
 
 public:
-    bool setData(QSqlQuery *query, eActionListView viewType);
+    void setViewPeriod(eActionListView viewType);
+    bool setData(QSqlQuery *query);
     QList<QObject*> *getData()   {   return &list;   }
+
+private:
+    static bool less(QObject *v1, QObject *v2);
 
 private:
     eActionListView currView;

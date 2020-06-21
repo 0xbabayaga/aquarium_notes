@@ -32,6 +32,9 @@ Window
     signal sigTankSelected(int tankIdx)
     signal sigPersonalParamStateChanged(int paramId, bool en)
     signal sigAddAction(string name, string desc, int type, int period, int dt)
+    signal sigEditAction(int id, string name, string desc, int type, int period, int dt)
+    signal sigDeleteAction(int id)
+    signal sigActionViewPeriodChanged(int p)
     signal sigRefreshData()
     signal sigDebug()
 

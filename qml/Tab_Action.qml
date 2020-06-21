@@ -13,6 +13,7 @@ Item
     property var days: ["Monday", "Tuesday", "Wensday", "Thursday", "Friday", "Saturday", "Sunday"]
     property var months: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
+
     function showActionDialog(visible, isEdit, id)
     {
         if (visible === true)
@@ -21,6 +22,7 @@ Item
 
             if (isEdit === true)
             {
+                rectAddActionDialog.editId = actionList.model[id].actId
                 textActionName.text = actionList.model[id].name
                 textDesc.text = actionList.model[id].desc
                 comboPeriod.currentIndex = actionList.model[id].period
@@ -51,17 +53,23 @@ Item
         }
     }
 
-    function editAction()
+    function editAction(id)
     {
         var dt = Math.round(new Date(datePicker.getLinuxDate() + " " + timePicker.getLinuxTime()).getTime()/1000)
 
         if (textActionName.text.length > 0 &&
             textDesc.text.length)
         {
-            //app.sigAddAction(textActionName.text, textDesc.text, 0, comboPeriod.currentIndex, dt)
+            app.sigEditAction(id, textActionName.text, textDesc.text, 0, comboPeriod.currentIndex, dt)
 
             showActionDialog(false, false, 0)
         }
+    }
+
+    function deleteAction(id)
+    {
+        app.sigDeleteAction(id)
+        showActionDialog(false, false, 0)
     }
 
     function printType(period)
@@ -104,15 +112,39 @@ Item
 
         Text
         {
+            id: textViewPeriod
             anchors.left: parent.left
             anchors.leftMargin: AppTheme.padding * app.scale
             height: AppTheme.compHeight * app.scale
             verticalAlignment: Text.AlignVCenter
-            width: 120 * app.scale
+            width: 100 * app.scale
             font.family: AppTheme.fontFamily
-            font.pixelSize: AppTheme.fontBigSize * app.scale
+            font.pixelSize: AppTheme.fontNormalSize * app.scale
             color: AppTheme.blueColor
-            text: qsTr("This week:")
+            text: qsTr("View period:")
+        }
+
+        ListModel
+        {
+            id: viewPeriodListModel
+            ListElement {   name: qsTr("Today");    idx:  AppDefs.ActionView_Today;       }
+            ListElement {   name: qsTr("Week");     idx:  AppDefs.ActionView_ThisWeek;    }
+            ListElement {   name: qsTr("Month");    idx:  AppDefs.ActionView_ThisMonth;   }
+        }
+
+        ComboList
+        {
+            id: comboViewPeriod
+            anchors.top: textViewPeriod.top
+            anchors.left: textViewPeriod.right
+            anchors.leftMargin: AppTheme.padding * app.scale
+            anchors.right: parent.right
+            propertyName: qsTr("Select a period:");
+            width: parent.width
+            model: viewPeriodListModel
+            currentIndex: 1
+
+            onSigSelectedIndexChanged: sigActionViewPeriodChanged(comboViewPeriod.model.get(currentIndex).idx)
         }
 
         ListView
@@ -265,7 +297,8 @@ Item
 
                             onSigButtonClicked:
                             {
-
+                                confirmDialog.setParam(actId)
+                                confirmDialog.showDialog(true, qsTr("Delete"), qsTr("Are you sure to delete item?"))
                             }
                         }
 
@@ -279,6 +312,45 @@ Item
                         }
                     }
                 }
+            }
+
+            ScrollBar.vertical: ScrollBar
+            {
+                policy: ScrollBar.AlwaysOn
+                parent: actionList.parent
+                anchors.top: actionList.top
+                anchors.left: actionList.right
+                //anchors.leftMargin: AppTheme.padding * app.scale
+                anchors.bottom: actionList.bottom
+
+                contentItem: Rectangle
+                {
+                    implicitWidth: 2 * app.scale
+                    implicitHeight: 100
+                    radius: width / 2
+                    color: AppTheme.hideColor
+                }
+            }
+        }
+
+        Rectangle
+        {
+            anchors.fill: parent
+            visible: (actionList.model.length === 0)
+            color: "#00000000"
+
+            Text
+            {
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                width: 250 * app.scale
+                font.family: AppTheme.fontFamily
+                font.pixelSize: AppTheme.fontBigSize * app.scale
+                wrapMode: Text.WordWrap
+                color: AppTheme.greyColor
+                text: qsTr("No action found for ") + viewPeriodListModel.get(comboViewPeriod.currentIndex).name
             }
         }
 
@@ -304,6 +376,7 @@ Item
         visible: (opacity === 0) ? false : true
 
         property bool isEdit: false
+        property int editId: -1
 
         Behavior on opacity
         {
@@ -417,7 +490,13 @@ Item
             anchors.right: parent.right
             image: "qrc:/resources/img/icon_ok.png"
 
-            onSigButtonClicked: rectAddActionDialog.isEdit ? editAction() : addAction()
+            onSigButtonClicked: rectAddActionDialog.isEdit ? editAction(rectAddActionDialog.editId) : addAction()
         }
+    }
+
+    ConfirmDialog
+    {
+        id: confirmDialog
+        onSigAccept: deleteAction(getParam())
     }
 }

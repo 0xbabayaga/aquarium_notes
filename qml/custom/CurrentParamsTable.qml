@@ -79,7 +79,7 @@ Item
         {
             if (val > prevVal)
             {
-                sign = "🡕"
+                sign = "\u2197"
 
                 if (val > 0.75 * (max - min) + min)
                     color = AppTheme.negativeChangesColor
@@ -90,7 +90,7 @@ Item
             }
             else if (val < prevVal)
             {
-                sign = "🡗"
+                sign = "\u2199"
 
                 if (val > 0.25 * (max - min) + min)
                     color = AppTheme.positiveChangesColor
@@ -253,8 +253,7 @@ Item
                         verticalAlignment: Text.AlignVCenter
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontNormalSize * app.scale
-                        //font.bold: true
-                        color: formattedColor(paramId, valueNow) //AppTheme.blueColor
+                        color: formattedColor(paramId, valueNow)
                         text: formattedValue(valueNow)
 
                         Rectangle
@@ -292,7 +291,6 @@ Item
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontNormalSize * app.scale
                         color: AppTheme.greyColor
-                        //text: formattedValue(valuePrev)
                         text: formattedDiffValue(valuePrev, valueNow)
                     }
 
@@ -306,20 +304,9 @@ Item
                         font.pixelSize: AppTheme.fontNormalSize * app.scale
                         font.bold: true
                         color: paramProgressState(paramId, valueNow, valuePrev)[1]
-                        //text: formattedDiffValue(valuePrev, valueNow)
                         text: paramProgressState(paramId, valueNow, valuePrev)[0]
                     }
                 }
-
-                /*
-                Rectangle
-                {
-                    width: parent.width
-                    height: 1 * app.scale
-                    anchors.bottom: parent.bottom
-                    color: ((index + 1) === curValuesListView.model.count) ? "#00000000" : AppTheme.shideColor
-                }
-                */
             }
         }
 
@@ -333,24 +320,6 @@ Item
             height: AppTheme.rowHeight * app.scale
             color: AppTheme.backLightBlueColor
             visible: (realModelLength() !== 0 && curValuesListView.model[0].note.length > 0)
-            //color: "#00000000"
-
-            /*
-            Text
-            {
-                id: textNoteHeader
-                anchors.top: curValuesListView.bottom
-                anchors.topMargin: AppTheme.padding * app.scale
-                anchors.right: parent.right
-                anchors.rightMargin: AppTheme.padding * app.scale
-                height: AppTheme.compHeight * app.scale
-                verticalAlignment: Text.AlignVCenter
-                font.family: AppTheme.fontFamily
-                font.pixelSize: AppTheme.fontNormalSize * app.scale
-                color: AppTheme.greyColor
-                text: qsTr("NOTE")
-            }
-            */
 
             Image
             {

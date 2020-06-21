@@ -13,7 +13,7 @@ Item
 
     signal sigSelectedIndexChanged(int id)
 
-    property int currentIndex: listView.currentIndex
+    property alias currentIndex: listView.currentIndex
     property alias propertyName: textPropertyName.text
     property alias model: listView.model
     property alias text: textArea.text
