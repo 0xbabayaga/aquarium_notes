@@ -298,7 +298,7 @@ Item
                             onSigButtonClicked:
                             {
                                 confirmDialog.setParam(actId)
-                                confirmDialog.showDialog(true, qsTr("Delete"), qsTr("Are you sure to delete item?"))
+                                confirmDialog.showDialog(true, qsTr("DELETING"), qsTr("Are you sure to delete item?"))
                             }
                         }
 
@@ -402,7 +402,7 @@ Item
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: textHeader.bottom
             anchors.topMargin: AppTheme.margin * app.scale
-            height: 300 * app.scale
+            height: 400 * app.scale
             width: parent.width
             spacing: AppTheme.padding * app.scale
 

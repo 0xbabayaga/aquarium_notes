@@ -34,6 +34,7 @@ Item
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignLeft
         color: enabled ? AppTheme.blueColor : AppTheme.hideColor
+        wrapMode: Text.WordWrap
 
         Text
         {
@@ -46,6 +47,7 @@ Item
             visible: !textArea.text
         }
 
+        onContentHeightChanged: textInput.height = contentHeight + AppTheme.padding * app.scale
         onFocusChanged: focus ? rectUnderLine.color = AppTheme.blueColor : rectUnderLine.color = AppTheme.hideColor
     }
 

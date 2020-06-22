@@ -67,6 +67,38 @@ Item
         return size
     }
 
+    function checkIfTodayRecordExist()
+    {
+        var lastRecId = -1
+        var lastDate
+        var todayDate
+
+        if (paramsTable.model)
+        {
+            lastRecId = paramsTable.model.length - 1
+            lastDate = new Date(paramsTable.model[lastRecId].dtNow * 1000)
+            todayDate = new Date()
+        }
+
+        if (lastRecId > -1 &&
+            lastDate.getYear() === todayDate.getYear() &&
+            lastDate.getMonth() === todayDate.getMonth() &&
+            lastDate.getDate() === todayDate.getDate())
+        {
+            confirmDialog.showDialog(true, qsTr("WARNING"), qsTr("The record for today is exist. Do you want to update existing?"))
+        }
+        else
+            showAddParamDialog()
+    }
+
+    function showAddParamDialog()
+    {
+        rectAddRecordDialog.opacity = 1
+        rectDataContainer.opacity = 0
+        addRecordListView.model = 0
+        addRecordListView.model = app.getAllParamsListModel()
+    }
+
     Rectangle
     {
         id: rectDataContainer
@@ -117,13 +149,7 @@ Item
             anchors.bottom: parent.bottom
             anchors.bottomMargin: AppTheme.margin * app.scale
 
-            onSigButtonClicked:
-            {
-                rectAddRecordDialog.opacity = 1
-                rectDataContainer.opacity = 0
-                addRecordListView.model = 0
-                addRecordListView.model = app.getAllParamsListModel()
-            }
+            onSigButtonClicked: checkIfTodayRecordExist()
         }
     }
 
@@ -294,24 +320,24 @@ Item
             }
         }
 
-        StandardButton
+        IconSimpleButton
         {
             id: buttonCancel
             anchors.bottom: parent.bottom
             anchors.bottomMargin: AppTheme.margin * app.scale
             anchors.left: parent.left
-            bText: qsTr("CANCEL")
+            image: "qrc:/resources/img/icon_cancel.png"
 
             onSigButtonClicked: addLogRecord(false)
         }
 
-        StandardButton
+        IconSimpleButton
         {
             id: buttonAdd
             anchors.bottom: parent.bottom
             anchors.bottomMargin: AppTheme.margin * app.scale
             anchors.right: parent.right
-            bText: qsTr("ADD")
+            image: "qrc:/resources/img/icon_ok.png"
 
             onSigButtonClicked: addLogRecord(true)
         }
@@ -419,26 +445,32 @@ Item
             }
         }
 
-        StandardButton
+        IconSimpleButton
         {
             id: buttonBack
             anchors.bottom: parent.bottom
             anchors.bottomMargin: AppTheme.margin * app.scale
             anchors.left: parent.left
-            bText: qsTr("CANCEL")
+            image: "qrc:/resources/img/icon_cancel.png"
 
             onSigButtonClicked: savePersonalParams(false)
         }
 
-        StandardButton
+        IconSimpleButton
         {
             id: buttonSave
             anchors.bottom: parent.bottom
             anchors.bottomMargin: AppTheme.margin * app.scale
             anchors.right: parent.right
-            bText: qsTr("SAVE")
+            image: "qrc:/resources/img/icon_ok.png"
 
             onSigButtonClicked: savePersonalParams(true)
         }
+    }
+
+    ConfirmDialog
+    {
+        id: confirmDialog
+        onSigAccept: showAddParamDialog()
     }
 }

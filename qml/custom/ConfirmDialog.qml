@@ -7,6 +7,8 @@ import "../"
 Item
 {
     id: confirmDialog
+    width: app.width
+    height: app.height
     opacity: enabled ? AppTheme.opacityEnabled : AppTheme.opacityDisabled
 
     signal sigAccept()
@@ -48,13 +50,14 @@ Item
     Rectangle
     {
         id: rectCont
+        anchors.fill: parent
         parent: Overlay.overlay
-        width: app.width
-        height: app.height
         focus: true
         clip: true
         visible: false
         color: "#00000000"
+
+        MouseArea { anchors.fill: parent }
 
         NumberAnimation
         {
@@ -78,8 +81,8 @@ Item
             {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
-                width: 300 * app.scale
-                height: 200 * app.scale
+                width: parent.width - AppTheme.margin * app.scale
+                height: 240 * app.scale - AppTheme.margin * app.scale
                 radius: AppTheme.radius * app.scale
                 color: AppTheme.whiteColor
 
@@ -93,7 +96,7 @@ Item
                     verticalAlignment: Text.AlignVCenter
                     horizontalAlignment: Text.AlignHCenter
                     font.family: AppTheme.fontFamily
-                    font.pixelSize: AppTheme.fontBigSize * app.scale
+                    font.pixelSize: AppTheme.fontNormalSize * app.scale
                     color: AppTheme.blueColor
                     text: "TEXT"
                 }
@@ -102,13 +105,14 @@ Item
                 {
                     id: textMessage
                     anchors.verticalCenter: parent.verticalCenter
+                    anchors.verticalCenterOffset: - AppTheme.padding * app.scale
                     height: AppTheme.compHeight * app.scale
                     width: parent.width
                     verticalAlignment: Text.AlignVCenter
                     horizontalAlignment: Text.AlignHCenter
                     font.family: AppTheme.fontFamily
                     font.pixelSize: AppTheme.fontNormalSize * app.scale
-                    color: AppTheme.blueColor
+                    color: AppTheme.greyDarkColor
                     text: "TEXT"
                     wrapMode: Text.WordWrap
                 }
