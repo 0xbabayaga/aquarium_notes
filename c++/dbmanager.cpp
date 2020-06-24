@@ -91,6 +91,7 @@ DBManager::DBManager(QQmlApplicationEngine *engine, QObject *parent) : QObject(p
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateAccount(QString, QString, QString)), this, SLOT(onGuiUserCreate(QString, QString, QString)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateTank(QString, int, int, int, int, QString)), this, SLOT(onGuiTankCreate(QString, int, int, int, int, QString)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecord(int, int, double)), this, SLOT(onGuiAddRecord(int, int, double)));
+    connect(qmlEngine->rootObjects().first(), SIGNAL(sigEditRecord(int, int, double)), this, SLOT(onGuiEditRecord(int, int, double)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecordNotes(int, QString, QString)), this, SLOT(onGuiAddRecordNote(int, QString, QString)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigAddAction(QString, QString, int, int, int)), this, SLOT(onGuiAddActionRecord(QString, QString, int, int, int)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigEditAction(int, QString, QString, int, int, int)), this, SLOT(onGuiEditActionRecord(int, QString, QString, int, int, int)));
@@ -127,6 +128,7 @@ DBManager::~DBManager()
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateAccount(QString, QString, QString)), this, SLOT(onUserCreate(QString, QString, QString)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateTank(QString, int, int, int, int)), this, SLOT(onGuiTankCreate(QString, int, int, int, int)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecord(int, int, float)), this, SLOT(onGuiAddRecord(int, int, float)));
+    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigEditRecord(int, int, double)), this, SLOT(onGuiEditRecord(int, int, double)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecordNotes(int, QString, QString)), this, SLOT(onGuiAddRecordNote(int, QString, QString)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigAddAction(QString, QString, int, int, int)), this, SLOT(onGuiAddActionRecord(QString, QString, int, int, int)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigEditAction(int, QString, QString, int, int, int)), this, SLOT(onGuiEditActionRecord(int, QString, QString, int, int, int)));
@@ -273,6 +275,11 @@ void DBManager::onGuiTankCreate(QString name, int type, int l, int w, int h, QSt
 void DBManager::onGuiAddRecord(int smpId, int paramId, double value)
 {
     addParamRecord(smpId, paramId, value);
+}
+
+void DBManager::onGuiEditRecord(int smpId, int paramId, double value)
+{
+    editParamRecord(smpId, paramId, value);
 }
 
 void DBManager::onGuiRefreshData()
@@ -815,6 +822,30 @@ bool DBManager::addParamRecord(int smpId, int paramId, double value)
 
     if (res == false)
         qDebug() << "Add record error: " << query.lastError();
+
+    return res;
+}
+
+bool DBManager::editParamRecord(int smpId, int paramId, double value)
+{
+    QSqlQuery query;
+    bool res = false;
+    TankObj *tank = (TankObj*) curSelectedObjs.listOfUserTanks.at(curSelectedObjs.tankIdx);
+
+    query.prepare("INSERT INTO HISTORY_VALUE_TABLE (SMP_ID, TANK_ID, PARAM_ID, VALUE, TIMESTAMP) "
+                  "VALUES (:smp_id, :tank_id, :param_id, :value, :tm)");
+
+    query.prepare("UPDATE HISTORY_VALUE_TABLE SET "
+                  "VALUE = " + QString::number(value) + ", "
+                  "TIMESTAMP = " + QString::number(QDateTime::currentSecsSinceEpoch()) + " "
+                  "WHERE smp_id = " + QString::number(smpId) + " AND "
+                  "PARAM_ID = " + QString::number(paramId) + " AND "
+                  "TANK_ID = '" + tank->tankId() + "'");
+
+    res = query.exec();
+
+    if (res == false)
+        qDebug() << "Edit record error: " << query.lastError();
 
     return res;
 }

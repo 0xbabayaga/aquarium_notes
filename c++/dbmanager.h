@@ -47,6 +47,7 @@ private:
     bool    createTank(QString name, QString manId, int type, int l, int w, int h, QString imgFile);
     bool    createTankDefaultParamSet(QString tankId, AquariumType type);
     bool    addParamRecord(int smpId, int paramId, double value);
+    bool    editParamRecord(int smpId, int paramId, double value);
     bool    addNoteRecord(int smpId, QString note, QString imageLink);
     bool    addActionRecord(QString tankId, QString name, QString desc, int type, int period, int tm);
     bool    editActionRecord(int id, QString tankId, QString name, QString desc, int type, int period, int tm);
@@ -86,6 +87,7 @@ public slots:
     void    onGuiUserCreate(QString uname, QString upass, QString email);
     void    onGuiTankCreate(QString name, int type, int l, int w, int h, QString imgFile);
     void    onGuiAddRecord(int smpId, int paramId, double value);
+    void    onGuiEditRecord(int smpId, int paramId, double value);
     void    onGuiAddRecordNote(int smpId, QString notes, QString imageLink);
     void    onGuiAddActionRecord(QString name, QString desc, int type, int period, int tm);
     void    onGuiEditActionRecord(int id, QString name, QString desc, int type, int period, int tm);

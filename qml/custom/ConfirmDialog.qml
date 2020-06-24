@@ -104,10 +104,11 @@ Item
                 Text
                 {
                     id: textMessage
+                    anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: - AppTheme.padding * app.scale
                     height: AppTheme.compHeight * app.scale
-                    width: parent.width
+                    width: parent.width - AppTheme.margin * app.scale * 2
                     verticalAlignment: Text.AlignVCenter
                     horizontalAlignment: Text.AlignHCenter
                     font.family: AppTheme.fontFamily

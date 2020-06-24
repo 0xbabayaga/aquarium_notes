@@ -26,7 +26,7 @@ Item
         addRecordListView.model = app.getAllParamsListModel()
     }
 
-    function addLogRecord(isAdd)
+    function addLogRecord(isAdd, isEdit)
     {
         if (isAdd === true)
         {
@@ -35,9 +35,18 @@ Item
                 if (addRecordListView.model[i].en === true &&
                     addRecordListView.model[i].value !== -1)
                 {
-                    app.sigAddRecord(app.lastSmpId,
-                                     addRecordListView.model[i].paramId,
-                                     addRecordListView.model[i].value)
+                    if (isEdit === false)
+                    {
+                        app.sigAddRecord(app.lastSmpId,
+                                         addRecordListView.model[i].paramId,
+                                         addRecordListView.model[i].value)
+                    }
+                    else
+                    {
+                        app.sigEditRecord(app.lastSmpId,
+                                         addRecordListView.model[i].paramId,
+                                         addRecordListView.model[i].value)
+                    }
                 }
             }
 
@@ -46,7 +55,8 @@ Item
                                   textNote.text,
                                   imagesList.getSelectedImageLink())
 
-            app.lastSmpId++
+            if (isEdit !== true)
+                app.lastSmpId++
 
             sigRefreshData()
         }
@@ -88,15 +98,35 @@ Item
             confirmDialog.showDialog(true, qsTr("WARNING"), qsTr("The record for today is exist. Do you want to update existing?"))
         }
         else
-            showAddParamDialog()
+            showAddParamDialog(false)
     }
 
-    function showAddParamDialog()
+    function showAddParamDialog(isEdit)
     {
+        rectAddRecordDialog.isEdit = isEdit
         rectAddRecordDialog.opacity = 1
         rectDataContainer.opacity = 0
         addRecordListView.model = 0
         addRecordListView.model = app.getAllParamsListModel()
+
+        if (isEdit === true)
+        {
+            for (var i = 0; i < addRecordListView.model.length; i++)
+            {
+                if (addRecordListView.model[i].en === true)
+                {
+                    for (var p = 0; p < paramsTable.model.length; p++)
+                    {
+                        if (addRecordListView.model[i].paramId === paramsTable.model[p].paramId)
+                        {
+                            addRecordListView.model[i].value = paramsTable.model[p].valueNow
+                            console.log(i, paramsTable.model[p].valueNow)
+                            break
+                        }
+                    }
+                }
+            }
+        }
     }
 
     Rectangle
@@ -163,6 +193,8 @@ Item
         opacity: 0
         visible: (opacity === 0) ? false : true
 
+        property bool isEdit: false
+
         Behavior on opacity
         {
             NumberAnimation {   duration: 200 }
@@ -204,8 +236,7 @@ Item
             anchors.topMargin: AppTheme.compHeight * 2 * app.scale
             anchors.bottomMargin: AppTheme.rowHeightMin * 2 * app.scale
             contentWidth: width
-            contentHeight: (addRecordListView.model) ? addRecordListView.model.length * AppTheme.rowHeightMin * app.scale : 0
-            clip: true
+            contentHeight: (addRecordListView.model) ? addRecordListView.model.length * AppTheme.rowHeightMin * app.scale + 100 * app.scale : 0
 
             ListView
             {
@@ -259,6 +290,7 @@ Item
                         placeholderText: "0"
                         width: 100 * app.scale
                         maximumLength: 4
+                        text: (value !== -1) ? value : ""
 
                         onTextChanged: value = Number.parseFloat(textInputValue.text)
 
@@ -339,7 +371,7 @@ Item
             anchors.right: parent.right
             image: "qrc:/resources/img/icon_ok.png"
 
-            onSigButtonClicked: addLogRecord(true)
+            onSigButtonClicked: addLogRecord(true, rectAddRecordDialog.isEdit)
         }
     }
 
@@ -393,7 +425,6 @@ Item
             anchors.bottomMargin: AppTheme.rowHeight * 2 * app.scale
             spacing: 0
             model: app.getAllParamsListModel()
-            clip: true
 
             delegate: Rectangle
             {
@@ -471,6 +502,6 @@ Item
     ConfirmDialog
     {
         id: confirmDialog
-        onSigAccept: showAddParamDialog()
+        onSigAccept: showAddParamDialog(true)
     }
 }
