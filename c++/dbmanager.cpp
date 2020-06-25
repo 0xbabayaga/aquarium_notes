@@ -888,18 +888,30 @@ bool DBManager::editNoteRecord(int smpId, QString note, QString imageLink)
     bool res = false;
     TankObj *tank = (TankObj*) curSelectedObjs.listOfUserTanks.at(curSelectedObjs.tankIdx);
 
-    query.prepare("UPDATE HISTORY_NOTES_TABLE SET "
-                  "TEXT = " + note + ", "
-                  "IMAGEDATA = '', "
-                  "IMAGELINK = '" + imageLink + "', "
-                  "TIMESTAMP = " + QDateTime::currentSecsSinceEpoch() + " "
-                  "WHERE SMP_ID = " + QString::number(smpId) + " AND "
-                  "TANK_ID = '" + tank->tankId() + "'");
+    query.prepare("SELECT * FROM HISTORY_NOTES_TABLE "
+                  "WHERE SMP_ID = " + QString::number(smpId));
 
     res = query.exec();
 
-    if (res == false)
-        qDebug() << "Edit Note record error: " << query.lastError();
+    if (query.first() != 0)
+    {
+        query.prepare("UPDATE HISTORY_NOTES_TABLE SET "
+                      "TEXT = '" + note + "', "
+                      "IMAGEDATA = '', "
+                      "IMAGELINK = '" + imageLink + "', "
+                      "TIMESTAMP = " + QString::number(QDateTime::currentSecsSinceEpoch()) + " "
+                      "WHERE SMP_ID = " + QString::number(smpId) + " AND "
+                      "TANK_ID = '" + tank->tankId() + "'");
+
+        res = query.exec();
+
+        qDebug() << query.lastQuery();
+
+        if (res == false)
+            qDebug() << "Edit Note record error: " << query.lastError();
+    }
+    else
+        res = addNoteRecord(smpId, note, imageLink);
 
     return res;
 }

@@ -30,6 +30,9 @@ Item
     {
         if (isAdd === true)
         {
+            if (isEdit !== true)
+                app.lastSmpId++
+
             for (var i = 0; i < addRecordListView.model.length; i++)
             {
                 if (addRecordListView.model[i].en === true &&
@@ -65,9 +68,6 @@ Item
                                        imagesList.getSelectedImageLink())
                 }
             }
-
-            if (isEdit !== true)
-                app.lastSmpId++
 
             sigRefreshData()
         }
