@@ -51,9 +51,20 @@ Item
             }
 
             if (textNote.text.length > 0 || imagesList.getSelectedImageLink().length > 0)
-                sigAddRecordNotes(app.lastSmpId,
-                                  textNote.text,
-                                  imagesList.getSelectedImageLink())
+            {
+                if (isEdit === false)
+                {
+                    sigAddRecordNotes(app.lastSmpId,
+                                      textNote.text,
+                                      imagesList.getSelectedImageLink())
+                }
+                else
+                {
+                    sigEditRecordNotes(app.lastSmpId,
+                                       textNote.text,
+                                       imagesList.getSelectedImageLink())
+                }
+            }
 
             if (isEdit !== true)
                 app.lastSmpId++
@@ -106,8 +117,6 @@ Item
         rectAddRecordDialog.isEdit = isEdit
         rectAddRecordDialog.opacity = 1
         rectDataContainer.opacity = 0
-        addRecordListView.model = 0
-        addRecordListView.model = app.getAllParamsListModel()
 
         if (isEdit === true)
         {
@@ -119,14 +128,16 @@ Item
                     {
                         if (addRecordListView.model[i].paramId === paramsTable.model[p].paramId)
                         {
-                            addRecordListView.model[i].value = paramsTable.model[p].valueNow
-                            console.log(i, paramsTable.model[p].valueNow)
+                            app.getAllParamsListModel()[i].value = paramsTable.model[p].valueNow
                             break
                         }
                     }
                 }
             }
         }
+
+        addRecordListView.model = 0
+        addRecordListView.model = app.getAllParamsListModel()
     }
 
     Rectangle
@@ -291,6 +302,7 @@ Item
                         width: 100 * app.scale
                         maximumLength: 4
                         text: (value !== -1) ? value : ""
+                        //text: value
 
                         onTextChanged: value = Number.parseFloat(textInputValue.text)
 

@@ -93,6 +93,7 @@ DBManager::DBManager(QQmlApplicationEngine *engine, QObject *parent) : QObject(p
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecord(int, int, double)), this, SLOT(onGuiAddRecord(int, int, double)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigEditRecord(int, int, double)), this, SLOT(onGuiEditRecord(int, int, double)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecordNotes(int, QString, QString)), this, SLOT(onGuiAddRecordNote(int, QString, QString)));
+    connect(qmlEngine->rootObjects().first(), SIGNAL(sigEditRecordNotes(int, QString, QString)), this, SLOT(onGuiEditRecordNote(int, QString, QString)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigAddAction(QString, QString, int, int, int)), this, SLOT(onGuiAddActionRecord(QString, QString, int, int, int)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigEditAction(int, QString, QString, int, int, int)), this, SLOT(onGuiEditActionRecord(int, QString, QString, int, int, int)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigDeleteAction(int)), this, SLOT(onGuiDeleteActionRecord(int)));
@@ -130,6 +131,7 @@ DBManager::~DBManager()
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecord(int, int, float)), this, SLOT(onGuiAddRecord(int, int, float)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigEditRecord(int, int, double)), this, SLOT(onGuiEditRecord(int, int, double)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecordNotes(int, QString, QString)), this, SLOT(onGuiAddRecordNote(int, QString, QString)));
+    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigEditRecordNotes(int, QString, QString)), this, SLOT(onGuiEditRecordNote(int, QString, QString)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigAddAction(QString, QString, int, int, int)), this, SLOT(onGuiAddActionRecord(QString, QString, int, int, int)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigEditAction(int, QString, QString, int, int, int)), this, SLOT(onGuiEditActionRecord(int, QString, QString, int, int, int)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigDeleteAction(int)), this, SLOT(onGuiDeleteActionRecord(int)));
@@ -294,6 +296,15 @@ void DBManager::onGuiRefreshData()
 void DBManager::onGuiAddRecordNote(int smpId, QString note, QString imageLink)
 {
     if (addNoteRecord(smpId, note, imageLink) == true)
+    {
+        getLatestParams();
+        getHistoryParams();
+    }
+}
+
+void DBManager::onGuiEditRecordNote(int smpId, QString note, QString imageLink)
+{
+    if (editNoteRecord(smpId, note, imageLink) == true)
     {
         getLatestParams();
         getHistoryParams();
@@ -624,7 +635,7 @@ int DBManager::getLastSmpId()
 {
     int id = 0;
 
-    QSqlQuery query("SELECT MAX(ID) FROM HISTORY_VALUE_TABLE");
+    QSqlQuery query("SELECT MAX(SMP_ID) FROM HISTORY_VALUE_TABLE");
 
     if(query.next())
         id = query.value(0).toInt();
@@ -832,9 +843,6 @@ bool DBManager::editParamRecord(int smpId, int paramId, double value)
     bool res = false;
     TankObj *tank = (TankObj*) curSelectedObjs.listOfUserTanks.at(curSelectedObjs.tankIdx);
 
-    query.prepare("INSERT INTO HISTORY_VALUE_TABLE (SMP_ID, TANK_ID, PARAM_ID, VALUE, TIMESTAMP) "
-                  "VALUES (:smp_id, :tank_id, :param_id, :value, :tm)");
-
     query.prepare("UPDATE HISTORY_VALUE_TABLE SET "
                   "VALUE = " + QString::number(value) + ", "
                   "TIMESTAMP = " + QString::number(QDateTime::currentSecsSinceEpoch()) + " "
@@ -870,6 +878,28 @@ bool DBManager::addNoteRecord(int smpId, QString note, QString imageLink)
 
     if (res == false)
         qDebug() << "Add Note record error: " << query.lastError();
+
+    return res;
+}
+
+bool DBManager::editNoteRecord(int smpId, QString note, QString imageLink)
+{
+    QSqlQuery query;
+    bool res = false;
+    TankObj *tank = (TankObj*) curSelectedObjs.listOfUserTanks.at(curSelectedObjs.tankIdx);
+
+    query.prepare("UPDATE HISTORY_NOTES_TABLE SET "
+                  "TEXT = " + note + ", "
+                  "IMAGEDATA = '', "
+                  "IMAGELINK = '" + imageLink + "', "
+                  "TIMESTAMP = " + QDateTime::currentSecsSinceEpoch() + " "
+                  "WHERE SMP_ID = " + QString::number(smpId) + " AND "
+                  "TANK_ID = '" + tank->tankId() + "'");
+
+    res = query.exec();
+
+    if (res == false)
+        qDebug() << "Edit Note record error: " << query.lastError();
 
     return res;
 }
