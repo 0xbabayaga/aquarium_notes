@@ -145,7 +145,11 @@ Item
             onFinished: if (to === 0) rectList.visible = false
         }
 
-        MouseArea { anchors.fill: parent }
+        MouseArea
+        {
+            anchors.fill: parent
+            onClicked: showList(false)
+        }
 
         Rectangle
         {
@@ -169,6 +173,12 @@ Item
                     anchors.topMargin: AppTheme.margin * app.scale
                     height: AppTheme.rowHeight * app.scale * 6
                     color: "#00000000"
+
+                    MouseArea
+                    {
+                        anchors.fill: parent
+                        onClicked: showList(false)
+                    }
 
                     Rectangle
                     {
@@ -205,8 +215,11 @@ Item
                     ListView
                     {
                         id: listView
-                        anchors.fill: parent
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.top: parent.top
                         anchors.topMargin: AppTheme.padding * 2 * app.scale
+                        height: AppTheme.compHeight * app.scale * model.count
                         clip: true
 
                         delegate: Rectangle
@@ -227,21 +240,6 @@ Item
                                 text: name
                                 opacity: (index === listView.currentIndex) ? AppTheme.opacityEnabled : AppTheme.opacityDisabled
                             }
-
-                            /*
-                            Text
-                            {
-                                anchors.verticalCenter: parent.verticalCenter
-                                anchors.right: parent.right
-                                font.family: AppTheme.fontFamily
-                                font.pixelSize: AppTheme.fontNormalSize * app.scale
-                                color: AppTheme.blueColor
-                                verticalAlignment: Text.AlignVCenter
-                                horizontalAlignment: Text.AlignHCenter
-                                text: desc //formattedTime(param1)
-                                opacity: (index === listView.currentIndex) ? AppTheme.opacityEnabled : AppTheme.opacityDisabled
-                            }
-                            */
 
                             Rectangle
                             {

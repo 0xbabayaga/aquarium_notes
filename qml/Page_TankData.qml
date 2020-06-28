@@ -16,7 +16,7 @@ Item
         id: modelTabs
         ListElement { tab: qsTr("HISTORY") }
         ListElement { tab: qsTr("GRAPHS") }
-        ListElement { tab: qsTr("ACTION") }
+        ListElement { tab: qsTr("CALENDAR") }
     }
 
     function showPage(vis, tankParams)
@@ -49,8 +49,6 @@ Item
             textTankName.color = (tankType < 4) ? AppTheme.blueColor : AppTheme.greenColor
             textTankVol.color = textTankName.color
             textTankType.text = "["+ tankTypeName +"]"
-            //arrowOverlay.color = textTankName.color
-
             imgTank.source = "data:image/jpg;base64," + tankParams[5]
         }
         else

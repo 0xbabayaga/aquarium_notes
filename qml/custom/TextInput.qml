@@ -28,7 +28,7 @@ Item
     {
         id: textArea
         width: textInput.width
-        height: textInput.height
+        height: AppTheme.compHeight * app.scale
         font.family: AppTheme.fontFamily
         font.pixelSize: AppTheme.fontNormalSize * app.scale
         verticalAlignment: Text.AlignVCenter

@@ -24,6 +24,7 @@ bool ActionList::setData(QSqlQuery *query)
     int viewStartDate = 0;
     int viewEndDate = 0;
     int repeatPeriod = 0;
+    int period = 0;
     int startDate = 0;
 
     QDateTime tmNow = QDateTime::currentDateTime();
@@ -44,7 +45,8 @@ bool ActionList::setData(QSqlQuery *query)
 
     while (query->next())
     {
-        repeatPeriod = query->value(query->record().indexOf("PERIOD")).toInt();
+        repeatPeriod = query->value(query->record().indexOf("TYPE")).toInt();
+        period = query->value(query->record().indexOf("PERIOD")).toInt();
         startDate = query->value(query->record().indexOf("STARTDATE")).toInt();
 
         qDebug() << "Valid dates" << viewStartDate << viewEndDate;
@@ -52,10 +54,10 @@ bool ActionList::setData(QSqlQuery *query)
         switch ((eActionRepeat) repeatPeriod)
         {
             case ActionRepeat_None:         repeatPeriod = 0;           break;
-            case ActionRepeat_EveryWeek:    repeatPeriod = 86400 * 7;   break;
-            case ActionRepeat_EveryMonth:   repeatPeriod = 86400 * 31;  break;
+            case ActionRepeat_EveryWeek:    repeatPeriod = 86400 * 7 * period;   break;
+            case ActionRepeat_EveryMonth:   repeatPeriod = 86400 * 30 * period;  break;
             case ActionRepeat_EveryDay:
-            default:                        repeatPeriod = 86400;       break;
+            default:                        repeatPeriod = 86400 * period;       break;
         }
 
         if (repeatPeriod > 0)
@@ -74,7 +76,7 @@ bool ActionList::setData(QSqlQuery *query)
 
                     list.append(obj);
 
-                    qDebug() << "Added : " << obj->actId() << obj->name() << obj->startDT() << tmNow.toSecsSinceEpoch();
+                    qDebug() << "Added : " << obj->actId() << obj->name() << obj->type() << obj->startDT() << tmNow.toSecsSinceEpoch();
                 }
 
                 startDate += repeatPeriod;
@@ -94,7 +96,7 @@ bool ActionList::setData(QSqlQuery *query)
 
                 list.append(obj);
 
-                qDebug() << "Added : " << obj->actId() << obj->name() << obj->startDT() << tmNow.toSecsSinceEpoch();
+                qDebug() << "Added : " << obj->actId() << obj->name() << obj->type() << obj->startDT() << tmNow.toSecsSinceEpoch();
             }
         }
     }

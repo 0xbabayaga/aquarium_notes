@@ -13,6 +13,7 @@ Item
     property alias currentIndex: view.currentIndex
 
     signal sigCurrentIndexChanged(int id)
+    signal sigDoubleClicked(int id)
 
     Rectangle
     {
@@ -114,6 +115,12 @@ Item
                     MouseArea
                     {
                         anchors.fill: parent
+                        onDoubleClicked:
+                        {
+                            view.currentIndex = index
+                            sigDoubleClicked(index)
+                        }
+
                         onClicked:
                         {
                             view.currentIndex = index

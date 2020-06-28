@@ -50,8 +50,8 @@ private:
     bool    editParamRecord(int smpId, int paramId, double value);
     bool    addNoteRecord(int smpId, QString note, QString imageLink);
     bool    editNoteRecord(int smpId, QString note, QString imageLink);
-    bool    addActionRecord(QString tankId, QString name, QString desc, int type, int period, int tm);
-    bool    editActionRecord(int id, QString tankId, QString name, QString desc, int type, int period, int tm);
+    bool    addActionRecord(QString tankId, QString name, QString desc, int periodType, int period, int tm);
+    bool    editActionRecord(int id, QString tankId, QString name, QString desc, int periodType, int period, int tm);
     bool    deleteActionRecord(int id, QString tankId);
     bool    editPersonalParamState(QString tankId, int paramId, bool en);
 
@@ -91,8 +91,8 @@ public slots:
     void    onGuiEditRecord(int smpId, int paramId, double value);
     void    onGuiAddRecordNote(int smpId, QString notes, QString imageLink);
     void    onGuiEditRecordNote(int smpId, QString note, QString imageLink);
-    void    onGuiAddActionRecord(QString name, QString desc, int type, int period, int tm);
-    void    onGuiEditActionRecord(int id, QString name, QString desc, int type, int period, int tm);
+    void    onGuiAddActionRecord(QString name, QString desc, int periodType, int period, int tm);
+    void    onGuiEditActionRecord(int id, QString name, QString desc, int periodType, int period, int tm);
     void    onGuiDeleteActionRecord(int id);
     void    onGuiActionViewPeriodChanged(int period);
     void    onGuiTankSelected(int tankIdx);

@@ -8,6 +8,18 @@ Item
 {
     id: page_Main
 
+    function openTankPage()
+    {
+        var tankParams = [tanksListModel[tanksList.currentIndex].name,
+                          tanksListModel[tanksList.currentIndex].desc,
+                          tanksListModel[tanksList.currentIndex].type,
+                          tanksListModel[tanksList.currentIndex].typeName,
+                          tanksListModel[tanksList.currentIndex].volume,
+                          tanksListModel[tanksList.currentIndex].img];
+
+        page_TankData.showPage(true, tankParams)
+    }
+
     Text
     {
         id: textTankName
@@ -28,10 +40,18 @@ Item
         anchors.topMargin: AppTheme.rowHeightMin * app.scale * 2
         anchors.horizontalCenter: parent.horizontalCenter
         model: tanksListModel
+
         onSigCurrentIndexChanged:
         {
             textTankName.text = model[id].name
             app.sigTankSelected(currentIndex)
+        }
+
+        onSigDoubleClicked:
+        {
+            textTankName.text = model[id].name
+            app.sigTankSelected(currentIndex)
+            openTankPage()
         }
     }
 
@@ -89,16 +109,6 @@ Item
         anchors.topMargin: -AppTheme.padding * app.scale
         image: "qrc:/resources/img/icon_arrow_right.png"
 
-        onSigButtonClicked:
-        {
-            var tankParams = [tanksListModel[tanksList.currentIndex].name,
-                              tanksListModel[tanksList.currentIndex].desc,
-                              tanksListModel[tanksList.currentIndex].type,
-                              tanksListModel[tanksList.currentIndex].typeName,
-                              tanksListModel[tanksList.currentIndex].volume,
-                              tanksListModel[tanksList.currentIndex].img];
-
-            page_TankData.showPage(true, tankParams)
-        }
+        onSigButtonClicked: openTankPage()
     }
 }

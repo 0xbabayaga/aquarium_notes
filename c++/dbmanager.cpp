@@ -311,15 +311,15 @@ void DBManager::onGuiEditRecordNote(int smpId, QString note, QString imageLink)
     }
 }
 
-void DBManager::onGuiAddActionRecord(QString name, QString desc, int type, int period, int tm)
+void DBManager::onGuiAddActionRecord(QString name, QString desc, int periodType, int period, int tm)
 {
-    if (addActionRecord(currentTankSelected()->tankId(), name, desc, type, period, tm) == true)
+    if (addActionRecord(currentTankSelected()->tankId(), name, desc, periodType, period, tm) == true)
         getActionCalendar();
 }
 
-void DBManager::onGuiEditActionRecord(int id, QString name, QString desc, int type, int period, int tm)
+void DBManager::onGuiEditActionRecord(int id, QString name, QString desc, int periodType, int period, int tm)
 {
-    if (editActionRecord(id, currentTankSelected()->tankId(), name, desc, type, period, tm) == true)
+    if (editActionRecord(id, currentTankSelected()->tankId(), name, desc, periodType, period, tm) == true)
         getActionCalendar();
 }
 
@@ -916,7 +916,7 @@ bool DBManager::editNoteRecord(int smpId, QString note, QString imageLink)
     return res;
 }
 
-bool DBManager::addActionRecord(QString tankId, QString name, QString desc, int type, int period, int tm)
+bool DBManager::addActionRecord(QString tankId, QString name, QString desc, int periodType, int period, int tm)
 {
     QSqlQuery query;
     bool res = false;
@@ -925,7 +925,7 @@ bool DBManager::addActionRecord(QString tankId, QString name, QString desc, int 
                   "VALUES (:tank_id, :type, :name, :desc, :period, :en, :tm)");
 
     query.bindValue(":tank_id", tankId);
-    query.bindValue(":type", type);
+    query.bindValue(":type", periodType);
     query.bindValue(":name", name);
     query.bindValue(":desc", desc);
     query.bindValue(":period", period);
@@ -940,13 +940,13 @@ bool DBManager::addActionRecord(QString tankId, QString name, QString desc, int 
     return res;
 }
 
-bool DBManager::editActionRecord(int id, QString tankId, QString name, QString desc, int type, int period, int tm)
+bool DBManager::editActionRecord(int id, QString tankId, QString name, QString desc, int periodType, int period, int tm)
 {
     QSqlQuery query;
     bool res = false;
 
     query.prepare("UPDATE ACTIONS_TABLE SET "
-                  "TYPE = " + QString::number(type) + ", "
+                  "TYPE = " + QString::number(periodType) + ", "
                   "NAME = '" + name + "', "
                   "DESC = '" + desc + "', "
                   "PERIOD = " + QString::number(period) + ", "

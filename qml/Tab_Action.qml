@@ -25,9 +25,19 @@ Item
                 rectAddActionDialog.editId = actionList.model[id].actId
                 textActionName.text = actionList.model[id].name
                 textDesc.text = actionList.model[id].desc
-                comboPeriod.currentIndex = actionList.model[id].period
+                textPeriod.text = actionList.model[id].period
+                comboPeriod.currentIndex = actionList.model[id].type
                 datePicker.setLinuxDate(actionList.model[id].startDT)
                 timePicker.setLinuxTime(actionList.model[id].startDT)
+            }
+            else
+            {
+                textActionName.text = ""
+                textDesc.text = ""
+                textPeriod.text = "1"
+                comboPeriod.currentIndex = 0
+                datePicker.setLinuxDate(Date.now() / 1000 | 0)
+                timePicker.setLinuxTime(Date.now() / 1000 | 0)
             }
 
             rectAddActionDialog.opacity = 1
@@ -47,7 +57,7 @@ Item
         if (textActionName.text.length > 0 &&
             textDesc.text.length)
         {
-            app.sigAddAction(textActionName.text, textDesc.text, 0, comboPeriod.currentIndex, dt)
+            app.sigAddAction(textActionName.text, textDesc.text, comboPeriod.currentIndex, parseInt(textPeriod.text), dt)
 
             showActionDialog(false, false, 0)
         }
@@ -72,13 +82,13 @@ Item
         showActionDialog(false, false, 0)
     }
 
-    function printType(period)
+    function printType(type, period)
     {
-        switch (period)
+        switch (type)
         {
-            case AppDefs.ActionRepeat_EveryDay:     return qsTr("(Daily)");
-            case AppDefs.ActionRepeat_EveryWeek:    return qsTr("(Weekly)");
-            case AppDefs.ActionRepeat_EveryMonth:   return qsTr("(Monthly)");
+            case AppDefs.ActionRepeat_EveryDay:     return qsTr("(Every " + period + " days)");
+            case AppDefs.ActionRepeat_EveryWeek:    return qsTr("(Every " + period + " weeks)");
+            case AppDefs.ActionRepeat_EveryMonth:   return qsTr("(Every " + period + " months");
             default:                                return "(Once)"
         }
     }
@@ -208,7 +218,7 @@ Item
                             font.family: AppTheme.fontFamily
                             font.pixelSize: AppTheme.fontSmallSize * app.scale
                             color: AppTheme.greyColor
-                            text: printType(period)
+                            text: printType(type, period)
                         }
                     }
 
@@ -431,21 +441,67 @@ Item
             ListModel
             {
                 id: periodslistModel
-                ListElement {   name: qsTr("One shot")      }
-                ListElement {   name: qsTr("Every day")     }
-                ListElement {   name: qsTr("Every week")    }
-                ListElement {   name: qsTr("Every month")   }
+                ListElement {   name: qsTr("Once")      }
+                ListElement {   name: qsTr("Days")     }
+                ListElement {   name: qsTr("Weeks")    }
+                ListElement {   name: qsTr("Months")   }
             }
 
-            ComboList
+            Rectangle
             {
-                id: comboPeriod
-                propertyName: qsTr("Select a period:");
                 width: parent.width
-                model: periodslistModel
-            }
+                height: AppTheme.compHeight * app.scale
+                color: "#00000000"
 
-            //Item { height: 1; width: 1;}
+                Text
+                {
+                    id: textRepeat
+                    anchors.left: parent.left
+                    height: parent.height
+                    verticalAlignment: Text.AlignVCenter
+                    font.family: AppTheme.fontFamily
+                    font.pixelSize: AppTheme.fontSmallSize * app.scale
+                    color: AppTheme.greyColor
+                    text: qsTr("Repeat: ")
+                }
+
+                TextInput
+                {
+                    id: textPeriod
+                    anchors.right: comboPeriod.left
+                    anchors.rightMargin: AppTheme.padding * app.scale
+                    placeholderText: qsTr("1")
+                    width: 60 * app.scale
+                    focus: true
+                    maximumLength: 2
+                    //KeyNavigation.tab: textUserEmail
+                }
+
+                ComboList
+                {
+                    id: comboPeriod
+                    anchors.right: parent.right
+                    propertyName: qsTr("Select a period:");
+                    width: 100 * app.scale
+                    model: periodslistModel
+
+                    onCurrentIndexChanged:
+                    {
+                        if (comboPeriod.currentIndex > 0)
+                        {
+                            textPeriod.enabled = true
+                            textPeriod.visible = true
+                            textRepeat.text = qsTr("Repeat every:")
+                        }
+                        else
+                        {
+                            textPeriod.enabled = false
+                            textPeriod.visible = false
+                            textRepeat.text = qsTr("Repeat:")
+                        }
+                    }
+                }
+            }
 
             Text
             {

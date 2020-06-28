@@ -9,8 +9,8 @@ Item
     height: AppTheme.compHeight * app.scale
     width: app.width
 
-    property alias model: view.model
-    property alias currentIndex: view.currentIndex
+    property alias model: listTab.model
+    property alias currentIndex: listTab.currentIndex
 
     signal sigCurrentIndexChanged(int id)
 
@@ -18,8 +18,58 @@ Item
     {
         id: rectContainer
         anchors.fill: parent
-        //color: "#f1feff"//AppTheme.whiteColor
         color: "#00000000"
+
+        /*
+        ListView
+        {
+            id: listTab
+            anchors.fill: parent
+            model: modelTabs
+            orientation: ListView.Horizontal
+            spacing: AppTheme.rowSpacing
+            currentIndex: 0
+
+            property int cellWidth: 110 * app.scale
+
+            //highlightRangeMode: ListView.StrictlyEnforceRange
+            //preferredHighlightBegin: (width - cellWidth) / 2
+            //preferredHighlightEnd: (width + cellWidth) / 2
+
+            delegate: Component
+            {
+                Rectangle
+                {
+                    width: listTab.cellWidth
+                    height: AppTheme.rowHeight/2 * app.scale
+                    radius: AppTheme.radius/2 * app.scale
+                    color:  "#00000000"
+
+                    Text
+                    {
+                        anchors.fill: parent
+                        color: AppTheme.blueColor
+                        font.pixelSize: (listTab.currentIndex === index) ? AppTheme.fontBigSize * app.scale : AppTheme.fontNormalSize * app.scale
+                        font.family: AppTheme.fontFamily
+                        verticalAlignment: Text.AlignVCenter
+                        horizontalAlignment: Text.AlignHCenter
+                        text: tab
+
+                        MouseArea
+                        {
+                            anchors.fill: parent
+                            onClicked:
+                            {
+                                listTab.currentIndex = index
+                                sigCurrentIndexChanged(currentIndex)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+*/
+
 
         Component
         {
@@ -28,7 +78,7 @@ Item
             Item
             {
                 id: itemContainer
-                width: 128 * app.scale
+                width: (index === currentIndex) ? 180 * app.scale : 120 * app.scale
                 height: parent.height
                 scale: PathView.iconScale
 
@@ -45,7 +95,6 @@ Item
                         anchors.leftMargin: AppTheme.padding/2 * app.scale
                         text: tab
                         font.family: AppTheme.fontFamily
-                        //font.pixelSize: AppTheme.fontNormalSize * app.scale
                         font.pixelSize: (index === currentIndex) ? AppTheme.fontBigSize * app.scale : AppTheme.fontNormalSize * app.scale
                         color: AppTheme.blueColor
                         verticalAlignment: Text.AlignVCenter
@@ -57,7 +106,7 @@ Item
                         anchors.fill: parent
                         onClicked:
                         {
-                            view.currentIndex = index
+                            listTab.currentIndex = index
                             sigCurrentIndexChanged(index)
                         }
                     }
@@ -67,41 +116,27 @@ Item
 
         PathView
         {
-            id: view
+            id: listTab
             anchors.fill: parent
-            pathItemCount: 5
-            preferredHighlightBegin: 0.1
-            preferredHighlightEnd: 0.1
+            pathItemCount: 3
+            preferredHighlightBegin: 0.15
+            preferredHighlightEnd: 0.15
             highlightRangeMode: PathView.StrictlyEnforceRange
             delegate: delegate
 
             path: Path
             {
                 startX: 120/2 * app.scale
-                startY: view.height/2
+                startY: listTab.height/2
 
                 PathAttribute { name: "iconScale"; value: 1 }
                 PathAttribute { name: "iconOrder"; value: 0 }
-                PathLine {x: view.width; y: view.height/2 }
+                PathLine {x: listTab.width; y: listTab.height/2 }
                 PathAttribute { name: "iconScale"; value: 1 }
                 PathAttribute { name: "iconOpacity"; value: 1 }
-                //PathLine {x: view.width; y: view.height/2 }
             }
 
             onCurrentIndexChanged: sigCurrentIndexChanged(currentIndex)
         }
     }
-
-    /*
-    DropShadow
-    {
-        anchors.fill: rectContainer
-        horizontalOffset: 0
-        verticalOffset: 2
-        radius: 6.0
-        samples: 16
-        color: "#20000000"
-        source: rectContainer
-    }
-    */
 }
