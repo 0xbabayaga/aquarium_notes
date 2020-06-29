@@ -472,7 +472,7 @@ bool DBManager::getLatestParams()
             curSelectedObjs.listOfCurrValues.append(recObj);
         }
 
-        if (smpIdList.size() > 1)
+        if (smpIdList.size() > 1 && (curIdx + 1) < smpIdList.size())
         {
             QSqlQuery query1("SELECT v.SMP_ID, v.TANK_ID, v.PARAM_ID, v.VALUE, v.TIMESTAMP, n.TEXT, n.IMAGELINK "
                              "FROM HISTORY_VALUE_TABLE v "
