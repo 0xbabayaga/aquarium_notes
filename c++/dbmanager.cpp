@@ -56,13 +56,8 @@ const static QMap<QString, QString> paramTranslationMap =
 
 DBManager::DBManager(QQmlApplicationEngine *engine, QObject *parent) : QObject(parent)
 {
-    bool initRequired = false;
-
     if (QDir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + dbFolder).exists() == false)
-    {
         QDir().mkdir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + dbFolder);
-        initRequired = true;
-    }
 
     dbFileLink = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + dbFolder + "/" +dbFile;
     db = QSqlDatabase::addDatabase("QSQLITE");
@@ -71,10 +66,11 @@ DBManager::DBManager(QQmlApplicationEngine *engine, QObject *parent) : QObject(p
 
     qDebug() << dbFileLink;
 
-    //if (initRequired == true)
-        initDB();
+    initDB();
 
     qmlEngine = engine;
+
+    isParamDataChanged = true;
 
     actionList = new ActionList();
 
@@ -101,8 +97,10 @@ DBManager::DBManager(QQmlApplicationEngine *engine, QObject *parent) : QObject(p
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigTankSelected(int)), this, SLOT(onGuiTankSelected(int)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigPersonalParamStateChanged(int, bool)), this, SLOT(onGuiPersonalParamStateChanged(int, bool)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigRefreshData()), this, SLOT(onGuiRefreshData()));
+    connect(qmlEngine->rootObjects().first(), SIGNAL(sigCurrentSmpIdChanged(int)), this, SLOT(onGuiCurrentSmpIdChanged(int)));
 
     curSelectedObjs.lastSmpId = getLastSmpId();
+    curSelectedObjs.curSmpId = curSelectedObjs.lastSmpId;
     setLastSmpId(curSelectedObjs.lastSmpId);
 
     getCurrentObjs();
@@ -139,6 +137,7 @@ DBManager::~DBManager()
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigTankSelected(int)), this, SLOT(onGuiTankSelected(int)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigPersonalParamStateChanged(int, bool)), this, SLOT(onGuiPersonalParamStateChanged(int, bool)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigRefreshData()), this, SLOT(onGuiRefreshData()));
+    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigCurrentSmpIdChanged(int)), this, SLOT(onGuiCurrentSmpIdChanged(int)));
 
     if (curSelectedObjs.user != nullptr)
         delete curSelectedObjs.user;
@@ -348,6 +347,14 @@ void DBManager::onGuiPersonalParamStateChanged(int paramId, bool en)
     editPersonalParamState(currentTankSelected()->tankId(), paramId, en);
 }
 
+void DBManager::onGuiCurrentSmpIdChanged(int smpId)
+{
+    curSelectedObjs.curSmpId = smpId;
+
+    getLatestParams();
+    getHistoryParams();
+}
+
 bool DBManager::getActionCalendar()
 {
     bool res = false;
@@ -405,31 +412,46 @@ bool DBManager::getLatestParams()
     bool found = false;
     LastDataParamRecObj *recObj = nullptr;
     QList<int> smpIdList;
-    QSqlQuery query0("SELECT SMP_ID FROM HISTORY_VALUE_TABLE WHERE TANK_ID='"+currentTankSelected()->tankId()+"' ORDER BY SMP_ID DESC");
+    int curIdx = 0;
 
-    smpIdList.clear();
-
-    while (query0.next())
+    if (isParamDataChanged == true)
     {
-        found = false;
+        smpIdList.clear();
 
-        for (int i = 0; i < smpIdList.size(); i++)
+        QSqlQuery query0("SELECT SMP_ID FROM HISTORY_VALUE_TABLE WHERE TANK_ID='"+currentTankSelected()->tankId()+"' ORDER BY SMP_ID DESC");
+
+        while (query0.next())
         {
-            if (query0.value(0).toInt() == smpIdList.at(i))
+            found = false;
+
+            for (int i = 0; i < smpIdList.size(); i++)
             {
-                found = true;
-                break;
+                if (query0.value(0).toInt() == smpIdList.at(i))
+                {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (found == false)
+            {
+                smpIdList.append(query0.value(0).toInt());
+
+                if (smpIdList.size() > 1)
+                    break;
             }
         }
 
-        if (found == false)
-        {
-            smpIdList.append(query0.value(0).toInt());
-
-            if (smpIdList.size() > 1)
-                break;
-        }
+        isParamDataChanged = true;
     }
+
+
+    for (int i = 0; i < smpIdList.size(); i++)
+        if (smpIdList.at(i) == curSelectedObjs.curSmpId)
+        {
+            curIdx = i;
+            break;
+        }
 
     curSelectedObjs.listOfCurrValues.clear();
 
@@ -438,7 +460,7 @@ bool DBManager::getLatestParams()
         QSqlQuery query("SELECT v.SMP_ID, v.TANK_ID, v.PARAM_ID, v.VALUE, v.TIMESTAMP, n.TEXT, n.IMAGELINK "
                         "FROM HISTORY_VALUE_TABLE v "
                         "LEFT JOIN HISTORY_NOTES_TABLE n ON n.SMP_ID = v.SMP_ID "
-                        "WHERE v.SMP_ID = '"+QString::number(smpIdList.at(0))+"'");
+                        "WHERE v.SMP_ID = '"+QString::number(smpIdList.at(curIdx))+"'");
 
         while (query.next())
         {
@@ -463,7 +485,7 @@ bool DBManager::getLatestParams()
             QSqlQuery query1("SELECT v.SMP_ID, v.TANK_ID, v.PARAM_ID, v.VALUE, v.TIMESTAMP, n.TEXT, n.IMAGELINK "
                              "FROM HISTORY_VALUE_TABLE v "
                              "LEFT JOIN HISTORY_NOTES_TABLE n ON n.SMP_ID = v.SMP_ID "
-                             "WHERE v.SMP_ID = '"+QString::number(smpIdList.at(1))+"'");
+                             "WHERE v.SMP_ID = '"+QString::number(smpIdList.at(curIdx + 1))+"'");
 
 
             while (query1.next())
@@ -546,7 +568,7 @@ bool DBManager::getHistoryParams()
 
     for (int i = 0; i < idList.size(); i++)
     {
-        QSqlQuery qParams("SELECT VALUE, TIMESTAMP FROM HISTORY_VALUE_TABLE "
+        QSqlQuery qParams("SELECT SMP_ID, VALUE, TIMESTAMP FROM HISTORY_VALUE_TABLE "
                           "WHERE PARAM_ID = '"+QString::number(idList.at(i))+"'");
 
         points.clear();
@@ -555,7 +577,7 @@ bool DBManager::getHistoryParams()
         {
             if (i == 0)
             {
-                PointObj *pt = new PointObj(qParams.value(1).toInt(), qParams.value(0).toFloat());
+                PointObj *pt = new PointObj(qParams.value(0).toInt(), qParams.value(2).toInt(), qParams.value(1).toFloat());
                 pointList.append(pt);
             }
 
@@ -834,6 +856,8 @@ bool DBManager::addParamRecord(int smpId, int paramId, double value)
     if (res == false)
         qDebug() << "Add record error: " << query.lastError();
 
+    isParamDataChanged = true;
+
     return res;
 }
 
@@ -878,6 +902,8 @@ bool DBManager::addNoteRecord(int smpId, QString note, QString imageLink)
 
     if (res == false)
         qDebug() << "Add Note record error: " << query.lastError();
+
+    isParamDataChanged = true;
 
     return res;
 }

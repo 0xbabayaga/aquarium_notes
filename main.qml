@@ -38,6 +38,7 @@ Window
     signal sigDeleteAction(int id)
     signal sigActionViewPeriodChanged(int p)
     signal sigRefreshData()
+    signal sigCurrentSmpIdChanged(int smpId)
     signal sigDebug()
 
     function getAllParamsListModel() { return allParamsListModel    }

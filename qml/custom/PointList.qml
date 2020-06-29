@@ -12,7 +12,7 @@ Item
     property alias model: view.model
     property alias currentIndex: view.currentIndex
 
-    signal sigCurrentIndexChanged(int id)
+    signal sigCurIndexChanged(int id)
 
     Rectangle
     {
@@ -52,8 +52,10 @@ Item
                         anchors.fill: parent
                         onClicked:
                         {
+                            console.log("1234")
+
                             view.currentIndex = index
-                            sigCurrentIndexChanged(index)
+                            //sigCurIndexChanged(view.currentIndex)
                         }
                     }
                 }
@@ -93,7 +95,7 @@ Item
                 PathLine {x: view.width; y: view.height/2 }
             }
 
-            onCurrentIndexChanged: sigCurrentIndexChanged(currentIndex)
+            onCurrentIndexChanged: sigCurIndexChanged(currentIndex)
         }
     }
 }

@@ -183,6 +183,19 @@ Item
             }
         }
 
+        PointList
+        {
+            id: ptList
+            anchors.bottom: rectDataContainer.bottom
+            anchors.bottomMargin: AppTheme.margin * 3 * app.scale
+            anchors.left: parent.left
+            anchors.right: parent.right
+            height: AppTheme.rowHeight * app.scale
+            model:  graphPointsList
+
+            onSigCurIndexChanged: app.sigCurrentSmpIdChanged(ptList.model[id].smpId)
+        }
+
         IconSimpleButton
         {
             id: addRecordButton

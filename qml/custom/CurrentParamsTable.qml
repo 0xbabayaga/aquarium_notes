@@ -133,28 +133,17 @@ Item
                 {
                     verticalAlignment: Text.AlignVCenter
                     height: AppTheme.compHeight * app.scale
-                    width: 135 * app.scale
+                    width: 116 * app.scale
                     font.family: AppTheme.fontFamily
                     font.pixelSize: AppTheme.fontBigSize * app.scale
                     color: AppTheme.blueColor
                     text: ""
                 }
 
-                Text
-                {
-                    verticalAlignment: Text.AlignVCenter
-                    height: AppTheme.compHeight * app.scale
-                    width: 35 * app.scale
-                    font.family: AppTheme.fontFamily
-                    font.pixelSize: AppTheme.fontNormalSize * app.scale
-                    color: AppTheme.greyColor
-                    text: ""
-                }
-
                 Rectangle
                 {
                     height: AppTheme.compHeight * app.scale
-                    width: 60 * app.scale
+                    width: 80 * app.scale
                     color: AppTheme.blueColor
                     visible: (realModelLength() !== 0)
 
@@ -227,7 +216,7 @@ Item
                     {
                         height: AppTheme.compHeight * app.scale
                         verticalAlignment: Text.AlignVCenter
-                        width: 120 * app.scale
+                        width: 116 * app.scale
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontNormalSize * app.scale
                         color: AppTheme.blueColor
@@ -237,18 +226,7 @@ Item
                     Text
                     {
                         height: AppTheme.compHeight * app.scale
-                        verticalAlignment: Text.AlignVCenter
-                        width: 50 * app.scale
-                        font.family: AppTheme.fontFamily
-                        font.pixelSize: AppTheme.fontNormalSize * app.scale
-                        color: AppTheme.greyColor
-                        text: app.getParamById(paramId).unitName
-                    }
-
-                    Text
-                    {
-                        height: AppTheme.compHeight * app.scale
-                        width: 60 * app.scale
+                        width: 80 * app.scale
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
                         font.family: AppTheme.fontFamily
@@ -305,6 +283,17 @@ Item
                         font.bold: true
                         color: paramProgressState(paramId, valueNow, valuePrev)[1]
                         text: paramProgressState(paramId, valueNow, valuePrev)[0]
+                    }
+
+                    Text
+                    {
+                        height: AppTheme.compHeight * app.scale
+                        verticalAlignment: Text.AlignVCenter
+                        width: 36 * app.scale
+                        font.family: AppTheme.fontFamily
+                        font.pixelSize: AppTheme.fontNormalSize * app.scale
+                        color: AppTheme.greyColor
+                        text: app.getParamById(paramId).unitName
                     }
                 }
             }

@@ -34,6 +34,7 @@ public:
         QList<QObject*> listOfUserTanks;
         int             tankIdx = 0;
         int             lastSmpId = 0;
+        int             curSmpId = 0;
         QList<QObject*> listOfCurrValues;
     }   UTObj;
 
@@ -98,6 +99,7 @@ public slots:
     void    onGuiTankSelected(int tankIdx);
     void    onGuiPersonalParamStateChanged(int paramId, bool en);
     void    onGuiRefreshData();
+    void    onGuiCurrentSmpIdChanged(int smpId);
 
 public:
     const QString   dbFolder = "db";
@@ -118,6 +120,8 @@ private:
 
     /* Currently selected objects */
     UTObj           curSelectedObjs;
+
+    bool            isParamDataChanged;
 
 private:
     QQmlApplicationEngine   *qmlEngine = nullptr;

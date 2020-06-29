@@ -80,6 +80,6 @@ Item
         height: AppTheme.rowHeight * app.scale
         model:  graphPointsList
 
-        onSigCurrentIndexChanged: redraw(id)
+        onSigCurIndexChanged: redraw(id)
     }
 }
