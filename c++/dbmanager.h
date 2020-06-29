@@ -117,6 +117,7 @@ private:
 
     QList<QObject*> aquariumTypeList;
     QList<QObject*> pointList;
+    QList<int>      smpIdList;
 
     /* Currently selected objects */
     UTObj           curSelectedObjs;

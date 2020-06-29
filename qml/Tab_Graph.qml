@@ -30,7 +30,7 @@ Item
     function addDiagram(num, paramId, xMin, xMax, yMin, yMax, points)
     {
         diagrams.add(paramId, tab_Graph.graphHeight, xMin, xMax, yMin, yMax, points)
-        flickableContainer.contentHeight = diagrams.curnesCnt * tab_Graph.graphHeight
+        flickableContainer.contentHeight = (diagrams.curnesCnt + 1) * tab_Graph.graphHeight
     }
 
     Flickable
@@ -38,7 +38,7 @@ Item
         id: flickableContainer
         anchors.fill: parent
         anchors.topMargin: AppTheme.padding * app.scale
-        anchors.bottomMargin: AppTheme.margin * app.scale * 4
+        anchors.bottomMargin: AppTheme.margin * app.scale// * 4
         contentWidth: flickableContainer.width
         contentHeight: 1400 * app.scale
         clip: true
@@ -73,12 +73,12 @@ Item
     PointList
     {
         id: pointList
-        anchors.top: flickableContainer.bottom
-        anchors.topMargin: AppTheme.margin * app.scale
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: AppTheme.margin * 3 * app.scale
         anchors.left: parent.left
         anchors.right: parent.right
-        height: AppTheme.rowHeight * app.scale
         model:  graphPointsList
+        z: 2
 
         onSigCurIndexChanged: redraw(id)
     }

@@ -6,7 +6,7 @@ import "../"
 Item
 {
     id: pointList
-    height: 64 * app.scale
+    height: AppTheme.compHeight * app.scale
     width: (model) ? ((model.length > 2) ? app.width + AppTheme.margin * app.scale * 4 : 360 * app.scale) : app.width
 
     property alias model: view.model
@@ -16,8 +16,9 @@ Item
 
     Rectangle
     {
+        id: container
         anchors.fill: parent
-        color: "#00000000"
+        color: AppTheme.lightBlueColor
 
         Component
         {
@@ -39,9 +40,9 @@ Item
                     {
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.horizontalCenter: parent.horizontalCenter
-                        text: app.printDate(tm)
+                        text: app.printDateEx(tm)
                         font.family: AppTheme.fontFamily
-                        font.pixelSize: AppTheme.fontSize * app.scale
+                        font.pixelSize: AppTheme.fontSmallSize * app.scale
                         color: (currentIndex === index) ? AppTheme.whiteColor : AppTheme.blueColor
                         verticalAlignment: Text.AlignVCenter
                         height: parent.height
@@ -50,13 +51,7 @@ Item
                     MouseArea
                     {
                         anchors.fill: parent
-                        onClicked:
-                        {
-                            console.log("1234")
-
-                            view.currentIndex = index
-                            //sigCurIndexChanged(view.currentIndex)
-                        }
+                        onClicked: view.currentIndex = index
                     }
                 }
             }
@@ -65,9 +60,8 @@ Item
         Rectangle
         {
             anchors.top: parent.top
-            anchors.topMargin: AppTheme.padding * app.scale
             anchors.horizontalCenter: parent.horizontalCenter
-            width: 80 * app.scale
+            width: 70 * app.scale
             height: AppTheme.compHeight * app.scale
             color: AppTheme.blueColor
         }
@@ -87,15 +81,26 @@ Item
                 startX: 0
                 startY: view.height/2
 
-                PathAttribute { name: "iconScale"; value: 0.75 }
+                PathAttribute { name: "iconScale"; value: 0.8 }
                 PathAttribute { name: "iconOrder"; value: 0 }
                 PathLine {x: view.width/2; y: view.height/2 }
-                PathAttribute { name: "iconScale"; value: 1.5 }
+                PathAttribute { name: "iconScale"; value: 1.2 }
                 PathAttribute { name: "iconOpacity"; value: 1.5 }
                 PathLine {x: view.width; y: view.height/2 }
             }
 
             onCurrentIndexChanged: sigCurIndexChanged(currentIndex)
         }
+    }
+
+    DropShadow
+    {
+        anchors.fill: container
+        horizontalOffset: 0
+        verticalOffset: 0
+        radius: 12.0
+        samples: 16
+        color: "#20000000"
+        source: container
     }
 }

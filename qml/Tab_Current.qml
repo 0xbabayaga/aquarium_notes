@@ -189,10 +189,12 @@ Item
             anchors.bottom: rectDataContainer.bottom
             anchors.bottomMargin: AppTheme.margin * 3 * app.scale
             anchors.left: parent.left
+            anchors.leftMargin: -AppTheme.padding * app.scale
             anchors.right: parent.right
-            height: AppTheme.rowHeight * app.scale
+            anchors.rightMargin: -AppTheme.padding * app.scale
             model:  graphPointsList
 
+            onModelChanged: currentIndex = model.length - 1
             onSigCurIndexChanged: app.sigCurrentSmpIdChanged(ptList.model[id].smpId)
         }
 

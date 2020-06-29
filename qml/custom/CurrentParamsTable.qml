@@ -133,7 +133,7 @@ Item
                 {
                     verticalAlignment: Text.AlignVCenter
                     height: AppTheme.compHeight * app.scale
-                    width: 116 * app.scale
+                    width: 113 * app.scale
                     font.family: AppTheme.fontFamily
                     font.pixelSize: AppTheme.fontBigSize * app.scale
                     color: AppTheme.blueColor
@@ -143,7 +143,7 @@ Item
                 Rectangle
                 {
                     height: AppTheme.compHeight * app.scale
-                    width: 80 * app.scale
+                    width: 70 * app.scale
                     color: AppTheme.blueColor
                     visible: (realModelLength() !== 0)
 
@@ -160,6 +160,7 @@ Item
                     }
                 }
 
+                /*
                 Text
                 {
                     height: AppTheme.compHeight * app.scale
@@ -172,6 +173,7 @@ Item
                     visible: (realModelLength() > 0)
                     text: (curValuesListView.model) ? app.printDate(curValuesListView.model[0].dtPrev) : ""
                 }
+                */
 
                 Text
                 {
@@ -216,7 +218,7 @@ Item
                     {
                         height: AppTheme.compHeight * app.scale
                         verticalAlignment: Text.AlignVCenter
-                        width: 116 * app.scale
+                        width: 113 * app.scale
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontNormalSize * app.scale
                         color: AppTheme.blueColor
@@ -226,7 +228,7 @@ Item
                     Text
                     {
                         height: AppTheme.compHeight * app.scale
-                        width: 80 * app.scale
+                        width: 70 * app.scale
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
                         font.family: AppTheme.fontFamily

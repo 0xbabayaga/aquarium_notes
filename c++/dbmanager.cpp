@@ -350,9 +350,8 @@ void DBManager::onGuiPersonalParamStateChanged(int paramId, bool en)
 void DBManager::onGuiCurrentSmpIdChanged(int smpId)
 {
     curSelectedObjs.curSmpId = smpId;
-
     getLatestParams();
-    getHistoryParams();
+    //getHistoryParams();
 }
 
 bool DBManager::getActionCalendar()
@@ -411,7 +410,6 @@ bool DBManager::getLatestParams()
 {
     bool found = false;
     LastDataParamRecObj *recObj = nullptr;
-    QList<int> smpIdList;
     int curIdx = 0;
 
     if (isParamDataChanged == true)
@@ -434,17 +432,11 @@ bool DBManager::getLatestParams()
             }
 
             if (found == false)
-            {
                 smpIdList.append(query0.value(0).toInt());
-
-                if (smpIdList.size() > 1)
-                    break;
-            }
         }
 
         isParamDataChanged = true;
     }
-
 
     for (int i = 0; i < smpIdList.size(); i++)
         if (smpIdList.at(i) == curSelectedObjs.curSmpId)
@@ -581,7 +573,7 @@ bool DBManager::getHistoryParams()
                 pointList.append(pt);
             }
 
-            points.insert(QString::number(qParams.value(1).toInt()), qParams.value(0).toFloat());
+            points.insert(QString::number(qParams.value(2).toInt()), qParams.value(1).toFloat());
         }
 
         curveList.append(points);
