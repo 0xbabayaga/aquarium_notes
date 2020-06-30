@@ -7,21 +7,15 @@ import "../"
 Item
 {
     id: imageList
-    width: 150 * app.scale
+    width: app.width
     height: AppTheme.rowHeightMin * app.scale
     opacity: enabled ? AppTheme.opacityEnabled : AppTheme.opacityDisabled
 
-    signal sigSelectedIndexChanged(int id)
-
-    property int currentIndex: listView.currentIndex
     property alias propertyName: textPropertyName.text
     property alias model: listView.model
     property int yOffset: 200 * app.scale
-
-    function getSelectedImageLink()
-    {
-        return listView.model[listView.currentIndex].fileLink
-    }
+    property int imagesCountMax: 4
+    property alias selectedImagesList: imagesListView.model
 
     function showList(vis)
     {
@@ -42,81 +36,65 @@ Item
         rectListOpacityAnimation.start()
     }
 
-    Rectangle
+    ListModel
     {
-        id: rectImageContainer
-        anchors.top: imageList.top
-        anchors.left: imageList.left
-        height: AppTheme.rowHeightMin * app.scale
-        width: height
-        radius: height/2
-        color: AppTheme.hideColor
-        clip: true
+        id: listOfImages
+    }
 
-        Image
+    ListView
+    {
+        id: imagesListView
+        width: listOfImages.count * height + AppTheme.padding * app.scale * (listOfImages.count - 1)
+        height: parent.height
+        orientation: ListView.Horizontal
+        spacing: AppTheme.padding * app.scale
+        clip: true
+        model: listOfImages
+
+        delegate: Rectangle
         {
-            id: imgSelected
-            anchors.fill: parent
-            source: ""
-            mipmap: true
-            layer.enabled: true
-            layer.effect: OpacityMask
+            width: imageList.height
+            height: width
+            radius: height / 2
+            color: AppTheme.greyColor
+
+            Image
             {
-                maskSource: imgTankMask
+                anchors.fill: parent
+                source: (fileLink === "") ? "" : "file:///" + fileLink
+                mipmap: true
+                layer.enabled: true
+                layer.effect: OpacityMask
+                {
+                    maskSource: imgTankMask
+                }
+            }
+
+            Rectangle
+            {
+                id: imgTankMask
+                anchors.fill: parent
+                radius: height/2
+                visible: false
             }
         }
-
-        Rectangle
-        {
-            id: imgTankMask
-            anchors.fill: parent
-            radius: height/2
-            visible: false
-        }
     }
 
-    Text
+    Rectangle
     {
-        id: textSelectImage
-        anchors.left: parent.left
-        anchors.leftMargin: rectImageContainer.width + AppTheme.padding * app.scale
-        anchors.verticalCenter: parent.verticalCenter
-        font.family: AppTheme.fontFamily
-        font.pixelSize: AppTheme.fontNormalSize * app.scale
-        color: AppTheme.blueColor
-        text: textPropertyName.text
-    }
-
-    Image
-    {
-        id: img
-        anchors.right: parent.right
-        anchors.verticalCenter: parent.verticalCenter
-        width: 27 * app.scale
-        height: 27 * app.scale
-        source: "qrc:/resources/img/icon_arrow_left.png"
-        mipmap: true
-        transformOrigin: Item.Center
-        rotation: 180
+        anchors.top: parent.top
+        anchors.left: imagesListView.right
+        anchors.leftMargin: AppTheme.padding * app.scale
+        width: imageList.height
+        height: width
+        radius: height / 2
+        color: AppTheme.backLightBlueColor
 
         MouseArea
         {
             anchors.fill: parent
-
-            onClicked:
-            {
-                showList(true)
-            }
+            onClicked: showList(true)
         }
-    }
-
-    ColorOverlay
-    {
-        anchors.fill: img
-        source: img
-        color: AppTheme.blueColor
-        transformOrigin: Item.Center
-        rotation: 180
     }
 
     Rectangle
@@ -158,7 +136,7 @@ Item
             {
                 anchors.fill: parent
                 anchors.topMargin: yOffset
-                color: "#ffffffff"
+                color: AppTheme.whiteColor
                 clip: true
 
                 Rectangle
@@ -214,7 +192,6 @@ Item
                         cellHeight: cellWidth
                         focus: true
 
-
                         delegate: Rectangle
                         {
                             color: "#00000000"
@@ -231,24 +208,20 @@ Item
                                 {
                                     anchors.fill: parent
                                     source: (fileLink) ? "file:///" + fileLink : ""
-                                    //mipmap: true
                                 }
 
                                 MouseArea
                                 {
                                     anchors.fill: parent
-                                    onClicked: listView.currentIndex = index
+                                    onClicked:
+                                    {
+                                        showList(false)
+
+                                        if (listOfImages.count < imageList.imagesCountMax)
+                                            listOfImages.append({ "fileLink": listView.model[index].fileLink })
+                                    }
                                 }
                             }
-                        }
-
-                        onCurrentIndexChanged:
-                        {
-                            showList(false)
-                            sigSelectedIndexChanged(currentIndex)
-
-                            if (listView.model[currentIndex].fileLink.length > 0)
-                                imgSelected.source = "file:///" + listView.model[currentIndex].fileLink
                         }
 
                         ScrollBar.vertical: ScrollBar

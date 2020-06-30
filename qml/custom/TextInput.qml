@@ -28,7 +28,7 @@ Item
     {
         id: textArea
         width: textInput.width
-        height: AppTheme.compHeight * app.scale
+        height: textInput.height
         font.family: AppTheme.fontFamily
         font.pixelSize: AppTheme.fontNormalSize * app.scale
         verticalAlignment: Text.AlignVCenter
@@ -47,14 +47,22 @@ Item
             visible: !textArea.text
         }
 
-        onContentHeightChanged: textInput.height = contentHeight + AppTheme.padding * app.scale
+        onContentHeightChanged:
+        {
+            if (textArea.contentHeight > AppTheme.compHeight * app.scale)
+            {
+                textInput.height = textArea.contentHeight
+                console.log(textInput.height)
+            }
+        }
+
         onFocusChanged: focus ? rectUnderLine.color = AppTheme.blueColor : rectUnderLine.color = AppTheme.hideColor
     }
 
     Rectangle
     {
         id: rectUnderLine
-        anchors.top: textArea.bottom
+        anchors.top: textInput.bottom
         anchors.left: textArea.left
         anchors.right: textArea.right
         height: 1 * app.scale

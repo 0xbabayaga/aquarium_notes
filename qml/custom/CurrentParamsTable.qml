@@ -147,7 +147,7 @@ Item
                     {
                         height: AppTheme.compHeight * app.scale
                         verticalAlignment: Text.AlignVCenter
-                        width: 120 * app.scale
+                        width: 113 * app.scale
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontNormalSize * app.scale
                         color: AppTheme.blueColor

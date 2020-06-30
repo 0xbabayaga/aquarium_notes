@@ -1,5 +1,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QCameraInfo>
+#include <QCamera>
 #include "c++/dbmanager.h"
 #include "c++/AppDefs.h"
 
@@ -23,6 +25,13 @@ int main(int argc, char *argv[])
             QCoreApplication::exit(-1);
     }, Qt::QueuedConnection);
     engine.load(url);
+
+
+    const QList<QCameraInfo> cameras = QCameraInfo::availableCameras();
+    for (const QCameraInfo &cameraInfo : cameras)
+    {
+        qDebug() << cameraInfo.deviceName();
+    }
 
     DBManager *dbMan = new DBManager(&engine);
 

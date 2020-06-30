@@ -53,13 +53,23 @@ Item
                 }
             }
 
-            if (textNote.text.length > 0 || imagesList.getSelectedImageLink().length > 0)
+            if (textNote.text.length > 0 || imagesList.selectedImagesList.count > 0)
             {
+                var links = ""
+
                 if (isEdit === false)
                 {
+                    for (i = 0; i < imagesList.selectedImagesList.count; i++)
+                    {
+                        if (i !== 0)
+                            links += ";"
+
+                        links += imagesList.selectedImagesList.get(i).fileLink
+                    }
+
                     sigAddRecordNotes(app.lastSmpId,
                                       textNote.text,
-                                      imagesList.getSelectedImageLink())
+                                      links)
                 }
                 else
                 {
@@ -259,9 +269,11 @@ Item
             id: flickableContainer
             anchors.fill: parent
             anchors.topMargin: AppTheme.compHeight * 2 * app.scale
-            anchors.bottomMargin: AppTheme.rowHeightMin * 2 * app.scale
+            anchors.bottomMargin: AppTheme.margin * 3 * app.scale
             contentWidth: width
-            contentHeight: (addRecordListView.model) ? addRecordListView.model.length * AppTheme.rowHeightMin * app.scale + 100 * app.scale : 0
+            contentHeight: (addRecordListView.model) ? addRecordListView.model.length * AppTheme.rowHeightMin * app.scale + 300 * app.scale : 0
+            clip:true
+
 
             ListView
             {
