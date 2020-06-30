@@ -83,7 +83,7 @@ private:
     void    addDiagram(int num, int paramId, int xMin, int xMax, float yMin, float yMax, QVariantMap points);
     void    drawDiagrams();
 
-signals:
+    static bool    less(QObject *v1, QObject *v2);
 
 public slots:
     void    onGuiUserCreate(QString uname, QString upass, QString email);
@@ -117,6 +117,7 @@ private:
 
     QList<QObject*> aquariumTypeList;
     QList<QObject*> pointList;
+    QList<QObject*> datesList;
     QList<int>      smpIdList;
 
     /* Currently selected objects */

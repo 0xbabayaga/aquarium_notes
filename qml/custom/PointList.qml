@@ -7,7 +7,7 @@ Item
 {
     id: pointList
     height: AppTheme.compHeight * app.scale
-    width: (model) ? ((model.length > 2) ? app.width + AppTheme.margin * app.scale * 4 : 360 * app.scale) : app.width
+    width: app.width
 
     property alias model: view.model
     property alias currentIndex: view.currentIndex
@@ -20,76 +20,47 @@ Item
         anchors.fill: parent
         color: AppTheme.lightBlueColor
 
-        Component
-        {
-            id: delegate
-
-            Item
-            {
-                id: itemContainer
-                width: 64 * app.scale
-                height: pointList.height
-                scale: PathView.iconScale
-
-                Rectangle
-                {
-                    anchors.fill: parent
-                    color: "#00000000"
-
-                    Text
-                    {
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        text: app.printDateEx(tm)
-                        font.family: AppTheme.fontFamily
-                        font.pixelSize: AppTheme.fontSmallSize * app.scale
-                        color: (currentIndex === index) ? AppTheme.whiteColor : AppTheme.blueColor
-                        verticalAlignment: Text.AlignVCenter
-                        height: parent.height
-                    }
-
-                    MouseArea
-                    {
-                        anchors.fill: parent
-                        onClicked: view.currentIndex = index
-                    }
-                }
-            }
-        }
-
-        Rectangle
-        {
-            anchors.top: parent.top
-            anchors.horizontalCenter: parent.horizontalCenter
-            width: 70 * app.scale
-            height: AppTheme.compHeight * app.scale
-            color: AppTheme.blueColor
-        }
-
-        PathView
+        ListView
         {
             id: view
             anchors.fill: parent
-            pathItemCount: 5
-            preferredHighlightBegin: 0.5
-            preferredHighlightEnd: 0.5
-            highlightRangeMode: PathView.StrictlyEnforceRange
-            delegate: delegate
+            orientation: ListView.Horizontal
+            clip: true
 
-            path: Path
-            {
-                startX: 0
-                startY: view.height/2
+            property int cellWidth: 70 * app.scale
 
-                PathAttribute { name: "iconScale"; value: 0.8 }
-                PathAttribute { name: "iconOrder"; value: 0 }
-                PathLine {x: view.width/2; y: view.height/2 }
-                PathAttribute { name: "iconScale"; value: 1.2 }
-                PathAttribute { name: "iconOpacity"; value: 1.5 }
-                PathLine {x: view.width; y: view.height/2 }
-            }
+            highlightRangeMode: ListView.StrictlyEnforceRange
+            preferredHighlightBegin: (width - cellWidth) / 2
+            preferredHighlightEnd: (width + cellWidth) / 2
 
             onCurrentIndexChanged: sigCurIndexChanged(currentIndex)
+
+            delegate: Component
+            {
+                Rectangle
+                {
+                    width: view.cellWidth
+                    height: AppTheme.rowHeight/2 * app.scale
+                    color: (view.currentIndex === index) ? AppTheme.blueColor : "#00000000"
+
+                    Text
+                    {
+                        anchors.fill: parent
+                        color: (view.currentIndex === index) ? AppTheme.whiteColor : AppTheme.blueColor
+                        font.pixelSize: (view.currentIndex === index) ? AppTheme.fontNormalSize * app.scale : AppTheme.fontSmallSize * app.scale
+                        font.family: AppTheme.fontFamily
+                        verticalAlignment: Text.AlignVCenter
+                        horizontalAlignment: Text.AlignHCenter
+                        text: app.printDateEx(tm)
+
+                        MouseArea
+                        {
+                            anchors.fill: parent
+                            onClicked: view.currentIndex = index
+                        }
+                    }
+                }
+            }
         }
     }
 

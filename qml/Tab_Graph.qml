@@ -33,12 +33,27 @@ Item
         flickableContainer.contentHeight = (diagrams.curnesCnt + 1) * tab_Graph.graphHeight
     }
 
+    PointList
+    {
+        id: pointList
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        model:  graphPointsList
+        z: 2
+
+        onSigCurIndexChanged: redraw(id)
+    }
+
     Flickable
     {
         id: flickableContainer
-        anchors.fill: parent
+        anchors.top: pointList.bottom
         anchors.topMargin: AppTheme.padding * app.scale
+        anchors.bottom: parent.bottom
         anchors.bottomMargin: AppTheme.margin * app.scale// * 4
+        anchors.left: parent.left
+        anchors.right: parent.right
         contentWidth: flickableContainer.width
         contentHeight: 1400 * app.scale
         clip: true
@@ -68,18 +83,5 @@ Item
                 color: AppTheme.hideColor
             }
         }
-    }
-
-    PointList
-    {
-        id: pointList
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: AppTheme.margin * 3 * app.scale
-        anchors.left: parent.left
-        anchors.right: parent.right
-        model:  graphPointsList
-        z: 2
-
-        onSigCurIndexChanged: redraw(id)
     }
 }

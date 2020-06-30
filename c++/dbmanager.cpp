@@ -557,6 +557,7 @@ bool DBManager::getHistoryParams()
     }
 
     pointList.clear();
+    datesList.clear();
 
     for (int i = 0; i < idList.size(); i++)
     {
@@ -571,6 +572,7 @@ bool DBManager::getHistoryParams()
             {
                 PointObj *pt = new PointObj(qParams.value(0).toInt(), qParams.value(2).toInt(), qParams.value(1).toFloat());
                 pointList.append(pt);
+                datesList.append(pt);
             }
 
             points.insert(QString::number(qParams.value(2).toInt()), qParams.value(1).toFloat());
@@ -579,7 +581,15 @@ bool DBManager::getHistoryParams()
         curveList.append(points);
     }
 
+    /* Set list of points for Diagrams */
     qmlEngine->rootContext()->setContextProperty("graphPointsList", QVariant::fromValue(pointList));
+
+
+    qSort(datesList.begin(), datesList.end(), less);
+
+
+    /* Set list of points for scroll dates lists */
+    qmlEngine->rootContext()->setContextProperty("datesList", QVariant::fromValue(datesList));
 
     for (int i = 0; i < curveList.size(); i++)
     {
@@ -600,23 +610,6 @@ bool DBManager::getHistoryParams()
     {
         yMin = __FLT_MAX__;
         yMax = __FLT_MIN__;
-
-        /*
-        for(int n = 0; n < paramsGuiList.size(); n++)
-        {
-            ParamObj *obj = (ParamObj*) paramsGuiList.at(n);
-
-            if (idList.at(i) == obj->paramId())
-            {
-                yMin = obj->min() - (obj->max() - obj->min());
-
-                if (yMin < 0)
-                    yMin = 0;
-
-                yMax = obj->max() + (obj->max() - obj->min());
-            }
-        }
-        */
 
         /* Looking for min\max for current curve */
         for (QVariantMap::const_iterator it = curveList.at(i).begin(); it != curveList.at(i).end(); it++)
@@ -1228,4 +1221,13 @@ QString DBManager::getAquariumTypeString(AquariumType type)
         return aquariumTypeNames[type];
     else
         return QString("");
+}
+
+
+bool DBManager::less(QObject *v1, QObject *v2)
+{
+    PointObj *a1 = (PointObj*) v1;
+    PointObj *a2 = (PointObj*) v2;
+
+    return a1->tm() > a2->tm();
 }

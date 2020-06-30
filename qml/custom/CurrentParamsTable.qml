@@ -114,81 +114,6 @@ Item
         anchors.fill: parent
         color: "#00000000"
 
-        Rectangle
-        {
-            id: rectDataHeader
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.top: parent.top
-            height: AppTheme.compHeight * app.scale
-            color: "#00000000"
-
-            Row
-            {
-                anchors.left: parent.left
-                anchors.leftMargin: AppTheme.padding * app.scale
-                anchors.right: parent.right
-
-                Text
-                {
-                    verticalAlignment: Text.AlignVCenter
-                    height: AppTheme.compHeight * app.scale
-                    width: 113 * app.scale
-                    font.family: AppTheme.fontFamily
-                    font.pixelSize: AppTheme.fontBigSize * app.scale
-                    color: AppTheme.blueColor
-                    text: ""
-                }
-
-                Rectangle
-                {
-                    height: AppTheme.compHeight * app.scale
-                    width: 70 * app.scale
-                    color: AppTheme.blueColor
-                    visible: (realModelLength() !== 0)
-
-                    Text
-                    {
-                        anchors.fill: parent
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                        font.family: AppTheme.fontFamily
-                        font.pixelSize: AppTheme.fontBigNormalSize * app.scale
-                        color: AppTheme.whiteColor
-                        visible: (curValuesListView.model) ? (curValuesListView.model.length > 0) : false
-                        text: (curValuesListView.model) ? app.printDate(curValuesListView.model[0].dtNow) : ""
-                    }
-                }
-
-                /*
-                Text
-                {
-                    height: AppTheme.compHeight * app.scale
-                    width: 65 * app.scale
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                    font.family: AppTheme.fontFamily
-                    font.pixelSize: AppTheme.fontBigNormalSize * app.scale
-                    color: AppTheme.greyColor
-                    visible: (realModelLength() > 0)
-                    text: (curValuesListView.model) ? app.printDate(curValuesListView.model[0].dtPrev) : ""
-                }
-                */
-
-                Text
-                {
-                    height: AppTheme.compHeight * app.scale
-                    width: 40 * app.scale
-                    verticalAlignment: Text.AlignVCenter
-                    horizontalAlignment: Text.AlignRight
-                    font.family: AppTheme.fontFamily
-                    font.pixelSize: AppTheme.fontBigSize * app.scale
-                    color: AppTheme.blueColor
-                    text: ""
-                }
-            }
-        }
-
         ListView
         {
             id: curValuesListView
@@ -199,7 +124,11 @@ Item
             spacing: 0
             interactive: false
 
-            onModelChanged: height = realModelLength() * AppTheme.compHeight * app.scale
+            onModelChanged:
+            {
+                height = realModelLength() * AppTheme.compHeight * app.scale
+                hideAnimation.start()
+            }
 
             delegate: Rectangle
             {
@@ -218,7 +147,7 @@ Item
                     {
                         height: AppTheme.compHeight * app.scale
                         verticalAlignment: Text.AlignVCenter
-                        width: 113 * app.scale
+                        width: 120 * app.scale
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontNormalSize * app.scale
                         color: AppTheme.blueColor
@@ -228,7 +157,7 @@ Item
                     Text
                     {
                         height: AppTheme.compHeight * app.scale
-                        width: 70 * app.scale
+                        width: 69 * app.scale
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
                         font.family: AppTheme.fontFamily
@@ -265,7 +194,7 @@ Item
                     Text
                     {
                         height: AppTheme.compHeight * app.scale
-                        width: 55 * app.scale
+                        width: 60 * app.scale
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
                         font.family: AppTheme.fontFamily
@@ -277,7 +206,7 @@ Item
                     Text
                     {
                         height: AppTheme.compHeight * app.scale
-                        width: 30 * app.scale
+                        width: 20 * app.scale
                         verticalAlignment: Text.AlignVCenter
                         horizontalAlignment: Text.AlignHCenter
                         font.family: AppTheme.fontFamily
@@ -290,15 +219,47 @@ Item
                     Text
                     {
                         height: AppTheme.compHeight * app.scale
+                        horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
-                        width: 36 * app.scale
+                        width: 46 * app.scale
                         font.family: AppTheme.fontFamily
-                        font.pixelSize: AppTheme.fontNormalSize * app.scale
+                        font.pixelSize: AppTheme.fontSmallSize * app.scale
                         color: AppTheme.greyColor
                         text: app.getParamById(paramId).unitName
                     }
                 }
             }
+        }
+
+
+        NumberAnimation
+        {
+            id: hideAnimation
+            target: rectNoteFound
+            property: "opacity"
+            duration: 200
+            from: 1
+            to: 0
+            easing.type: Easing.InOutQuad
+            onFinished:
+            {
+                rectNoteFound.visible = false
+
+                if (realModelLength() !== 0 && curValuesListView.model[0].note.length > 0)
+                    showAnimation.start()
+            }
+        }
+
+        NumberAnimation
+        {
+            id: showAnimation
+            target: rectNoteFound
+            property: "opacity"
+            duration: 200
+            from: 0
+            to: 1
+            easing.type: Easing.InOutQuad
+            onStarted: rectNoteFound.visible = true
         }
 
         Rectangle
@@ -308,17 +269,32 @@ Item
             anchors.topMargin: AppTheme.padding * app.scale
             anchors.left: parent.left
             anchors.right: parent.right
-            height: AppTheme.rowHeight * app.scale
-            color: AppTheme.backLightBlueColor
-            visible: (realModelLength() !== 0 && curValuesListView.model[0].note.length > 0)
+            height: (AppTheme.rowHeight + AppTheme.compHeight) * app.scale
+            color: "#00000000"
+            visible: false
+            opacity: 0
+            //visible: (realModelLength() !== 0 && curValuesListView.model[0].note.length > 0)
+
+            Text
+            {
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.leftMargin: AppTheme.padding * app.scale
+                height: AppTheme.compHeight * app.scale
+                verticalAlignment: Text.AlignVCenter
+                font.family: AppTheme.fontFamily
+                font.pixelSize: AppTheme.fontNormalSize * app.scale
+                color: AppTheme.blueColor
+                text: qsTr("NOTE FOUND:")
+            }
 
             Image
             {
                 id: imgNotePhoto
                 anchors.top: parent.top
-                anchors.topMargin: AppTheme.padding/2 * app.scale
-                anchors.left: parent.left
-                anchors.leftMargin: AppTheme.padding * app.scale
+                anchors.topMargin: AppTheme.compHeight * app.scale
+                anchors.right: parent.right
+                anchors.rightMargin: AppTheme.padding * app.scale
                 height: AppTheme.rowHeightMin * app.scale
                 width: height
                 mipmap: true
@@ -340,20 +316,19 @@ Item
                 anchors.topMargin: AppTheme.compHeight * app.scale
                 height: AppTheme.rowHeight * app.scale
                 width: height
-                radius: AppTheme.radius * app.scale
+                radius: height / 2
                 visible: false
             }
 
             Text
             {
                 id: textNote
-                anchors.top: parent.top
-                anchors.topMargin: AppTheme.padding/2 * app.scale
-                anchors.left: imgNotePhoto.right
+                anchors.left: parent.left
                 anchors.leftMargin: AppTheme.padding * app.scale
-                anchors.right: parent.right
+                anchors.right: imgNotePhoto.left
                 anchors.rightMargin: AppTheme.padding * app.scale
-                height: AppTheme.compHeight * app.scale
+                anchors.verticalCenter: imgNotePhoto.verticalCenter
+                height: contentHeight + AppTheme.padding * app.scale
                 verticalAlignment: Text.AlignVCenter
                 font.family: AppTheme.fontFamily
                 font.pixelSize: AppTheme.fontSmallSize * app.scale

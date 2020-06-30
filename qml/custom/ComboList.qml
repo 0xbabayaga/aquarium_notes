@@ -78,7 +78,6 @@ Item
             anchors.fill: parent
             onClicked: textArea.forceActiveFocus()
         }
-
     }
 
     Rectangle

@@ -49,8 +49,6 @@ bool ActionList::setData(QSqlQuery *query)
         period = query->value(query->record().indexOf("PERIOD")).toInt();
         startDate = query->value(query->record().indexOf("STARTDATE")).toInt();
 
-        qDebug() << "Valid dates" << viewStartDate << viewEndDate;
-
         switch ((eActionRepeat) repeatPeriod)
         {
             case ActionRepeat_None:         repeatPeriod = 0;           break;
@@ -75,8 +73,6 @@ bool ActionList::setData(QSqlQuery *query)
                                         query->value(query->record().indexOf("DESC")).toString());
 
                     list.append(obj);
-
-                    qDebug() << "Added : " << obj->actId() << obj->name() << obj->type() << obj->startDT() << tmNow.toSecsSinceEpoch();
                 }
 
                 startDate += repeatPeriod;
@@ -95,8 +91,6 @@ bool ActionList::setData(QSqlQuery *query)
                                     query->value(query->record().indexOf("DESC")).toString());
 
                 list.append(obj);
-
-                qDebug() << "Added : " << obj->actId() << obj->name() << obj->type() << obj->startDT() << tmNow.toSecsSinceEpoch();
             }
         }
     }

@@ -22,7 +22,7 @@ QtObject
     property color blueColor: "#00a7b8"
     property color greenColor: "#00c082"
     property color hideColor: "#20000000"
-    property color greyColor: "#aaaaaa"
+    property color greyColor: "#919191"
     property color greyDarkColor: "#808080"
     property color shideColor: "#20bababa"
 

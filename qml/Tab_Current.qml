@@ -186,15 +186,14 @@ Item
         PointList
         {
             id: ptList
-            anchors.bottom: rectDataContainer.bottom
-            anchors.bottomMargin: AppTheme.margin * 3 * app.scale
+            anchors.top: paramsTable.top
             anchors.left: parent.left
             anchors.leftMargin: -AppTheme.padding * app.scale
             anchors.right: parent.right
             anchors.rightMargin: -AppTheme.padding * app.scale
-            model:  graphPointsList
+            model:  datesList
 
-            onModelChanged: currentIndex = model.length - 1
+            onModelChanged: currentIndex = 0
             onSigCurIndexChanged: app.sigCurrentSmpIdChanged(ptList.model[id].smpId)
         }
 
