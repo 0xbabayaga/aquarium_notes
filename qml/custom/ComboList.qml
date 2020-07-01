@@ -63,7 +63,7 @@ Item
     Text
     {
         id: textArea
-        text: (listView.model) ? listView.model.get(listView.currentIndex).name : ""
+        text: (listView.model.count) ? listView.model.get(listView.currentIndex).name : ""
         width: comboList.width
         height: comboList.height
         font.family: AppTheme.fontFamily

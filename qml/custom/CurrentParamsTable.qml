@@ -137,27 +137,20 @@ Item
                 visible: en
                 color: (index%2 === 0) ? AppTheme.backLightBlueColor : "#00000000"
 
-                Row
+                Rectangle
                 {
-                    anchors.left: parent.left
+                    anchors.fill: parent
                     anchors.leftMargin: AppTheme.padding * app.scale
-                    anchors.right: parent.right
+                    anchors.rightMargin: AppTheme.padding * app.scale
+                    color: "#00000000"
 
                     Text
                     {
+                        id: textValueNow
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.top: parent.top
                         height: AppTheme.compHeight * app.scale
-                        verticalAlignment: Text.AlignVCenter
-                        width: 113 * app.scale
-                        font.family: AppTheme.fontFamily
-                        font.pixelSize: AppTheme.fontNormalSize * app.scale
-                        color: AppTheme.blueColor
-                        text: app.getParamById(paramId).fullName
-                    }
-
-                    Text
-                    {
-                        height: AppTheme.compHeight * app.scale
-                        width: 69 * app.scale
+                        width: 70 * app.scale
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
                         font.family: AppTheme.fontFamily
@@ -193,6 +186,22 @@ Item
 
                     Text
                     {
+                        anchors.top: parent.top
+                        anchors.right: textValueNow.left
+                        height: AppTheme.compHeight * app.scale
+                        verticalAlignment: Text.AlignVCenter
+                        width: 120 * app.scale
+                        font.family: AppTheme.fontFamily
+                        font.pixelSize: AppTheme.fontNormalSize * app.scale
+                        color: AppTheme.blueColor
+                        text: app.getParamById(paramId).fullName
+                    }
+
+                    Text
+                    {
+                        id: textDiffValue
+                        anchors.top: parent.top
+                        anchors.left: textValueNow.right
                         height: AppTheme.compHeight * app.scale
                         width: 60 * app.scale
                         horizontalAlignment: Text.AlignHCenter
@@ -205,6 +214,9 @@ Item
 
                     Text
                     {
+                        id: textProgressSign
+                        anchors.top: parent.top
+                        anchors.left: textDiffValue.right
                         height: AppTheme.compHeight * app.scale
                         width: 20 * app.scale
                         verticalAlignment: Text.AlignVCenter
@@ -218,6 +230,8 @@ Item
 
                     Text
                     {
+                        anchors.top: parent.top
+                        anchors.left: textProgressSign.right
                         height: AppTheme.compHeight * app.scale
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
@@ -273,7 +287,6 @@ Item
             color: "#00000000"
             visible: false
             opacity: 0
-            //visible: (realModelLength() !== 0 && curValuesListView.model[0].note.length > 0)
 
             Text
             {

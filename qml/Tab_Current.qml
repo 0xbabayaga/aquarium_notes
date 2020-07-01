@@ -23,76 +23,69 @@ Item
         rectPersonalParamsDialog.opacity = 0
         rectAddRecordDialog.opacity = 1
 
-        addRecordListView.model = app.getAllParamsListModel()
+        dialogAddParamNote.addParamsListModel = app.getAllParamsListModel()
     }
 
-    function addLogRecord(isAdd, isEdit)
+    function addLogRecord(isEdit)
     {
-        if (isAdd === true)
+        if (isEdit !== true)
+            app.lastSmpId++
+
+        for (var i = 0; i < dialogAddParamNote.addParamsListModel.length; i++)
         {
-            if (isEdit !== true)
-                app.lastSmpId++
-
-            for (var i = 0; i < addRecordListView.model.length; i++)
+            if (dialogAddParamNote.addParamsListModel[i].en === true &&
+                dialogAddParamNote.addParamsListModel[i].value !== -1)
             {
-                if (addRecordListView.model[i].en === true &&
-                    addRecordListView.model[i].value !== -1)
-                {
-                    if (isEdit === false)
-                    {
-                        app.sigAddRecord(app.lastSmpId,
-                                         addRecordListView.model[i].paramId,
-                                         addRecordListView.model[i].value)
-                    }
-                    else
-                    {
-                        app.sigEditRecord(app.lastSmpId,
-                                         addRecordListView.model[i].paramId,
-                                         addRecordListView.model[i].value)
-                    }
-                }
-            }
-
-            if (textNote.text.length > 0 || imagesList.selectedImagesList.count > 0)
-            {
-                var links = ""
-
                 if (isEdit === false)
                 {
-                    for (i = 0; i < imagesList.selectedImagesList.count; i++)
-                    {
-                        if (i !== 0)
-                            links += ";"
-
-                        links += imagesList.selectedImagesList.get(i).fileLink
-                    }
-
-                    sigAddRecordNotes(app.lastSmpId,
-                                      textNote.text,
-                                      links)
+                    app.sigAddRecord(app.lastSmpId,
+                                     dialogAddParamNote.addParamsListModel[i].paramId,
+                                     dialogAddParamNote.addParamsListModel[i].value)
                 }
                 else
                 {
-                    sigEditRecordNotes(app.lastSmpId,
-                                       textNote.text,
-                                       imagesList.getSelectedImageLink())
+                    app.sigEditRecord(app.lastSmpId,
+                                      dialogAddParamNote.addParamsListModel[i].paramId,
+                                      dialogAddParamNote.addParamsListModel[i].value)
                 }
             }
-
-            sigRefreshData()
         }
 
-        rectAddRecordDialog.opacity = 0
-        rectPersonalParamsDialog.opacity = 0
-        rectDataContainer.opacity = 1
+        if (dialogAddParamNote.note.length > 0 || dialogAddParamNote.selectedImagesList.count > 0)
+        {
+            var links = ""
+
+            if (isEdit === false)
+            {
+                for (i = 0; i < dialogAddParamNote.selectedImagesList.count; i++)
+                {
+                    if (i !== 0)
+                        links += ";"
+
+                    links += dialogAddParamNote.selectedImagesList.get(i).fileLink
+                }
+
+                sigAddRecordNotes(app.lastSmpId,
+                                  dialogAddParamNote.note,
+                                  links)
+            }
+            else
+            {
+                sigEditRecordNotes(app.lastSmpId,
+                                   dialogAddParamNote.note,
+                                   links)
+            }
+        }
+
+        sigRefreshData()
     }
 
     function getParamListRealCount()
     {
         var size = 0
 
-        for (var i = 0; i < addRecordListView.model.length; i++)
-            if (addRecordListView.model[i].en === true)
+        for (var i = 0; i < dialogAddParamNote.addParamsListModel.length; i++)
+            if (dialogAddParamNote.addParamsListModel[i].en === true)
                 size++;
 
         return size
@@ -124,19 +117,18 @@ Item
 
     function showAddParamDialog(isEdit)
     {
-        rectAddRecordDialog.isEdit = isEdit
-        rectAddRecordDialog.opacity = 1
-        rectDataContainer.opacity = 0
+        dialogAddParamNote.setEdit(isEdit)
+        dialogAddParamNote.show(true)
 
         if (isEdit === true)
         {
-            for (var i = 0; i < addRecordListView.model.length; i++)
+            for (var i = 0; i < dialogAddParamNote.addParamsListModel.length; i++)
             {
-                if (addRecordListView.model[i].en === true)
+                if (dialogAddParamNote.addParamsListModel[i].en === true)
                 {
                     for (var p = 0; p < paramsTable.model.length; p++)
                     {
-                        if (addRecordListView.model[i].paramId === paramsTable.model[p].paramId)
+                        if (dialogAddParamNote.addParamsListModel[i].paramId === paramsTable.model[p].paramId)
                         {
                             app.getAllParamsListModel()[i].value = paramsTable.model[p].valueNow
                             break
@@ -146,8 +138,8 @@ Item
             }
         }
 
-        addRecordListView.model = 0
-        addRecordListView.model = app.getAllParamsListModel()
+        dialogAddParamNote.addParamsListModel = 0
+        dialogAddParamNote.addParamsListModel = app.getAllParamsListModel()
     }
 
     Rectangle
@@ -222,199 +214,12 @@ Item
         }
     }
 
-    Rectangle
+    DialogAddParamNote
     {
-        id: rectAddRecordDialog
-        anchors.fill: parent
-        anchors.leftMargin: AppTheme.padding * 2 * app.scale
-        anchors.rightMargin: AppTheme.padding * 2 * app.scale
-        color: "#00000020"
-        opacity: 0
-        visible: (opacity === 0) ? false : true
+        id: dialogAddParamNote
+        visible: false
 
-        property bool isEdit: false
-
-        Behavior on opacity
-        {
-            NumberAnimation {   duration: 200 }
-        }
-
-        Text
-        {
-            id: textHeader
-            anchors.top: parent.top
-            anchors.left: parent.left
-            verticalAlignment: Text.AlignVCenter
-            height: AppTheme.rowHeightMin * app.scale
-            width: 100 * app.scale
-            font.family: AppTheme.fontFamily
-            font.pixelSize: AppTheme.fontBigSize * app.scale
-            color: AppTheme.blueColor
-            text: qsTr("Add record:")
-        }
-
-        UrlButton
-        {
-            id: buttonSetParams
-            anchors.right: parent.right
-            anchors.bottom: textHeader.bottom
-            buttonText: "Edit params"
-            width: 80 * app.scale
-
-            onSigButtonClicked:
-            {
-                rectAddRecordDialog.opacity = 0
-                rectPersonalParamsDialog.opacity = 1
-            }
-        }
-
-        Flickable
-        {
-            id: flickableContainer
-            anchors.fill: parent
-            anchors.topMargin: AppTheme.compHeight * 2 * app.scale
-            anchors.bottomMargin: AppTheme.margin * 3 * app.scale
-            contentWidth: width
-            contentHeight: (addRecordListView.model) ? addRecordListView.model.length * AppTheme.rowHeightMin * app.scale + 300 * app.scale : 0
-            clip:true
-
-
-            ListView
-            {
-                id: addRecordListView
-                anchors.top: parent.top
-                anchors.left: parent.left
-                anchors.right: parent.right
-                height: (model) ? model.length * AppTheme.rowHeightMin * app.scale : 0
-                spacing: 0
-                model: app.getAllParamsListModel()
-                clip: true
-                interactive: false
-
-                onModelChanged:
-                {
-                    height = getParamListRealCount() * AppTheme.rowHeightMin * app.scale
-                    flickableContainer.contentHeight = addRecordListView.height
-                    flickableContainer.contentHeight += AppTheme.rowHeightMin * 3 * app.scale
-                }
-
-                delegate: Rectangle
-                {
-                    width: parent.width
-                    height: (en === true) ? AppTheme.rowHeightMin * app.scale : 0
-                    visible: en
-                    color: "#00000000"
-
-                    Behavior on height
-                    {
-                        NumberAnimation { duration: 200}
-                    }
-
-                    Text
-                    {
-                        anchors.left: parent.left
-                        anchors.verticalCenter: parent.verticalCenter
-                        verticalAlignment: Text.AlignVCenter
-                        width: 100 * app.scale
-                        height: parent.height
-                        font.family: AppTheme.fontFamily
-                        font.pixelSize: AppTheme.fontNormalSize * app.scale
-                        color: AppTheme.blueColor
-                        text: fullName
-                    }
-
-                    TextInput
-                    {
-                        id: textInputValue
-                        anchors.right: parent.right
-                        anchors.verticalCenter: parent.verticalCenter
-                        placeholderText: "0"
-                        width: 100 * app.scale
-                        maximumLength: 4
-                        text: (value !== -1) ? value : ""
-                        //text: value
-
-                        onTextChanged: value = Number.parseFloat(textInputValue.text)
-
-                        Text
-                        {
-                            anchors.verticalCenter: parent.verticalCenter
-                            anchors.right: parent.right
-                            verticalAlignment: Text.AlignVCenter
-                            font.family: AppTheme.fontFamily
-                            font.pixelSize: AppTheme.fontNormalSize * app.scale
-                            color: AppTheme.greyColor
-                            text: unitName
-                        }
-                    }
-                }
-            }
-
-            TextInput
-            {
-                id: textNote
-                anchors.top: addRecordListView.bottom
-                anchors.topMargin: AppTheme.padding * app.scale
-                placeholderText: qsTr("Add notes")
-                width: parent.width
-                maximumLength: 256
-                //focus: false
-                //KeyNavigation.tab: textTankL
-            }
-
-            ImageList
-            {
-                id: imagesList
-                anchors.top: textNote.bottom
-                anchors.topMargin: AppTheme.margin * app.scale
-                anchors.left: parent.left
-                anchors.right: parent.right
-                width: parent.width
-                propertyName: qsTr("Attach a photo")
-                model: imageGalleryListModel
-            }
-
-
-            ScrollBar.vertical: ScrollBar
-            {
-                policy: ScrollBar.AlwaysOn
-                parent: flickableContainer.parent
-                anchors.top: flickableContainer.top
-                anchors.left: flickableContainer.right
-                anchors.leftMargin: AppTheme.padding * app.scale
-                anchors.bottom: flickableContainer.bottom
-
-                contentItem: Rectangle
-                {
-                    implicitWidth: 2 * app.scale
-                    implicitHeight: 100 * app.scale
-                    radius: width / 2
-                    color: AppTheme.hideColor
-                }
-            }
-        }
-
-        IconSimpleButton
-        {
-            id: buttonCancel
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: AppTheme.margin * app.scale
-            anchors.left: parent.left
-            image: "qrc:/resources/img/icon_cancel.png"
-
-            onSigButtonClicked: addLogRecord(false)
-        }
-
-        IconSimpleButton
-        {
-            id: buttonAdd
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: AppTheme.margin * app.scale
-            anchors.right: parent.right
-            image: "qrc:/resources/img/icon_ok.png"
-
-            onSigButtonClicked: addLogRecord(true, rectAddRecordDialog.isEdit)
-        }
+        onSigOk: addLogRecord(dialogAddParamNote.isEdit)
     }
 
 

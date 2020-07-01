@@ -39,8 +39,11 @@ Item
 
     function setCurrentPoint(currentPoint)
     {
-        ctx.setCurrentPoint(currentPoint)
-        canvas.requestPaint()
+        if (ctx)
+        {
+            ctx.setCurrentPoint(currentPoint)
+            canvas.requestPaint()
+        }
     }
 
     function draw()
