@@ -43,6 +43,7 @@ public:
 
 private:
     /* Database management */
+    void    init();
     bool    initDB();
     bool    createUser(QString uname, QString upass, QString phone, QString email);
     bool    createTank(QString name, QString manId, int type, int l, int w, int h, QString imgFile);
@@ -86,6 +87,7 @@ private:
     static bool    less(QObject *v1, QObject *v2);
 
 public slots:
+    void    onQmlEngineLoaded(QObject *object, const QUrl &url);
     void    onGuiUserCreate(QString uname, QString upass, QString email);
     void    onGuiTankCreate(QString name, int type, int l, int w, int h, QString imgFile);
     void    onGuiAddRecord(int smpId, int paramId, double value);

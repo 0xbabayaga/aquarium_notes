@@ -30,7 +30,7 @@ Item
         font.family: AppTheme.fontFamily
         font.pixelSize: AppTheme.fontSuperBigSize * app.scale
         color: AppTheme.blueColor
-        text: (tanksList.model) ? tanksList.model[0].name : ""
+        text: (tanksList.model.length > 0) ? tanksList.model[0].name : ""
     }
 
     TanksList

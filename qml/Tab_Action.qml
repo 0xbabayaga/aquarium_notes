@@ -177,7 +177,11 @@ Item
             model: viewPeriodListModel
             currentIndex: 1
 
-            onSigSelectedIndexChanged: sigActionViewPeriodChanged(comboViewPeriod.model.get(currentIndex).idx)
+            onSigSelectedIndexChanged:
+            {
+                if (comboViewPeriod.model)
+                    sigActionViewPeriodChanged(comboViewPeriod.model.get(currentIndex).idx)
+            }
         }
 
         ListView

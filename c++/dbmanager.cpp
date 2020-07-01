@@ -70,9 +70,19 @@ DBManager::DBManager(QQmlApplicationEngine *engine, QObject *parent) : QObject(p
 
     qmlEngine = engine;
 
+    connect(qmlEngine, SIGNAL(objectCreated(QObject*, const QUrl)), this, SLOT(onQmlEngineLoaded(QObject*, const QUrl)));
+
     isParamDataChanged = true;
 
     actionList = new ActionList();
+
+    /* Initializing all models to avoid Qml reference error */
+    qmlEngine->rootContext()->setContextProperty("tanksListModel", QVariant::fromValue(curSelectedObjs.listOfUserTanks));
+    qmlEngine->rootContext()->setContextProperty("actionsListModel", QVariant::fromValue(*actionList->getData()));
+    qmlEngine->rootContext()->setContextProperty("allParamsListModel", QVariant::fromValue(paramsGuiList));
+    qmlEngine->rootContext()->setContextProperty("curValuesListModel", QVariant::fromValue(curSelectedObjs.listOfCurrValues));
+    qmlEngine->rootContext()->setContextProperty("graphPointsList", QVariant::fromValue(pointList));
+    qmlEngine->rootContext()->setContextProperty("datesList", QVariant::fromValue(datesList));
 
     aquariumTypeList.clear();
 
@@ -84,42 +94,12 @@ DBManager::DBManager(QQmlApplicationEngine *engine, QObject *parent) : QObject(p
 
     qmlEngine->rootContext()->setContextProperty("aquariumTypesListModel", QVariant::fromValue(aquariumTypeList));
 
-    connect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateAccount(QString, QString, QString)), this, SLOT(onGuiUserCreate(QString, QString, QString)));
-    connect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateTank(QString, int, int, int, int, QString)), this, SLOT(onGuiTankCreate(QString, int, int, int, int, QString)));
-    connect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecord(int, int, double)), this, SLOT(onGuiAddRecord(int, int, double)));
-    connect(qmlEngine->rootObjects().first(), SIGNAL(sigEditRecord(int, int, double)), this, SLOT(onGuiEditRecord(int, int, double)));
-    connect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecordNotes(int, QString, QString)), this, SLOT(onGuiAddRecordNote(int, QString, QString)));
-    connect(qmlEngine->rootObjects().first(), SIGNAL(sigEditRecordNotes(int, QString, QString)), this, SLOT(onGuiEditRecordNote(int, QString, QString)));
-    connect(qmlEngine->rootObjects().first(), SIGNAL(sigAddAction(QString, QString, int, int, int)), this, SLOT(onGuiAddActionRecord(QString, QString, int, int, int)));
-    connect(qmlEngine->rootObjects().first(), SIGNAL(sigEditAction(int, QString, QString, int, int, int)), this, SLOT(onGuiEditActionRecord(int, QString, QString, int, int, int)));
-    connect(qmlEngine->rootObjects().first(), SIGNAL(sigDeleteAction(int)), this, SLOT(onGuiDeleteActionRecord(int)));
-    connect(qmlEngine->rootObjects().first(), SIGNAL(sigActionViewPeriodChanged(int)), this, SLOT(onGuiActionViewPeriodChanged(int)));
-    connect(qmlEngine->rootObjects().first(), SIGNAL(sigTankSelected(int)), this, SLOT(onGuiTankSelected(int)));
-    connect(qmlEngine->rootObjects().first(), SIGNAL(sigPersonalParamStateChanged(int, bool)), this, SLOT(onGuiPersonalParamStateChanged(int, bool)));
-    connect(qmlEngine->rootObjects().first(), SIGNAL(sigRefreshData()), this, SLOT(onGuiRefreshData()));
-    connect(qmlEngine->rootObjects().first(), SIGNAL(sigCurrentSmpIdChanged(int)), this, SLOT(onGuiCurrentSmpIdChanged(int)));
-
-    curSelectedObjs.lastSmpId = getLastSmpId();
-    curSelectedObjs.curSmpId = curSelectedObjs.lastSmpId;
-    setLastSmpId(curSelectedObjs.lastSmpId);
-
-    getCurrentObjs();
-
-#ifdef Q_OS_ANDROID
-    for (int i = 0; i < permissions.size(); i++)
-    {
-        QtAndroid::PermissionResult r = QtAndroid::checkPermission(permissions.at(i));
-
-        QtAndroid::requestPermissionsSync( QStringList() << permissions.at(i) );
-
-        r = QtAndroid::checkPermission(permissions.at(i));
-
-        qDebug() << "Permission " << permissions.at(i) << ((r == QtAndroid::PermissionResult::Denied) ? " DENIED" : " GRANTED ");
-    }
-#endif
 
     imageGallery = new ImageGallery();
     qmlEngine->rootContext()->setContextProperty("imageGalleryListModel", QVariant::fromValue(imageGallery->getGalleryObjList()));
+
+    curSelectedObjs.lastSmpId = getLastSmpId();
+    curSelectedObjs.curSmpId = curSelectedObjs.lastSmpId;
 }
 
 DBManager::~DBManager()
@@ -138,12 +118,48 @@ DBManager::~DBManager()
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigPersonalParamStateChanged(int, bool)), this, SLOT(onGuiPersonalParamStateChanged(int, bool)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigRefreshData()), this, SLOT(onGuiRefreshData()));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigCurrentSmpIdChanged(int)), this, SLOT(onGuiCurrentSmpIdChanged(int)));
+    disconnect(qmlEngine, SIGNAL(objectCreated(QObject*, const QUrl)), this, SLOT(onQmlEngineLoaded(QObject*, const QUrl)));
 
     if (curSelectedObjs.user != nullptr)
         delete curSelectedObjs.user;
 
     if (actionList != nullptr)
         delete actionList;
+}
+
+void DBManager::init()
+{
+    connect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateAccount(QString, QString, QString)), this, SLOT(onGuiUserCreate(QString, QString, QString)));
+    connect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateTank(QString, int, int, int, int, QString)), this, SLOT(onGuiTankCreate(QString, int, int, int, int, QString)));
+    connect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecord(int, int, double)), this, SLOT(onGuiAddRecord(int, int, double)));
+    connect(qmlEngine->rootObjects().first(), SIGNAL(sigEditRecord(int, int, double)), this, SLOT(onGuiEditRecord(int, int, double)));
+    connect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecordNotes(int, QString, QString)), this, SLOT(onGuiAddRecordNote(int, QString, QString)));
+    connect(qmlEngine->rootObjects().first(), SIGNAL(sigEditRecordNotes(int, QString, QString)), this, SLOT(onGuiEditRecordNote(int, QString, QString)));
+    connect(qmlEngine->rootObjects().first(), SIGNAL(sigAddAction(QString, QString, int, int, int)), this, SLOT(onGuiAddActionRecord(QString, QString, int, int, int)));
+    connect(qmlEngine->rootObjects().first(), SIGNAL(sigEditAction(int, QString, QString, int, int, int)), this, SLOT(onGuiEditActionRecord(int, QString, QString, int, int, int)));
+    connect(qmlEngine->rootObjects().first(), SIGNAL(sigDeleteAction(int)), this, SLOT(onGuiDeleteActionRecord(int)));
+    connect(qmlEngine->rootObjects().first(), SIGNAL(sigActionViewPeriodChanged(int)), this, SLOT(onGuiActionViewPeriodChanged(int)));
+    connect(qmlEngine->rootObjects().first(), SIGNAL(sigTankSelected(int)), this, SLOT(onGuiTankSelected(int)));
+    connect(qmlEngine->rootObjects().first(), SIGNAL(sigPersonalParamStateChanged(int, bool)), this, SLOT(onGuiPersonalParamStateChanged(int, bool)));
+    connect(qmlEngine->rootObjects().first(), SIGNAL(sigRefreshData()), this, SLOT(onGuiRefreshData()));
+    connect(qmlEngine->rootObjects().first(), SIGNAL(sigCurrentSmpIdChanged(int)), this, SLOT(onGuiCurrentSmpIdChanged(int)));
+
+    setLastSmpId(curSelectedObjs.lastSmpId);
+
+    getCurrentObjs();
+
+#ifdef Q_OS_ANDROID
+    for (int i = 0; i < permissions.size(); i++)
+    {
+        QtAndroid::PermissionResult r = QtAndroid::checkPermission(permissions.at(i));
+
+        QtAndroid::requestPermissionsSync( QStringList() << permissions.at(i) );
+
+        r = QtAndroid::checkPermission(permissions.at(i));
+
+        qDebug() << "Permission " << permissions.at(i) << ((r == QtAndroid::PermissionResult::Denied) ? " DENIED" : " GRANTED ");
+    }
+#endif
 }
 
 bool DBManager::getCurrentObjs()
@@ -253,6 +269,11 @@ void DBManager::drawDiagrams()
 
     if (obj != nullptr)
         QMetaObject::invokeMethod(obj, "drawDiagrams");
+}
+
+void DBManager::onQmlEngineLoaded(QObject *object, const QUrl &url)
+{
+    init();
 }
 
 
@@ -812,7 +833,8 @@ bool DBManager::createTankDefaultParamSet(QString tankId, AquariumType type)
 
             if (query.exec() != true)
             {
-                qDebug() << query.lastError();
+                if (res == false)
+        qDebug() << query.lastError();
                 return false;
             }
         }
@@ -1027,8 +1049,9 @@ QString DBManager::randId()
 bool DBManager::initDB()
 {
     QSqlQuery query;
+    bool res = false;
 
-    query.exec("CREATE TABLE IF NOT EXISTS USER_TABLE"
+    res = query.exec("CREATE TABLE IF NOT EXISTS USER_TABLE"
                 "(MAN_ID varchar(16), "
                 "UNAME varchar(64), "
                 "UPASS varchar(128), "
@@ -1040,9 +1063,10 @@ bool DBManager::initDB()
                 "DATE_CREATE integer, "
                 "DATE_EDIT integer )");
 
-    qDebug() << query.lastError();
+    if (res == false)
+        qDebug() << query.lastError();
 
-    query.exec("CREATE TABLE IF NOT EXISTS TANKS_TABLE "
+    res = query.exec("CREATE TABLE IF NOT EXISTS TANKS_TABLE "
                 "(TANK_ID varchar(16), "
                 "MAN_ID varchar(16), "
                 "TYPE integer, "
@@ -1056,9 +1080,10 @@ bool DBManager::initDB()
                 "DATE_CREATE integer, "
                 "DATE_EDIT integer )");
 
-    qDebug() << query.lastError();
+    if (res == false)
+        qDebug() << query.lastError();
 
-    query.exec("CREATE TABLE IF NOT EXISTS HISTORY_VALUE_TABLE "
+    res = query.exec("CREATE TABLE IF NOT EXISTS HISTORY_VALUE_TABLE "
                 "(ID integer PRIMARY KEY AUTOINCREMENT, "
                 "SMP_ID integer, "
                 "TANK_ID varchar(16), "
@@ -1066,9 +1091,10 @@ bool DBManager::initDB()
                 "VALUE float, "
                 "TIMESTAMP integer)");
 
-    qDebug() << query.lastError();
+    if (res == false)
+        qDebug() << query.lastError();
 
-    query.exec("CREATE TABLE IF NOT EXISTS HISTORY_NOTES_TABLE "
+    res = query.exec("CREATE TABLE IF NOT EXISTS HISTORY_NOTES_TABLE "
                 "(SMP_ID integer, "
                 "TANK_ID varchar(16), "
                 "TEXT text, "
@@ -1076,10 +1102,11 @@ bool DBManager::initDB()
                 "IMAGELINK varchar(64),"
                 "TIMESTAMP integer)");
 
-    qDebug() << query.lastError();
+    if (res == false)
+        qDebug() << query.lastError();
 
     /* Limits count must match DbManager::AquariumType */
-    query.exec("CREATE TABLE IF NOT EXISTS DICT_TABLE "
+    res = query.exec("CREATE TABLE IF NOT EXISTS DICT_TABLE "
                 "(PARAM_ID integer, "
                 "SHORT_NAME varchar(8), "
                 "FULL_NAME varchar(32), "
@@ -1101,106 +1128,109 @@ bool DBManager::initDB()
                 "MIN_8 float,"
                 "MAX_8 float)");
 
-    qDebug() << query.lastError();
+    if (res == false)
+        qDebug() << query.lastError();
 
-    query.exec("SELECT COUNT(*) FROM DICT_TABLE");
+    res = query.exec("SELECT COUNT(*) FROM DICT_TABLE");
 
     query.first();
 
     if (query.value(0).toInt() == 0)
     {
-        query.exec("INSERT OR IGNORE INTO DICT_TABLE "
+        res = query.exec("INSERT OR IGNORE INTO DICT_TABLE "
                    "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
                    "VALUES (1, 'TEMP', 'Temperature', '°C', 22.2, 25.6, 24.4, 28.3, 24.4, 28.3, 24.4, 28.3, 22.2, 27.8, 24.4, 30, 24.4, 30.0, 24.4, 30.0)");
 
-        query.exec("INSERT OR IGNORE INTO DICT_TABLE "
+        res = query.exec("INSERT OR IGNORE INTO DICT_TABLE "
                    "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
                    "VALUES (2, 'SAL', 'Salinity', 'ppt', 26.6, 33.2, 30.6, 35, 33.0, 35.0, 34.0, 35.0, -1, -1, -1, -1, -1, -1, -1, -1)");
 
-        query.exec("INSERT OR IGNORE INTO DICT_TABLE "
+        res = query.exec("INSERT OR IGNORE INTO DICT_TABLE "
                    "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
                    "VALUES (3, 'CA', 'Calcium', 'ppm', 350, 450, 380, 450, 380, 450, 380, 450, -1, -1, -1, -1, -1, -1, -1, -1)");
 
-        query.exec("INSERT OR IGNORE INTO DICT_TABLE "
+        res = query.exec("INSERT OR IGNORE INTO DICT_TABLE "
                    "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
                    "VALUES (4, 'PH', 'pH', 'ppm', 8.1, 8.4, 8.1, 8.4, 8.1, 8.4, 8.1, 8.4, 7.5, 8.5, 6.0, 7.5, 6.5, 7.5, 6.5, 7.5)");
 
-        query.exec("INSERT OR IGNORE INTO DICT_TABLE "
+        res = query.exec("INSERT OR IGNORE INTO DICT_TABLE "
                    "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
                    "VALUES (5, 'KH', 'kH', 'ppm', 8.0, 12.0, 8.0, 12.0, 8.0, 12.0, 8.0, 12.0, 10, 18, 3, 8, 4, 8, 4, 8)");
 
-        query.exec("INSERT OR IGNORE INTO DICT_TABLE "
+        res = query.exec("INSERT OR IGNORE INTO DICT_TABLE "
                    "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
                    "VALUES (6, 'GH', 'gH', 'dKh', -1, -1, -1, -1, -1, -1, -1, -1, 12, 20, 3, 8, 4, 12, 4, 12)");
 
-        query.exec("INSERT OR IGNORE INTO DICT_TABLE "
+        res = query.exec("INSERT OR IGNORE INTO DICT_TABLE "
                    "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
                    "VALUES (7, 'PO4', 'Phosphates', 'ppm', 0, 0.2, 0, 0.2, 0, 0.05, 0, 0.05, 0, 1, 0, 1, 0, 1, 0, 1)");
 
-        query.exec("INSERT OR IGNORE INTO DICT_TABLE "
+        res = query.exec("INSERT OR IGNORE INTO DICT_TABLE "
                    "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
                    "VALUES (8, 'NO2', 'Nitrite', 'ppb', 0, 100, 0, 100, 0, 100, 0, 100, -1, -1, -1, -1, -1, -1, -1, -1)");
 
-        query.exec("INSERT OR IGNORE INTO DICT_TABLE "
+        res = query.exec("INSERT OR IGNORE INTO DICT_TABLE "
                    "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
                    "VALUES (9, 'NO3', 'Nitrate', 'ppm', 0, 30, 0, 10, 0, 1, 0, 1, 0, 50, 0, 30, 0, 50, 0, 50)");
 
-        query.exec("INSERT OR IGNORE INTO DICT_TABLE "
+        res = query.exec("INSERT OR IGNORE INTO DICT_TABLE "
                    "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
                    "VALUES (10, 'NH3', 'Ammonia', 'ppm', 0, 0.05, 0, 0.05, 0, 0.05, 0, 0.05, 0, 0.05, 0, 0.05, 0, 0.05, 0, 0.05)");
 
-        query.exec("INSERT OR IGNORE INTO DICT_TABLE "
+        res = query.exec("INSERT OR IGNORE INTO DICT_TABLE "
                    "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
                    "VALUES (11, 'CO2', 'Carbon', 'ppm, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 4, 30, 4, 30')");
 
-        query.exec("INSERT OR IGNORE INTO DICT_TABLE "
+        res = query.exec("INSERT OR IGNORE INTO DICT_TABLE "
                    "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
                    "VALUES (12, 'MG', 'Magnesium', 'ppm', 1150, 1350, 1250, 1350, 1250, 1350, 1250, 1350, 10, -1, 10, -1, 10, -1, 10, -1)");
 
-        query.exec("INSERT OR IGNORE INTO DICT_TABLE "
+        res = query.exec("INSERT OR IGNORE INTO DICT_TABLE "
                    "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
                    "VALUES (13, 'SI', 'Silicates', 'ppm', 0, 3, 0.06, 2, 0.06, 2, 0.06, 2, 0, 2, 0, 2, 0, 2, 0, 2)");
 
-        query.exec("INSERT OR IGNORE INTO DICT_TABLE "
+        res = query.exec("INSERT OR IGNORE INTO DICT_TABLE "
                    "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
                    "VALUES (14, 'K', 'Potassium', 'ppm', 380, 400, 380, 400, 380, 400, 380, 400, 5, 10, 5, 1, 5, 20, 5, 20)");
 
-        query.exec("INSERT OR IGNORE INTO DICT_TABLE "
+        res = query.exec("INSERT OR IGNORE INTO DICT_TABLE "
                    "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
                    "VALUES (15, 'I', 'Iodine', 'ppm', 0.04, 0.1, 0.06, 0.1, 0.06, 0.1, 0.06, 0.1, -1, -1, -1, -1, -1, -1, -1, -1)");
 
-        query.exec("INSERT OR IGNORE INTO DICT_TABLE "
+        res = query.exec("INSERT OR IGNORE INTO DICT_TABLE "
                    "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
                    "VALUES (16, 'SR', 'Strontium', 'ppm', 4, 10, 8, 14, 8, 14, 8, 14, -1, -1, -1, -1, -1, -1, -1, -1)");
 
-        query.exec("INSERT OR IGNORE INTO DICT_TABLE "
+        res = query.exec("INSERT OR IGNORE INTO DICT_TABLE "
                    "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
                    "VALUES (17, 'FE', 'Ferrum', 'ppm', 0.1, 0.3, 0.1, 0.3, 0.1, 0.3, 0.1, 0.3, 0.05, 0.1, 0.05, 0.1, 0.05, 0.1, 0.05, 0.1)");
 
-        query.exec("INSERT OR IGNORE INTO DICT_TABLE "
+        res = query.exec("INSERT OR IGNORE INTO DICT_TABLE "
                    "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
                    "VALUES (18, 'B', 'Boron', 'ppm', 0, 10, 0, 10, 0, 10, 0, 10, -1, -1, -1, -1, -1, -1, -1, -1)");
 
-        query.exec("INSERT OR IGNORE INTO DICT_TABLE "
+        res = query.exec("INSERT OR IGNORE INTO DICT_TABLE "
                    "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
                    "VALUES (19, 'MO', 'Molybdenum', 'ppm', 0.03, 0.12, 0.03, 0.12, 0.03, 0.12, 0.03, 0.12, -1, -1, -1, -1, -1, -1, -1, -1)");
 
-        query.exec("INSERT OR IGNORE INTO DICT_TABLE "
+        res = query.exec("INSERT OR IGNORE INTO DICT_TABLE "
                    "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
                    "VALUES (20, 'ORP', 'ORP', 'mV', 250, 400, 250, 400, 250, 200, 250, 400, -1, -1, -1, -1, -1, -1, -1, -1)");
     }
 
-    qDebug() << query.lastError();
+    if (res == false)
+        qDebug() << query.lastError();
 
-    query.exec("CREATE TABLE IF NOT EXISTS PERSONAL_PARAM_TABLE "
+    res = query.exec("CREATE TABLE IF NOT EXISTS PERSONAL_PARAM_TABLE "
                 "(PARAM_ID integer, "
                 "TANK_ID varchar(16), "
                 "ENABLED integer)");
 
-    qDebug() << query.lastError();
+    if (res == false)
+        qDebug() << query.lastError();
 
 
-    query.exec("CREATE TABLE IF NOT EXISTS ACTIONS_TABLE "
+    res = query.exec("CREATE TABLE IF NOT EXISTS ACTIONS_TABLE "
                "(ID integer PRIMARY KEY AUTOINCREMENT,"
                "TANK_ID varchar(16),"
                "TYPE integer,"
@@ -1210,7 +1240,8 @@ bool DBManager::initDB()
                "EN integer,"
                "STARTDATE integer)");
 
-    qDebug() << query.lastError();
+    if (res == false)
+        qDebug() << query.lastError();
 
     return true;
 }

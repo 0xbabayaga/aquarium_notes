@@ -204,7 +204,11 @@ Item
             model:  datesList
 
             onModelChanged: currentIndex = 0
-            onSigCurIndexChanged: app.sigCurrentSmpIdChanged(ptList.model[id].smpId)
+            onSigCurIndexChanged:
+            {
+                if (ptList.model && ptList.model.length > id)
+                    app.sigCurrentSmpIdChanged(ptList.model[id].smpId)
+            }
         }
 
         IconSimpleButton

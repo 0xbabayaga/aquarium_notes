@@ -24,16 +24,10 @@ int main(int argc, char *argv[])
         if (!obj && url == objUrl)
             QCoreApplication::exit(-1);
     }, Qt::QueuedConnection);
-    engine.load(url);
-
-
-    const QList<QCameraInfo> cameras = QCameraInfo::availableCameras();
-    for (const QCameraInfo &cameraInfo : cameras)
-    {
-        qDebug() << cameraInfo.deviceName();
-    }
 
     DBManager *dbMan = new DBManager(&engine);
+
+    engine.load(url);
 
 
     return app.exec();

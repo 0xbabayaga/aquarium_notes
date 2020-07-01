@@ -298,7 +298,7 @@ Item
                 height: AppTheme.rowHeightMin * app.scale
                 width: height
                 mipmap: true
-                source: (curValuesListView.model) ? "file:///"+curValuesListView.model[0].imgLink : ""
+                source: (curValuesListView.model.length > 0 && curValuesListView.model[0].imgLink.length > 0) ? "file:///"+curValuesListView.model[0].imgLink : ""
 
                 fillMode: Image.PreserveAspectCrop
                 layer.enabled: true
@@ -333,7 +333,7 @@ Item
                 font.family: AppTheme.fontFamily
                 font.pixelSize: AppTheme.fontSmallSize * app.scale
                 color: AppTheme.greyColor
-                text: (curValuesListView.model) ? curValuesListView.model[0].note : ""
+                text: (curValuesListView.model.length > 0) ? curValuesListView.model[0].note : ""
                 wrapMode: Text.WordWrap
             }
         }
