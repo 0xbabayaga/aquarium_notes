@@ -235,6 +235,17 @@ Item
                         //KeyNavigation.tab: textTankL
                     }
 
+                    IconSimpleButton
+                    {
+                        id: buttonAddImage
+                        anchors.top: textNote.bottom
+                        anchors.topMargin: AppTheme.margin * app.scale
+                        anchors.left: parent.left
+                        image: "qrc:/resources/img/icon_plus.png"
+
+                        onSigButtonClicked: dialogAddImage.show(true)
+                    }
+
                     ImageList
                     {
                         id: imagesList
@@ -245,8 +256,14 @@ Item
                         width: parent.width
                         propertyName: qsTr("Attach a photo")
                         model: imageGalleryListModel
+                        visible: false
                     }
 
+                    DialogAddImage
+                    {
+                        id: dialogAddImage
+                        visible: false
+                    }
 
                     ScrollBar.vertical: ScrollBar
                     {

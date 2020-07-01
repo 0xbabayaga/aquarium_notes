@@ -121,28 +121,6 @@ Item
             NumberAnimation {   duration: 200 }
         }
 
-        Camera {
-                id: camera
-
-                imageCapture {
-                    onImageCaptured: {
-                        // Show the preview in an Image
-                        photoPreview.source = preview
-                    }
-                }
-            }
-
-            VideoOutput {
-                source: camera
-                focus : visible // to receive focus and capture key events when visible
-                anchors.fill: parent
-
-                MouseArea {
-                    anchors.fill: parent;
-                    onClicked: camera.imageCapture.capture();
-                }
-            }
-
         Text
         {
             id: textViewPeriod
