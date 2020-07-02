@@ -102,6 +102,7 @@ public slots:
     void    onGuiPersonalParamStateChanged(int paramId, bool en);
     void    onGuiRefreshData();
     void    onGuiCurrentSmpIdChanged(int smpId);
+    void    onGuiOpenGallery();
 
 public:
     const QString   dbFolder = "db";

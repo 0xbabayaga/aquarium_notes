@@ -417,6 +417,7 @@ Item
 
                     Item { height: 1; width: 1;}
 
+                    /*
                     ImageList
                     {
                         id: imagesList
@@ -424,6 +425,7 @@ Item
                         propertyName: qsTr("Select a photo:")
                         model: imageGalleryListModel
                     }
+                    */
 
                     Item { height: 1; width: 1;}
                     Item { height: 1; width: 1;}
@@ -459,7 +461,8 @@ Item
                                                   textTankL.text,
                                                   textTankW.text,
                                                   textTankH.text,
-                                                  imagesList.getSelectedImageLink())
+                                                  ""//imagesList.getSelectedImageLink()
+                                                  )
                             }
                         }
                     }

@@ -13,9 +13,9 @@ int main(int argc, char *argv[])
 
     AppDef::declareQML();
 
-    app.setOrganizationName("ANotes");
-    app.setOrganizationDomain("org.anotes.com");
-    app.setApplicationName("AquariumNotes");
+    //app.setOrganizationName("AquariumNotes");
+    //app.setOrganizationDomain("org.tikava");
+    //app.setApplicationName("AquariumNotes");
 
     QQmlApplicationEngine engine;
     const QUrl url(QStringLiteral("qrc:/main.qml"));

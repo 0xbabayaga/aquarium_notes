@@ -210,7 +210,11 @@ Item
             anchors.bottom: parent.bottom
             anchors.bottomMargin: AppTheme.margin * app.scale
 
-            onSigButtonClicked: checkIfTodayRecordExist()
+            onSigButtonClicked:
+            {
+                app.sigOpenGallery()
+                checkIfTodayRecordExist()
+            }
         }
     }
 

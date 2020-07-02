@@ -42,6 +42,7 @@ Window
     signal sigRefreshData()
     signal sigCurrentSmpIdChanged(int smpId)
     signal sigDebug()
+    signal sigOpenGallery()
 
     function getAllParamsListModel() { return allParamsListModel    }
 
