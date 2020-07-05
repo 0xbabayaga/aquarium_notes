@@ -417,15 +417,6 @@ Item
 
                     Item { height: 1; width: 1;}
 
-                    /*
-                    ImageList
-                    {
-                        id: imagesList
-                        width: parent.width
-                        propertyName: qsTr("Select a photo:")
-                        model: imageGalleryListModel
-                    }
-                    */
 
                     Item { height: 1; width: 1;}
                     Item { height: 1; width: 1;}

@@ -65,6 +65,8 @@ extern "C" {
 JNIEXPORT void JNICALL
 Java_org_tikava_AquariumNotes_AquariumNotes_fileSelected(JNIEnv *, jobject , jstring results)
 {
+    qDebug() << "File selected = " << selectedFileName << "1234567890";
+
     selectedFileName = QAndroidJniObject(results).toString();
 }
 #ifdef __cplusplus
@@ -74,10 +76,25 @@ Java_org_tikava_AquariumNotes_AquariumNotes_fileSelected(JNIEnv *, jobject , jst
 
 DBManager::DBManager(QQmlApplicationEngine *engine, QObject *parent) : QObject(parent)
 {
+#ifdef  Q_OS_ANDROID
+    appFolder = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+
+    if (QDir(appFolder + "/AquariumNotes/").exists() == false)
+    {
+        qWarning() << "CREATE " << appFolder + "/AquariumNotes/" << "   "  << QDir().mkdir(appFolder + "/AquariumNotes/");
+        qWarning() << "CREATE " << appFolder + "/AquariumNotes/" + dbFolder + "/" << "   "  << QDir().mkdir(appFolder + "/AquariumNotes/" + dbFolder + "/");
+    }
+
+    dbFileLink = appFolder + "/AquariumNotes/" + dbFolder + "/" +dbFile;
+
+    qWarning() << "dbFileLink = " << dbFileLink;
+#else
     if (QDir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + dbFolder).exists() == false)
         QDir().mkdir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + dbFolder);
 
     dbFileLink = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + dbFolder + "/" +dbFile;
+#endif
+
     db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(dbFileLink);
     db.open();
@@ -108,13 +125,11 @@ DBManager::DBManager(QQmlApplicationEngine *engine, QObject *parent) : QObject(p
     {
         TankTypeObj *obj = new TankTypeObj(i, getAquariumTypeString((AquariumType)i));
         aquariumTypeList.append(obj);
+
+        qDebug() << obj->name() << obj->type();
     }
 
     qmlEngine->rootContext()->setContextProperty("aquariumTypesListModel", QVariant::fromValue(aquariumTypeList));
-
-
-    imageGallery = new ImageGallery();
-    qmlEngine->rootContext()->setContextProperty("imageGalleryListModel", QVariant::fromValue(imageGallery->getGalleryObjList()));
 
     curSelectedObjs.lastSmpId = getLastSmpId();
     curSelectedObjs.curSmpId = curSelectedObjs.lastSmpId;
@@ -253,6 +268,21 @@ void DBManager::setLastSmpId(int id)
         obj->setProperty("lastSmpId", id);
     }
 }
+
+void DBManager::setGalleryImageSelected(QString imgUrl)
+{
+    QObject *obj = nullptr;
+
+    obj = qmlEngine->rootObjects().first()->findChild<QObject*>("imageList");
+
+    if (obj != nullptr)
+    {
+        obj->setProperty("galleryImageSelected", imgUrl);
+    }
+    else
+        qDebug() << "Cannot find imageList object";
+}
+
 
 void DBManager::clearDiagrams()
 {
@@ -397,33 +427,27 @@ void DBManager::onGuiCurrentSmpIdChanged(int smpId)
     //getHistoryParams();
 }
 
+#ifdef  Q_OS_ANDROID
 void DBManager::onGuiOpenGallery()
 {
     selectedFileName = "#";
-
-    qDebug() << "Started";
 
     QAndroidJniObject::callStaticMethod<void>("org/tikava/AquariumNotes/AquariumNotes",
                                               "openAnImage",
                                               "()V");
     while(selectedFileName == "#")
-    {
-        QThread::sleep(1);
-        //qApp->processEvents();
-        qDebug() << "dsfa";
-    }
-    //    qApp->processEvents();
+        qApp->processEvents();
 
-    qDebug() << "Closed";
     qDebug() << selectedFileName;
 
-    //if(QFile(selectedFileName).exists())
-    {
-
-        //QImage img(selectedFileName);
-        //ui->label->setPixmap(QPixmap::fromImage(img));
-    }
+    setGalleryImageSelected(selectedFileName);
 }
+#else
+void DBManager::onGuiOpenGallery()
+{
+
+}
+#endif
 
 bool DBManager::getActionCalendar()
 {

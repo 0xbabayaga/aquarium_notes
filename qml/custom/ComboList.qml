@@ -218,7 +218,7 @@ Item
                         anchors.right: parent.right
                         anchors.top: parent.top
                         anchors.topMargin: AppTheme.padding * 2 * app.scale
-                        height: AppTheme.compHeight * app.scale * model.count
+                        height: AppTheme.compHeight * app.scale * model.length
                         clip: true
 
                         delegate: Rectangle
@@ -261,6 +261,7 @@ Item
                         onCurrentIndexChanged:
                         {
                             showList(false)
+                            textArea.text = model[currentIndex].name
                             sigSelectedIndexChanged(currentIndex)
                         }
 

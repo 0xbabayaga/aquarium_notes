@@ -6,7 +6,6 @@
 #include <QDir>
 #include <QQmlApplicationEngine>
 #include "dbobjects.h"
-#include "imagegallery.h"
 #include "actionlist.h"
 
 #define RAND_ID_LENGTH  16
@@ -79,6 +78,8 @@ private:
     /* Gui methods */
     void    setInitialDialogStage(int stage, QString name);
     void    setLastSmpId(int id);
+    void    setGalleryImageSelected(QString imgUrl);
+
     /* Gui diagram drawing */
     void    clearDiagrams();
     void    addDiagram(int num, int paramId, int xMin, int xMax, float yMin, float yMax, QVariantMap points);
@@ -110,9 +111,9 @@ public:
 
 private:
     ActionList      *actionList;
+    QString         appFolder;
     QString         dbFileLink;
     QSqlDatabase    db;
-    ImageGallery    *imageGallery;
 
     /* Store params enumeration */
     QList<QObject*> paramsGuiList;

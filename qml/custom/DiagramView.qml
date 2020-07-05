@@ -63,8 +63,11 @@ Item
 
             onPaint:
             {
-                ctx.init(canvas.getContext('2d'), canvas.width, canvas.height)
-                ctx.draw()
+                if (ctx)
+                {
+                    ctx.init(canvas.getContext('2d'), canvas.width, canvas.height)
+                    ctx.draw()
+                }
             }
         }
     }

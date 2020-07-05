@@ -12,7 +12,6 @@ Item
 
     property alias addParamsListModel: addRecordListView.model
     property alias note: textNote.text
-    property alias selectedImagesList: imagesList.selectedImagesList
     property bool isEdit: false
 
     signal sigCancel()
@@ -223,46 +222,42 @@ Item
                         }
                     }
 
-                    TextInput
+                    Column
                     {
-                        id: textNote
                         anchors.top: addRecordListView.bottom
                         anchors.topMargin: AppTheme.padding * app.scale
-                        placeholderText: qsTr("Add note")
                         width: parent.width
-                        maximumLength: 256
-                        //focus: false
-                        //KeyNavigation.tab: textTankL
-                    }
+                        height: 120 * app.scale
+                        spacing: AppTheme.padding * app.scale
 
-                    IconSimpleButton
-                    {
-                        id: buttonAddImage
-                        anchors.top: textNote.bottom
-                        anchors.topMargin: AppTheme.margin * app.scale
-                        anchors.left: parent.left
-                        image: "qrc:/resources/img/icon_plus.png"
+                        TextInput
+                        {
+                            id: textNote
+                            placeholderText: qsTr("Add note")
+                            width: parent.width
+                            height: AppTheme.compHeight * app.scale
+                            maximumLength: 256
+                            //focus: false
+                            //KeyNavigation.tab: textTankL
+                        }
 
-                        onSigButtonClicked: dialogAddImage.show(true)
-                    }
+                        Text
+                        {
+                            id: textAddImage
+                            verticalAlignment: Text.AlignVCenter
+                            width: parent.width
+                            height: AppTheme.compHeight * app.scale
+                            font.family: AppTheme.fontFamily
+                            font.pixelSize: AppTheme.fontNormalSize * app.scale
+                            color: AppTheme.blueColor
+                            text: qsTr("Add image")
+                        }
 
-                    ImageList
-                    {
-                        id: imagesList
-                        anchors.top: textNote.bottom
-                        anchors.topMargin: AppTheme.margin * app.scale
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        width: parent.width
-                        propertyName: qsTr("Attach a photo")
-                        model: imageGalleryListModel
-                        visible: false
-                    }
-
-                    DialogAddImage
-                    {
-                        id: dialogAddImage
-                        visible: false
+                        ImageList
+                        {
+                            id: imagesList
+                            objectName: "imageList"
+                        }
                     }
 
                     ScrollBar.vertical: ScrollBar

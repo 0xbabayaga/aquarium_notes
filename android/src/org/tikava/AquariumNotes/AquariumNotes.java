@@ -1,5 +1,3 @@
-// http://www.amin-ahmadi.com
-
 package org.tikava.AquariumNotes;
 
 import org.qtproject.qt5.android.bindings.QtApplication;
@@ -14,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.provider.DocumentsContract;
 import android.util.Log;
 
 import java.io.File;
@@ -33,14 +32,12 @@ public class AquariumNotes extends QtActivity
 
     public AquariumNotes()
     {
-        Log.d(">>>>>", "AquariumNotes ");
         m_instance = this;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
-        Log.d(">>>>>", "onCretae");
         super.onCreate(savedInstanceState);
     }
 
@@ -52,15 +49,12 @@ public class AquariumNotes extends QtActivity
 
     static void openAnImage()
     {
-        Log.d(">>>>>", "OpenAnImage");
         m_instance.dispatchOpenGallery();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
-        Log.d(">>>>>", "onActivityResult");
-
         if (resultCode == RESULT_OK)
         {
             if(requestCode == REQUEST_OPEN_IMAGE)
@@ -71,7 +65,7 @@ public class AquariumNotes extends QtActivity
         }
         else
         {
-            fileSelected(":(");
+            fileSelected("");
         }
 
         super.onActivityResult(requestCode, resultCode, data);
@@ -87,13 +81,26 @@ public class AquariumNotes extends QtActivity
     public String getRealPathFromURI(Context context, Uri contentUri)
     {
         Cursor cursor = null;
+
         try
         {
-            String[] proj = { MediaStore.Images.Media.DATA };
-            cursor = context.getContentResolver().query(contentUri,  proj, null, null, null);
-            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            cursor.moveToFirst();
-            return cursor.getString(column_index);
+            String filePath = "";
+            String wholeID = DocumentsContract.getDocumentId(contentUri);
+            String id = wholeID.split(":")[1];
+            String[] column = { MediaStore.Images.Media.DATA };
+            String sel = MediaStore.Images.Media._ID + "=?";
+
+            cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                                           column, sel, new String[]{ id }, null);
+
+            int columnIndex = cursor.getColumnIndex(column[0]);
+
+            if (cursor.moveToFirst())
+                filePath = cursor.getString(columnIndex);
+
+            cursor.close();
+
+            return filePath;
         }
         finally
         {

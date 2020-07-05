@@ -45,6 +45,6 @@
         <file>resources/img/icon_edit.png</file>
         <file>qml/custom/ConfirmDialog.qml</file>
         <file>qml/custom/DialogAddParamNote.qml</file>
-        <file>qml/custom/DialogAddImage.qml</file>
+        <file>resources/img/icon_photo.png</file>
     </qresource>
 </RCC>

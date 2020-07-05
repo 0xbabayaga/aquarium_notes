@@ -100,7 +100,10 @@ Item
         if (paramsTable.model)
         {
             lastRecId = paramsTable.model.length - 1
-            lastDate = new Date(paramsTable.model[lastRecId].dtNow * 1000)
+
+            if (lastRecId >= 0)
+                lastDate = new Date(paramsTable.model[lastRecId].dtNow * 1000)
+
             todayDate = new Date()
         }
 
@@ -210,11 +213,7 @@ Item
             anchors.bottom: parent.bottom
             anchors.bottomMargin: AppTheme.margin * app.scale
 
-            onSigButtonClicked:
-            {
-                app.sigOpenGallery()
-                checkIfTodayRecordExist()
-            }
+            onSigButtonClicked: checkIfTodayRecordExist()
         }
     }
 
