@@ -156,9 +156,10 @@ class LastDataParamRecObj : public QObject
     Q_PROPERTY(QString note READ note WRITE setNote NOTIFY noteChanged)
     Q_PROPERTY(QString imgLink READ imgLink WRITE setImgLink NOTIFY imgLinkChanged)
     Q_PROPERTY(bool en READ en WRITE setEn NOTIFY enChanged)
+    Q_PROPERTY(unsigned int dtLast READ dtLast WRITE setDtLast NOTIFY dtLastChanged)
 
 public:
-    LastDataParamRecObj(char paramId, int idNow, int idPrev, float now, float prev, unsigned int dtNow, unsigned int dtPrev, QString note, QString img)
+    LastDataParamRecObj(char paramId, int idNow, int idPrev, float now, float prev, unsigned int dtNow, unsigned int dtPrev, unsigned int dtLast, QString note, QString img)
     {
         _paramId = paramId;
         _smpIdNow = idNow;
@@ -167,6 +168,7 @@ public:
         _valuePrev = prev;
         _dtNow = dtNow;
         _dtPrev = dtPrev;
+        _dtLast = dtLast;
         _note = note;
         _imgLink = img;
         _en = true;
@@ -179,6 +181,7 @@ public:
     float valuePrev()                   {   return _valuePrev;      }
     unsigned int dtNow()                {   return _dtNow;          }
     unsigned int dtPrev()               {   return _dtPrev;         }
+    unsigned int dtLast()               {   return _dtLast;         }
     QString note()                      {   return _note;           }
     QString imgLink()                   {   return _imgLink;        }
     bool    en()                        {   return _en;             }
@@ -190,6 +193,7 @@ public:
     void setValuePrev(float valuePrev)  {   _valuePrev = valuePrev; }
     void setDtNow(unsigned int dt)      {   _dtNow = dt;            }
     void setDtPrev(unsigned int dt)     {   _dtPrev = dt;           }
+    void setDtLast(unsigned int dt)     {   _dtLast = dt;           }
     void setNote(QString note)          {   _note = note;           }
     void setImgLink(QString link)       {   _imgLink = link;        }
     void setEn(bool en)                 {   _en = en;               }
@@ -202,6 +206,7 @@ signals:
     void valuePrevChanged();
     void dtNowChanged();
     void dtPrevChanged();
+    void dtLastChanged();
     void noteChanged();
     void imgLinkChanged();
     void enChanged();
@@ -214,6 +219,7 @@ protected:
     float           _valuePrev;
     unsigned int    _dtNow;
     unsigned int    _dtPrev;
+    unsigned int    _dtLast;
     QString         _note;
     QString         _imgLink;
     bool            _en;

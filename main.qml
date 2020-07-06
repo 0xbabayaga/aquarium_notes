@@ -10,11 +10,12 @@ Window
     id: app
     objectName: "app"
 
-    property int lastSmpId: 0
-    property bool isAccountCreated: false
-    property real scale: (Screen.orientation  === Qt.PortraitOrientation) ? Screen.desktopAvailableHeight / 720 : Screen.desktopAvailableHeight / 1080
+    property bool   isAndro: false
+    property int    lastSmpId: 0
+    property bool   isAccountCreated: false
+    property real   scale: (Screen.orientation  === Qt.PortraitOrientation) ? Screen.desktopAvailableHeight / 720 : Screen.desktopAvailableHeight / 1080
 
-    property var months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+    property var    months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
     ListView
     {

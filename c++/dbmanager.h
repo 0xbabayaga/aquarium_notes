@@ -79,6 +79,7 @@ private:
     void    setInitialDialogStage(int stage, QString name);
     void    setLastSmpId(int id);
     void    setGalleryImageSelected(QString imgUrl);
+    void    setAndroidFlag(bool flag);
 
     /* Gui diagram drawing */
     void    clearDiagrams();
@@ -108,10 +109,11 @@ public slots:
 public:
     const QString   dbFolder = "db";
     const QString   dbFile = "db.db";
+    const QString   appFolder = "AqauriumNotes";
 
 private:
     ActionList      *actionList;
-    QString         appFolder;
+    QString         appPath;
     QString         dbFileLink;
     QSqlDatabase    db;
 

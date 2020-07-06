@@ -6,7 +6,6 @@ QT += multimedia
 android: QT += androidextras
 
 CONFIG += c++11
-#CONFIG += mobility
 
 TARGET = AquariumNotes
 TEMPLATE = app

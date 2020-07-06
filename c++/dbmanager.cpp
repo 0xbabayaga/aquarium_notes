@@ -60,8 +60,6 @@ QString selectedFileName;
 #ifdef __cplusplus
 extern "C" {
 #endif
-//org.tikava.aquariumnotes
-//com.amin.QtAndroidGallery
 JNIEXPORT void JNICALL
 Java_org_tikava_AquariumNotes_AquariumNotes_fileSelected(JNIEnv *, jobject , jstring results)
 {
@@ -77,29 +75,29 @@ Java_org_tikava_AquariumNotes_AquariumNotes_fileSelected(JNIEnv *, jobject , jst
 DBManager::DBManager(QQmlApplicationEngine *engine, QObject *parent) : QObject(parent)
 {
 #ifdef  Q_OS_ANDROID
-    appFolder = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+    appPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
 
-    if (QDir(appFolder + "/AquariumNotes/").exists() == false)
+    if (QDir(appPath + "/AquariumNotes/").exists() == false)
     {
-        qWarning() << "CREATE " << appFolder + "/AquariumNotes/" << "   "  << QDir().mkdir(appFolder + "/AquariumNotes/");
-        qWarning() << "CREATE " << appFolder + "/AquariumNotes/" + dbFolder + "/" << "   "  << QDir().mkdir(appFolder + "/AquariumNotes/" + dbFolder + "/");
+        qWarning() << "CREATE " << appPath + "/" + appFolder << "   "  << QDir().mkdir(appPath + "/" + appFolder);
+        qWarning() << "CREATE " << appPath + "/" + appFolder + "/" + dbFolder + "/" << "   "  << QDir().mkdir(appPath + "/AquariumNotes/" + dbFolder + "/");
     }
 
-    dbFileLink = appFolder + "/AquariumNotes/" + dbFolder + "/" +dbFile;
+    dbFileLink = appPath + "/" + appFolder + "/" + dbFolder + "/" +dbFile;
 
     qWarning() << "dbFileLink = " << dbFileLink;
 #else
     if (QDir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + dbFolder).exists() == false)
         QDir().mkdir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + dbFolder);
 
-    dbFileLink = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + dbFolder + "/" +dbFile;
+    dbFileLink = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + dbFolder + "/" + dbFile;
 #endif
 
     db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(dbFileLink);
     db.open();
 
-    qDebug() << dbFileLink;
+    qDebug() << "DB file = " << dbFileLink;
 
     initDB();
 
@@ -179,6 +177,9 @@ void DBManager::init()
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigCurrentSmpIdChanged(int)), this, SLOT(onGuiCurrentSmpIdChanged(int)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigOpenGallery()), this, SLOT(onGuiOpenGallery()));
 
+#ifdef  Q_OS_ANDROID
+    setAndroidFlag(true);
+#endif
     setLastSmpId(curSelectedObjs.lastSmpId);
 
     qmlEngine->rootContext()->setContextProperty("aquariumTypesListModel", QVariant::fromValue(aquariumTypeList));
@@ -264,9 +265,17 @@ void DBManager::setLastSmpId(int id)
     obj = qmlEngine->rootObjects().first();
 
     if (obj != nullptr)
-    {
         obj->setProperty("lastSmpId", id);
-    }
+}
+
+void DBManager::setAndroidFlag(bool flag)
+{
+    QObject *obj = nullptr;
+
+    obj = qmlEngine->rootObjects().first();
+
+    if (obj != nullptr)
+        obj->setProperty("isAndro", flag);
 }
 
 void DBManager::setGalleryImageSelected(QString imgUrl)
@@ -276,9 +285,7 @@ void DBManager::setGalleryImageSelected(QString imgUrl)
     obj = qmlEngine->rootObjects().first()->findChild<QObject*>("imageList");
 
     if (obj != nullptr)
-    {
         obj->setProperty("galleryImageSelected", imgUrl);
-    }
     else
         qDebug() << "Cannot find imageList object";
 }
@@ -506,6 +513,12 @@ bool DBManager::getLatestParams()
     bool found = false;
     LastDataParamRecObj *recObj = nullptr;
     int curIdx = 0;
+    unsigned int lastDateRecord = 0;
+
+    QSqlQuery qDt("SELECT MAX(TIMESTAMP) FROM HISTORY_VALUE_TABLE WHERE TANK_ID='"+currentTankSelected()->tankId()+"'");
+
+    if (qDt.next())
+        lastDateRecord = qDt.value(0).toInt();
 
     if (isParamDataChanged == true)
     {
@@ -558,6 +571,7 @@ bool DBManager::getLatestParams()
                                              -1,
                                              (unsigned int)query.value(query.record().indexOf("TIMESTAMP")).toInt(),
                                              0,
+                                             lastDateRecord,
                                              query.value(query.record().indexOf("TEXT")).toString(),
                                              query.value(query.record().indexOf("IMAGELINK")).toString());
 
@@ -605,6 +619,7 @@ bool DBManager::getLatestParams()
                                                      query1.value(query1.record().indexOf("VALUE")).toFloat(),
                                                      0,
                                                      (unsigned int)query.value(query.record().indexOf("TIMESTAMP")).toInt(),
+                                                     lastDateRecord,
                                                      query.value(query.record().indexOf("TEXT")).toString(),
                                                      query.value(query.record().indexOf("IMAGELINK")).toString());
 

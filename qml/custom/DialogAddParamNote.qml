@@ -11,6 +11,7 @@ Item
     height: app.height
 
     property alias addParamsListModel: addRecordListView.model
+    property alias selectedImagesList: imagesList.selectedImagesList
     property alias note: textNote.text
     property bool isEdit: false
 
@@ -23,6 +24,7 @@ Item
         {
             showDialogAnimation.start()
             rectFakeDataContainer.anchors.topMargin = AppTheme.padding * 9 * app.scale
+            imagesList.reset()
         }
         else
         {
@@ -34,6 +36,23 @@ Item
     function setEdit(isEdit)
     {
         dialogAddParamNote.isEdit = isEdit
+    }
+
+    function savePersonalParams(isSave)
+    {
+        if (isSave === true)
+        {
+            for (var i = 0; i < personalParamsListView.model.length; i++)
+            {
+                app.sigPersonalParamStateChanged(personalParamsListView.model[i].paramId,
+                                                 personalParamsListView.model[i].en)
+            }
+        }
+
+        rectPersonalParamsDialog.opacity = 0
+        rectAddRecordDialog.opacity = 1
+
+        dialogAddParamNote.addParamsListModel = app.getAllParamsListModel()
     }
 
     NumberAnimation
@@ -111,6 +130,11 @@ Item
                 anchors.rightMargin: AppTheme.margin * app.scale
                 color: AppTheme.whiteColor
 
+                Behavior on opacity
+                {
+                    NumberAnimation {   duration: 200 }
+                }
+
                 Text
                 {
                     id: textHeader
@@ -122,7 +146,7 @@ Item
                     font.family: AppTheme.fontFamily
                     font.pixelSize: AppTheme.fontBigSize * app.scale
                     color: AppTheme.blueColor
-                    text: qsTr("Add record:")
+                    text: (dialogAddParamNote.isEdit === true) ? qsTr("Edit record:") : qsTr("Add record:")
                 }
 
                 UrlButton
@@ -147,9 +171,8 @@ Item
                     anchors.topMargin: AppTheme.compHeight * 2 * app.scale
                     anchors.bottomMargin: AppTheme.margin * 3 * app.scale
                     contentWidth: width
-                    contentHeight: (addRecordListView.model) ? addRecordListView.model.length * AppTheme.rowHeightMin * app.scale + 300 * app.scale : 0
+                    contentHeight: (addRecordListView.model) ? addRecordListView.model.length * AppTheme.rowHeightMin * app.scale : 0
                     clip:true
-
 
                     ListView
                     {
@@ -167,7 +190,7 @@ Item
                         {
                             height = getParamListRealCount() * AppTheme.rowHeightMin * app.scale
                             flickableContainer.contentHeight = addRecordListView.height
-                            flickableContainer.contentHeight += AppTheme.rowHeightMin * 3 * app.scale
+                            flickableContainer.contentHeight += AppTheme.rowHeightMin * 4 * app.scale
                         }
 
                         delegate: Rectangle
@@ -307,6 +330,133 @@ Item
                         dialogAddParamNote.show(false)
                         sigOk()
                     }
+                }
+            }
+
+
+            Rectangle
+            {
+                id: rectPersonalParamsDialog
+                anchors.fill: parent
+                anchors.topMargin: AppTheme.padding * app.scale
+                anchors.leftMargin: AppTheme.margin * app.scale
+                anchors.rightMargin: AppTheme.margin * app.scale
+                color: AppTheme.whiteColor
+                opacity: 0
+                visible: (opacity === 0) ? false : true
+
+                Behavior on opacity
+                {
+                    NumberAnimation {   duration: 200 }
+                }
+
+                Text
+                {
+                    id: textListOfParamsHeader
+                    anchors.top: parent.top
+                    anchors.left: parent.left
+                    verticalAlignment: Text.AlignVCenter
+                    height: AppTheme.rowHeightMin * app.scale
+                    width: 100 * app.scale
+                    font.family: AppTheme.fontFamily
+                    font.pixelSize: AppTheme.fontBigSize * app.scale
+                    color: AppTheme.blueColor
+                    text: qsTr("List of params:")
+                }
+
+                Text
+                {
+                    anchors.top: textListOfParamsHeader.bottom
+                    anchors.topMargin: AppTheme.padding * app.scale
+                    anchors.left: parent.left
+                    verticalAlignment: Text.AlignVCenter
+                    width: 100 * app.scale
+                    font.family: AppTheme.fontFamily
+                    font.pixelSize: AppTheme.fontSmallSize * app.scale
+                    color: AppTheme.greyColor
+                    text: qsTr("Please select a set of parameters for monitoring")
+                }
+
+                ListView
+                {
+                    id: personalParamsListView
+                    anchors.fill: parent
+                    anchors.topMargin: AppTheme.compHeight * 2 * app.scale
+                    anchors.bottomMargin: AppTheme.rowHeight * 2 * app.scale
+                    spacing: 0
+                    clip: true
+                    model: app.getAllParamsListModel()
+
+                    delegate: Rectangle
+                    {
+                        width: parent.width
+                        height: AppTheme.rowHeightMin * app.scale
+                        color: "#00000000"
+
+                        Text
+                        {
+                            id: textFullName
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.left: parent.left
+                            verticalAlignment: Text.AlignVCenter
+                            width: 100 * app.scale
+                            font.family: AppTheme.fontFamily
+                            font.pixelSize: AppTheme.fontNormalSize * app.scale
+                            color: en ? AppTheme.blueColor : AppTheme.greyColor
+                            text: fullName
+                        }
+
+                        SwitchButton
+                        {
+                            anchors.right: parent.right
+                            anchors.verticalCenter: parent.verticalCenter
+                            checked: en
+                            onCheckedChanged: {
+                                en = checked
+                                textFullName.color = en ? AppTheme.blueColor : AppTheme.greyColor
+                            }
+                        }
+                    }
+
+                    ScrollBar.vertical: ScrollBar
+                    {
+                        policy: ScrollBar.AlwaysOn
+                        parent: personalParamsListView.parent
+                        anchors.top: personalParamsListView.top
+                        anchors.left: personalParamsListView.right
+                        anchors.leftMargin: AppTheme.padding * app.scale
+                        anchors.bottom: personalParamsListView.bottom
+
+                        contentItem: Rectangle
+                        {
+                            implicitWidth: 2
+                            implicitHeight: 100
+                            radius: width / 2
+                            color: AppTheme.hideColor
+                        }
+                    }
+                }
+
+                IconSimpleButton
+                {
+                    id: buttonBack
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: AppTheme.margin * app.scale
+                    anchors.left: parent.left
+                    image: "qrc:/resources/img/icon_cancel.png"
+
+                    onSigButtonClicked: savePersonalParams(false)
+                }
+
+                IconSimpleButton
+                {
+                    id: buttonSave
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: AppTheme.margin * app.scale
+                    anchors.right: parent.right
+                    image: "qrc:/resources/img/icon_ok.png"
+
+                    onSigButtonClicked: savePersonalParams(true)
                 }
             }
         }

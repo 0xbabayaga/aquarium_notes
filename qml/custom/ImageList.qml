@@ -2,7 +2,7 @@ import QtQuick 2.12
 import QtQuick.Window 2.12
 import QtQuick.Controls 2.12
 import QtGraphicalEffects 1.12
-//import QtQuick.Dialogs 1.3
+import QtQuick.Dialogs 1.0
 import "../"
 
 Item
@@ -18,6 +18,12 @@ Item
 
     onGalleryImageSelectedChanged: if (galleryImageSelected !== "") addImageToList(galleryImageSelected)
 
+    function reset()
+    {
+        listOfImages.clear()
+        imagesListView.width = 0
+    }
+
     function addImageToList(imgUrl)
     {
         if (listOfImages.count < imagesCountMax)
@@ -25,10 +31,7 @@ Item
 
         galleryImageSelected = ""
 
-        imagesListView.width = listOfImages.count * AppTheme.rowHeightMin * app.scale
-
-        if (listOfImages.count > 1)
-            imagesListView.width += (listOfImages.count - 1) * AppTheme.padding * app.scale
+        imagesListView.width = listOfImages.count * (AppTheme.rowHeightMin + AppTheme.padding) * app.scale
     }
 
     ListModel
@@ -39,12 +42,19 @@ Item
     ListView
     {
         id: imagesListView
+        anchors.left: parent.left
+        anchors.top: parent.top
         width: 0
         height: parent.height
         orientation: ListView.Horizontal
         spacing: AppTheme.padding * app.scale
         clip: true
         model: listOfImages
+
+        Behavior on width
+        {
+            NumberAnimation { duration: 100 }
+        }
 
         delegate: Rectangle
         {
@@ -79,33 +89,31 @@ Item
     {
         id: buttonAddImage
         anchors.left: imagesListView.right
-        anchors.leftMargin: AppTheme.padding * app.sacle
         image: "qrc:/resources/img/icon_photo.png"
 
-        onSigButtonClicked: app.sigOpenGallery()
-        //onSigButtonClicked: fileDialog.open()
-
+        onSigButtonClicked:
+        {
+            if (app.isAndro === true)
+                app.sigOpenGallery()
+            else
+                fileDialog.open()
+        }
     }
 
-    /*
     FileDialog
     {
         id: fileDialog
         title: "Please choose an image"
-        folder: shortcuts.home
-        nameFilters: [ "Image files (*.jpg *.png)", "All files (*)" ]
+        folder: shortcuts.pictures
+        nameFilters: [ "Image files (*.jpg *.png)" ]
+        visible: false
 
         onAccepted:
         {
-            addImageToList(fileDialog.fileUrls)
-
-            console.log("You chose: " + fileDialog.fileUrls)
+            addImageToList(fileDialog.fileUrls[0].replace("file:///", ""))
             close()
         }
 
         onRejected: close()
-
-        Component.onCompleted: visible = true
     }
-    */
 }
