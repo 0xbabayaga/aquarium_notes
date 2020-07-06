@@ -5,6 +5,7 @@
 #include <QSqlDatabase>
 #include <QDir>
 #include <QQmlApplicationEngine>
+#include <QStandardPaths>
 #include "dbobjects.h"
 #include "actionlist.h"
 
@@ -87,6 +88,15 @@ private:
     void    drawDiagrams();
 
     static bool    less(QObject *v1, QObject *v2);
+    QString createDbImgFileName(int i);
+    QString getImgDbFolder()
+    {
+        #ifdef  Q_OS_ANDROID
+        return appPath + "/" + appFolder + "/" + imgFolder + "/";
+        #else
+        return QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + imgFolder + "/";
+        #endif
+    }
 
 public slots:
     void    onQmlEngineLoaded(QObject *object, const QUrl &url);
@@ -108,8 +118,9 @@ public slots:
 
 public:
     const QString   dbFolder = "db";
+    const QString   imgFolder = "imagesbase";
     const QString   dbFile = "db.db";
-    const QString   appFolder = "AqauriumNotes";
+    const QString   appFolder = "AquariumNotes";
 
 private:
     ActionList      *actionList;

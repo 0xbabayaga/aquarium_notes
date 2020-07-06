@@ -128,6 +128,13 @@ Item
             {
                 height = realModelLength() * AppTheme.compHeight * app.scale
                 hideAnimation.start()
+
+                if (curValuesListView.model.length > 0 && curValuesListView.model[0].imgLink.length > 0)
+                {
+                    rectNoteFound.imgLinks = 0
+                    rectNoteFound.imgLinks = curValuesListView.model[0].imgLink.split(';')
+                    imgNotePhoto.source = "file:///" + rectNoteFound.imgLinks[0]
+                }
             }
 
             delegate: Rectangle
@@ -245,7 +252,6 @@ Item
             }
         }
 
-
         NumberAnimation
         {
             id: hideAnimation
@@ -288,6 +294,8 @@ Item
             visible: false
             opacity: 0
 
+            property var imgLinks: []
+
             Text
             {
                 anchors.top: parent.top
@@ -311,7 +319,7 @@ Item
                 height: AppTheme.rowHeightMin * app.scale
                 width: height
                 mipmap: true
-                source: (curValuesListView.model.length > 0 && curValuesListView.model[0].imgLink.length > 0) ? "file:///"+curValuesListView.model[0].imgLink : ""
+                //source: (curValuesListView.model.length > 0 && curValuesListView.model[0].imgLink.length > 0) ? "file:///"+curValuesListView.model[0].imgLink : ""
 
                 fillMode: Image.PreserveAspectCrop
                 layer.enabled: true

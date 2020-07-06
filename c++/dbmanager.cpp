@@ -77,11 +77,17 @@ DBManager::DBManager(QQmlApplicationEngine *engine, QObject *parent) : QObject(p
 #ifdef  Q_OS_ANDROID
     appPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
 
-    if (QDir(appPath + "/AquariumNotes/").exists() == false)
+    if (QDir(appPath + "/" + appFolder).exists() == false)
     {
-        qWarning() << "CREATE " << appPath + "/" + appFolder << "   "  << QDir().mkdir(appPath + "/" + appFolder);
-        qWarning() << "CREATE " << appPath + "/" + appFolder + "/" + dbFolder + "/" << "   "  << QDir().mkdir(appPath + "/AquariumNotes/" + dbFolder + "/");
+        qInfo() << "Creating " << appPath + "/" + appFolder << "   "
+                << QDir().mkdir(appPath + "/" + appFolder);
+        qInfo() << "Creating " << appPath + "/" + appFolder + "/" + dbFolder + "/" << "   "
+                << QDir().mkdir(appPath + "/" + appFolder + "/" + dbFolder + "/");
     }
+
+    if (QDir(appPath + "/" + appFolder + "/" + imgFolder).exists() == false)
+        qInfo() << "Creating " << appPath + "/" + appFolder + "/" + imgFolder + "/"
+                << QDir().mkdir(appPath + "/" + appFolder + "/" + imgFolder + "/");
 
     dbFileLink = appPath + "/" + appFolder + "/" + dbFolder + "/" +dbFile;
 
@@ -89,6 +95,9 @@ DBManager::DBManager(QQmlApplicationEngine *engine, QObject *parent) : QObject(p
 #else
     if (QDir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + dbFolder).exists() == false)
         QDir().mkdir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + dbFolder);
+
+    if (QDir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + imgFolder).exists() == false)
+        QDir().mkdir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + imgFolder);
 
     dbFileLink = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + dbFolder + "/" + dbFile;
 #endif
@@ -980,9 +989,25 @@ bool DBManager::editParamRecord(int smpId, int paramId, double value)
 
 bool DBManager::addNoteRecord(int smpId, QString note, QString imageLink)
 {
+    QStringList imgLinksList;
+    QString fileName;
+    QString dbFiles;
     QSqlQuery query;
     bool res = false;
     TankObj *tank = (TankObj*) curSelectedObjs.listOfUserTanks.at(curSelectedObjs.tankIdx);
+
+    imgLinksList = imageLink.split(';');
+
+    for (int i = 0; i < imgLinksList.size(); i++)
+    {
+        fileName = getImgDbFolder() + createDbImgFileName(i) + "." + QFileInfo(imgLinksList.at(i)).completeSuffix();
+        QFile::copy(imgLinksList.at(i), fileName);
+
+        if (i != 0)
+            dbFiles += ";";
+
+        dbFiles += fileName;
+    }
 
     query.prepare("INSERT INTO HISTORY_NOTES_TABLE (SMP_ID, TANK_ID, TEXT, IMAGEDATA, IMAGELINK, TIMESTAMP) "
                   "VALUES (:smp_id, :tank_id, :text, :imagedata, :imagelink, :tm)");
@@ -991,7 +1016,7 @@ bool DBManager::addNoteRecord(int smpId, QString note, QString imageLink)
     query.bindValue(":tank_id", tank->tankId());
     query.bindValue(":text", note);
     query.bindValue(":imagedata", "");
-    query.bindValue(":imagelink", imageLink);
+    query.bindValue(":imagelink", dbFiles);
     query.bindValue(":tm", QDateTime::currentSecsSinceEpoch());
 
     res = query.exec();
@@ -1350,4 +1375,17 @@ bool DBManager::less(QObject *v1, QObject *v2)
     PointObj *a2 = (PointObj*) v2;
 
     return a1->tm() > a2->tm();
+}
+
+QString DBManager::createDbImgFileName(int i)
+{
+    QString fileName;
+    QString num;
+    TankObj *tank = (TankObj*) curSelectedObjs.listOfUserTanks.at(curSelectedObjs.tankIdx);
+
+    fileName = tank->tankId();
+    fileName += "_" + QDateTime::currentDateTime().toString("yyyyMMdd_hhmm");
+    fileName += "_" + num.sprintf("%02u", i);
+
+    return fileName;
 }
