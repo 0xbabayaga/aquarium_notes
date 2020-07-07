@@ -146,7 +146,15 @@ Item
                     font.family: AppTheme.fontFamily
                     font.pixelSize: AppTheme.fontBigSize * app.scale
                     color: AppTheme.blueColor
-                    text: (dialogAddParamNote.isEdit === true) ? qsTr("Edit record:") : qsTr("Add record:")
+                    text: (dialogAddParamNote.isEdit === true) ? qsTr("EDIT RECORD") : qsTr("ADD RECORD")
+                }
+
+                Rectangle
+                {
+                    anchors.top: textHeader.bottom
+                    width: parent.width
+                    height: 1 * app.scale
+                    color: AppTheme.backLightBlueColor
                 }
 
                 UrlButton
@@ -361,7 +369,15 @@ Item
                     font.family: AppTheme.fontFamily
                     font.pixelSize: AppTheme.fontBigSize * app.scale
                     color: AppTheme.blueColor
-                    text: qsTr("List of params:")
+                    text: qsTr("LIST OF PARAMS")
+                }
+
+                Rectangle
+                {
+                    anchors.top: textListOfParamsHeader.bottom
+                    width: parent.width
+                    height: 1 * app.scale
+                    color: AppTheme.backLightBlueColor
                 }
 
                 Text
@@ -370,18 +386,19 @@ Item
                     anchors.topMargin: AppTheme.padding * app.scale
                     anchors.left: parent.left
                     verticalAlignment: Text.AlignVCenter
-                    width: 100 * app.scale
+                    width: parent.width
                     font.family: AppTheme.fontFamily
                     font.pixelSize: AppTheme.fontSmallSize * app.scale
                     color: AppTheme.greyColor
-                    text: qsTr("Please select a set of parameters for monitoring")
+                    wrapMode: Text.WordWrap
+                    text: qsTr("Select a set of parameters for monitoring")
                 }
 
                 ListView
                 {
                     id: personalParamsListView
                     anchors.fill: parent
-                    anchors.topMargin: AppTheme.compHeight * 2 * app.scale
+                    anchors.topMargin: AppTheme.compHeight * 3 * app.scale
                     anchors.bottomMargin: AppTheme.rowHeight * 2 * app.scale
                     spacing: 0
                     clip: true
@@ -406,7 +423,7 @@ Item
                             text: fullName
                         }
 
-                        SwitchButton
+                        CheckBoxButton
                         {
                             anchors.right: parent.right
                             anchors.verticalCenter: parent.verticalCenter
