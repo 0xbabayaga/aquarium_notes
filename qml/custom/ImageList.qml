@@ -29,8 +29,22 @@ Item
         if (listOfImages.count < imagesCountMax)
             listOfImages.append({ "fileLink": imgUrl})
 
-        galleryImageSelected = ""
+        resize()
 
+        galleryImageSelected = ""
+    }
+
+    function removeImage(index)
+    {
+        if (index < listOfImages.count)
+        {
+            listOfImages.remove(index, 1)
+            resize()
+        }
+    }
+
+    function resize()
+    {
         imagesListView.width = listOfImages.count * (AppTheme.rowHeightMin + AppTheme.padding) * app.scale
     }
 
@@ -72,6 +86,12 @@ Item
                 layer.effect: OpacityMask
                 {
                     maskSource: imgTankMask
+                }
+
+                MouseArea
+                {
+                    anchors.fill: parent
+                    onClicked: imageList.removeImage(index)
                 }
             }
 
