@@ -87,12 +87,6 @@ Item
                 {
                     maskSource: imgTankMask
                 }
-
-                MouseArea
-                {
-                    anchors.fill: parent
-                    onClicked: imageList.removeImage(index)
-                }
             }
 
             Rectangle
@@ -101,6 +95,32 @@ Item
                 anchors.fill: parent
                 radius: height/2
                 visible: false
+            }
+
+            Rectangle
+            {
+                anchors.right: parent.right
+                anchors.top: parent.top
+                width: 24 * app.scale
+                height: width
+                radius: width / 2
+                color: AppTheme.blueColor
+
+                Image
+                {
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    width: AppTheme.compHeight / 2 * app.scale
+                    height: width
+                    source: "qrc:/resources/img/icon_cancel.png"
+                    mipmap: true
+
+                    MouseArea
+                    {
+                        anchors.fill: parent
+                        onClicked: imageList.removeImage(index)
+                    }
+                }
             }
         }
     }

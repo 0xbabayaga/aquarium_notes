@@ -127,13 +127,13 @@ Item
             onModelChanged:
             {
                 height = realModelLength() * AppTheme.compHeight * app.scale
-                hideAnimation.start()
+
+                noteView.hide()
 
                 if (curValuesListView.model.length > 0 && curValuesListView.model[0].imgLink.length > 0)
                 {
-                    rectNoteFound.imgLinks = 0
-                    rectNoteFound.imgLinks = curValuesListView.model[0].imgLink.split(';')
-                    imgNotePhoto.source = "file:///" + rectNoteFound.imgLinks[0]
+                    noteView.noteText = curValuesListView.model[0].note
+                    noteView.noteImages = curValuesListView.model[0].imgLink
                 }
             }
 
@@ -252,111 +252,17 @@ Item
             }
         }
 
-        NumberAnimation
+        NoteView
         {
-            id: hideAnimation
-            target: rectNoteFound
-            property: "opacity"
-            duration: 200
-            from: 1
-            to: 0
-            easing.type: Easing.InOutQuad
-            onFinished:
-            {
-                rectNoteFound.visible = false
-
-                if (realModelLength() !== 0 && curValuesListView.model[0].note.length > 0)
-                    showAnimation.start()
-            }
-        }
-
-        NumberAnimation
-        {
-            id: showAnimation
-            target: rectNoteFound
-            property: "opacity"
-            duration: 200
-            from: 0
-            to: 1
-            easing.type: Easing.InOutQuad
-            onStarted: rectNoteFound.visible = true
-        }
-
-        Rectangle
-        {
-            id: rectNoteFound
+            id: noteView
             anchors.top: curValuesListView.bottom
             anchors.topMargin: AppTheme.padding * app.scale
             anchors.left: parent.left
             anchors.right: parent.right
             height: (AppTheme.rowHeight + AppTheme.compHeight) * app.scale
-            color: "#00000000"
-            visible: false
-            opacity: 0
 
-            property var imgLinks: []
-
-            Text
-            {
-                anchors.top: parent.top
-                anchors.left: parent.left
-                anchors.leftMargin: AppTheme.padding * app.scale
-                height: AppTheme.compHeight * app.scale
-                verticalAlignment: Text.AlignVCenter
-                font.family: AppTheme.fontFamily
-                font.pixelSize: AppTheme.fontNormalSize * app.scale
-                color: AppTheme.blueColor
-                text: qsTr("NOTE FOUND:")
-            }
-
-            Image
-            {
-                id: imgNotePhoto
-                anchors.top: parent.top
-                anchors.topMargin: AppTheme.compHeight * app.scale
-                anchors.right: parent.right
-                anchors.rightMargin: AppTheme.padding * app.scale
-                height: AppTheme.rowHeightMin * app.scale
-                width: height
-                mipmap: true
-                //source: (curValuesListView.model.length > 0 && curValuesListView.model[0].imgLink.length > 0) ? "file:///"+curValuesListView.model[0].imgLink : ""
-
-                fillMode: Image.PreserveAspectCrop
-                layer.enabled: true
-                layer.effect: OpacityMask
-                {
-                    maskSource: imgNotePhotoMask
-                }
-            }
-
-            Rectangle
-            {
-                id: imgNotePhotoMask
-                anchors.left: parent.left
-                anchors.top: parent.top
-                anchors.topMargin: AppTheme.compHeight * app.scale
-                height: AppTheme.rowHeight * app.scale
-                width: height
-                radius: height / 2
-                visible: false
-            }
-
-            Text
-            {
-                id: textNote
-                anchors.left: parent.left
-                anchors.leftMargin: AppTheme.padding * app.scale
-                anchors.right: imgNotePhoto.left
-                anchors.rightMargin: AppTheme.padding * app.scale
-                anchors.verticalCenter: imgNotePhoto.verticalCenter
-                height: contentHeight + AppTheme.padding * app.scale
-                verticalAlignment: Text.AlignVCenter
-                font.family: AppTheme.fontFamily
-                font.pixelSize: AppTheme.fontSmallSize * app.scale
-                color: AppTheme.greyColor
-                text: (curValuesListView.model.length > 0) ? curValuesListView.model[0].note : ""
-                wrapMode: Text.WordWrap
-            }
+            noteText: (curValuesListView.model.length > 0) ? curValuesListView.model[0].note : ""
+            noteImages: (curValuesListView.model.length > 0 && curValuesListView.model[0].imgLink.length > 0) ? curValuesListView.model[0].imgLink : []
         }
     }
 }
