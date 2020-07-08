@@ -198,7 +198,6 @@ Item
                         verticalAlignment: Text.AlignVCenter
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontNormalSize * app.scale
-                        //font.bold: true
                         color: AppTheme.blueColor
                         text: formattedValue(valueNow)
                     }

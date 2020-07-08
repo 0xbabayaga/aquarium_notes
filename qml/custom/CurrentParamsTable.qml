@@ -130,7 +130,7 @@ Item
 
                 noteView.hide()
 
-                if (curValuesListView.model.length > 0 && curValuesListView.model[0].imgLink.length > 0)
+                if (curValuesListView.model.length > 0)
                 {
                     noteView.noteText = curValuesListView.model[0].note
                     noteView.noteImages = curValuesListView.model[0].imgLink
@@ -262,7 +262,7 @@ Item
             height: (AppTheme.rowHeight + AppTheme.compHeight) * app.scale
 
             noteText: (curValuesListView.model.length > 0) ? curValuesListView.model[0].note : ""
-            noteImages: (curValuesListView.model.length > 0 && curValuesListView.model[0].imgLink.length > 0) ? curValuesListView.model[0].imgLink : []
+            noteImages: (curValuesListView.model.length > 0 && curValuesListView.model[0].imgLink.length > 0) ? curValuesListView.model[0].imgLink : ""
         }
     }
 }
