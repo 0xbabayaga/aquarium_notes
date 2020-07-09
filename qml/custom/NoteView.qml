@@ -379,7 +379,7 @@ Item
                     {
                         anchors.fill: parent
                         pinch.target: imgCurrent
-                        pinch.minimumScale: 1
+                        pinch.minimumScale: 0.1
                         pinch.maximumScale: 5
                         pinch.dragAxis: Pinch.XAndYAxis
 
