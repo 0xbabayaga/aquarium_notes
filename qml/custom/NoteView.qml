@@ -1,5 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
+import QtQuick.Window 2.1
 import QtGraphicalEffects 1.12
 import "../"
 
@@ -342,24 +343,104 @@ Item
                 imgCurrent.source = "file:///" + listOfImages.get(0).fileLink
             }
 
-            Image
+            Flickable
             {
-                id: imgCurrent
+                id: flickImageArea
                 anchors.top: parent.top
+                anchors.horizontalCenter: parent.horizontalCenter
                 width: parent.width
-                fillMode: Image.PreserveAspectFit
-                mipmap: true
+                height: 400 * app.scale
+                clip: true
 
-                Behavior on height
+                contentWidth: width
+                contentHeight: height
+
+                Behavior on height {    NumberAnimation { duration: 100 } }
+
+                Image
                 {
-                    NumberAnimation { duration: 200 }
+                    id: imgCurrent
+                    mipmap: true
+                    smooth: true
+
+                    onStatusChanged:
+                    {
+                        if (status == Image.Ready)
+                        {
+                            var sc = sourceSize.width / flickImageArea.width
+                            flickImageArea.height = sourceSize.height / sc
+                            imgCurrent.scale = 1 / sc
+                            x = -sourceSize.width / 2 + flickImageArea.width / 2
+                            y = -sourceSize.height / 2 + sourceSize.height / sc / 2
+                        }
+                    }
+
+                    PinchArea
+                    {
+                        anchors.fill: parent
+                        pinch.target: imgCurrent
+                        pinch.minimumScale: 1
+                        pinch.maximumScale: 5
+                        pinch.dragAxis: Pinch.XAndYAxis
+
+                        /*
+                        onSmartZoom:
+                        {
+                            if (pinch.scale > 0)
+                            {
+                                imgCurrent.rotation = 0;
+                                imgCurrent.scale = Math.min(root.width, root.height) / Math.max(image.sourceSize.width, image.sourceSize.height) * 0.85
+                                imgCurrent.x = flick.contentX + (flick.width - imgCurrent.width) / 2
+                                imgCurrent.y = flick.contentY + (flick.height - imgCurrent.height) / 2
+                            }
+                            else
+                            {
+                                imgCurrent.rotation = pinch.previousAngle
+                                imgCurrent.scale = pinch.previousScale
+                                imgCurrent.x = pinch.previousCenter.x - imgCurrent.width / 2
+                                imgCurrent.y = pinch.previousCenter.y - imgCurrent.height / 2
+                            }
+                        }
+                        */
+
+                        MouseArea
+                        {
+                            id: dragArea
+                            hoverEnabled: true
+                            anchors.fill: parent
+                            drag.target: imgCurrent
+                            scrollGestureEnabled: false
+
+                            onWheel:
+                            {
+                                if (wheel.modifiers & Qt.ControlModifier)
+                                {
+                                    //imgCurrent.rotation += wheel.angleDelta.y / 120 * 5;
+
+                                    //if (Math.abs(imgCurrent.rotation) < 4)
+                                    //    imgCurrent.rotation = 0;
+                                }
+                                else
+                                {
+                                    //imgCurrent.rotation += wheel.angleDelta.x / 120;
+
+                                    //if (Math.abs(imgCurrent.rotation) < 0.6)
+                                    //    imgCurrent.rotation = 0;
+                                    var scaleTmp = imgCurrent.scale + imgCurrent.scale * wheel.angleDelta.y / 120 / 10
+
+                                    if (imgCurrent.width * scaleTmp > flickImageArea.width )
+                                        imgCurrent.scale += imgCurrent.scale * wheel.angleDelta.y / 120 / 10;
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
             ListView
             {
                 id: detailedImagesListView
-                anchors.top: imgCurrent.bottom
+                anchors.top: flickImageArea.bottom
                 anchors.topMargin: AppTheme.padding * app.scale
                 anchors.horizontalCenter: parent.horizontalCenter
                 width: listOfImages.count * (AppTheme.compHeight + AppTheme.padding / 2) * app.scale
