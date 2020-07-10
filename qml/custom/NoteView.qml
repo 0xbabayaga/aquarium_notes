@@ -217,7 +217,7 @@ Item
             anchors.right: parent.right
             anchors.rightMargin: AppTheme.padding * app.scale
             width: 0
-            height: AppTheme.rowHeightMin * app.scale
+            height: (AppTheme.rowHeightMin + 2) * app.scale
             orientation: ListView.Horizontal
             spacing: -AppTheme.rowHeightMin * 3 / 4 * app.scale
             clip: true
@@ -231,7 +231,7 @@ Item
 
             delegate: Rectangle
             {
-                width: parent.height
+                width: AppTheme.rowHeightMin * app.scale
                 height: width
                 radius: height / 2
                 color: AppTheme.lightBlueColor
@@ -334,104 +334,101 @@ Item
             id: rectNoteDetails
             anchors.fill: rectShadowNoteDetails
             radius: AppTheme.radius * 2 * app.scale
+            clip: true
 
             Behavior on height { NumberAnimation { duration: 200 } }
 
             onVisibleChanged:
             {
                 textNoteDetailed.text = textNote.text
-                imgCurrent.source = "file:///" + listOfImages.get(0).fileLink
+
+                if(listOfImages.count > 0)
+                    imgCurrent.source = "file:///" + listOfImages.get(0).fileLink
             }
 
-            Flickable
+            Item
             {
-                id: flickImageArea
+                id: photoFrame
                 anchors.top: parent.top
-                anchors.horizontalCenter: parent.horizontalCenter
                 width: parent.width
-                height: 400 * app.scale
-                clip: true
-
-                contentWidth: width
-                contentHeight: height
-
-                Behavior on height {    NumberAnimation { duration: 100 } }
+                height: 400
 
                 Image
                 {
                     id: imgCurrent
-                    mipmap: true
-                    smooth: true
+                    anchors.fill: parent
+                    anchors.bottomMargin: 2
 
                     onStatusChanged:
                     {
                         if (status == Image.Ready)
                         {
-                            var sc = sourceSize.width / flickImageArea.width
-                            flickImageArea.height = sourceSize.height / sc
-                            imgCurrent.scale = 1 / sc
-                            x = -sourceSize.width / 2 + flickImageArea.width / 2
-                            y = -sourceSize.height / 2 + sourceSize.height / sc / 2
+                            var sc = sourceSize.width / photoFrame.width
+                            photoFrame.height = sourceSize.height / sc
+                            photoFrame.scale = 1
                         }
                     }
+                }
 
-                    PinchArea
+                PinchArea
+                {
+                    anchors.fill: parent
+                    pinch.target: photoFrame
+                    pinch.minimumRotation: 0
+                    pinch.maximumRotation: 0
+                    pinch.minimumScale: 1
+                    pinch.maximumScale: 4
+
+                    onPinchUpdated:
                     {
+                        if(photoFrame.x < dragArea.drag.minimumX)
+                            photoFrame.x = dragArea.drag.minimumX
+                        else if(photoFrame.x > dragArea.drag.maximumX)
+                            photoFrame.x = dragArea.drag.maximumX
+
+                        if(photoFrame.y < dragArea.drag.minimumY)
+                            photoFrame.y = dragArea.drag.minimumY
+                        else if(photoFrame.y > dragArea.drag.maximumY)
+                            photoFrame.y = dragArea.drag.maximumY
+                    }
+
+                    MouseArea
+                    {
+                        id: dragArea
+                        hoverEnabled: true
                         anchors.fill: parent
-                        pinch.target: imgCurrent
-                        pinch.minimumScale: 0.1
-                        pinch.maximumScale: 5
-                        pinch.dragAxis: Pinch.XAndYAxis
+                        drag.target: photoFrame
+                        scrollGestureEnabled: false
+                        drag.minimumX: (rectNoteDetails.width - (photoFrame.width * photoFrame.scale))/2
+                        drag.maximumX: -(rectNoteDetails.width - (photoFrame.width * photoFrame.scale))/2
+                        drag.minimumY: (rectNoteDetails.height - (photoFrame.height * photoFrame.scale))/2
+                        drag.maximumY: -(rectNoteDetails.height - (photoFrame.height * photoFrame.scale))/2
 
-                        /*
-                        onSmartZoom:
+                        onDoubleClicked:
                         {
-                            if (pinch.scale > 0)
-                            {
-                                imgCurrent.rotation = 0;
-                                imgCurrent.scale = Math.min(root.width, root.height) / Math.max(image.sourceSize.width, image.sourceSize.height) * 0.85
-                                imgCurrent.x = flick.contentX + (flick.width - imgCurrent.width) / 2
-                                imgCurrent.y = flick.contentY + (flick.height - imgCurrent.height) / 2
-                            }
-                            else
-                            {
-                                imgCurrent.rotation = pinch.previousAngle
-                                imgCurrent.scale = pinch.previousScale
-                                imgCurrent.x = pinch.previousCenter.x - imgCurrent.width / 2
-                                imgCurrent.y = pinch.previousCenter.y - imgCurrent.height / 2
-                            }
+                            photoFrame.x = 0
+                            photoFrame.y = 0
+                            photoFrame.scale = 1
                         }
-                        */
 
-                        MouseArea
+                        onWheel:
                         {
-                            id: dragArea
-                            hoverEnabled: true
-                            anchors.fill: parent
-                            drag.target: imgCurrent
-                            scrollGestureEnabled: false
+                            var scaleBefore = photoFrame.scale
+                            photoFrame.scale += photoFrame.scale * wheel.angleDelta.y / 120 / 10
+                            if(photoFrame.scale < 1)
+                                photoFrame.scale = 1
+                            else if(photoFrame.scale > 4)
+                                photoFrame.scale = 4
 
-                            onWheel:
-                            {
-                                if (wheel.modifiers & Qt.ControlModifier)
-                                {
-                                    //imgCurrent.rotation += wheel.angleDelta.y / 120 * 5;
+                            if(photoFrame.x < drag.minimumX)
+                                photoFrame.x = drag.minimumX
+                            else if(photoFrame.x > drag.maximumX)
+                                photoFrame.x = drag.maximumX
 
-                                    //if (Math.abs(imgCurrent.rotation) < 4)
-                                    //    imgCurrent.rotation = 0;
-                                }
-                                else
-                                {
-                                    //imgCurrent.rotation += wheel.angleDelta.x / 120;
-
-                                    //if (Math.abs(imgCurrent.rotation) < 0.6)
-                                    //    imgCurrent.rotation = 0;
-                                    var scaleTmp = imgCurrent.scale + imgCurrent.scale * wheel.angleDelta.y / 120 / 10
-
-                                    if (imgCurrent.width * scaleTmp > flickImageArea.width )
-                                        imgCurrent.scale += imgCurrent.scale * wheel.angleDelta.y / 120 / 10;
-                                }
-                            }
+                            if(photoFrame.y < drag.minimumY)
+                                photoFrame.y = drag.minimumY
+                            else if(photoFrame.y > drag.maximumY)
+                                photoFrame.y = drag.maximumY
                         }
                     }
                 }
@@ -440,8 +437,8 @@ Item
             ListView
             {
                 id: detailedImagesListView
-                anchors.top: flickImageArea.bottom
-                anchors.topMargin: AppTheme.padding * app.scale
+                anchors.top: photoFrame.bottom
+                anchors.topMargin: AppTheme.padding * app.scale + (photoFrame.scale - 1) * photoFrame.height / 2
                 anchors.horizontalCenter: parent.horizontalCenter
                 width: listOfImages.count * (AppTheme.compHeight + AppTheme.padding / 2) * app.scale
                 height: AppTheme.compHeight * app.scale

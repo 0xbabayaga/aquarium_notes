@@ -132,8 +132,6 @@ DBManager::DBManager(QQmlApplicationEngine *engine, QObject *parent) : QObject(p
     {
         TankTypeObj *obj = new TankTypeObj(i, getAquariumTypeString((AquariumType)i));
         aquariumTypeList.append(obj);
-
-        qDebug() << obj->name() << obj->type();
     }
 
     qmlEngine->rootContext()->setContextProperty("aquariumTypesListModel", QVariant::fromValue(aquariumTypeList));
@@ -341,7 +339,8 @@ void DBManager::drawDiagrams()
 
 void DBManager::onQmlEngineLoaded(QObject *object, const QUrl &url)
 {
-    init();
+    if (object != 0)
+        init();
 }
 
 
