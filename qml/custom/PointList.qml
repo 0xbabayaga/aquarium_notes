@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtGraphicalEffects 1.12
+import "../../js/datetimeutility.js" as DateTimeUtils
 import "../"
 
 Item
@@ -51,7 +52,7 @@ Item
                         font.family: AppTheme.fontFamily
                         verticalAlignment: Text.AlignVCenter
                         horizontalAlignment: Text.AlignHCenter
-                        text: app.printDateEx(tm)
+                        text: (new DateTimeUtils.DateTimeUtil()).printDateEx(tm)
 
                         MouseArea
                         {

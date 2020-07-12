@@ -15,8 +15,6 @@ Window
     property bool   isAccountCreated: false
     property real   scale: (Screen.orientation  === Qt.PortraitOrientation) ? Screen.desktopAvailableHeight / 720 : Screen.desktopAvailableHeight / 1080
 
-    property var    months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
-
     ListView
     {
         id: tmpParamList
@@ -56,28 +54,6 @@ Window
         }
 
         return 0
-    }
-
-    function printDate(tm)
-    {
-        var date = new Date(tm * 1000)
-        var day = "0" + date.getDate()
-        var month = "0" + date.getMonth()
-        var year = "0" + date.getYear()
-
-        //var formattedDate = day.substr(-2) + '.' + month.substr(-2) + '.' + year.substr(-2)
-        var formattedDate = day.substr(-2) + '/' + month.substr(-2)
-
-        return formattedDate
-    }
-
-    function printDateEx(tm)
-    {
-        var date = new Date(tm * 1000)
-        var day = "0" + date.getDate()
-        var formattedDate = day.substr(-2) + ' ' + app.months[date.getMonth()].slice(0,3).toUpperCase()
-
-        return formattedDate
     }
 
     Image

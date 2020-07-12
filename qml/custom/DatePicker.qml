@@ -3,6 +3,7 @@ import QtQuick.Window 2.12
 import QtQuick.Controls 2.12
 import QtGraphicalEffects 1.12
 import Qt.labs.calendar 1.0
+import "../../js/datetimeutility.js" as DateTimeUtils
 import "../"
 
 Item
@@ -11,9 +12,6 @@ Item
     width: 150 * app.scale
     height: AppTheme.compHeight * app.scale
     opacity: enabled ? AppTheme.opacityEnabled : AppTheme.opacityDisabled
-
-    property var months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
-    property var weekNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 
     property alias title: textHeader.text
     property double cellSize: AppTheme.compHeight * app.scale
@@ -248,7 +246,7 @@ Item
                                     font.family: AppTheme.fontFamily
                                     font.pixelSize: AppTheme.fontBigSize * app.scale
                                     color: AppTheme.blueColor
-                                    text: datePicker.months[model.month] + " " + model.year;
+                                    text: (new DateTimeUtils.DateTimeUtil()).getMonthString(model.month) + " " + model.year;
                                 }
                             }
 

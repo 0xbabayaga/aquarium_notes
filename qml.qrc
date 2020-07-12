@@ -48,5 +48,7 @@
         <file>resources/img/icon_photo.png</file>
         <file>qml/custom/CheckBoxButton.qml</file>
         <file>qml/custom/NoteView.qml</file>
+        <file>resources/img/icon_arrow_down.png</file>
+        <file>js/datetimeutility.js</file>
     </qresource>
 </RCC>

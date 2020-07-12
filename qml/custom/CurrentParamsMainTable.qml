@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtGraphicalEffects 1.12
+import "../../js/datetimeutility.js" as DateTimeUtils
 import "../"
 
 Item
@@ -8,11 +9,15 @@ Item
     id: currentParamsTable
 
     property alias model: curParamsListView.model
+    property var dtUtils: 0
 
     onModelChanged:
     {
+        if (dtUtils === 0)
+            dtUtils = new DateTimeUtils.DateTimeUtil()
+
         if (model.length > 0)
-            textTableHeader.text = qsTr("LAST MEASURED") + " [" +app.printDate(curParamsListView.model[0].dtNow)+ "]"
+            textTableHeader.text = qsTr("LAST MEASURED") + " [" + dtUtils.printDate(curParamsListView.model[0].dtNow)+ "]"
 
         currParamsMainTable.height = (currentParamsTable.realModelLength() + 1) * AppTheme.compHeight * app.scale
     }

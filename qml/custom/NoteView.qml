@@ -12,6 +12,7 @@ Item
 
     property bool   isOpened: false
     property alias  noteText: textNote.text
+    property alias  noteDate: textNoteDate.text
     property string noteImages: ""
 
     ListModel { id: listOfImages }
@@ -77,7 +78,7 @@ Item
             duration: 200
             from: rectDetailedContainer.height
             to: AppTheme.padding * 9 * app.scale
-            easing.type: Easing.InOutQuad
+            easing.type: Easing.OutBack
         }
     }
 
@@ -92,7 +93,7 @@ Item
             duration: 200
             from: AppTheme.padding * 9 * app.scale
             to: rectDetailedContainer.height
-            easing.type: Easing.InOutQuad
+            easing.type: Easing.InBack
         }
 
         NumberAnimation
@@ -189,7 +190,7 @@ Item
             id: textNoteFound
             anchors.top: parent.top
             anchors.left: parent.left
-            anchors.leftMargin: AppTheme.padding * app.scale
+            anchors.leftMargin: AppTheme.padding / 2 * app.scale
             height: AppTheme.compHeight * app.scale
             verticalAlignment: Text.AlignVCenter
             font.family: AppTheme.fontFamily
@@ -215,7 +216,7 @@ Item
             anchors.top: parent.top
             anchors.topMargin: AppTheme.compHeight * app.scale
             anchors.right: parent.right
-            anchors.rightMargin: AppTheme.padding * app.scale
+            //anchors.rightMargin: AppTheme.padding * app.scale
             width: 0
             height: (AppTheme.rowHeightMin + 2) * app.scale
             orientation: ListView.Horizontal
@@ -280,9 +281,9 @@ Item
         {
             id: textNote
             anchors.left: parent.left
-            anchors.leftMargin: AppTheme.padding * app.scale
+            anchors.leftMargin: AppTheme.padding / 2 * app.scale
             anchors.right: imagesListView.left
-            anchors.rightMargin: AppTheme.padding * app.scale
+            anchors.rightMargin: AppTheme.padding / 2 * app.scale
             anchors.top: textNoteFound.bottom
             height: contentHeight + AppTheme.padding * app.scale
             verticalAlignment: Text.AlignVCenter
@@ -492,9 +493,9 @@ Item
             {
                 id: textNoteDetailed
                 anchors.left: parent.left
-                anchors.leftMargin: AppTheme.margin * app.scale
+                anchors.leftMargin: AppTheme.padding * 3 / 2 * app.scale
                 anchors.right: parent.right
-                anchors.rightMargin: AppTheme.margin * app.scale
+                anchors.rightMargin: AppTheme.padding * 3 / 2 * app.scale
                 anchors.top: detailedImagesListView.bottom
                 anchors.topMargin: AppTheme.padding / 2 * app.scale
                 height: contentHeight + AppTheme.padding * app.scale
@@ -506,12 +507,27 @@ Item
                 wrapMode: Text.WordWrap
             }
 
+            Text
+            {
+                id: textNoteDate
+                anchors.right: parent.right
+                anchors.rightMargin: AppTheme.padding * 3 / 2 * app.scale
+                anchors.top: textNoteDetailed.bottom
+                anchors.topMargin: AppTheme.padding / 2 * app.scale
+                height: AppTheme.compHeight * app.scale
+                verticalAlignment: Text.AlignVCenter
+                font.family: AppTheme.fontFamily
+                font.pixelSize: AppTheme.fontSmallSize * app.scale
+                color: AppTheme.blueColor
+                text: ""
+            }
+
             IconSimpleButton
             {
                 anchors.top: parent.top
                 anchors.topMargin: rectDetailedContainer.height - AppTheme.rowHeight / 2 *  app.scale - AppTheme.rowHeight * 3 * app.scale
                 anchors.horizontalCenter: parent.horizontalCenter
-                image: "qrc:/resources/img/icon_ok.png"
+                image: "qrc:/resources/img/icon_arrow_down.png"
 
                 onSigButtonClicked: showDetails(false)
             }

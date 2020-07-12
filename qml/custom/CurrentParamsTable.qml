@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtGraphicalEffects 1.12
+import "../../js/datetimeutility.js" as DateTimeUtils
 import "../"
 
 Item
@@ -261,6 +262,7 @@ Item
             anchors.right: parent.right
             height: (AppTheme.rowHeight + AppTheme.compHeight) * app.scale
 
+            noteDate: (curValuesListView.model.length > 0) ? (new DateTimeUtils.DateTimeUtil()).printFullDate(curValuesListView.model[0].dtNow) : ""
             noteText: (curValuesListView.model.length > 0) ? curValuesListView.model[0].note : ""
             noteImages: (curValuesListView.model.length > 0 && curValuesListView.model[0].imgLink.length > 0) ? curValuesListView.model[0].imgLink : ""
         }

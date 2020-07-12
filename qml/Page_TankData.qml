@@ -41,8 +41,8 @@ Item
         if (vis === true)
         {
             page_TankData.visible = true
-            scaleAnimation.from = 0
-            scaleAnimation.to = 1
+            scaleAnimation.from = parent.width
+            scaleAnimation.to = 0
 
             textTankVol.text = tankVol + "L"
             textTankName.text = tankName
@@ -53,8 +53,8 @@ Item
         }
         else
         {
-            scaleAnimation.to = 0
-            scaleAnimation.from = 1
+            scaleAnimation.to = parent.width
+            scaleAnimation.from = 0
         }
 
         scaleAnimation.start()
@@ -65,21 +65,26 @@ Item
         swipeView.setCurrentIndex(index)
     }
 
-    ScaleAnimator
+    NumberAnimation
     {
         id: scaleAnimation
-        target: page_TankData
-        from: 0
-        to: 1
-        duration: 200
+        target: rectContainer
+        property: "x"
+        from: parent.width
+        to: 0
+        easing.type: Easing.OutBack
+        duration: 400
         running: false
-        onFinished: if (to === 0) page_TankData.visible = false
+        onFinished: if (to === parent.width) page_TankData.visible = false
     }
 
     Rectangle
     {
         id: rectContainer
-        anchors.fill: parent
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        width: parent.width
+        x: parent.width
         radius: AppTheme.radius * 2 * app.scale
         color: AppTheme.whiteColor
     }
@@ -98,7 +103,7 @@ Item
     Rectangle
     {
         id: rectRealContainer
-        anchors.fill: parent
+        anchors.fill: rectContainer
         anchors.bottomMargin: AppTheme.rowHeightMin * app.scale
         radius: AppTheme.radius * 2 * app.scale
         color: AppTheme.whiteColor
