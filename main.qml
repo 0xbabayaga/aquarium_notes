@@ -56,88 +56,175 @@ Window
         return 0
     }
 
-    Image
+    function showMenu(vis)
     {
-        anchors.left: parent.left
+        if (vis === true)
+            rectMainShadow.x = -AppTheme.rightWidth * app.scale
+        else
+            rectMainShadow.x = 0
+    }
+
+    SideMenu
+    {
+        id: sideMenu
         anchors.top: parent.top
-        anchors.topMargin: AppTheme.margin * app.scale
-        width: parent.width
-        height: width * 0.75
-        source: "qrc:/resources/img/back_waves.png"
+        anchors.right: parent.right
+        width: AppTheme.rightWidth * app.scale
+        height: parent.height
+
+        onSigMenuSelected:
+        {
+            showMenu(false)
+        }
     }
 
     Rectangle
     {
-        id: rectBackground
-        anchors.fill: parent
-        color: "#00000000"
+        id: rectMainShadow
+        x: 0
+        y: 0
+        width: parent.width
+        height: parent.height
 
-        Rectangle
+        Behavior on x
         {
-            id: rectHeader
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
-            height: AppTheme.rowHeightMin * app.scale
-            color: "#00000000"
-
-            Image
+            NumberAnimation
             {
-                id: imgAppIcon
-                anchors.right: parent.right
-                anchors.rightMargin: 12 * app.scale
-                anchors.verticalCenter: parent.verticalCenter
-                fillMode: Image.PreserveAspectFit
-                width: 24 * app.scale
-                height: 24 * app.scale
-                source: "qrc:/resources/img/icon_app.png"
-                mipmap: true
-
-                ColorOverlay
-                {
-                    anchors.fill: imgAppIcon
-                    source: imgAppIcon
-                    color: AppTheme.blueColor
-                }
-            }
-
-            Text
-            {
-                id: textAppName
-                anchors.left: parent.left
-                anchors.leftMargin: AppTheme.margin/2 * app.scale
-                anchors.verticalCenter: parent.verticalCenter
-                verticalAlignment: Text.AlignVCenter
-                font.family: AppTheme.fontFamily
-                font.pixelSize: AppTheme.fontNormalSize * app.scale
-                color: AppTheme.blueColor
-                text: qsTr("AQUARIUM NOTES")
+                duration: 500
+                easing.type: Easing.OutBack
             }
         }
     }
 
-    Page_Main
+    DropShadow
     {
-        id: page_Main
-        anchors.fill: rectBackground
-        visible: isAccountCreated === true
+        anchors.fill: rectMainShadow
+        horizontalOffset: 3
+        verticalOffset: 0
+        radius: 10.0 * app.scale
+        samples: 16
+        color: "#20000000"
+        source: rectMainShadow
     }
 
-    Page_AccountCreation
+    Rectangle
     {
-        id: page_AccountCreation
-        objectName: "page_AccountCreation"
-        anchors.fill: rectBackground
-        visible: isAccountCreated === false
+        id: rectMain
+        anchors.fill: rectMainShadow
 
-        onSigAppInitCompleted: isAccountCreated = true
-    }
+        Image
+        {
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.topMargin: AppTheme.margin * app.scale
+            width: parent.width
+            height: width * 0.75
+            source: "qrc:/resources/img/back_waves.png"
+        }
 
-    Page_TankData
-    {
-        id: page_TankData
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: AppTheme.rowHeightMin * app.scale
+        Rectangle
+        {
+            id: rectBackground
+            anchors.fill: parent
+            color: "#00000000"
+
+            Rectangle
+            {
+                id: rectHeader
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.right: parent.right
+                height: AppTheme.rowHeightMin * app.scale
+                color: "#00000000"
+
+                SequentialAnimation
+                {
+                    id: imgAppAnimation
+
+                    ScaleAnimator
+                    {
+                        target: imgAppIcon
+                        from: 1
+                        to: 0.95
+                        easing.type: Easing.OutBack
+                        duration: 100
+                    }
+
+                    ScaleAnimator
+                    {
+                        target: imgAppIcon
+                        from: 0.95
+                        to: 1
+                        easing.type: Easing.OutBack
+                        duration: 500
+                    }
+                }
+
+                Image
+                {
+                    id: imgAppIcon
+                    anchors.right: parent.right
+                    anchors.rightMargin: 12 * app.scale
+                    anchors.verticalCenter: parent.verticalCenter
+                    fillMode: Image.PreserveAspectFit
+                    width: 24 * app.scale
+                    height: 24 * app.scale
+                    source: "qrc:/resources/img/icon_app.png"
+                    mipmap: true
+
+                    ColorOverlay
+                    {
+                        anchors.fill: imgAppIcon
+                        source: imgAppIcon
+                        color: AppTheme.blueColor
+                    }
+
+                    MouseArea
+                    {
+                        anchors.fill: parent
+                        onPressed: imgAppAnimation.start()
+                        onReleased: showMenu(true)
+                    }
+                }
+
+                Text
+                {
+                    id: textAppName
+                    anchors.left: parent.left
+                    anchors.leftMargin: AppTheme.margin/2 * app.scale
+                    anchors.verticalCenter: parent.verticalCenter
+                    verticalAlignment: Text.AlignVCenter
+                    font.family: AppTheme.fontFamily
+                    font.pixelSize: AppTheme.fontNormalSize * app.scale
+                    color: AppTheme.blueColor
+                    text: qsTr("AQUARIUM NOTES")
+                }
+            }
+        }
+
+        Page_Main
+        {
+            id: page_Main
+            anchors.fill: rectBackground
+            visible: isAccountCreated === true
+        }
+
+        Page_AccountCreation
+        {
+            id: page_AccountCreation
+            objectName: "page_AccountCreation"
+            anchors.fill: rectBackground
+            visible: isAccountCreated === false
+
+            onSigAppInitCompleted: isAccountCreated = true
+        }
+
+        Page_TankData
+        {
+            id: page_TankData
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.verticalCenterOffset: AppTheme.rowHeightMin * app.scale
+        }
     }
 }

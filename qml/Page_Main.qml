@@ -86,7 +86,7 @@ Item
             parent: flickableContainer.parent
             anchors.top: flickableContainer.top
             anchors.left: flickableContainer.right
-            anchors.leftMargin: AppTheme.padding * app.scale
+            //anchors.leftMargin: AppTheme.padding / 2 * app.scale
             anchors.bottom: flickableContainer.bottom
 
             contentItem: Rectangle

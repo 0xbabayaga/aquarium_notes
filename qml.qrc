@@ -50,5 +50,6 @@
         <file>qml/custom/NoteView.qml</file>
         <file>resources/img/icon_arrow_down.png</file>
         <file>js/datetimeutility.js</file>
+        <file>qml/custom/SideMenu.qml</file>
     </qresource>
 </RCC>

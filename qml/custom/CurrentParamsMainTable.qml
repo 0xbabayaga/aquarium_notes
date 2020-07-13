@@ -114,20 +114,6 @@ Item
                 color: AppTheme.greyColor
                 text: qsTr("LAST MEASURED")
             }
-
-            /*
-            Text
-            {
-                anchors.right: parent.right
-                anchors.rightMargin: AppTheme.padding * app.scale
-                verticalAlignment: Text.AlignVCenter
-                height: parent.height
-                font.family: AppTheme.fontFamily
-                font.pixelSize: AppTheme.fontNormalSize * app.scale
-                color: AppTheme.greyColor
-                text: "[" +app.printDate(curParamsListView.model[0].dtNow)+ "]"
-            }
-            */
         }
 
         Rectangle
@@ -213,7 +199,7 @@ Item
                         width: 12 * app.scale
                         height: width
                         radius: height/2
-                        color: formattedColor(paramId, valueNow) //AppTheme.hideColor
+                        color: formattedColor(paramId, valueNow)
                     }
                 }
             }
