@@ -7,9 +7,27 @@ import "../"
 Item
 {
     id: sideMenu
-    width: AppTheme.rightWidth * app.scale
 
     signal sigMenuSelected(int id)
+
+    property bool isOpened: false
+
+    function showMenu(vis)
+    {
+        showAnimation.stop()
+        hideAnimation.stop()
+
+        if (vis === true)
+        {
+            showAnimation.start()
+            isOpened = true
+        }
+        else
+        {
+            hideAnimation.start()
+            isOpened = false
+        }
+    }
 
     ListModel
     {
@@ -21,32 +39,143 @@ Item
         ListElement {   name: qsTr("UTILITY");      en: false   }
     }
 
+    SequentialAnimation
+    {
+        id: showAnimation
+
+        onStarted:
+        {
+            shadowEffect.visible = true
+            rectShadow.visible = true
+        }
+
+        NumberAnimation
+        {
+            target: rectShadow
+            property: "opacity"
+            from: 0
+            to: 1
+            duration: 200
+        }
+
+        NumberAnimation
+        {
+            target: rectShadow
+            property: "anchors.leftMargin"
+            from: -AppTheme.rowHeightMin * app.scale
+            to: -AppTheme.rightWidth * app.scale
+            duration: 200
+            //easing.type: Easing.InBack
+        }
+    }
+
+    SequentialAnimation
+    {
+        id: hideAnimation
+
+        onFinished:
+        {
+           shadowEffect.visible = false
+           rectShadow.visible = false
+        }
+
+        NumberAnimation
+        {
+            target: rectShadow
+            property: "anchors.leftMargin"
+            from: -AppTheme.rightWidth * app.scale
+            to: -AppTheme.rowHeightMin * app.scale
+            duration: 200
+            //easing.type: Easing.InBack
+        }
+
+        NumberAnimation
+        {
+            target: rectShadow
+            property: "opacity"
+            from: 1
+            to: 0
+            duration: 200
+        }
+    }
+
     Rectangle
     {
+        id: rectBackground
         anchors.top: parent.top
-        anchors.right: parent.right
-        width: parent.width
-        height: parent.width
+        anchors.left: parent.left
+        anchors.right: rectShadow.left
+        height: parent.height
+        opacity: rectShadow.opacity
+        visible: rectShadow.visible
+        color: AppTheme.backLightBlueColor
+
+        MouseArea
+        {
+            anchors.fill: parent
+        }
+    }
+
+    Rectangle
+    {
+        id: rectShadow
+        anchors.top: parent.top
+        anchors.left: parent.right
+        anchors.leftMargin: -AppTheme.rowHeightMin * app.scale
+        width: AppTheme.rightWidth * app.scale
+        height: parent.height
         color: AppTheme.whiteColor
+        visible: false
+    }
+
+    DropShadow
+    {
+        id: shadowEffect
+        anchors.fill: rectShadow
+        horizontalOffset: -10
+        verticalOffset: 0
+        radius: 8.0 * app.scale
+        samples: 8 * app.scale
+        color: "#10000000"
+        source: rectShadow
+        opacity: rectShadow.opacity
+        visible: false
+    }
+
+    Rectangle
+    {
+        anchors.fill: rectShadow
+        color: AppTheme.whiteColor
+        visible: rectShadow.visible
+        opacity: rectShadow.opacity
 
         Rectangle
         {
-            id: rectAccountPhoto
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-            width: AppTheme.margin * 3 * app.scale
-            height: width
-            radius: width / 2
-            border.width: 2 * app.scale
-            border.color: AppTheme.blueColor
-            color: AppTheme.backLightBlueColor
+            id: rectHeader
+            anchors.top: parent.top
+            anchors.left: parent.left
+            height: parent.width
+            width: parent.width
+
+            Rectangle
+            {
+                id: rectAccountPhoto
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                width: AppTheme.margin * 3 * app.scale
+                height: width
+                radius: width / 2
+                border.width: 2 * app.scale
+                border.color: AppTheme.blueColor
+                color: AppTheme.backLightBlueColor
+            }
 
             Text
             {
                 id: textAccountName
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: rectAccountPhoto.bottom
-                anchors.topMargin: AppTheme.padding * app.scale
+                anchors.topMargin: AppTheme.padding / 2 * app.scale
                 height: AppTheme.compHeight * app.scale
                 verticalAlignment: Text.AlignBottom
                 font.family: AppTheme.fontFamily
@@ -67,93 +196,165 @@ Item
                 color: AppTheme.greyColor
                 text: "john.wick007@gmail.com"
             }
+
+            Rectangle
+            {
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.bottom: parent.bottom
+                width: parent.width
+                height: 2 * app.scale
+                color: AppTheme.backLightBlueColor
+            }
         }
 
         Rectangle
         {
-            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: rectHeader.bottom
+            anchors.topMargin: AppTheme.margin * app.scale
             anchors.bottom: parent.bottom
             width: parent.width
-            height: 2 * app.scale
-            color: AppTheme.backLightBlueColor
-        }
-    }
+            height: menuListModel.count * AppTheme.rowHeightMin * app.scale
 
-    Rectangle
-    {
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: AppTheme.margin * app.scale
-        width: parent.width
-        height: menuListModel.count * AppTheme.rowHeightMin * app.scale
-
-        ListView
-        {
-            anchors.fill: parent
-            spacing: 0
-            interactive: false
-            model: menuListModel
-
-            delegate: Rectangle
+            ListView
             {
-                id: rectCeil
-                width: parent.width
-                height: AppTheme.rowHeightMin * app.scale
-                color: AppTheme.whiteColor
+                anchors.fill: parent
+                spacing: 0
+                interactive: false
+                model: menuListModel
 
-                Behavior on color { ColorAnimation { duration: 200 }    }
-
-                Text
+                delegate: Rectangle
                 {
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.left: parent.left
-                    anchors.leftMargin: AppTheme.margin * 3 * app.scale
-                    anchors.right: parent.right
+                    id: rectCeil
+                    width: parent.width
                     height: AppTheme.rowHeightMin * app.scale
-                    verticalAlignment: Text.AlignVCenter
-                    font.family: AppTheme.fontFamily
-                    font.pixelSize: AppTheme.fontNormalSize * app.scale
-                    color: AppTheme.blueColor
-                    text: name
-                }
+                    color: AppTheme.whiteColor
 
-                SequentialAnimation
-                {
-                    id: rectCeilAnimation
+                    Behavior on color { ColorAnimation { duration: 200 }    }
 
-                    ScaleAnimator
+                    Image
                     {
-                        target: rectCeil
-                        from: 1
-                        to: 0.95
-                        easing.type: Easing.OutBack
-                        duration: 100
+                        id: img
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: parent.left
+                        anchors.leftMargin: AppTheme.margin * 2 * app.scale
+                        fillMode: Image.PreserveAspectFit
+                        width: 16 * app.scale
+                        height: 16 * app.scale
+                        source: "qrc:/resources/img/icon_app.png"
+                        mipmap: true
                     }
 
-                    ScaleAnimator
+                    ColorOverlay
                     {
-                        target: rectCeil
-                        from: 0.95
-                        to: 1
-                        easing.type: Easing.OutBack
-                        duration: 500
+                        anchors.fill: img
+                        source: img
+                        color: AppTheme.blueColor
                     }
-                }
 
-                MouseArea
-                {
-                    anchors.fill: parent
-                    onPressed:
+                    Text
                     {
-                        rectCeilAnimation.start()
-                        color = AppTheme.lightBlueColor
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: parent.left
+                        anchors.leftMargin: AppTheme.margin * 3 * app.scale
+                        anchors.right: parent.right
+                        height: AppTheme.rowHeightMin * app.scale
+                        verticalAlignment: Text.AlignVCenter
+                        font.family: AppTheme.fontFamily
+                        font.pixelSize: AppTheme.fontNormalSize * app.scale
+                        color: AppTheme.blueColor
+                        text: name
                     }
-                    onReleased:
+
+                    SequentialAnimation
                     {
-                        sigMenuSelected(index)
-                        color = AppTheme.whiteColor
+                        id: rectCeilAnimation
+
+                        ScaleAnimator
+                        {
+                            target: rectCeil
+                            from: 1
+                            to: 0.95
+                            easing.type: Easing.OutBack
+                            duration: 100
+                        }
+
+                        ScaleAnimator
+                        {
+                            target: rectCeil
+                            from: 0.95
+                            to: 1
+                            easing.type: Easing.OutBack
+                            duration: 500
+                        }
+                    }
+
+                    MouseArea
+                    {
+                        anchors.fill: parent
+                        onPressed:
+                        {
+                            rectCeilAnimation.start()
+                            color = AppTheme.lightBlueColor
+                        }
+                        onReleased:
+                        {
+                            showMenu(false)
+                            color = AppTheme.whiteColor
+                        }
                     }
                 }
             }
+        }
+    }
+
+    Image
+    {
+        id: imgAppIcon
+        anchors.left: rectShadow.left
+        anchors.leftMargin: 12 * app.scale
+        anchors.top: parent.top
+        anchors.topMargin: 12 * app.scale
+        fillMode: Image.PreserveAspectFit
+        width: 24 * app.scale
+        height: 24 * app.scale
+        source: "qrc:/resources/img/icon_app.png"
+        mipmap: true
+
+        ColorOverlay
+        {
+            anchors.fill: imgAppIcon
+            source: imgAppIcon
+            color: AppTheme.blueColor
+        }
+
+        SequentialAnimation
+        {
+            id: imgAppAnimation
+
+            ScaleAnimator
+            {
+                target: imgAppIcon
+                from: 1
+                to: 0.95
+                easing.type: Easing.OutBack
+                duration: 100
+            }
+
+            ScaleAnimator
+            {
+                target: imgAppIcon
+                from: 0.95
+                to: 1
+                easing.type: Easing.OutBack
+                duration: 500
+            }
+        }
+
+        MouseArea
+        {
+            anchors.fill: parent
+            onPressed: imgAppAnimation.start()
+            onReleased: showMenu(!isOpened)
         }
     }
 }

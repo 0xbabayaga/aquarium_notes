@@ -10,7 +10,7 @@ QtObject
     property int margin: 32
     property int radius: 8
 
-    property int rightWidth: 261
+    property int rightWidth: 240
     property int leftWidth: 82
     property int rowHeightMin: 48
     property int rowHeight: 64

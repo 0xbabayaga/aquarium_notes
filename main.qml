@@ -56,61 +56,10 @@ Window
         return 0
     }
 
-    function showMenu(vis)
-    {
-        if (vis === true)
-            rectMainShadow.x = -AppTheme.rightWidth * app.scale
-        else
-            rectMainShadow.x = 0
-    }
-
-    SideMenu
-    {
-        id: sideMenu
-        anchors.top: parent.top
-        anchors.right: parent.right
-        width: AppTheme.rightWidth * app.scale
-        height: parent.height
-
-        onSigMenuSelected:
-        {
-            showMenu(false)
-        }
-    }
-
-    Rectangle
-    {
-        id: rectMainShadow
-        x: 0
-        y: 0
-        width: parent.width
-        height: parent.height
-
-        Behavior on x
-        {
-            NumberAnimation
-            {
-                duration: 500
-                easing.type: Easing.OutBack
-            }
-        }
-    }
-
-    DropShadow
-    {
-        anchors.fill: rectMainShadow
-        horizontalOffset: 3
-        verticalOffset: 0
-        radius: 10.0 * app.scale
-        samples: 16
-        color: "#20000000"
-        source: rectMainShadow
-    }
-
     Rectangle
     {
         id: rectMain
-        anchors.fill: rectMainShadow
+        anchors.fill: parent
 
         Image
         {
@@ -136,56 +85,6 @@ Window
                 anchors.right: parent.right
                 height: AppTheme.rowHeightMin * app.scale
                 color: "#00000000"
-
-                SequentialAnimation
-                {
-                    id: imgAppAnimation
-
-                    ScaleAnimator
-                    {
-                        target: imgAppIcon
-                        from: 1
-                        to: 0.95
-                        easing.type: Easing.OutBack
-                        duration: 100
-                    }
-
-                    ScaleAnimator
-                    {
-                        target: imgAppIcon
-                        from: 0.95
-                        to: 1
-                        easing.type: Easing.OutBack
-                        duration: 500
-                    }
-                }
-
-                Image
-                {
-                    id: imgAppIcon
-                    anchors.right: parent.right
-                    anchors.rightMargin: 12 * app.scale
-                    anchors.verticalCenter: parent.verticalCenter
-                    fillMode: Image.PreserveAspectFit
-                    width: 24 * app.scale
-                    height: 24 * app.scale
-                    source: "qrc:/resources/img/icon_app.png"
-                    mipmap: true
-
-                    ColorOverlay
-                    {
-                        anchors.fill: imgAppIcon
-                        source: imgAppIcon
-                        color: AppTheme.blueColor
-                    }
-
-                    MouseArea
-                    {
-                        anchors.fill: parent
-                        onPressed: imgAppAnimation.start()
-                        onReleased: showMenu(true)
-                    }
-                }
 
                 Text
                 {
@@ -226,5 +125,14 @@ Window
             anchors.verticalCenter: parent.verticalCenter
             anchors.verticalCenterOffset: AppTheme.rowHeightMin * app.scale
         }
+    }
+
+    SideMenu
+    {
+        id: sideMenu
+        anchors.top: parent.top
+        anchors.right: parent.right
+        width: parent.width
+        height: parent.height
     }
 }
