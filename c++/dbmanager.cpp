@@ -277,6 +277,7 @@ void DBManager::setAndroidFlag(bool flag)
 void DBManager::setGalleryImageSelected(QString imgUrl)
 {  
     setQmlParam("imageList", "galleryImageSelected", imgUrl);
+    setQmlParam("imgUserAvatar", "galleryImageSelected", imgUrl);
 }
 
 void DBManager::setCurrentUser(QString uname, QString email, QString imgLink)
@@ -880,7 +881,7 @@ bool DBManager::editUser(QString uname, QString upass, QString phone, QString em
     {
         if (img.length() > 0)
         {
-            if (img.contains(":/") == true)
+            if (img.contains(".jpg") == true || img.contains(".png") == true)
             {
                 QImage src(img);
                 QImage resized = src.scaled(USER_IMAGE_WIDTH, USER_IMAGE_HEIGHT, Qt::KeepAspectRatio);

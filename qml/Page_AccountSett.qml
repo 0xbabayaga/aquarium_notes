@@ -270,6 +270,7 @@ Item
                     ImageList
                     {
                         id: imgUserAvatar
+                        objectName: "imgUserAvatar"
                         imagesCountMax: 1
                     }
                 }
