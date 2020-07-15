@@ -169,7 +169,7 @@ Item
                 width: AppTheme.margin * 3 * app.scale
                 height: width
                 radius: width / 2
-                border.width: 3 * app.scale
+                border.width: 2 * app.scale
                 border.color: AppTheme.blueColor
                 color: AppTheme.backLightBlueColor
 
@@ -177,6 +177,7 @@ Item
                 {
                     id: imgAccount
                     anchors.fill: parent
+                    anchors.margins: 2 * app.scale
                     source: ""
                     mipmap: true
                     layer.enabled: true

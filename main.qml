@@ -159,6 +159,7 @@ Window
             if (id === AppDefs.Menu_Account)
             {
                 page_Main.showPage(false)
+                page_AccountSett.moveToEdit(false)
                 page_AccountSett.showPage(true)
             }
         }

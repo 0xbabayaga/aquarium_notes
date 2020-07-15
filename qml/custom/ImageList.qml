@@ -27,7 +27,17 @@ Item
     function addImageToList(imgUrl)
     {
         if (listOfImages.count < imagesCountMax)
-            listOfImages.append({ "fileLink": imgUrl})
+            listOfImages.append({ "fileLink": imgUrl,   "base64data": ""})
+
+        resize()
+
+        galleryImageSelected = ""
+    }
+
+    function addBase64ImageToList(img64)
+    {
+        if (listOfImages.count < imagesCountMax)
+            listOfImages.append({ "fileLink": "",   "base64data": img64})
 
         resize()
 
@@ -41,6 +51,16 @@ Item
             listOfImages.remove(index, 1)
             resize()
         }
+    }
+
+    function getSource(link, base64)
+    {
+        if (link !== "")
+            return "file:///" + link
+        else if (base64 !== "")
+            return "data:image/png;base64," + base64
+        else
+            return ""
     }
 
     function resize()
@@ -80,7 +100,7 @@ Item
             Image
             {
                 anchors.fill: parent
-                source: (fileLink === "") ? "" : "file:///" + fileLink
+                source: getSource(fileLink, base64data)
                 mipmap: true
                 layer.enabled: true
                 layer.effect: OpacityMask

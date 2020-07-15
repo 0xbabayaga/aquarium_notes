@@ -143,7 +143,8 @@ DBManager::DBManager(QQmlApplicationEngine *engine, QObject *parent) : QObject(p
 
 DBManager::~DBManager()
 {
-    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateAccount(QString, QString, QString, QString)), this, SLOT(onUserCreate(QString, QString, QString, QString)));
+    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateAccount(QString, QString, QString, QString)), this, SLOT(onGuiUserCreate(QString, QString, QString, QString)));
+    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigEditAccount(QString, QString, QString, QString)), this, SLOT(onGuiUserEdit(QString, QString, QString, QString)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateTank(QString, int, int, int, int)), this, SLOT(onGuiTankCreate(QString, int, int, int, int)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecord(int, int, float)), this, SLOT(onGuiAddRecord(int, int, float)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigEditRecord(int, int, double)), this, SLOT(onGuiEditRecord(int, int, double)));
@@ -170,6 +171,7 @@ DBManager::~DBManager()
 void DBManager::init()
 {
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateAccount(QString, QString, QString, QString)), this, SLOT(onGuiUserCreate(QString, QString, QString, QString)));
+    connect(qmlEngine->rootObjects().first(), SIGNAL(sigEditAccount(QString, QString, QString, QString)), this, SLOT(onGuiUserEdit(QString, QString, QString, QString)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateTank(QString, int, int, int, int, QString)), this, SLOT(onGuiTankCreate(QString, int, int, int, int, QString)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecord(int, int, double)), this, SLOT(onGuiAddRecord(int, int, double)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigEditRecord(int, int, double)), this, SLOT(onGuiEditRecord(int, int, double)));
@@ -258,47 +260,23 @@ TankObj *DBManager::currentTankSelected()
 
 void DBManager::setInitialDialogStage(int stage, QString name)
 {
-    QObject *obj = nullptr;
-
-    obj = qmlEngine->rootObjects().first()->findChild<QObject*>("page_AccountWizard");
-
-    if (obj != nullptr)
-    {
-        obj->setProperty("stage", stage);
-        obj->setProperty("currentUName", name);
-    }
+    setQmlParam("page_AccountWizard", "stage", stage);
+    setQmlParam("page_AccountWizard", "currentUName", name);
 }
 
 void DBManager::setLastSmpId(int id)
 {
-    QObject *obj = nullptr;
-
-    obj = qmlEngine->rootObjects().first();
-
-    if (obj != nullptr)
-        obj->setProperty("lastSmpId", id);
+    setQmlParam("app", "lastSmpId", id);
 }
 
 void DBManager::setAndroidFlag(bool flag)
-{
-    QObject *obj = nullptr;
-
-    obj = qmlEngine->rootObjects().first();
-
-    if (obj != nullptr)
-        obj->setProperty("isAndro", flag);
+{    
+    setQmlParam("app", "isAndro", flag);
 }
 
 void DBManager::setGalleryImageSelected(QString imgUrl)
-{
-    QObject *obj = nullptr;
-
-    obj = qmlEngine->rootObjects().first()->findChild<QObject*>("imageList");
-
-    if (obj != nullptr)
-        obj->setProperty("galleryImageSelected", imgUrl);
-    else
-        qDebug() << "Cannot find imageList object";
+{  
+    setQmlParam("imageList", "galleryImageSelected", imgUrl);
 }
 
 void DBManager::setCurrentUser(QString uname, QString email, QString imgLink)
@@ -378,10 +356,20 @@ void DBManager::onQmlEngineLoaded(QObject *object, const QUrl &url)
 
 void DBManager::onGuiUserCreate(QString uname, QString upass, QString email, QString img)
 {
-    if (createUser(uname, upass, "123", email, img) == true)
+    if (createUser(uname, upass, "", email, img) == true)
     {
         getCurrentUser();
         setInitialDialogStage(AppDef::AppInit_UserExist, curSelectedObjs.user->uname);
+    }
+}
+
+void DBManager::onGuiUserEdit(QString uname, QString upass, QString email, QString img)
+{
+    if (editUser(uname, upass, "", email, img) == true)
+    {
+        getCurrentUser();
+
+        setCurrentUser(curSelectedObjs.user->uname, curSelectedObjs.user->email, curSelectedObjs.user->avatar_img);
     }
 }
 
@@ -837,10 +825,9 @@ bool DBManager::createUser(QString uname, QString upass, QString phone, QString 
 {
     QByteArray base64Img = 0;
 
-    if (uname.length() > 0 && uname.length() <= 64 &&
-        upass.length() > 0 && upass.length() <= 128 &&
-        phone.length() > 0 && phone.length() <= 16 &&
-        email.length() > 0 && email.length() <= 64)
+    if (uname.length() > 0 && uname.length() <= USER_NAME_SIZE &&
+        upass.length() > 0 && upass.length() <= USER_PASS_SIZE &&
+        email.length() > 0 && email.length() <= USER_EMAIL_SIZE)
     {
         QSqlQuery query;
         bool res = false;
@@ -848,7 +835,7 @@ bool DBManager::createUser(QString uname, QString upass, QString phone, QString 
         if (img.length() > 0)
         {
             QImage src(img.replace("file:///", ""));
-            QImage resized = src.scaled(512, 512, Qt::KeepAspectRatio);
+            QImage resized = src.scaled(USER_IMAGE_WIDTH, USER_IMAGE_HEIGHT, Qt::KeepAspectRatio);
             QByteArray ba;
             QBuffer buf(&ba);
             resized.save(&buf, "png");
@@ -883,51 +870,46 @@ bool DBManager::createUser(QString uname, QString upass, QString phone, QString 
 
 bool DBManager::editUser(QString uname, QString upass, QString phone, QString email, QString img)
 {
-    /*
-    QByteArray base64Img = 0;
+    QString base64ImgString = "";
+    QSqlQuery query;
+    bool res = false;
 
-    if (uname.length() > 0 && uname.length() <= 64 &&
-        upass.length() > 0 && upass.length() <= 128 &&
-        phone.length() > 0 && phone.length() <= 16 &&
-        email.length() > 0 && email.length() <= 64)
+    if (uname.length() > 0 && uname.length() <= USER_NAME_SIZE &&
+        upass.length() > 0 && upass.length() <= USER_PASS_SIZE &&
+        email.length() > 0 && email.length() <= USER_EMAIL_SIZE)
     {
-        QSqlQuery query;
-        bool res = false;
-
         if (img.length() > 0)
         {
-            QImage src(img.replace("file:///", ""));
-            QImage resized = src.scaled(512, 512, Qt::KeepAspectRatio);
-            QByteArray ba;
-            QBuffer buf(&ba);
-            resized.save(&buf, "png");
-            base64Img = ba.toBase64();
-            buf.close();
+            if (img.contains(":/") == true)
+            {
+                QImage src(img);
+                QImage resized = src.scaled(USER_IMAGE_WIDTH, USER_IMAGE_HEIGHT, Qt::KeepAspectRatio);
+                QByteArray ba;
+                QBuffer buf(&ba);
+                resized.save(&buf, "png");
+                base64ImgString = QString(ba.toBase64());
+                buf.close();
+            }
+            else
+                base64ImgString = img;
         }
 
-        query.prepare("INSERT INTO USER_TABLE (MAN_ID, UNAME, UPASS, SELECTED, STATUS, PHONE, EMAIL, AVATAR_IMG, DATE_CREATE, DATE_EDIT) "
-                      "VALUES (:man_id, :uname, :upass, :selected, :status, :phone, :email, :avatar_img, :date_create, :date_edit)");
-
-        query.bindValue(":man_id", randId());
-        query.bindValue(":uname", uname);
-        query.bindValue(":upass", upass);
-        query.bindValue(":selected", true);
-        query.bindValue(":status", UStatus_Enabled);
-        query.bindValue(":phone", phone);
-        query.bindValue(":email", email);
-        query.bindValue(":avatar_img", QString(base64Img));
-        query.bindValue(":date_create", QDateTime::currentSecsSinceEpoch());
-        query.bindValue(":date_edit", QDateTime::currentSecsSinceEpoch());
+        query.prepare("UPDATE USER_TABLE SET "
+                      "UNAME = '" + uname + "', "
+                      "UPASS = '" + upass + "', "
+                      "EMAIL = '" + email + "', "
+                      "AVATAR_IMG = '" + base64ImgString + "', "
+                      "DATE_EDIT = '" + QString::number(QDateTime::currentSecsSinceEpoch()) + "' "
+                      "WHERE MAN_ID = '" + curSelectedObjs.user->man_id + "'");
 
         res = query.exec();
 
         if (res == false)
-            qDebug() << "Create user error: " << query.lastError();
+            qDebug() << "Edit user error: " << query.lastError();
 
         return res;
     }
     else
-    */
         return false;
 }
 

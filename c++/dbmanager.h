@@ -14,6 +14,12 @@
 #define DIAGRAMM_DRAW_GAP_TOP       0.30  //Means +20% of full scale
 #define DIAGRAMM_DRAW_GAP_BOTTOM    0.30  //Means +20% of full scale
 
+#define USER_IMAGE_WIDTH            256
+#define USER_IMAGE_HEIGHT           256
+#define USER_PASS_SIZE              16
+#define USER_NAME_SIZE              32
+#define USER_EMAIL_SIZE             64
+
 typedef enum
 {
     UStatus_Disabled = 0,
@@ -59,7 +65,6 @@ private:
     bool    editPersonalParamState(QString tankId, int paramId, bool en);
 
     /* Read basics */
-    //bool    getParamsList();
     bool    getParamsList(QString tankId, AquariumType type);
     bool    getHistoryParams();
     int     getLastSmpId();
@@ -105,6 +110,7 @@ private:
 public slots:
     void    onQmlEngineLoaded(QObject *object, const QUrl &url);
     void    onGuiUserCreate(QString uname, QString upass, QString email, QString img);
+    void    onGuiUserEdit(QString uname, QString upass, QString email, QString img);
     void    onGuiTankCreate(QString name, int type, int l, int w, int h, QString imgFile);
     void    onGuiAddRecord(int smpId, int paramId, double value);
     void    onGuiEditRecord(int smpId, int paramId, double value);
