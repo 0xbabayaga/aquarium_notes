@@ -36,9 +36,18 @@ public:
         ActionView_ThisMonth = 3
     };
 
+    enum EnumMenuSelected
+    {
+        Menu_None = 0,
+        Menu_Account = 1,
+        Menu_TankInfo = 2,
+        Menu_Settings = 3
+    };
+
     Q_ENUMS(AppInitEnum)
     Q_ENUMS(EnumActionRepeat)
     Q_ENUMS(EnumActionViewPeriod)
+    Q_ENUMS(EnumMenuSelected)
 
     static void declareQML()
     {

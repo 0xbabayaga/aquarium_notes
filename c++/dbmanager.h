@@ -45,7 +45,8 @@ private:
     /* Database management */
     void    init();
     bool    initDB();
-    bool    createUser(QString uname, QString upass, QString phone, QString email);
+    bool    createUser(QString uname, QString upass, QString phone, QString email, QString img);
+    bool    editUser(QString uname, QString upass, QString phone, QString email, QString img);
     bool    createTank(QString name, QString manId, int type, int l, int w, int h, QString imgFile);
     bool    createTankDefaultParamSet(QString tankId, AquariumType type);
     bool    addParamRecord(int smpId, int paramId, double value);
@@ -77,10 +78,12 @@ private:
 
 private:
     /* Gui methods */
+    bool    setQmlParam(QString objName, QString name, QVariant value);
     void    setInitialDialogStage(int stage, QString name);
     void    setLastSmpId(int id);
     void    setGalleryImageSelected(QString imgUrl);
     void    setAndroidFlag(bool flag);
+    void    setCurrentUser(QString uname, QString email, QString imgLink);
 
     /* Gui diagram drawing */
     void    clearDiagrams();
@@ -89,6 +92,7 @@ private:
 
     static bool    less(QObject *v1, QObject *v2);
     QString createDbImgFileName(int i);
+    QString createDbImgAccountFileName();
     QString getImgDbFolder()
     {
         #ifdef  Q_OS_ANDROID
@@ -100,7 +104,7 @@ private:
 
 public slots:
     void    onQmlEngineLoaded(QObject *object, const QUrl &url);
-    void    onGuiUserCreate(QString uname, QString upass, QString email);
+    void    onGuiUserCreate(QString uname, QString upass, QString email, QString img);
     void    onGuiTankCreate(QString name, int type, int l, int w, int h, QString imgFile);
     void    onGuiAddRecord(int smpId, int paramId, double value);
     void    onGuiEditRecord(int smpId, int paramId, double value);

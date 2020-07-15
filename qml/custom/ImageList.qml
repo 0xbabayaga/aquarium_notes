@@ -130,6 +130,7 @@ Item
         id: buttonAddImage
         anchors.left: imagesListView.right
         image: "qrc:/resources/img/icon_photo.png"
+        enabled: imagesListView.model.count < imageList.imagesCountMax
 
         onSigButtonClicked:
         {

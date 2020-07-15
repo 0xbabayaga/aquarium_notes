@@ -8,7 +8,7 @@ import AppDefs 1.0
 
 Item
 {
-    id: page_AccountCreation
+    id: page_AccountWizard
 
     property string currentUName: qsTr("User")
     property int stage: -1
@@ -26,7 +26,7 @@ Item
 
         if (page === AppDefs.AppInit_Completed)
         {
-            page_AccountCreation.visible = false
+            page_AccountWizard.visible = false
             sigAppInitCompleted()
         }
 
@@ -101,18 +101,16 @@ Item
                         color: AppTheme.greyColor
                         text: qsTr("There is no active account found")
                     }
+                }
 
-                    Item { height: 1; width: 1;}
-                    Item { height: 1; width: 1;}
+                IconSimpleButton
+                {
+                    id: buttonGoToAccount
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: AppTheme.margin * app.scale
+                    anchors.horizontalCenter: parent.horizontalCenter
 
-                    StandardButton
-                    {
-                        id: buttonGoToAccount
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        bText: qsTr("CREATE")
-
-                        onSigButtonClicked: page_AccountCreation.openAccountDialog(1)
-                     }
+                    onSigButtonClicked: page_AccountWizard.openAccountDialog(1)
                 }
             }
 
@@ -144,7 +142,7 @@ Item
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontBigSize * app.scale
                         color: AppTheme.blueColor
-                        text: qsTr("Creating account:")
+                        text: qsTr("Creating account")
                     }
 
                     Item { height: 1; width: 1;}
@@ -154,6 +152,7 @@ Item
                         id: textUserName
                         placeholderText: qsTr("User name")
                         width: parent.width
+                        maximumLength: AppTheme.textMaxLength32
                         focus: true
                         KeyNavigation.tab: textUserEmail
                     }
@@ -165,6 +164,7 @@ Item
                         id: textUserEmail
                         placeholderText: qsTr("User email")
                         width: parent.width
+                        maximumLength: AppTheme.textMaxLength64
                         focus: true
                         KeyNavigation.tab: textUserPass
                     }
@@ -176,47 +176,60 @@ Item
                         id: textUserPass
                         placeholderText: qsTr("User password")
                         width: parent.width
+                        maximumLength: AppTheme.textMaxLength16
                         focus: true
                         KeyNavigation.tab: buttonCancel
                     }
 
                     Item { height: 1; width: 1;}
-                    Item { height: 1; width: 1;}
-                    Item { height: 1; width: 1;}
 
-                    Rectangle
+                    Text
                     {
-                        width: parent.width
-                        height: AppTheme.compHeight * app.scale
+                        verticalAlignment: Text.AlignVCenter
+                        font.family: AppTheme.fontFamily
+                        font.pixelSize: AppTheme.fontNormalSize * app.scale
+                        color: AppTheme.blueColor
+                        text: qsTr("User photo")
+                    }
 
-                        StandardButton
-                        {
-                            id: buttonCancel
-                            anchors.left: parent.left
-                            width: 130 * app.scale
-                            bText: qsTr("CANCEL")
-                            focus: true
-                            KeyNavigation.tab: buttonCreate
+                    ImageList
+                    {
+                        id: imgAccountAvatar
+                        imagesCountMax: 1
+                    }
+                }
 
-                            onSigButtonClicked: page_AccountCreation.openAccountDialog(0)
-                        }
+                IconSimpleButton
+                {
+                    id: buttonCancel
+                    anchors.left: parent.left
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: AppTheme.margin * app.scale
+                    image: "qrc:/resources/img/icon_cancel.png"
+                    KeyNavigation.tab: buttonCreate
 
-                        StandardButton
-                        {
-                            id: buttonCreate
-                            anchors.right: parent.right
-                            width: 130 * app.scale
-                            bText: qsTr("CREATE")
-                            focus: true
-                            KeyNavigation.tab: textUserName
+                    onSigButtonClicked: page_AccountWizard.openAccountDialog()
+                }
 
-                            onSigButtonClicked:
-                            {
-                                app.sigCreateAccount(textUserName.text,
-                                                     textUserPass.text,
-                                                     textUserEmail.text)
-                            }
-                        }
+                IconSimpleButton
+                {
+                    id: buttonCreate
+                    anchors.right: parent.right
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: AppTheme.margin * app.scale
+                    KeyNavigation.tab: textUserName
+
+                    onSigButtonClicked:
+                    {
+                        var imgLink = ""
+
+                        if (imgAccountAvatar.selectedImagesList.count > 0)
+                            imgLink = imgAccountAvatar.selectedImagesList.get(0).fileLink
+
+                        app.sigCreateAccount(textUserName.text,
+                                             textUserPass.text,
+                                             textUserEmail.text,
+                                             imgLink)
                     }
                 }
             }
@@ -260,23 +273,20 @@ Item
                         color: AppTheme.greyColor
                         text: qsTr("There is no active tank found")
                     }
+                }
 
-                    Item { height: 1; width: 1;}
-                    Item { height: 1; width: 1;}
+                IconSimpleButton
+                {
+                    id: buttonGoToTank
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: AppTheme.margin * app.scale
+                    anchors.horizontalCenter: parent.horizontalCenter
 
-                    StandardButton
+                    onSigButtonClicked:
                     {
-                        id: buttonGoToTank
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        bText: qsTr("CREATE")
-
-                        onSigButtonClicked:
-                        {
-                            stage = AppDefs.AppInit_CreateTank
-                            textTankName.forceActiveFocus()
-                            app.sigDebug()
-                        }
-                     }
+                        stage = AppDefs.AppInit_CreateTank
+                        textTankName.forceActiveFocus()
+                    }
                 }
             }
 
@@ -295,7 +305,7 @@ Item
                 {
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
-                    anchors.verticalCenterOffset: 60 * app.scale
+                    anchors.verticalCenterOffset: 32 * app.scale
                     height: 300 * app.scale
                     width: parent.width
                     spacing: AppTheme.padding * app.scale
@@ -308,7 +318,7 @@ Item
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontBigSize * app.scale
                         color: AppTheme.blueColor
-                        text: qsTr("Creating tank:")
+                        text: qsTr("Creating tank profile")
                     }
 
                     Item { height: 1; width: 1;}
@@ -403,7 +413,6 @@ Item
                         }
                     }
 
-
                     Item { height: 1; width: 1;}
 
                     ComboList
@@ -417,45 +426,55 @@ Item
 
                     Item { height: 1; width: 1;}
 
-
-                    Item { height: 1; width: 1;}
-                    Item { height: 1; width: 1;}
-
-                    Rectangle
+                    Text
                     {
-                        width: parent.width
-                        height: AppTheme.compHeight * app.scale
+                        verticalAlignment: Text.AlignVCenter
+                        font.family: AppTheme.fontFamily
+                        font.pixelSize: AppTheme.fontNormalSize * app.scale
+                        color: AppTheme.blueColor
+                        text: qsTr("Tank image")
+                    }
 
-                        StandardButton
-                        {
-                            id: buttonCancel2
-                            anchors.left: parent.left
-                            width: 130 * app.scale
-                            bText: qsTr("CANCEL")
-                            KeyNavigation.tab: buttonCreate2
+                    ImageList
+                    {
+                        id: imgTankAvatar
+                        imagesCountMax: 1
+                    }
+                }
 
-                            onSigButtonClicked: page_AccountCreation.openAccountDialog(2)
-                        }
+                IconSimpleButton
+                {
+                    id: buttonCancel2
+                    anchors.left: parent.left
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: AppTheme.margin * app.scale
+                    image: "qrc:/resources/img/icon_cancel.png"
+                    KeyNavigation.tab: buttonCreate2
 
-                        StandardButton
-                        {
-                            id: buttonCreate2
-                            anchors.right: parent.right
-                            width: 130 * app.scale
-                            bText: qsTr("CREATE")
-                            KeyNavigation.tab: textTankName
+                    onSigButtonClicked: page_AccountWizard.openAccountDialog(2)
+                }
 
-                            onSigButtonClicked:
-                            {
-                                app.sigCreateTank(textTankName.text,
-                                                  comboTankType.currentIndex,
-                                                  textTankL.text,
-                                                  textTankW.text,
-                                                  textTankH.text,
-                                                  ""//imagesList.getSelectedImageLink()
-                                                  )
-                            }
-                        }
+                IconSimpleButton
+                {
+                    id: buttonCreate2
+                    anchors.right: parent.right
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: AppTheme.margin * app.scale
+                    KeyNavigation.tab: textTankName
+
+                    onSigButtonClicked:
+                    {
+                        var imgLink = ""
+
+                        if (imgTankAvatar.selectedImagesList.count > 0)
+                            imgLink = imgTankAvatar.selectedImagesList.get(0).fileLink
+
+                        app.sigCreateTank(textTankName.text,
+                                          comboTankType.currentIndex,
+                                          textTankL.text,
+                                          textTankW.text,
+                                          textTankH.text,
+                                          imgLink)
                     }
                 }
             }

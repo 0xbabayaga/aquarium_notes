@@ -2,6 +2,7 @@ import QtQuick 2.12
 import QtQuick.Window 2.12
 import QtQuick.Controls 2.12
 import QtGraphicalEffects 1.12
+import AppDefs 1.0
 import "../"
 
 Item
@@ -11,6 +12,9 @@ Item
     signal sigMenuSelected(int id)
 
     property bool isOpened: false
+    property alias accountName: textAccountName.text
+    property alias accountEmail: textAccountEmail.text
+    property alias accountImage: imgAccount.source
 
     function showMenu(vis)
     {
@@ -33,10 +37,10 @@ Item
     {
         id: menuListModel
 
-        ListElement {   name: qsTr("ACCOUNT");      en: true    }
-        ListElement {   name: qsTr("TANK INFO");    en: true    }
-        ListElement {   name: qsTr("SETTINGS");     en: true    }
-        ListElement {   name: qsTr("UTILITY");      en: false   }
+        ListElement {   name: qsTr("ACCOUNT");      index: AppDefs.Menu_Account;    en: true    }
+        ListElement {   name: qsTr("TANK INFO");    index: AppDefs.Menu_TankInfo;   en: true    }
+        ListElement {   name: qsTr("SETTINGS");     index: AppDefs.Menu_Settings;   en: true    }
+        ListElement {   name: qsTr("UTILITY");      index: AppDefs.Menu_None;       en: false   }
     }
 
     SequentialAnimation
@@ -65,7 +69,7 @@ Item
             from: -AppTheme.rowHeightMin * app.scale
             to: -AppTheme.rightWidth * app.scale
             duration: 200
-            //easing.type: Easing.InBack
+            easing.type: Easing.OutCubic
         }
     }
 
@@ -86,7 +90,7 @@ Item
             from: -AppTheme.rightWidth * app.scale
             to: -AppTheme.rowHeightMin * app.scale
             duration: 200
-            //easing.type: Easing.InBack
+            easing.type: Easing.InQuad
         }
 
         NumberAnimation
@@ -165,9 +169,30 @@ Item
                 width: AppTheme.margin * 3 * app.scale
                 height: width
                 radius: width / 2
-                border.width: 2 * app.scale
+                border.width: 3 * app.scale
                 border.color: AppTheme.blueColor
                 color: AppTheme.backLightBlueColor
+
+                Image
+                {
+                    id: imgAccount
+                    anchors.fill: parent
+                    source: ""
+                    mipmap: true
+                    layer.enabled: true
+                    layer.effect: OpacityMask
+                    {
+                        maskSource: imgTankMask
+                    }
+                }
+
+                Rectangle
+                {
+                    id: imgTankMask
+                    anchors.fill: parent
+                    radius: height/2
+                    visible: false
+                }
             }
 
             Text
@@ -299,6 +324,7 @@ Item
                         onReleased:
                         {
                             showMenu(false)
+                            sigMenuSelected(index)
                             color = AppTheme.whiteColor
                         }
                     }

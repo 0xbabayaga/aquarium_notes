@@ -79,17 +79,20 @@ Item
         var lastDate
         var todayDate
 
-        if (paramsTable.model)
+        if (paramsTable.model.count > 0)
         {
             lastDate = new Date(paramsTable.model[0].dtLast * 1000)
             todayDate = new Date()
-        }
 
-        if (lastDate.getYear() === todayDate.getYear() &&
-            lastDate.getMonth() === todayDate.getMonth() &&
-            lastDate.getDate() === todayDate.getDate())
-        {
-            confirmDialog.showDialog(true, qsTr("WARNING"), qsTr("The record for today is exist. Do you want to update existing?"))
+
+            if (lastDate.getYear() === todayDate.getYear() &&
+                lastDate.getMonth() === todayDate.getMonth() &&
+                lastDate.getDate() === todayDate.getDate())
+            {
+                confirmDialog.showDialog(true, qsTr("WARNING"), qsTr("The record for today is exist. Do you want to update existing?"))
+            }
+            else
+                showAddParamDialog(false)
         }
         else
             showAddParamDialog(false)

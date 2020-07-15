@@ -11,6 +11,7 @@
 #include <QDebug>
 #include <QList>
 #include <QStringList>
+#include <QImage>
 #include "AppDefs.h"
 #include "dbobjects.h"
 
@@ -142,7 +143,7 @@ DBManager::DBManager(QQmlApplicationEngine *engine, QObject *parent) : QObject(p
 
 DBManager::~DBManager()
 {
-    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateAccount(QString, QString, QString)), this, SLOT(onUserCreate(QString, QString, QString)));
+    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateAccount(QString, QString, QString, QString)), this, SLOT(onUserCreate(QString, QString, QString, QString)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateTank(QString, int, int, int, int)), this, SLOT(onGuiTankCreate(QString, int, int, int, int)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecord(int, int, float)), this, SLOT(onGuiAddRecord(int, int, float)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigEditRecord(int, int, double)), this, SLOT(onGuiEditRecord(int, int, double)));
@@ -168,7 +169,7 @@ DBManager::~DBManager()
 
 void DBManager::init()
 {
-    connect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateAccount(QString, QString, QString)), this, SLOT(onGuiUserCreate(QString, QString, QString)));
+    connect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateAccount(QString, QString, QString, QString)), this, SLOT(onGuiUserCreate(QString, QString, QString, QString)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateTank(QString, int, int, int, int, QString)), this, SLOT(onGuiTankCreate(QString, int, int, int, int, QString)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecord(int, int, double)), this, SLOT(onGuiAddRecord(int, int, double)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigEditRecord(int, int, double)), this, SLOT(onGuiEditRecord(int, int, double)));
@@ -215,6 +216,9 @@ bool DBManager::getCurrentObjs()
     {
         getUserTanksList();
 
+        setCurrentUser(curSelectedObjs.user->uname, curSelectedObjs.user->email, curSelectedObjs.user->avatar_img);
+
+
         if (curSelectedObjs.listOfUserTanks.size() > 0)
         {
             setInitialDialogStage(AppDef::AppInit_Completed, curSelectedObjs.user->uname);
@@ -256,7 +260,7 @@ void DBManager::setInitialDialogStage(int stage, QString name)
 {
     QObject *obj = nullptr;
 
-    obj = qmlEngine->rootObjects().first()->findChild<QObject*>("page_AccountCreation");
+    obj = qmlEngine->rootObjects().first()->findChild<QObject*>("page_AccountWizard");
 
     if (obj != nullptr)
     {
@@ -295,6 +299,34 @@ void DBManager::setGalleryImageSelected(QString imgUrl)
         obj->setProperty("galleryImageSelected", imgUrl);
     else
         qDebug() << "Cannot find imageList object";
+}
+
+void DBManager::setCurrentUser(QString uname, QString email, QString imgLink)
+{
+    setQmlParam("app", "curUserName", uname);
+    setQmlParam("app", "curUserEmail", email);
+    setQmlParam("app", "curUserAvatar", imgLink);
+}
+
+bool DBManager::setQmlParam(QString objName, QString name, QVariant value)
+{
+    QObject *obj = nullptr;
+    bool res = false;
+
+    if (qmlEngine->rootObjects().first()->objectName() == objName)
+       obj = qmlEngine->rootObjects().first();
+    else
+        obj = qmlEngine->rootObjects().first()->findChild<QObject*>(objName);
+
+    if (obj != nullptr)
+    {
+        obj->setProperty(name.toLocal8Bit(), value);
+        res = true;
+    }
+    else
+        qDebug() << "Cannot find "<< objName << "object";
+
+    return res;
 }
 
 
@@ -344,9 +376,9 @@ void DBManager::onQmlEngineLoaded(QObject *object, const QUrl &url)
 }
 
 
-void DBManager::onGuiUserCreate(QString uname, QString upass, QString email)
+void DBManager::onGuiUserCreate(QString uname, QString upass, QString email, QString img)
 {
-    if (createUser(uname, upass, "123", email) == true)
+    if (createUser(uname, upass, "123", email, img) == true)
     {
         getCurrentUser();
         setInitialDialogStage(AppDef::AppInit_UserExist, curSelectedObjs.user->uname);
@@ -801,8 +833,10 @@ bool DBManager::getUserTanksList()
     return res;
 }
 
-bool DBManager::createUser(QString uname, QString upass, QString phone, QString email)
+bool DBManager::createUser(QString uname, QString upass, QString phone, QString email, QString img)
 {
+    QByteArray base64Img = 0;
+
     if (uname.length() > 0 && uname.length() <= 64 &&
         upass.length() > 0 && upass.length() <= 128 &&
         phone.length() > 0 && phone.length() <= 16 &&
@@ -811,8 +845,19 @@ bool DBManager::createUser(QString uname, QString upass, QString phone, QString 
         QSqlQuery query;
         bool res = false;
 
-        query.prepare("INSERT INTO USER_TABLE (MAN_ID, UNAME, UPASS, SELECTED, STATUS, PHONE, EMAIL, DATE_CREATE, DATE_EDIT) "
-                      "VALUES (:man_id, :uname, :upass, :selected, :status, :phone, :email, :date_create, :date_edit)");
+        if (img.length() > 0)
+        {
+            QImage src(img.replace("file:///", ""));
+            QImage resized = src.scaled(512, 512, Qt::KeepAspectRatio);
+            QByteArray ba;
+            QBuffer buf(&ba);
+            resized.save(&buf, "png");
+            base64Img = ba.toBase64();
+            buf.close();
+        }
+
+        query.prepare("INSERT INTO USER_TABLE (MAN_ID, UNAME, UPASS, SELECTED, STATUS, PHONE, EMAIL, AVATAR_IMG, DATE_CREATE, DATE_EDIT) "
+                      "VALUES (:man_id, :uname, :upass, :selected, :status, :phone, :email, :avatar_img, :date_create, :date_edit)");
 
         query.bindValue(":man_id", randId());
         query.bindValue(":uname", uname);
@@ -821,6 +866,7 @@ bool DBManager::createUser(QString uname, QString upass, QString phone, QString 
         query.bindValue(":status", UStatus_Enabled);
         query.bindValue(":phone", phone);
         query.bindValue(":email", email);
+        query.bindValue(":avatar_img", QString(base64Img));
         query.bindValue(":date_create", QDateTime::currentSecsSinceEpoch());
         query.bindValue(":date_edit", QDateTime::currentSecsSinceEpoch());
 
@@ -832,6 +878,56 @@ bool DBManager::createUser(QString uname, QString upass, QString phone, QString 
         return res;
     }
     else
+        return false;
+}
+
+bool DBManager::editUser(QString uname, QString upass, QString phone, QString email, QString img)
+{
+    /*
+    QByteArray base64Img = 0;
+
+    if (uname.length() > 0 && uname.length() <= 64 &&
+        upass.length() > 0 && upass.length() <= 128 &&
+        phone.length() > 0 && phone.length() <= 16 &&
+        email.length() > 0 && email.length() <= 64)
+    {
+        QSqlQuery query;
+        bool res = false;
+
+        if (img.length() > 0)
+        {
+            QImage src(img.replace("file:///", ""));
+            QImage resized = src.scaled(512, 512, Qt::KeepAspectRatio);
+            QByteArray ba;
+            QBuffer buf(&ba);
+            resized.save(&buf, "png");
+            base64Img = ba.toBase64();
+            buf.close();
+        }
+
+        query.prepare("INSERT INTO USER_TABLE (MAN_ID, UNAME, UPASS, SELECTED, STATUS, PHONE, EMAIL, AVATAR_IMG, DATE_CREATE, DATE_EDIT) "
+                      "VALUES (:man_id, :uname, :upass, :selected, :status, :phone, :email, :avatar_img, :date_create, :date_edit)");
+
+        query.bindValue(":man_id", randId());
+        query.bindValue(":uname", uname);
+        query.bindValue(":upass", upass);
+        query.bindValue(":selected", true);
+        query.bindValue(":status", UStatus_Enabled);
+        query.bindValue(":phone", phone);
+        query.bindValue(":email", email);
+        query.bindValue(":avatar_img", QString(base64Img));
+        query.bindValue(":date_create", QDateTime::currentSecsSinceEpoch());
+        query.bindValue(":date_edit", QDateTime::currentSecsSinceEpoch());
+
+        res = query.exec();
+
+        if (res == false)
+            qDebug() << "Create user error: " << query.lastError();
+
+        return res;
+    }
+    else
+    */
         return false;
 }
 
@@ -1385,6 +1481,16 @@ QString DBManager::createDbImgFileName(int i)
     fileName = tank->tankId();
     fileName += "_" + QDateTime::currentDateTime().toString("yyyyMMdd_hhmm");
     fileName += "_" + num.sprintf("%02u", i);
+
+    return fileName;
+}
+
+QString DBManager::createDbImgAccountFileName()
+{
+    QString fileName = "";
+
+    fileName = curSelectedObjs.user->man_id.left(4);
+    fileName += "_" + QDateTime::currentDateTime().toString("yyyyMMdd_hhmm");
 
     return fileName;
 }

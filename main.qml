@@ -2,6 +2,7 @@ import QtQuick 2.12
 import QtQuick.Window 2.12
 import QtQuick.Controls 2.12
 import QtGraphicalEffects 1.12
+import AppDefs 1.0
 import "qml"
 import "qml/custom"
 
@@ -15,6 +16,10 @@ Window
     property bool   isAccountCreated: false
     property real   scale: (Screen.orientation  === Qt.PortraitOrientation) ? Screen.desktopAvailableHeight / 720 : Screen.desktopAvailableHeight / 1080
 
+    property string curUserName: ""
+    property string curUserEmail: ""
+    property string curUserAvatar: ""
+
     ListView
     {
         id: tmpParamList
@@ -26,7 +31,8 @@ Window
     width: 360
     height: 720
 
-    signal sigCreateAccount(string uname, string upass, string umail)
+    signal sigCreateAccount(string uname, string upass, string umail, string img)
+    signal sigEditAccount(string uname, string upass, string umail, string img)
     signal sigCreateTank(string name, int type, int l, int w, int h, string img)
     signal sigAddRecord(int smpId, int paramId, double value)
     signal sigEditRecord(int smpId, int paramId, double value)
@@ -108,10 +114,10 @@ Window
             visible: isAccountCreated === true
         }
 
-        Page_AccountCreation
+        Page_AccountsWizard
         {
-            id: page_AccountCreation
-            objectName: "page_AccountCreation"
+            id: page_AccountWizard
+            objectName: "page_AccountWizard"
             anchors.fill: rectBackground
             visible: isAccountCreated === false
 
@@ -125,6 +131,15 @@ Window
             anchors.verticalCenter: parent.verticalCenter
             anchors.verticalCenterOffset: AppTheme.rowHeightMin * app.scale
         }
+
+        Page_AccountSett
+        {
+            id: page_AccountSett
+            anchors.fill: rectBackground
+            visible: false
+
+            onSigClose: page_Main.showPage(true)
+        }
     }
 
     SideMenu
@@ -134,5 +149,18 @@ Window
         anchors.right: parent.right
         width: parent.width
         height: parent.height
+
+        accountName: app.curUserName
+        accountEmail: app.curUserEmail
+        accountImage: "data:image/png;base64," + app.curUserAvatar
+
+        onSigMenuSelected:
+        {
+            if (id === AppDefs.Menu_Account)
+            {
+                page_Main.showPage(false)
+                page_AccountSett.showPage(true)
+            }
+        }
     }
 }

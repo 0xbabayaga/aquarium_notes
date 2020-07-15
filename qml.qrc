@@ -11,7 +11,7 @@
         <file>qml/Page_TankData.qml</file>
         <file>resources/img/icon_arrow_left.png</file>
         <file>qml/custom/StandardButton.qml</file>
-        <file>qml/Page_AccountCreation.qml</file>
+        <file>qml/Page_AccountsWizard.qml</file>
         <file>qml/Page_Main.qml</file>
         <file>qml/custom/ComboList.qml</file>
         <file>qml/custom/TextInput.qml</file>
@@ -51,5 +51,6 @@
         <file>resources/img/icon_arrow_down.png</file>
         <file>js/datetimeutility.js</file>
         <file>qml/custom/SideMenu.qml</file>
+        <file>qml/Page_AccountSett.qml</file>
     </qresource>
 </RCC>

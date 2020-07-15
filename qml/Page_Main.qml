@@ -8,6 +8,14 @@ Item
 {
     id: page_Main
 
+    function showPage(vis)
+    {
+        if (vis === true)
+            showPageAnimation.start()
+        else
+            hidePageAnimation.start()
+    }
+
     function openTankPage()
     {
         var tankParams = [tanksListModel[tanksList.currentIndex].name,
@@ -15,9 +23,29 @@ Item
                           tanksListModel[tanksList.currentIndex].type,
                           tanksListModel[tanksList.currentIndex].typeName,
                           tanksListModel[tanksList.currentIndex].volume,
-                          tanksListModel[tanksList.currentIndex].img];
+                          tanksListModel[tanksList.currentIndex].img]
 
         page_TankData.showPage(true, tankParams)
+    }
+
+    NumberAnimation
+    {
+        id: showPageAnimation
+        target: page_Main
+        property: "opacity"
+        from: 0
+        to: 1
+        onStarted: page_Main.visible = true
+    }
+
+    NumberAnimation
+    {
+        id: hidePageAnimation
+        target: page_Main
+        property: "opacity"
+        from: 1
+        to: 0
+        onFinished: page_Main.visible = false
     }
 
     Text
@@ -86,7 +114,6 @@ Item
             parent: flickableContainer.parent
             anchors.top: flickableContainer.top
             anchors.left: flickableContainer.right
-            //anchors.leftMargin: AppTheme.padding / 2 * app.scale
             anchors.bottom: flickableContainer.bottom
 
             contentItem: Rectangle
