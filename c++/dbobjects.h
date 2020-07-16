@@ -358,6 +358,9 @@ class TankObj : public QObject
     Q_PROPERTY(QString typeName READ typeName WRITE setTypeName NOTIFY typeNameChanged)
     Q_PROPERTY(QString img READ img WRITE setImg NOTIFY imgChanged)
     Q_PROPERTY(int dtCreate READ dtCreate WRITE setDtCreate NOTIFY dtCreateChanged)
+    Q_PROPERTY(int l READ l WRITE setL NOTIFY lChanged)
+    Q_PROPERTY(int h READ h WRITE setH NOTIFY hChanged)
+    Q_PROPERTY(int w READ w WRITE setW NOTIFY wChanged)
 
 public:
     TankObj(QSqlQuery *query)
@@ -391,6 +394,9 @@ public:
     QString img()                   {   return _img;            }
     QString typeName()              {   return _typeName;       }
     int dtCreate()                  {   return _date_create;    }
+    int l()                         {   return _l;              }
+    int h()                         {   return _h;              }
+    int w()                         {   return _w;              }
 
     void setTankId(QString tankId)  {   _tank_id = tankId;      }
     void setName(QString name)      {   _name = name;           }
@@ -400,6 +406,9 @@ public:
     void setImg(QString img)        {   _img = img;             }
     void setTypeName(QString name)  {   _typeName = name;       }
     void setDtCreate(int dt)        {   _date_create = dt;      }
+    void setL(int l)                {   _l = l;                 }
+    void setH(int h)                {   _h = h;                 }
+    void setW(int w)                {   _w = w;                 }
 
 signals:
     void tankIdChanged();
@@ -410,6 +419,9 @@ signals:
     void imgChanged();
     void typeNameChanged();
     void dtCreateChanged();
+    void lChanged();
+    void hChanged();
+    void wChanged();
 
 protected:
     QString     _tank_id;

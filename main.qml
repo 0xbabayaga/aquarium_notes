@@ -175,6 +175,7 @@ Window
             else if (id === AppDefs.Menu_TankInfo)
             {
                 page_Main.showPage(false)
+                page_AccountSett.moveToEdit(false)
                 page_AccountSett.showPage(false)
                 page_TankSett.showPage(true)
             }

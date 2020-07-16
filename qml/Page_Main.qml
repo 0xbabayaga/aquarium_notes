@@ -113,8 +113,11 @@ Item
             policy: ScrollBar.AlwaysOn
             parent: flickableContainer.parent
             anchors.top: flickableContainer.top
+            anchors.topMargin: AppTheme.padding * app.scale
             anchors.left: flickableContainer.right
+            anchors.leftMargin: AppTheme.padding / 4 * app.scale
             anchors.bottom: flickableContainer.bottom
+            anchors.bottomMargin: AppTheme.padding * app.scale
 
             contentItem: Rectangle
             {
