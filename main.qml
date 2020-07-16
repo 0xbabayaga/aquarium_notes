@@ -19,6 +19,7 @@ Window
     property string curUserName: ""
     property string curUserEmail: ""
     property string curUserAvatar: ""
+    property int curUserDateCreate: 0
 
     ListView
     {
@@ -140,6 +141,15 @@ Window
 
             onSigClose: page_Main.showPage(true)
         }
+
+        Page_TankSett
+        {
+            id: page_TankSett
+            anchors.fill: rectBackground
+            visible: false
+
+            onSigClose: page_Main.showPage(true)
+        }
     }
 
     SideMenu
@@ -161,6 +171,12 @@ Window
                 page_Main.showPage(false)
                 page_AccountSett.moveToEdit(false)
                 page_AccountSett.showPage(true)
+            }
+            else if (id === AppDefs.Menu_TankInfo)
+            {
+                page_Main.showPage(false)
+                page_AccountSett.showPage(false)
+                page_TankSett.showPage(true)
             }
         }
     }

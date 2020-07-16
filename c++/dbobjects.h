@@ -81,67 +81,6 @@ protected:
     QString _desc;
 };
 
-/*
-class DataParamObj : public QObject
-{
-    Q_OBJECT
-
-    Q_PROPERTY(char paramId READ paramId WRITE setParamId NOTIFY paramIdChanged)
-    Q_PROPERTY(int smpId READ smpId WRITE setSmpId NOTIFY smpIdChanged)
-    Q_PROPERTY(float value READ value WRITE setValue NOTIFY valueChanged)
-    Q_PROPERTY(unsigned int dt READ dt WRITE setDt NOTIFY dtChanged)
-    Q_PROPERTY(QString note READ note WRITE setNote NOTIFY noteChanged)
-    Q_PROPERTY(QString imgLink READ imgLink WRITE setImgLink NOTIFY imgLinkChanged)
-    Q_PROPERTY(bool en READ en WRITE setEn NOTIFY enChanged)
-
-public:
-    DataParamObj(char paramId, int id, float value, unsigned int dt, QString note, QString img)
-    {
-        _paramId = paramId;
-        _smpId = id;
-        _value = value;
-        _dt = dt;
-        _note = note;
-        _imgLink = img;
-        _en = true;
-    }
-
-    char paramId()                      {   return _paramId;        }
-    int smpId()                         {   return _smpId;          }
-    float value()                       {   return _value;          }
-    unsigned int dt()                   {   return _dt;             }
-    QString note()                      {   return _note;           }
-    QString imgLink()                   {   return _imgLink;        }
-    bool    en()                        {   return _en;             }
-
-    void setParamId(char paramId)       {   _paramId = paramId;     }
-    void setSmpId(int smpId)            {   _smpId = smpId;         }
-    void setValue(float value)          {   _value = value;         }
-    void setDt(unsigned int dt)         {   _dt = dt;               }
-    void setNote(QString note)          {   _note = note;           }
-    void setImgLink(QString link)       {   _imgLink = link;        }
-    void setEn(bool en)                 {   _en = en;               }
-
-signals:
-    void paramIdChanged();
-    void smpIdChanged();
-    void valueChanged();
-    void dtChanged();
-    void noteChanged();
-    void imgLinkChanged();
-    void enChanged();
-
-protected:
-    char            _paramId;
-    int             _smpId;
-    float           _value;
-    unsigned int    _dt;
-    QString         _note;
-    QString         _imgLink;
-    bool            _en;
-};
-*/
-
 class LastDataParamRecObj : public QObject
 {
     Q_OBJECT
@@ -418,6 +357,7 @@ class TankObj : public QObject
     Q_PROPERTY(int type READ type WRITE setType NOTIFY typeChanged)
     Q_PROPERTY(QString typeName READ typeName WRITE setTypeName NOTIFY typeNameChanged)
     Q_PROPERTY(QString img READ img WRITE setImg NOTIFY imgChanged)
+    Q_PROPERTY(int dtCreate READ dtCreate WRITE setDtCreate NOTIFY dtCreateChanged)
 
 public:
     TankObj(QSqlQuery *query)
@@ -450,6 +390,7 @@ public:
     int type()                      {   return _type;           }
     QString img()                   {   return _img;            }
     QString typeName()              {   return _typeName;       }
+    int dtCreate()                  {   return _date_create;    }
 
     void setTankId(QString tankId)  {   _tank_id = tankId;      }
     void setName(QString name)      {   _name = name;           }
@@ -458,6 +399,7 @@ public:
     void setType(int type)          {   _type = type;           }
     void setImg(QString img)        {   _img = img;             }
     void setTypeName(QString name)  {   _typeName = name;       }
+    void setDtCreate(int dt)        {   _date_create = dt;      }
 
 signals:
     void tankIdChanged();
@@ -467,6 +409,7 @@ signals:
     void typeChanged();
     void imgChanged();
     void typeNameChanged();
+    void dtCreateChanged();
 
 protected:
     QString     _tank_id;

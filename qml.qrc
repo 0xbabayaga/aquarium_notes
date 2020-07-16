@@ -52,5 +52,6 @@
         <file>js/datetimeutility.js</file>
         <file>qml/custom/SideMenu.qml</file>
         <file>qml/Page_AccountSett.qml</file>
+        <file>qml/Page_TankSett.qml</file>
     </qresource>
 </RCC>

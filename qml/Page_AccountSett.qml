@@ -5,6 +5,7 @@ import QtQuick.Window 2.12
 import QtGraphicalEffects 1.12
 import "custom"
 import AppDefs 1.0
+import "../js/datetimeutility.js" as DateTimeUtils
 
 Item
 {
@@ -147,12 +148,23 @@ Item
                     }
                 }
 
+                DropShadow
+                {
+                    anchors.fill: rectAccountPhoto
+                    horizontalOffset: 0
+                    verticalOffset: 0
+                    radius: 8.0
+                    samples: 16
+                    color: "#60000000"
+                    source: rectAccountPhoto
+                }
+
                 Text
                 {
                     id: textAccountName
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.top: rectAccountPhoto.bottom
-                    anchors.topMargin: AppTheme.padding / 2 * app.scale
+                    anchors.topMargin: AppTheme.padding * app.scale
                     height: AppTheme.compHeight * app.scale
                     verticalAlignment: Text.AlignBottom
                     font.family: AppTheme.fontFamily
@@ -172,6 +184,19 @@ Item
                     font.pixelSize: AppTheme.fontSmallSize * app.scale
                     color: AppTheme.greyColor
                     text: app.curUserEmail
+                }
+
+                Text
+                {
+                    id: textAccountDateCreate
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.top: textAccountEmail.bottom
+                    height: AppTheme.compHeight / 2 * app.scale
+                    verticalAlignment: Text.AlignTop
+                    font.family: AppTheme.fontFamily
+                    font.pixelSize: AppTheme.fontSmallSize * app.scale
+                    color: AppTheme.greyColor
+                    text: (new DateTimeUtils.DateTimeUtil()).printFullDate(app.curUserDateCreate)
                 }
 
                 IconSimpleButton

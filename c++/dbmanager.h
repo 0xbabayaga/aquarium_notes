@@ -88,7 +88,7 @@ private:
     void    setLastSmpId(int id);
     void    setGalleryImageSelected(QString imgUrl);
     void    setAndroidFlag(bool flag);
-    void    setCurrentUser(QString uname, QString email, QString imgLink);
+    void    setCurrentUser(QString uname, QString email, QString imgLink, int dt);
 
     /* Gui diagram drawing */
     void    clearDiagrams();

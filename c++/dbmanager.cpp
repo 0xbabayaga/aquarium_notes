@@ -218,7 +218,10 @@ bool DBManager::getCurrentObjs()
     {
         getUserTanksList();
 
-        setCurrentUser(curSelectedObjs.user->uname, curSelectedObjs.user->email, curSelectedObjs.user->avatar_img);
+        setCurrentUser(curSelectedObjs.user->uname,
+                       curSelectedObjs.user->email,
+                       curSelectedObjs.user->avatar_img,
+                       curSelectedObjs.user->date_create);
 
 
         if (curSelectedObjs.listOfUserTanks.size() > 0)
@@ -280,11 +283,12 @@ void DBManager::setGalleryImageSelected(QString imgUrl)
     setQmlParam("imgUserAvatar", "galleryImageSelected", imgUrl);
 }
 
-void DBManager::setCurrentUser(QString uname, QString email, QString imgLink)
+void DBManager::setCurrentUser(QString uname, QString email, QString imgLink, int dt)
 {
     setQmlParam("app", "curUserName", uname);
     setQmlParam("app", "curUserEmail", email);
     setQmlParam("app", "curUserAvatar", imgLink);
+    setQmlParam("app", "curUserDateCreate", dt);
 }
 
 bool DBManager::setQmlParam(QString objName, QString name, QVariant value)
@@ -370,7 +374,10 @@ void DBManager::onGuiUserEdit(QString uname, QString upass, QString email, QStri
     {
         getCurrentUser();
 
-        setCurrentUser(curSelectedObjs.user->uname, curSelectedObjs.user->email, curSelectedObjs.user->avatar_img);
+        setCurrentUser(curSelectedObjs.user->uname,
+                       curSelectedObjs.user->email,
+                       curSelectedObjs.user->avatar_img,
+                       curSelectedObjs.user->date_create);
     }
 }
 
