@@ -6,7 +6,7 @@ import "../"
 
 Item
 {
-    id: comboList
+    id: comboListQuick
     width: 150 * app.scale
     height: AppTheme.compHeight * app.scale
     opacity: enabled ? AppTheme.opacityEnabled : AppTheme.opacityDisabled
@@ -64,8 +64,8 @@ Item
     {
         id: textArea
         text: (listView.model.count) ? listView.model.get(listView.currentIndex).name : ""
-        width: comboList.width
-        height: comboList.height
+        width: comboListQuick.width
+        height: comboListQuick.height
         font.family: AppTheme.fontFamily
         font.pixelSize: AppTheme.fontNormalSize * app.scale
         horizontalAlignment: Text.AlignLeft
@@ -93,7 +93,7 @@ Item
         anchors.right: textArea.right
         height: 1 * app.scale
         color: AppTheme.hideColor
-        opacity: comboList.opacity
+        opacity: comboListQuick.opacity
     }
 
     Image
@@ -223,7 +223,7 @@ Item
                         anchors.right: parent.right
                         anchors.top: parent.top
                         anchors.topMargin: AppTheme.padding * 2 * app.scale
-                        height: AppTheme.compHeight * app.scale * model.length
+                        height: AppTheme.compHeight * app.scale * model.count
                         clip: true
 
                         delegate: Rectangle
@@ -242,7 +242,7 @@ Item
                                 verticalAlignment: Text.AlignVCenter
                                 horizontalAlignment: Text.AlignHCenter
                                 text: name
-                                opacity: (index === listView.currentIndex) ? AppTheme.opacityEnabled : AppTheme.opacityDisabled
+                                //opacity: (index === listView.currentIndex) ? AppTheme.opacityEnabled : AppTheme.opacityDisabled
                             }
 
                             Rectangle
@@ -268,7 +268,7 @@ Item
                             sigSelectedIndexChanged(currentIndex)
 
                             showList(false)
-                            textArea.text = model[currentIndex].name
+                            textArea.text = (model !== undefined) ? model.get(currentIndex).name : ""
                         }
 
                         ScrollBar.vertical: ScrollBar

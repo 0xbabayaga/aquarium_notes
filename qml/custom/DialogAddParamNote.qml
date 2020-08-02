@@ -3,6 +3,7 @@ import QtQuick.Controls 2.12
 import QtGraphicalEffects 1.12
 import "../"
 import "../custom"
+import AppDefs 1.0
 
 Item
 {
@@ -233,7 +234,7 @@ Item
                                 anchors.verticalCenter: parent.verticalCenter
                                 placeholderText: "0"
                                 width: 100 * app.scale
-                                maximumLength: 4
+                                maximumLength: AppDefs.MAX_TANKDIMENSION_SIZE
                                 text: (value !== -1) ? value : ""
                                 //text: value
 

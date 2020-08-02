@@ -12,68 +12,46 @@
 #include <QList>
 #include <QStringList>
 #include <QImage>
+#include <QTranslator>
 #include "AppDefs.h"
 #include "dbobjects.h"
 
-#ifdef  Q_OS_ANDROID
-#include <QtAndroidExtras>
-const static QStringList permissions = { "android.permission.READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE" };
-#endif
-
 const static QString aquariumTypeNames[AquariumType::EndOfList] =
 {
-    QString("Fish Reef"),           /* 0 */
-    QString("Soft Coral Reef"),     /* 1 */
-    QString("Mixed Reef"),          /* 2 */
-    QString("SPS Reef"),            /* 3 */
-    QString("Cyhlids"),             /* 4 */
-    QString("Discus aquarium"),     /* 5 */
-    QString("Fresh aquarium"),      /* 6 */
-    QString("Fresh scape")          /* 7 */
+    QString(QObject::tr("Fish Reef")),           /* 0 */
+    QString(QObject::tr("Soft Coral Reef")),     /* 1 */
+    QString(QObject::tr("Mixed Reef")),          /* 2 */
+    QString(QObject::tr("SPS Reef")),            /* 3 */
+    QString(QObject::tr("Cyhlids")),             /* 4 */
+    QString(QObject::tr("Discus aquarium")),     /* 5 */
+    QString(QObject::tr("Fresh aquarium")),      /* 6 */
+    QString(QObject::tr("Fresh scape"))          /* 7 */
 };
 
 const static QMap<QString, QString> paramTranslationMap =
 {
-    {   "TEMP",     "Temperature"   },
-    {   "SAL",      "Salinity"      },
-    {   "CA",   "Calcium"           },
-    {   "PH",   "pH"                },
-    {   "KH",   "kH"                },
-    {   "GH",   "gH"                },
-    {   "PO4",  "Phosphates"        },
-    {   "NO2",  "Nitrite"           },
-    {   "NO3",  "Nitrate"           },
-    {   "NH3",  "Ammonia"           },
-    {   "MG",   "Magnesium"         },
-    {   "SI",   "Silicates"         },
-    {   "K",    "Potassium"         },
-    {   "I",    "Iodine"            },
-    {   "SR",   "Strontium"         },
-    {   "FE",   "Ferrum"            },
-    {   "B",    "Boron"             },
-    {   "MO",   "Molybdenum"        },
-    {   "ORP",  "ORP"               }
+    {   "TEMP", QObject::tr("Temperature")   },
+    {   "SAL",  QObject::tr("Salinity")      },
+    {   "CA",   QObject::tr("Calcium")           },
+    {   "PH",   QObject::tr("pH")                },
+    {   "KH",   QObject::tr("kH")                },
+    {   "GH",   QObject::tr("gH")                },
+    {   "PO4",  QObject::tr("Phosphates")        },
+    {   "NO2",  QObject::tr("Nitrite")           },
+    {   "NO3",  QObject::tr("Nitrate")           },
+    {   "NH3",  QObject::tr("Ammonia")           },
+    {   "MG",   QObject::tr("Magnesium")         },
+    {   "SI",   QObject::tr("Silicates")         },
+    {   "K",    QObject::tr("Potassium")         },
+    {   "I",    QObject::tr("Iodine")            },
+    {   "SR",   QObject::tr("Strontium")         },
+    {   "FE",   QObject::tr("Ferrum")            },
+    {   "B",    QObject::tr("Boron")             },
+    {   "MO",   QObject::tr("Molybdenum")        },
+    {   "ORP",  QObject::tr("ORP")               }
 };
 
-#ifdef  Q_OS_ANDROID
-QString selectedFileName;
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-JNIEXPORT void JNICALL
-Java_org_tikava_AquariumNotes_AquariumNotes_fileSelected(JNIEnv *, jobject , jstring results)
-{
-    qDebug() << "File selected = " << selectedFileName << "1234567890";
-
-    selectedFileName = QAndroidJniObject(results).toString();
-}
-#ifdef __cplusplus
-}
-#endif
-#endif
-
-DBManager::DBManager(QQmlApplicationEngine *engine, QObject *parent) : QObject(parent)
+DBManager::DBManager(QObject *parent) : QObject(parent)
 {
 #ifdef  Q_OS_ANDROID
     appPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
@@ -111,144 +89,12 @@ DBManager::DBManager(QQmlApplicationEngine *engine, QObject *parent) : QObject(p
 
     initDB();
 
-    qmlEngine = engine;
-
-    connect(qmlEngine, SIGNAL(objectCreated(QObject*, const QUrl)), this, SLOT(onQmlEngineLoaded(QObject*, const QUrl)));
-
     isParamDataChanged = true;
-
-    actionList = new ActionList();
-
-    /* Initializing all models to avoid Qml reference error */
-    qmlEngine->rootContext()->setContextProperty("tanksListModel", QVariant::fromValue(curSelectedObjs.listOfUserTanks));
-    qmlEngine->rootContext()->setContextProperty("actionsListModel", QVariant::fromValue(*actionList->getData()));
-    qmlEngine->rootContext()->setContextProperty("allParamsListModel", QVariant::fromValue(paramsGuiList));
-    qmlEngine->rootContext()->setContextProperty("curValuesListModel", QVariant::fromValue(curSelectedObjs.listOfCurrValues));
-    qmlEngine->rootContext()->setContextProperty("graphPointsList", QVariant::fromValue(pointList));
-    qmlEngine->rootContext()->setContextProperty("datesList", QVariant::fromValue(datesList));
-
-    aquariumTypeList.clear();
-
-    for (int i = 0; i < AquariumType::EndOfList; i++)
-    {
-        TankTypeObj *obj = new TankTypeObj(i, getAquariumTypeString((AquariumType)i));
-        aquariumTypeList.append(obj);
-    }
-
-    qmlEngine->rootContext()->setContextProperty("aquariumTypesListModel", QVariant::fromValue(aquariumTypeList));
-
-    curSelectedObjs.lastSmpId = getLastSmpId();
-    curSelectedObjs.curSmpId = curSelectedObjs.lastSmpId;
 }
 
 DBManager::~DBManager()
 {
-    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateAccount(QString, QString, QString, QString)), this, SLOT(onGuiUserCreate(QString, QString, QString, QString)));
-    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigEditAccount(QString, QString, QString, QString)), this, SLOT(onGuiUserEdit(QString, QString, QString, QString)));
-    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateTank(QString, int, int, int, int)), this, SLOT(onGuiTankCreate(QString, int, int, int, int)));
-    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecord(int, int, float)), this, SLOT(onGuiAddRecord(int, int, float)));
-    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigEditRecord(int, int, double)), this, SLOT(onGuiEditRecord(int, int, double)));
-    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecordNotes(int, QString, QString)), this, SLOT(onGuiAddRecordNote(int, QString, QString)));
-    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigEditRecordNotes(int, QString, QString)), this, SLOT(onGuiEditRecordNote(int, QString, QString)));
-    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigAddAction(QString, QString, int, int, int)), this, SLOT(onGuiAddActionRecord(QString, QString, int, int, int)));
-    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigEditAction(int, QString, QString, int, int, int)), this, SLOT(onGuiEditActionRecord(int, QString, QString, int, int, int)));
-    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigDeleteAction(int)), this, SLOT(onGuiDeleteActionRecord(int)));
-    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigActionViewPeriodChanged(int)), this, SLOT(onGuiActionViewPeriodChanged(int)));
-    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigTankSelected(int)), this, SLOT(onGuiTankSelected(int)));
-    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigPersonalParamStateChanged(int, bool)), this, SLOT(onGuiPersonalParamStateChanged(int, bool)));
-    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigRefreshData()), this, SLOT(onGuiRefreshData()));
-    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigCurrentSmpIdChanged(int)), this, SLOT(onGuiCurrentSmpIdChanged(int)));
-    disconnect(qmlEngine, SIGNAL(objectCreated(QObject*, const QUrl)), this, SLOT(onQmlEngineLoaded(QObject*, const QUrl)));
-    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigOpenGallery()), this, SLOT(onGuiOpenGallery()));
 
-    if (curSelectedObjs.user != nullptr)
-        delete curSelectedObjs.user;
-
-    if (actionList != nullptr)
-        delete actionList;
-}
-
-void DBManager::init()
-{
-    connect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateAccount(QString, QString, QString, QString)), this, SLOT(onGuiUserCreate(QString, QString, QString, QString)));
-    connect(qmlEngine->rootObjects().first(), SIGNAL(sigEditAccount(QString, QString, QString, QString)), this, SLOT(onGuiUserEdit(QString, QString, QString, QString)));
-    connect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateTank(QString, int, int, int, int, QString)), this, SLOT(onGuiTankCreate(QString, int, int, int, int, QString)));
-    connect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecord(int, int, double)), this, SLOT(onGuiAddRecord(int, int, double)));
-    connect(qmlEngine->rootObjects().first(), SIGNAL(sigEditRecord(int, int, double)), this, SLOT(onGuiEditRecord(int, int, double)));
-    connect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecordNotes(int, QString, QString)), this, SLOT(onGuiAddRecordNote(int, QString, QString)));
-    connect(qmlEngine->rootObjects().first(), SIGNAL(sigEditRecordNotes(int, QString, QString)), this, SLOT(onGuiEditRecordNote(int, QString, QString)));
-    connect(qmlEngine->rootObjects().first(), SIGNAL(sigAddAction(QString, QString, int, int, int)), this, SLOT(onGuiAddActionRecord(QString, QString, int, int, int)));
-    connect(qmlEngine->rootObjects().first(), SIGNAL(sigEditAction(int, QString, QString, int, int, int)), this, SLOT(onGuiEditActionRecord(int, QString, QString, int, int, int)));
-    connect(qmlEngine->rootObjects().first(), SIGNAL(sigDeleteAction(int)), this, SLOT(onGuiDeleteActionRecord(int)));
-    connect(qmlEngine->rootObjects().first(), SIGNAL(sigActionViewPeriodChanged(int)), this, SLOT(onGuiActionViewPeriodChanged(int)));
-    connect(qmlEngine->rootObjects().first(), SIGNAL(sigTankSelected(int)), this, SLOT(onGuiTankSelected(int)));
-    connect(qmlEngine->rootObjects().first(), SIGNAL(sigPersonalParamStateChanged(int, bool)), this, SLOT(onGuiPersonalParamStateChanged(int, bool)));
-    connect(qmlEngine->rootObjects().first(), SIGNAL(sigRefreshData()), this, SLOT(onGuiRefreshData()));
-    connect(qmlEngine->rootObjects().first(), SIGNAL(sigCurrentSmpIdChanged(int)), this, SLOT(onGuiCurrentSmpIdChanged(int)));
-    connect(qmlEngine->rootObjects().first(), SIGNAL(sigOpenGallery()), this, SLOT(onGuiOpenGallery()));
-
-#ifdef  Q_OS_ANDROID
-    setAndroidFlag(true);
-#endif
-    setLastSmpId(curSelectedObjs.lastSmpId);
-
-    qmlEngine->rootContext()->setContextProperty("aquariumTypesListModel", QVariant::fromValue(aquariumTypeList));
-
-    getCurrentObjs();
-
-#ifdef Q_OS_ANDROID
-    for (int i = 0; i < permissions.size(); i++)
-    {
-        QtAndroid::PermissionResult r = QtAndroid::checkPermission(permissions.at(i));
-
-        QtAndroid::requestPermissionsSync( QStringList() << permissions.at(i) );
-
-        r = QtAndroid::checkPermission(permissions.at(i));
-
-        qDebug() << "Permission " << permissions.at(i) << ((r == QtAndroid::PermissionResult::Denied) ? " DENIED" : " GRANTED ");
-    }
-#endif
-}
-
-bool DBManager::getCurrentObjs()
-{
-    getCurrentUser();
-
-    if (curSelectedObjs.user != nullptr)
-    {
-        getUserTanksList();
-
-        setCurrentUser(curSelectedObjs.user->uname,
-                       curSelectedObjs.user->email,
-                       curSelectedObjs.user->avatar_img,
-                       curSelectedObjs.user->date_create);
-
-
-        if (curSelectedObjs.listOfUserTanks.size() > 0)
-        {
-            setInitialDialogStage(AppDef::AppInit_Completed, curSelectedObjs.user->uname);
-
-            curSelectedObjs.tankIdx = 0;
-
-            qmlEngine->rootContext()->setContextProperty("tanksListModel", QVariant::fromValue(curSelectedObjs.listOfUserTanks));
-
-            getParamsList(currentTankSelected()->tankId(), (AquariumType) currentTankSelected()->type());
-
-            getLatestParams();
-
-            getHistoryParams();
-
-            getActionCalendar();
-
-            return true;
-        }
-        else
-            setInitialDialogStage(AppDef::AppInit_UserExist, curSelectedObjs.user->uname);
-    }
-    else
-        setInitialDialogStage(AppDef::AppInit_NoData, "User");
-
-    return false;
 }
 
 TankObj *DBManager::currentTankSelected()
@@ -261,237 +107,6 @@ TankObj *DBManager::currentTankSelected()
     return obj;
 }
 
-void DBManager::setInitialDialogStage(int stage, QString name)
-{
-    setQmlParam("page_AccountWizard", "stage", stage);
-    setQmlParam("page_AccountWizard", "currentUName", name);
-}
-
-void DBManager::setLastSmpId(int id)
-{
-    setQmlParam("app", "lastSmpId", id);
-}
-
-void DBManager::setAndroidFlag(bool flag)
-{    
-    setQmlParam("app", "isAndro", flag);
-}
-
-void DBManager::setGalleryImageSelected(QString imgUrl)
-{  
-    setQmlParam("imageList", "galleryImageSelected", imgUrl);
-    setQmlParam("imgUserAvatar", "galleryImageSelected", imgUrl);
-}
-
-void DBManager::setCurrentUser(QString uname, QString email, QString imgLink, int dt)
-{
-    setQmlParam("app", "curUserName", uname);
-    setQmlParam("app", "curUserEmail", email);
-    setQmlParam("app", "curUserAvatar", imgLink);
-    setQmlParam("app", "curUserDateCreate", dt);
-}
-
-bool DBManager::setQmlParam(QString objName, QString name, QVariant value)
-{
-    QObject *obj = nullptr;
-    bool res = false;
-
-    if (qmlEngine->rootObjects().first()->objectName() == objName)
-       obj = qmlEngine->rootObjects().first();
-    else
-        obj = qmlEngine->rootObjects().first()->findChild<QObject*>(objName);
-
-    if (obj != nullptr)
-    {
-        obj->setProperty(name.toLocal8Bit(), value);
-        res = true;
-    }
-    else
-        qDebug() << "Cannot find "<< objName << "object";
-
-    return res;
-}
-
-
-void DBManager::clearDiagrams()
-{
-    QObject *obj = nullptr;
-
-    obj = qmlEngine->rootObjects().first()->findChild<QObject*>("tab_Graph");
-
-    if (obj != nullptr)
-        QMetaObject::invokeMethod(obj, "clearDiagrams");
-}
-
-void DBManager::addDiagram(int num, int paramId, int xMin, int xMax, float yMin, float yMax, QVariantMap points)
-{
-    QObject *obj = nullptr;
-
-    obj = qmlEngine->rootObjects().first()->findChild<QObject*>("tab_Graph");
-
-    if (obj != nullptr)
-        QMetaObject::invokeMethod(obj, "addDiagram",
-                                  Q_ARG(QVariant, num),
-                                  Q_ARG(QVariant, paramId),
-                                  Q_ARG(QVariant, xMin),
-                                  Q_ARG(QVariant, xMax),
-                                  Q_ARG(QVariant, yMin),
-                                  Q_ARG(QVariant, yMax),
-                                  Q_ARG(QVariant, QVariant::fromValue(points)));
-    else
-        qDebug() << "tab_Graph not found!";
-}
-
-void DBManager::drawDiagrams()
-{
-    QObject *obj = nullptr;
-
-    obj = qmlEngine->rootObjects().first()->findChild<QObject*>("tab_Graph");
-
-    if (obj != nullptr)
-        QMetaObject::invokeMethod(obj, "drawDiagrams");
-}
-
-void DBManager::onQmlEngineLoaded(QObject *object, const QUrl &url)
-{
-    if (object != 0)
-        init();
-}
-
-
-void DBManager::onGuiUserCreate(QString uname, QString upass, QString email, QString img)
-{
-    if (createUser(uname, upass, "", email, img) == true)
-    {
-        getCurrentUser();
-        setInitialDialogStage(AppDef::AppInit_UserExist, curSelectedObjs.user->uname);
-    }
-}
-
-void DBManager::onGuiUserEdit(QString uname, QString upass, QString email, QString img)
-{
-    if (editUser(uname, upass, "", email, img) == true)
-    {
-        getCurrentUser();
-
-        setCurrentUser(curSelectedObjs.user->uname,
-                       curSelectedObjs.user->email,
-                       curSelectedObjs.user->avatar_img,
-                       curSelectedObjs.user->date_create);
-    }
-}
-
-void DBManager::onGuiTankCreate(QString name, int type, int l, int w, int h, QString imgFile)
-{
-    if (createTank(name, curSelectedObjs.user->man_id, type, l, w, h, imgFile) == true)
-    {
-        setInitialDialogStage(AppDef::AppInit_Completed, curSelectedObjs.user->uname);
-    }
-}
-
-void DBManager::onGuiAddRecord(int smpId, int paramId, double value)
-{
-    addParamRecord(smpId, paramId, value);
-}
-
-void DBManager::onGuiEditRecord(int smpId, int paramId, double value)
-{
-    editParamRecord(smpId, paramId, value);
-}
-
-void DBManager::onGuiRefreshData()
-{
-    curSelectedObjs.lastSmpId = getLastSmpId();
-    setLastSmpId(curSelectedObjs.lastSmpId);
-
-    getLatestParams();
-    getHistoryParams();
-}
-
-void DBManager::onGuiAddRecordNote(int smpId, QString note, QString imageLink)
-{
-    if (addNoteRecord(smpId, note, imageLink) == true)
-    {
-        getLatestParams();
-        getHistoryParams();
-    }
-}
-
-void DBManager::onGuiEditRecordNote(int smpId, QString note, QString imageLink)
-{
-    if (editNoteRecord(smpId, note, imageLink) == true)
-    {
-        getLatestParams();
-        getHistoryParams();
-    }
-}
-
-void DBManager::onGuiAddActionRecord(QString name, QString desc, int periodType, int period, int tm)
-{
-    if (addActionRecord(currentTankSelected()->tankId(), name, desc, periodType, period, tm) == true)
-        getActionCalendar();
-}
-
-void DBManager::onGuiEditActionRecord(int id, QString name, QString desc, int periodType, int period, int tm)
-{
-    if (editActionRecord(id, currentTankSelected()->tankId(), name, desc, periodType, period, tm) == true)
-        getActionCalendar();
-}
-
-void DBManager::onGuiDeleteActionRecord(int id)
-{
-    if (deleteActionRecord(id, currentTankSelected()->tankId()) == true)
-        getActionCalendar();
-}
-
-void DBManager::onGuiActionViewPeriodChanged(int period)
-{
-    actionList->setViewPeriod((eActionListView)period);
-    getActionCalendar();
-}
-
-void DBManager::onGuiTankSelected(int tankIdx)
-{
-    curSelectedObjs.tankIdx = tankIdx;
-
-    getLatestParams();
-    getHistoryParams();
-}
-
-void DBManager::onGuiPersonalParamStateChanged(int paramId, bool en)
-{
-    editPersonalParamState(currentTankSelected()->tankId(), paramId, en);
-}
-
-void DBManager::onGuiCurrentSmpIdChanged(int smpId)
-{
-    curSelectedObjs.curSmpId = smpId;
-    getLatestParams();
-    //getHistoryParams();
-}
-
-#ifdef  Q_OS_ANDROID
-void DBManager::onGuiOpenGallery()
-{
-    selectedFileName = "#";
-
-    QAndroidJniObject::callStaticMethod<void>("org/tikava/AquariumNotes/AquariumNotes",
-                                              "openAnImage",
-                                              "()V");
-    while(selectedFileName == "#")
-        qApp->processEvents();
-
-    qDebug() << selectedFileName;
-
-    setGalleryImageSelected(selectedFileName);
-}
-#else
-void DBManager::onGuiOpenGallery()
-{
-
-}
-#endif
-
 bool DBManager::getActionCalendar()
 {
     bool res = false;
@@ -499,8 +114,6 @@ bool DBManager::getActionCalendar()
 
     if (actionList->setData(&query) != true)
         qDebug() << "actionList->setData error";
-
-    qmlEngine->rootContext()->setContextProperty("actionsListModel", QVariant::fromValue(*actionList->getData()));
 
     return res;
 }
@@ -538,8 +151,6 @@ bool DBManager::getParamsList(QString tankId, AquariumType type)
 
         obj->setFullName(paramTranslationMap[obj->shortName()]);
     }
-
-    qmlEngine->rootContext()->setContextProperty("allParamsListModel", QVariant::fromValue(paramsGuiList));
 
     return res;
 }
@@ -668,119 +279,6 @@ bool DBManager::getLatestParams()
         }
     }
 
-    qmlEngine->rootContext()->setContextProperty("curValuesListModel", QVariant::fromValue(curSelectedObjs.listOfCurrValues));
-
-    return false;
-}
-
-bool DBManager::getHistoryParams()
-{
-    QList<int> idList;
-    QVariantMap points;
-    QList<QVariantMap> curveList;
-    bool found = false;
-    int xMin = INT_MAX, xMax = INT_MIN;
-    float yMin = __FLT_MAX__, yMax = __FLT_MIN__;
-
-    idList.clear();
-    curveList.clear();
-
-    QSqlQuery qId("SELECT PARAM_ID FROM HISTORY_VALUE_TABLE "
-                  "WHERE TANK_ID = '"+currentTankSelected()->tankId()+"'");
-
-    while (qId.next())
-    {
-        found = false;
-
-        for (int i = 0; i < idList.size(); i++)
-        {
-            if (idList.at(i) == qId.value(0).toInt())
-                found = true;
-        }
-
-        if (found == false)
-            idList.append(qId.value(0).toInt());
-    }
-
-    pointList.clear();
-    datesList.clear();
-
-    for (int i = 0; i < idList.size(); i++)
-    {
-        QSqlQuery qParams("SELECT SMP_ID, VALUE, TIMESTAMP FROM HISTORY_VALUE_TABLE "
-                          "WHERE PARAM_ID = '"+QString::number(idList.at(i))+"'");
-
-        points.clear();
-
-        while (qParams.next())
-        {
-            if (i == 0)
-            {
-                PointObj *pt = new PointObj(qParams.value(0).toInt(), qParams.value(2).toInt(), qParams.value(1).toFloat());
-                pointList.append(pt);
-                datesList.append(pt);
-            }
-
-            points.insert(QString::number(qParams.value(2).toInt()), qParams.value(1).toFloat());
-        }
-
-        curveList.append(points);
-    }
-
-    /* Set list of points for Diagrams */
-    qmlEngine->rootContext()->setContextProperty("graphPointsList", QVariant::fromValue(pointList));
-
-
-    qSort(datesList.begin(), datesList.end(), less);
-
-
-    /* Set list of points for scroll dates lists */
-    qmlEngine->rootContext()->setContextProperty("datesList", QVariant::fromValue(datesList));
-
-    for (int i = 0; i < curveList.size(); i++)
-    {
-        /* Looking for min max Dates */
-        for (QVariantMap::const_iterator it = curveList.at(i).begin(); it != curveList.at(i).end(); it++)
-        {
-            if (it.key().toInt() < xMin)
-                xMin = it.key().toInt();
-
-            if (it.key().toInt() > xMax)
-                xMax = it.key().toInt();
-        }
-    }
-
-    clearDiagrams();
-
-    for (int i = 0; i < curveList.size(); i++)
-    {
-        yMin = __FLT_MAX__;
-        yMax = __FLT_MIN__;
-
-        /* Looking for min\max for current curve */
-        for (QVariantMap::const_iterator it = curveList.at(i).begin(); it != curveList.at(i).end(); it++)
-        {
-            if (it.value().toFloat() < yMin)
-                yMin = it.value().toFloat();
-
-            if (it.value().toFloat() > yMax)
-                yMax = it.value().toFloat();
-        }
-
-        if (yMin > 0)
-            yMin -= (yMax - yMin) * DIAGRAMM_DRAW_GAP_BOTTOM;
-
-        if (yMin < 0.1)
-            yMin = 0;
-
-        if (yMax > 0)
-            yMax += (yMax - yMin) * DIAGRAMM_DRAW_GAP_TOP;
-
-        addDiagram(0, idList.at(i), xMin, xMax, yMin, yMax, curveList.at(i));
-    }
-
-    drawDiagrams();
-
     return false;
 }
 
@@ -798,7 +296,13 @@ int DBManager::getLastSmpId()
 
 bool DBManager::getCurrentUser()
 {
-    QSqlQuery query("SELECT * FROM USER_TABLE");
+    QSqlQuery query("SELECT * FROM USER_TABLE WHERE STATUS != -1");
+
+    if (curSelectedObjs.user != nullptr)
+    {
+        delete curSelectedObjs.user;
+        curSelectedObjs.user = nullptr;
+    }
 
     while (query.next())
     {
@@ -814,7 +318,7 @@ bool DBManager::getUserTanksList()
 {
     bool res = false;
     TankObj *obj = nullptr;
-    QSqlQuery query("SELECT * FROM TANKS_TABLE WHERE MAN_ID='"+curSelectedObjs.user->man_id+"'");
+    QSqlQuery query("SELECT * FROM TANKS_TABLE WHERE MAN_ID='"+curSelectedObjs.user->man_id+"' AND STATUS != -1");
 
     curSelectedObjs.listOfUserTanks.clear();
 
@@ -829,13 +333,42 @@ bool DBManager::getUserTanksList()
     return res;
 }
 
+bool DBManager::getParamIdList(QList<int> *idList)
+{
+    bool found = false;
+
+    if (idList != 0)
+    {
+        QSqlQuery qId("SELECT PARAM_ID FROM HISTORY_VALUE_TABLE "
+                      "WHERE TANK_ID = '"+currentTankSelected()->tankId()+"'");
+
+        while (qId.next())
+        {
+            found = false;
+
+            for (int i = 0; i < idList->size(); i++)
+            {
+                if (idList->at(i) == qId.value(0).toInt())
+                    found = true;
+            }
+
+            if (found == false)
+                idList->append(qId.value(0).toInt());
+        }
+
+        return true;
+    }
+    else
+        return false;
+}
+
 bool DBManager::createUser(QString uname, QString upass, QString phone, QString email, QString img)
 {
     QByteArray base64Img = 0;
 
-    if (uname.length() > 0 && uname.length() <= USER_NAME_SIZE &&
-        upass.length() > 0 && upass.length() <= USER_PASS_SIZE &&
-        email.length() > 0 && email.length() <= USER_EMAIL_SIZE)
+    if (uname.length() > 0 && uname.length() <= AppDef::MAX_USERNAME_SIZE &&
+        upass.length() > 0 && upass.length() <= AppDef::MAX_PASS_SIZE &&
+        email.length() > 0 && email.length() <= AppDef::MAX_EMAIL_SIZE)
     {
         QSqlQuery query;
         bool res = false;
@@ -878,13 +411,15 @@ bool DBManager::createUser(QString uname, QString upass, QString phone, QString 
 
 bool DBManager::editUser(QString uname, QString upass, QString phone, QString email, QString img)
 {
+    Q_UNUSED(phone);
+
     QString base64ImgString = "";
     QSqlQuery query;
     bool res = false;
 
-    if (uname.length() > 0 && uname.length() <= USER_NAME_SIZE &&
-        upass.length() > 0 && upass.length() <= USER_PASS_SIZE &&
-        email.length() > 0 && email.length() <= USER_EMAIL_SIZE)
+    if (uname.length() > 0 && uname.length() <= AppDef::MAX_USERNAME_SIZE &&
+        upass.length() > 0 && upass.length() <= AppDef::MAX_PASS_SIZE &&
+        email.length() > 0 && email.length() <= AppDef::MAX_EMAIL_SIZE)
     {
         if (img.length() > 0)
         {
@@ -921,7 +456,35 @@ bool DBManager::editUser(QString uname, QString upass, QString phone, QString em
         return false;
 }
 
-bool DBManager::createTank(QString name, QString manId, int type, int l, int w, int h, QString imgFile)
+bool DBManager::deleteUser()
+{
+    QSqlQuery query;
+    bool res = false;
+
+    query.prepare("UPDATE USER_TABLE SET "
+                  "STATUS = -1, "
+                  "DATE_EDIT = '" + QString::number(QDateTime::currentSecsSinceEpoch()) + "' "
+                  "WHERE MAN_ID = '" + curSelectedObjs.user->man_id + "'");
+
+    res = query.exec();
+
+    if (res == false)
+        qDebug() << "Delete user error: " << query.lastError();
+
+    query.prepare("UPDATE TANKS_TABLE SET "
+                  "STATUS = -1, "
+                  "DATE_EDIT = '" + QString::number(QDateTime::currentSecsSinceEpoch()) + "' "
+                  "WHERE MAN_ID = '" + curSelectedObjs.user->man_id + "'");
+
+    res = query.exec();
+
+    if (res == false)
+        qDebug() << "Delete user error: " << query.lastError();
+
+    return res;
+}
+
+bool DBManager::createTank(QString name, QString desc, QString manId, int type, int l, int w, int h, QString imgFile)
 {
     bool res = false;
     QFile *file = nullptr;
@@ -953,13 +516,14 @@ bool DBManager::createTank(QString name, QString manId, int type, int l, int w, 
             delete file;
         }
 
-        query.prepare("INSERT INTO TANKS_TABLE (TANK_ID, MAN_ID, TYPE, IMG, NAME, STATUS, L, W, H, DATE_CREATE, DATE_EDIT) "
-                      "VALUES (:tank_id, :man_id, :type, :img, :name, :status, :l, :w, :h, :date_create, :date_edit)");
+        query.prepare("INSERT INTO TANKS_TABLE (TANK_ID, MAN_ID, TYPE, IMG, NAME, DESC, STATUS, L, W, H, DATE_CREATE, DATE_EDIT) "
+                      "VALUES (:tank_id, :man_id, :type, :img, :name, :desc, :status, :l, :w, :h, :date_create, :date_edit)");
 
         query.bindValue(":tank_id", tankId);
         query.bindValue(":man_id", manId);
         query.bindValue(":type", type);
         query.bindValue(":name", name);
+        query.bindValue(":desc", desc);
         query.bindValue(":img", img);
         query.bindValue(":status", UStatus_Enabled);
         query.bindValue(":l", l);
@@ -978,8 +542,69 @@ bool DBManager::createTank(QString name, QString manId, int type, int l, int w, 
         }
     }
 
-    if (res == true)
-        getCurrentObjs();
+    return res;
+}
+
+bool DBManager::editTank(QString name, QString desc, int type, int l, int w, int h, QString img)
+{
+    QString base64ImgString = "";
+    QSqlQuery query;
+    bool res = false;
+
+    if (name.length() > 0 && name.length() <= AppDef::MAX_USERNAME_SIZE)
+    {
+        if (img.length() > 0)
+        {
+            if (img.contains(".jpg") == true || img.contains(".png") == true)
+            {
+                QImage src(img);
+                QImage resized = src.scaled(USER_IMAGE_WIDTH, USER_IMAGE_HEIGHT, Qt::KeepAspectRatio);
+                QByteArray ba;
+                QBuffer buf(&ba);
+                resized.save(&buf, "png");
+                base64ImgString = QString(ba.toBase64());
+                buf.close();
+            }
+            else
+                base64ImgString = img;
+        }
+
+        query.prepare("UPDATE TANKS_TABLE SET "
+                      "TYPE = " + QString::number(type) + ", "
+                      "NAME = '" + name + "', "
+                      "DESC = '" + desc + "', "
+                      "L = " + QString::number(l) + ", "
+                      "W = " + QString::number(w) + ", "
+                      "H = " + QString::number(h) + ", "
+                      "IMG = '" + base64ImgString + "', "
+                      "DATE_EDIT = '" + QString::number(QDateTime::currentSecsSinceEpoch()) + "' "
+                      "WHERE TANK_ID = '" + currentTankSelected()->tankId() + "'");
+
+        res = query.exec();
+
+        if (res == false)
+            qDebug() << "Edit tank error: " << query.lastError();
+
+        return res;
+    }
+    else
+        return false;
+}
+
+bool DBManager::deleteTank(QString tankId)
+{
+    QSqlQuery query;
+    bool res = false;
+
+    query.prepare("UPDATE TANKS_TABLE SET "
+                  "STATUS = -1, "
+                  "DATE_EDIT = '" + QString::number(QDateTime::currentSecsSinceEpoch()) + "' "
+                  "WHERE TANK_ID = '" + tankId + "'");
+
+    res = query.exec();
+
+    if (res == false)
+        qDebug() << "Delete tank error: " << query.lastError();
 
     return res;
 }
@@ -1032,6 +657,8 @@ bool DBManager::addParamRecord(int smpId, int paramId, double value)
     bool res = false;
     TankObj *tank = (TankObj*) curSelectedObjs.listOfUserTanks.at(curSelectedObjs.tankIdx);
 
+    qDebug() << "addParamRecord smpId = " << smpId;
+
     query.prepare("INSERT INTO HISTORY_VALUE_TABLE (SMP_ID, TANK_ID, PARAM_ID, VALUE, TIMESTAMP) "
                   "VALUES (:smp_id, :tank_id, :param_id, :value, :tm)");
 
@@ -1056,6 +683,8 @@ bool DBManager::editParamRecord(int smpId, int paramId, double value)
     QSqlQuery query;
     bool res = false;
     TankObj *tank = (TankObj*) curSelectedObjs.listOfUserTanks.at(curSelectedObjs.tankIdx);
+
+    qDebug() << "editParamRecord";
 
     query.prepare("UPDATE HISTORY_VALUE_TABLE SET "
                   "VALUE = " + QString::number(value) + ", "
@@ -1232,12 +861,14 @@ bool DBManager::editPersonalParamState(QString tankId, int paramId, bool en)
 QString DBManager::randId()
 {
     const QString possibleCharacters("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
-    const int randomStringLength = RAND_ID_LENGTH; // assuming you want random strings of 12 characters
+    const int randomStringLength = RAND_ID_LENGTH;
     QString randomString;
 
     for(int i = 0; i < randomStringLength; ++i)
     {
-        int index = qrand() % possibleCharacters.length();
+        int index = qrand() * QDateTime::currentDateTime().time().msec();
+
+        index = index % possibleCharacters.length();
         QChar nextChar = possibleCharacters.at(index);
         randomString.append(nextChar);
     }
@@ -1470,7 +1101,7 @@ QString DBManager::createDbImgFileName(int i)
 
     fileName = tank->tankId();
     fileName += "_" + QDateTime::currentDateTime().toString("yyyyMMdd_hhmm");
-    fileName += "_" + num.sprintf("%02u", i);
+    fileName += "_" + num.asprintf("%02u", i);
 
     return fileName;
 }

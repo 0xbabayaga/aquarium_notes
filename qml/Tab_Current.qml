@@ -79,11 +79,10 @@ Item
         var lastDate
         var todayDate
 
-        if (paramsTable.model.count > 0)
+        if (paramsTable.model.length > 0)
         {
             lastDate = new Date(paramsTable.model[0].dtLast * 1000)
             todayDate = new Date()
-
 
             if (lastDate.getYear() === todayDate.getYear() &&
                 lastDate.getMonth() === todayDate.getMonth() &&
@@ -118,6 +117,14 @@ Item
                         }
                     }
                 }
+            }
+        }
+        else
+        {
+            for (var i = 0; i < dialogAddParamNote.addParamsListModel.length; i++)
+            {
+                if (dialogAddParamNote.addParamsListModel[i].en === true)
+                    dialogAddParamNote.addParamsListModel[i].value = -1
             }
         }
 
@@ -181,7 +188,7 @@ Item
             onModelChanged: currentIndex = 0
             onSigCurIndexChanged:
             {
-                if (ptList.model && ptList.model.length > id)
+                if (ptList.model && ptList.model.length > id && id >= 0)
                     app.sigCurrentSmpIdChanged(ptList.model[id].smpId)
             }
         }

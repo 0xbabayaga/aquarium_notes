@@ -32,9 +32,29 @@ Window
     width: 360
     height: 720
 
+    onIsAccountCreatedChanged:
+    {
+        if (isAccountCreated === false)
+        {
+            page_TankSett.visible = false
+            page_AccountSett.visible = false
+            page_TankData.visible = false
+            page_Main.visible = false
+            page_AccountWizard.visible = true
+        }
+        else
+        {
+            page_Main.visible = true
+            page_AccountWizard.visible = false
+        }
+    }
+
     signal sigCreateAccount(string uname, string upass, string umail, string img)
     signal sigEditAccount(string uname, string upass, string umail, string img)
-    signal sigCreateTank(string name, int type, int l, int w, int h, string img)
+    signal sigDeleteAccount()
+    signal sigCreateTank(string name, string desc, int type, int l, int w, int h, string img)
+    signal sigEditTank(string name, string desc, int type, int l, int w, int h, string img)
+    signal sigDeleteTank(string tankId)
     signal sigAddRecord(int smpId, int paramId, double value)
     signal sigEditRecord(int smpId, int paramId, double value)
     signal sigAddRecordNotes(int smpId, string note, string imageLink)
@@ -49,6 +69,7 @@ Window
     signal sigCurrentSmpIdChanged(int smpId)
     signal sigDebug()
     signal sigOpenGallery()
+    signal sigLanguageChanged(int id)
 
     function getAllParamsListModel() { return allParamsListModel    }
 
@@ -137,18 +158,30 @@ Window
         {
             id: page_AccountSett
             anchors.fill: rectBackground
+            anchors.topMargin: AppTheme.rowHeightMin * app.scale
             visible: false
 
-            onSigClose: page_Main.showPage(true)
+            //onSigClosed: page_Main.showPage(true)
         }
 
         Page_TankSett
         {
             id: page_TankSett
             anchors.fill: rectBackground
+            anchors.topMargin: AppTheme.rowHeightMin * app.scale
             visible: false
 
-            onSigClose: page_Main.showPage(true)
+            //onSigClosed: page_Main.showPage(true)
+        }
+
+        Page_AppSett
+        {
+            id: page_AppSett
+            anchors.fill: rectBackground
+            anchors.topMargin: AppTheme.rowHeightMin * app.scale
+            visible: false
+
+            //onSigClosed: page_Main.showPage(true)
         }
     }
 
@@ -166,18 +199,29 @@ Window
 
         onSigMenuSelected:
         {
-            if (id === AppDefs.Menu_Account)
+            if (isAccountCreated === true)
             {
-                page_Main.showPage(false)
-                page_AccountSett.moveToEdit(false)
-                page_AccountSett.showPage(true)
-            }
-            else if (id === AppDefs.Menu_TankInfo)
-            {
-                page_Main.showPage(false)
-                page_AccountSett.moveToEdit(false)
-                page_AccountSett.showPage(false)
-                page_TankSett.showPage(true)
+                if (id === AppDefs.Menu_Account)
+                {
+                    page_TankSett.moveToEdit(false)
+                    page_TankSett.showPage(false)
+                    page_AppSett.showPage(false)
+                    page_AccountSett.showPage(true)
+                }
+                else if (id === AppDefs.Menu_TankInfo)
+                {
+                    page_AccountSett.moveToEdit(false)
+                    page_AccountSett.showPage(false)
+                    page_AppSett.showPage(false)
+                    page_TankSett.showPage(true)
+                }
+                else if (id === AppDefs.Menu_Settings)
+                {
+                    page_AccountSett.moveToEdit(false)
+                    page_AccountSett.showPage(false)
+                    page_TankSett.showPage(false)
+                    page_AppSett.showPage(true)
+                }
             }
         }
     }

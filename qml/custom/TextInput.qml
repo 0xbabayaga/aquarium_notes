@@ -35,6 +35,7 @@ Item
         horizontalAlignment: Text.AlignLeft
         color: enabled ? AppTheme.blueColor : AppTheme.hideColor
         wrapMode: Text.WordWrap
+        clip: true
 
         Text
         {

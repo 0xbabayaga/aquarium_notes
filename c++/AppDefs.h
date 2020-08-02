@@ -44,60 +44,28 @@ public:
         Menu_Settings = 3
     };
 
+    enum AppDefines
+    {
+        MAX_TANKNAME_SIZE = 32,
+        MAX_TANKDESC_SIZE = 256,
+        MAX_USERNAME_SIZE = 32,
+        MAX_EMAIL_SIZE = 64,
+        MAX_PASS_SIZE = 16,
+        MAX_TANKDIMENSION_SIZE = 4,
+
+        MAX_USERTANKS_COUNT = 16
+    };
+
     Q_ENUMS(AppInitEnum)
     Q_ENUMS(EnumActionRepeat)
     Q_ENUMS(EnumActionViewPeriod)
     Q_ENUMS(EnumMenuSelected)
+    Q_ENUMS(AppDefines)
 
     static void declareQML()
     {
         qmlRegisterType<AppDef>("AppDefs", 1, 0, "AppDefs");
-        //qmlRegisterType<AppDef>("EnumActionRepeat", 1, 0, "EnumActionRepeat");
     }
 };
-
-/*
-class ActionRepeat : public QObject
-{
-    Q_OBJECT
-
-public:
-    ActionRepeat() : QObject() {}
-
-    enum EnumActionRepeat
-    {
-        ActionRepeat_None = 0,
-        ActionRepeat_EveryDay = 1,
-        ActionRepeat_EveryWeek = 2,
-        ActionRepeat_EveryMonth = 3
-    };
-
-    Q_ENUMS(AppInitEnum)
-
-    static void declareQML() {  qmlRegisterType<AppDef>("AppInitEnum", 1, 0, "AppInitEnum");     }
-};
-
-/*
-class PageSett : public QObject
-{
-    Q_OBJECT
-
-public:
-    PageSett() : QObject() {}
-
-    enum Pages
-    {
-        //Network settings
-        PAGE_DATETIME = 1,
-        PAGE_ALARMS = 2,
-        PAGE_DISPLAY = 3,
-        PAGE_LIGHT = 4,
-    };
-
-    Q_ENUMS(Pages)
-
-    static void declareQML() {  qmlRegisterType<PageSett>("Pages", 1, 0, "Pages");     }
-};
-*/
 
 #endif // APPDEFS_H

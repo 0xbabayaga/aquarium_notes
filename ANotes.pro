@@ -12,6 +12,7 @@ TEMPLATE = app
 
 SOURCES += \
         c++/actionlist.cpp \
+        c++/appmanager.cpp \
         c++/dbmanager.cpp \
         main.cpp
 
@@ -41,6 +42,7 @@ ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 HEADERS += \
     c++/AppDefs.h \
     c++/actionlist.h \
+    c++/appmanager.h \
     c++/dbmanager.h \
     c++/dbobjects.h \
     c++/galleryobjects.h
@@ -49,3 +51,8 @@ HEADERS += \
 #    ANDROID_PACKAGE_SOURCE_DIR = \
 #        $$PWD/android
 #}
+
+TRANSLATIONS += \
+    resources/langs/lang_en.ts \
+    resources/langs/lang_ru.ts \
+    resources/langs/lang_be.ts

@@ -39,10 +39,6 @@ QtObject
     property int fontBigSize: 22
     property int fontSuperBigSize: 32
 
-    property int textMaxLength64: 64
-    property int textMaxLength32: 32
-    property int textMaxLength16: 16
-
     property FontLoader appFont: FontLoader { source: "qrc:/resources/font/Century.otf" }
 
     property string fontFamily: appFont.name

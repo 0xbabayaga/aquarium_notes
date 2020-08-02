@@ -95,7 +95,7 @@ bool ActionList::setData(QSqlQuery *query)
         }
     }
 
-    qSort(list.begin(), list.end(), less);
+    std::sort(list.begin(), list.end(), less);
 
     res = true;
 

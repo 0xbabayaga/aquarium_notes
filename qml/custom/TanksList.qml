@@ -30,6 +30,7 @@ Item
                 width: 128 * app.scale
                 height: 96 * app.scale
                 scale: PathView.iconScale
+                z: PathView.z
 
                 Rectangle
                 {
@@ -82,6 +83,7 @@ Item
                         opacity: 0.8
                     }
 
+                    /*
                     Text
                     {
                         anchors.left: parent.left
@@ -95,6 +97,7 @@ Item
                         verticalAlignment: Text.AlignBottom
                         height: AppTheme.compHeight * app.scale
                     }
+                    */
 
                     Text
                     {
@@ -147,10 +150,11 @@ Item
                 startY: view.height * 1.20
 
                 PathAttribute { name: "iconScale"; value: 0.75 }
-                PathAttribute { name: "iconOrder"; value: 0 }
+                PathAttribute { name: "z"; value: 0 }
                 PathLine {x: view.width/2; y: view.height }
                 PathAttribute { name: "iconScale"; value: 1.25 }
                 PathAttribute { name: "iconOpacity"; value: 1 }
+                PathAttribute { name: "z"; value: 1 }
                 PathLine {x: view.width; y: view.height * 1.20 }
             }
 

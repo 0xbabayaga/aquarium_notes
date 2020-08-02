@@ -1,15 +1,12 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-#include <QCameraInfo>
-#include <QCamera>
-#include "c++/dbmanager.h"
+#include <QDebug>
+#include "c++/appmanager.h"
 #include "c++/AppDefs.h"
 
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
-
-    //qmlRegisterType<PermissionManager>("ANotes.PermissionManager", 1, 0, "PermissionManager");
 
     AppDef::declareQML();
 
@@ -25,7 +22,7 @@ int main(int argc, char *argv[])
             QCoreApplication::exit(-1);
     }, Qt::QueuedConnection);
 
-    DBManager *dbMan = new DBManager(&engine);
+    AppManager *appMan = new AppManager(&engine);
 
     engine.load(url);
 

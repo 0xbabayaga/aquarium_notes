@@ -16,9 +16,6 @@
 
 #define USER_IMAGE_WIDTH            256
 #define USER_IMAGE_HEIGHT           256
-#define USER_PASS_SIZE              16
-#define USER_NAME_SIZE              32
-#define USER_EMAIL_SIZE             64
 
 typedef enum
 {
@@ -31,8 +28,10 @@ class DBManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit DBManager(QQmlApplicationEngine *engine, QObject *parent = nullptr);
+    explicit DBManager(QObject *parent = nullptr);
     ~DBManager();
+
+    friend class AppManager;
 
     typedef struct
     {
@@ -49,11 +48,13 @@ public:
 
 private:
     /* Database management */
-    void    init();
     bool    initDB();
     bool    createUser(QString uname, QString upass, QString phone, QString email, QString img);
     bool    editUser(QString uname, QString upass, QString phone, QString email, QString img);
-    bool    createTank(QString name, QString manId, int type, int l, int w, int h, QString imgFile);
+    bool    deleteUser();
+    bool    createTank(QString name, QString desc, QString manId, int type, int l, int w, int h, QString imgFile);
+    bool    editTank(QString name, QString desc, int type, int l, int w, int h, QString img);
+    bool    deleteTank(QString tankId);
     bool    createTankDefaultParamSet(QString tankId, AquariumType type);
     bool    addParamRecord(int smpId, int paramId, double value);
     bool    editParamRecord(int smpId, int paramId, double value);
@@ -66,13 +67,13 @@ private:
 
     /* Read basics */
     bool    getParamsList(QString tankId, AquariumType type);
-    bool    getHistoryParams();
     int     getLastSmpId();
     bool    getLatestParams();
     bool    getActionCalendar();
-
     bool    getCurrentUser();
     bool    getUserTanksList();
+
+    bool    getParamIdList(QList<int> *idList);
 
     /* Preparation for GUI start */
     bool    getCurrentObjs();
@@ -81,23 +82,7 @@ private:
     QString randId();
     TankObj *currentTankSelected();
 
-private:
-    /* Gui methods */
-    bool    setQmlParam(QString objName, QString name, QVariant value);
-    void    setInitialDialogStage(int stage, QString name);
-    void    setLastSmpId(int id);
-    void    setGalleryImageSelected(QString imgUrl);
-    void    setAndroidFlag(bool flag);
-    void    setCurrentUser(QString uname, QString email, QString imgLink, int dt);
-
-    /* Gui diagram drawing */
-    void    clearDiagrams();
-    void    addDiagram(int num, int paramId, int xMin, int xMax, float yMin, float yMax, QVariantMap points);
-    void    drawDiagrams();
-
     static bool    less(QObject *v1, QObject *v2);
-    QString createDbImgFileName(int i);
-    QString createDbImgAccountFileName();
     QString getImgDbFolder()
     {
         #ifdef  Q_OS_ANDROID
@@ -107,24 +92,8 @@ private:
         #endif
     }
 
-public slots:
-    void    onQmlEngineLoaded(QObject *object, const QUrl &url);
-    void    onGuiUserCreate(QString uname, QString upass, QString email, QString img);
-    void    onGuiUserEdit(QString uname, QString upass, QString email, QString img);
-    void    onGuiTankCreate(QString name, int type, int l, int w, int h, QString imgFile);
-    void    onGuiAddRecord(int smpId, int paramId, double value);
-    void    onGuiEditRecord(int smpId, int paramId, double value);
-    void    onGuiAddRecordNote(int smpId, QString notes, QString imageLink);
-    void    onGuiEditRecordNote(int smpId, QString note, QString imageLink);
-    void    onGuiAddActionRecord(QString name, QString desc, int periodType, int period, int tm);
-    void    onGuiEditActionRecord(int id, QString name, QString desc, int periodType, int period, int tm);
-    void    onGuiDeleteActionRecord(int id);
-    void    onGuiActionViewPeriodChanged(int period);
-    void    onGuiTankSelected(int tankIdx);
-    void    onGuiPersonalParamStateChanged(int paramId, bool en);
-    void    onGuiRefreshData();
-    void    onGuiCurrentSmpIdChanged(int smpId);
-    void    onGuiOpenGallery();
+    QString createDbImgFileName(int i);
+    QString createDbImgAccountFileName();
 
 public:
     const QString   dbFolder = "db";
@@ -133,7 +102,6 @@ public:
     const QString   appFolder = "AquariumNotes";
 
 private:
-    ActionList      *actionList;
     QString         appPath;
     QString         dbFileLink;
     QSqlDatabase    db;
@@ -141,7 +109,6 @@ private:
     /* Store params enumeration */
     QList<QObject*> paramsGuiList;
     QMap<int, bool> mapPersonal;
-
     QList<QObject*> aquariumTypeList;
     QList<QObject*> pointList;
     QList<QObject*> datesList;
@@ -149,11 +116,9 @@ private:
 
     /* Currently selected objects */
     UTObj           curSelectedObjs;
-
     bool            isParamDataChanged;
 
-private:
-    QQmlApplicationEngine   *qmlEngine = nullptr;
+    ActionList      *actionList;
 };
 
 #endif // DBMANAGER_H

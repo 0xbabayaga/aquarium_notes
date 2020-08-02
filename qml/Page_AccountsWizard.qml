@@ -152,7 +152,7 @@ Item
                         id: textUserName
                         placeholderText: qsTr("User name")
                         width: parent.width
-                        maximumLength: AppTheme.textMaxLength32
+                        maximumLength: AppDefs.MAX_USERNAME_SIZE
                         focus: true
                         KeyNavigation.tab: textUserEmail
                     }
@@ -164,7 +164,7 @@ Item
                         id: textUserEmail
                         placeholderText: qsTr("User email")
                         width: parent.width
-                        maximumLength: AppTheme.textMaxLength64
+                        maximumLength: AppDefs.MAX_EMAIL_SIZE
                         focus: true
                         KeyNavigation.tab: textUserPass
                     }
@@ -176,7 +176,7 @@ Item
                         id: textUserPass
                         placeholderText: qsTr("User password")
                         width: parent.width
-                        maximumLength: AppTheme.textMaxLength16
+                        maximumLength: AppDefs.MAX_PASS_SIZE
                         focus: true
                         KeyNavigation.tab: buttonCancel
                     }
@@ -328,6 +328,7 @@ Item
                         id: textTankName
                         placeholderText: qsTr("Tank name")
                         width: parent.width
+                        maximumLength: AppDefs.MAX_TANKNAME_SIZE
                         focus: false
                         KeyNavigation.tab: textTankL
                     }
@@ -372,7 +373,7 @@ Item
                             anchors.horizontalCenter: parent.horizontalCenter
                             placeholderText: qsTr("50")
                             width: (parent.width - rectRow.unitWidth * 3) / 3
-                            maximumLength: 4
+                            maximumLength: AppDefs.MAX_TANKDIMENSION_SIZE
                             validator : RegExpValidator { regExp : /[0-9]+[0-9]+/ }
                             focus: true
                             KeyNavigation.tab: textTankH
@@ -395,7 +396,7 @@ Item
                             anchors.right: parent.right
                             placeholderText: qsTr("50")
                             width: (parent.width - rectRow.unitWidth * 3) / 3
-                            maximumLength: 4
+                            maximumLength: AppDefs.MAX_TANKDIMENSION_SIZE
                             validator : RegExpValidator { regExp : /[0-9]+[0-9]+/ }
                             focus: true
                             KeyNavigation.tab: comboTankType
@@ -470,6 +471,7 @@ Item
                             imgLink = imgTankAvatar.selectedImagesList.get(0).fileLink
 
                         app.sigCreateTank(textTankName.text,
+                                          "",
                                           comboTankType.currentIndex,
                                           textTankL.text,
                                           textTankW.text,

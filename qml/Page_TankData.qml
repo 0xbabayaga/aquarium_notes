@@ -139,11 +139,7 @@ Item
                 anchors.verticalCenter: imgTank.verticalCenter
                 image: "qrc:/resources/img/icon_arrow_left.png"
 
-                onSigButtonClicked:
-                {
-                    tab_Current.addLogRecord(false)
-                    showPage(false, "")
-                }
+                onSigButtonClicked: showPage(false, "")
             }
 
             Image

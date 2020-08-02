@@ -21,6 +21,42 @@ typedef enum
     EndOfList = Fresh_FullScape + 1
 }   AquariumType;
 
+class LangObj : public QObject
+{
+    Q_OBJECT
+
+    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
+    Q_PROPERTY(int id READ id WRITE setId NOTIFY idChanged)
+    Q_PROPERTY(QString fileName READ fileName WRITE setFileName NOTIFY fileNameChanged)
+
+public:
+    LangObj(int id, QString name, QString fileName)
+    {
+        _id = id;
+        _name = name;
+        _fileName = fileName;
+    }
+
+public:
+    int id()                    {   return _id;         }
+    QString name()              {   return _name;       }
+    QString fileName()          {   return _fileName;   }
+
+    void setId(int id)          {   _id = id;           }
+    void setName(QString name)  {   _name = name;       }
+    void setFileName(QString m) {   _fileName = m;      }
+
+signals:
+    void idChanged();
+    void nameChanged();
+    void fileNameChanged();
+
+protected:
+    int     _id;
+    QString _name;
+    QString _fileName;
+};
+
 class ActionObj : public QObject
 {
     Q_OBJECT
@@ -401,7 +437,7 @@ public:
     void setTankId(QString tankId)  {   _tank_id = tankId;      }
     void setName(QString name)      {   _name = name;           }
     void setDesc(QString desc)      {   _desc = desc;           }
-    void setVolume(float vol)       {   _l = _w;                }
+    void setVolume(float vol)       {   Q_UNUSED(vol);          }
     void setType(int type)          {   _type = type;           }
     void setImg(QString img)        {   _img = img;             }
     void setTypeName(QString name)  {   _typeName = name;       }

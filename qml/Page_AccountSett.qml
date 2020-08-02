@@ -11,14 +11,19 @@ Item
 {
     id: page_AccountSett
 
-    signal sigClose()
+    signal sigClosing()
+    signal sigClosed()
 
     function showPage(vis)
     {
+        showAccountSettAnimation.stop()
+
         if (vis === true)
-            showPageAnimation.start()
+            showAccountSettAnimation.to = 0
         else
-            hidePageAnimation.start()
+            showAccountSettAnimation.to = page_AccountSett.height
+
+        showAccountSettAnimation.start()
     }
 
     function setCurrentImage(img)
@@ -53,300 +58,403 @@ Item
 
     NumberAnimation
     {
-        id: showPageAnimation
-        target: page_AccountSett
-        property: "opacity"
-        from: 0
-        to: 1
+        id: showAccountSettAnimation
+        target: rectContainer
+        property: "anchors.topMargin"
+        duration: 400
+        easing.type: Easing.OutExpo
         onStarted: page_AccountSett.visible = true
+        onFinished:
+        {
+            if (rectContainer.anchors.topMargin > 0 && page_AccountSett.visible === true)
+            {
+                page_AccountSett.visible = false
+                sigClosed()
+            }
+        }
     }
-
-    NumberAnimation
-    {
-        id: hidePageAnimation
-        target: page_AccountSett
-        property: "opacity"
-        from: 1
-        to: 0
-        onFinished: page_AccountSett.visible = false
-    }
-
 
     Rectangle
     {
         id: rectContainer
-        anchors.fill: parent
+        anchors.top: parent.top
+        anchors.topMargin: page_AccountSett.height
+        anchors.left: parent.left
+        anchors.right: parent.right
+        height: page_AccountSett.height
+        radius: AppTheme.radius * 2 * app.scale
+        color: AppTheme.whiteColor
+    }
+
+    DropShadow
+    {
+        anchors.fill: rectContainer
+        horizontalOffset: 0
+        verticalOffset: -3
+        radius: 10.0 * app.scale
+        samples: 16
+        color: "#20000000"
+        source: rectContainer
+    }
+
+    Rectangle
+    {
+        id: rectRealContainer
+        anchors.fill: rectContainer
         color: "#00000000"
 
-        Flickable
+        Image
         {
-            id: flickView
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
             anchors.left: parent.left
-            anchors.right: parent.right
-            contentWidth: width
-            contentHeight: app.height * 2
+            anchors.top: parent.top
+            anchors.topMargin: -(AppTheme.rowHeightMin - AppTheme.margin) * app.scale
+            width: parent.width
+            height: width * 0.75
+            source: "qrc:/resources/img/back_waves.png"
+            opacity: 0.3
+        }
 
-            flickableDirection: Flickable.VerticalFlick
-            interactive: false
-
-            NumberAnimation on contentY
-            {
-                id: animationToPage
-                from: 0
-                to: 0
-                duration: 500
-                easing.type: Easing.OutExpo
-                running: false
-            }
+        Rectangle
+        {
+            id: rectAccountInfo
+            anchors.fill: parent
+            anchors.leftMargin: AppTheme.padding * app.scale
+            anchors.rightMargin: AppTheme.padding * app.scale
+            color: "#00000000"
 
             Rectangle
             {
-                id: rectAccountInfo
                 anchors.top: parent.top
                 anchors.left: parent.left
-                anchors.leftMargin: AppTheme.margin * app.scale
                 anchors.right: parent.right
-                anchors.rightMargin: AppTheme.margin * app.scale
-                height: flickView.height
+                height: AppTheme.rowHeight * app.scale
                 color: "#00000000"
 
-                Rectangle
+                Image
                 {
-                    id: rectAccountPhoto
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.top: parent.top
-                    anchors.topMargin: AppTheme.margin * 3 * app.scale
-                    width: AppTheme.margin * 4 * app.scale
-                    height: width
-                    radius: width / 2
-                    border.width: 2 * app.scale
-                    border.color: AppTheme.blueColor
-                    color: AppTheme.backLightBlueColor
-
-                    Image
-                    {
-                        id: imgAccount
-                        anchors.fill: parent
-                        anchors.margins: 2 * app.scale
-                        source: "data:image/png;base64," + app.curUserAvatar
-                        mipmap: true
-                        layer.enabled: true
-                        layer.effect: OpacityMask
-                        {
-                            maskSource: imgTankMask
-                        }
-                    }
-
-                    Rectangle
-                    {
-                        id: imgTankMask
-                        anchors.fill: parent
-                        radius: height/2
-                        visible: false
-                    }
+                    id: imgApp
+                    anchors.left: parent.left
+                    anchors.verticalCenter: parent.verticalCenter
+                    fillMode: Image.PreserveAspectFit
+                    width: 20 * app.scale
+                    height: 20 * app.scale
+                    source: "qrc:/resources/img/icon_app.png"
+                    mipmap: true
                 }
 
-                DropShadow
+                ColorOverlay
                 {
-                    anchors.fill: rectAccountPhoto
-                    horizontalOffset: 0
-                    verticalOffset: 0
-                    radius: 8.0
-                    samples: 16
-                    color: "#60000000"
-                    source: rectAccountPhoto
+                    anchors.fill: imgApp
+                    source: imgApp
+                    color: AppTheme.blueColor
                 }
 
                 Text
                 {
-                    id: textAccountName
+                    id: textHeader
+                    anchors.verticalCenter: imgApp.verticalCenter
                     anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.top: rectAccountPhoto.bottom
-                    anchors.topMargin: AppTheme.padding * app.scale
-                    height: AppTheme.compHeight * app.scale
                     verticalAlignment: Text.AlignBottom
                     font.family: AppTheme.fontFamily
                     font.pixelSize: AppTheme.fontBigSize * app.scale
                     color: AppTheme.blueColor
-                    text: app.curUserName
-                }
-
-                Text
-                {
-                    id: textAccountEmail
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.top: textAccountName.bottom
-                    height: AppTheme.compHeight / 2 * app.scale
-                    verticalAlignment: Text.AlignTop
-                    font.family: AppTheme.fontFamily
-                    font.pixelSize: AppTheme.fontSmallSize * app.scale
-                    color: AppTheme.greyColor
-                    text: app.curUserEmail
-                }
-
-                Text
-                {
-                    id: textAccountDateCreate
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.top: textAccountEmail.bottom
-                    height: AppTheme.compHeight / 2 * app.scale
-                    verticalAlignment: Text.AlignTop
-                    font.family: AppTheme.fontFamily
-                    font.pixelSize: AppTheme.fontSmallSize * app.scale
-                    color: AppTheme.greyColor
-                    text: (new DateTimeUtils.DateTimeUtil()).printFullDate(app.curUserDateCreate)
-                }
-
-                IconSimpleButton
-                {
-                    id: buttonEdit
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.bottom: parent.bottom
-                    anchors.bottomMargin: AppTheme.margin * app.scale
-                    image: "qrc:/resources/img/icon_edit.png"
-                    KeyNavigation.tab: textUserName
-
-                    onSigButtonClicked: moveToEdit(true)
+                    text: qsTr("ACCOUNT")
                 }
             }
 
             Rectangle
             {
-                id: rectCreateAccount
-                anchors.top: rectAccountInfo.bottom
-                anchors.left: parent.left
-                anchors.leftMargin: AppTheme.margin * app.scale
-                anchors.right: parent.right
-                anchors.rightMargin: AppTheme.margin * app.scale
-                height: flickView.height
-                color: "#00000000"
+                id: rectAccountPhoto
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: parent.top
+                anchors.topMargin: AppTheme.margin * 2 * app.scale
+                width: AppTheme.margin * 4 * app.scale
+                height: width
+                radius: width / 2
+                border.width: 2 * app.scale
+                border.color: AppTheme.blueColor
+                color: AppTheme.backLightBlueColor
 
-                Column
+                Image
                 {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.verticalCenterOffset: 60 * app.scale
-                    height: 300 * app.scale
-                    width: parent.width
-                    spacing: AppTheme.padding * app.scale
+                    id: imgAccount
+                    anchors.fill: parent
+                    anchors.margins: 1 * app.scale
+                    source: "data:image/png;base64," + app.curUserAvatar
+                    mipmap: true
+                    layer.enabled: true
+                    layer.effect: OpacityMask
+                    {
+                        maskSource: imgTankMask
+                    }
+                }
 
-                    Text
+                Rectangle
+                {
+                    id: imgTankMask
+                    anchors.fill: parent
+                    radius: height/2
+                    visible: false
+                }
+            }
+
+            DropShadow
+            {
+                anchors.fill: rectAccountPhoto
+                horizontalOffset: 0
+                verticalOffset: 0
+                radius: 12.0
+                samples: 16
+                color: "#60000000"
+                source: rectAccountPhoto
+            }
+
+            Text
+            {
+                id: textAccountName
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: rectAccountPhoto.bottom
+                anchors.topMargin: AppTheme.padding / 2 * app.scale
+                height: AppTheme.compHeight * app.scale
+                verticalAlignment: Text.AlignBottom
+                font.family: AppTheme.fontFamily
+                font.pixelSize: AppTheme.fontBigSize * app.scale
+                color: AppTheme.blueColor
+                text: app.curUserName
+            }
+
+            Text
+            {
+                id: textAccountEmail
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: textAccountName.bottom
+                height: AppTheme.compHeight * app.scale
+                verticalAlignment: Text.AlignVCenter
+                font.family: AppTheme.fontFamily
+                font.pixelSize: AppTheme.fontSmallSize * app.scale
+                color: AppTheme.greyColor
+                text: app.curUserEmail
+            }
+
+            Text
+            {
+                id: textAccountDateCreate
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: textAccountEmail.bottom
+                height: AppTheme.compHeight / 2 * app.scale
+                verticalAlignment: Text.AlignTop
+                font.family: AppTheme.fontFamily
+                font.pixelSize: AppTheme.fontSmallSize * app.scale
+                color: AppTheme.greyColor
+                text: (new DateTimeUtils.DateTimeUtil()).printFullDate(app.curUserDateCreate)
+            }
+
+            Flickable
+            {
+                id: flickView
+                anchors.top: parent.top
+                anchors.topMargin: AppTheme.margin * 9 * app.scale
+                anchors.bottom: parent.bottom
+                anchors.left: parent.left
+                anchors.leftMargin: AppTheme.padding * app.scale
+                anchors.right: parent.right
+                anchors.rightMargin: AppTheme.padding * app.scale
+                contentWidth: width
+                contentHeight: height * 2
+                clip: true
+                flickableDirection: Flickable.VerticalFlick
+                interactive: false
+
+                NumberAnimation on contentY
+                {
+                    id: animationToPage
+                    from: 0
+                    to: 0
+                    duration: 500
+                    easing.type: Easing.OutExpo
+                    running: false
+                }
+
+                Rectangle
+                {
+                    id: rectEdit
+                    anchors.top: parent.top
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    height: parent.height / 2
+                    color: "#00000000"
+
+                    IconSmallSimpleButton
+                    {
+                        anchors.top: parent.top
+                        anchors.topMargin: AppTheme.margin * app.scale
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.horizontalCenterOffset: -AppTheme.margin * app.scale
+                        image: "qrc:/resources/img/icon_edit.png"
+
+                        onSigButtonClicked: moveToEdit(true)
+                    }
+
+                    IconSmallSimpleButton
+                    {
+                        anchors.top: parent.top
+                        anchors.topMargin: AppTheme.margin * app.scale
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.horizontalCenterOffset: AppTheme.margin * app.scale
+                        image: "qrc:/resources/img/icon_cancel.png"
+
+                        onSigButtonClicked: confirmDialog.showDialog(true,
+                                                                     qsTr("Account delete"),
+                                                                     qsTr("All data assosiated with current account will be deleted!"))
+                    }
+
+                    IconSimpleButton
+                    {
+                        id: buttonGoBack
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.bottom: parent.bottom
+                        anchors.bottomMargin: AppTheme.margin * app.scale
+                        image: "qrc:/resources/img/icon_arrow_down.png"
+                        KeyNavigation.tab: textUserName
+
+                        onSigButtonClicked:
+                        {
+                            page_AccountSett.showPage(false)
+                            sigClosing()
+                        }
+                    }
+                }
+
+                Rectangle
+                {
+                    id: rectEditAccount
+                    anchors.top: rectEdit.bottom
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    height: flickView.height
+                    color: "#00000000"
+
+                    Column
                     {
                         anchors.horizontalCenter: parent.horizontalCenter
-                        height: AppTheme.compHeight * app.scale
-                        verticalAlignment: Text.AlignVCenter
-                        font.family: AppTheme.fontFamily
-                        font.pixelSize: AppTheme.fontBigSize * app.scale
-                        color: AppTheme.blueColor
-                        text: qsTr("Edit account")
-                    }
-
-                    Item { height: 1; width: 1;}
-
-                    TextInput
-                    {
-                        id: textUserName
-                        placeholderText: qsTr("User name")
+                        anchors.top: parent.top
+                        height: 300 * app.scale
                         width: parent.width
-                        maximumLength: AppTheme.textMaxLength32
-                        focus: true
-                        text: app.curUserName
-                        KeyNavigation.tab: textUserEmail
-                    }
+                        spacing: AppTheme.padding * app.scale
 
-                    Item { height: 1; width: 1;}
-
-                    TextInput
-                    {
-                        id: textUserEmail
-                        placeholderText: qsTr("User email")
-                        width: parent.width
-                        maximumLength: AppTheme.textMaxLength64
-                        focus: true
-                        text: app.curUserEmail
-                        KeyNavigation.tab: textUserPass
-                    }
-
-                    Item { height: 1; width: 1;}
-
-                    TextInput
-                    {
-                        id: textUserPass
-                        placeholderText: qsTr("User password")
-                        width: parent.width
-                        maximumLength: AppTheme.textMaxLength16
-                        focus: true
-                        KeyNavigation.tab: buttonCancel
-                    }
-
-                    Item { height: 1; width: 1;}
-
-                    Text
-                    {
-                        verticalAlignment: Text.AlignVCenter
-                        font.family: AppTheme.fontFamily
-                        font.pixelSize: AppTheme.fontNormalSize * app.scale
-                        color: AppTheme.blueColor
-                        text: qsTr("Tank image")
-                    }
-
-                    ImageList
-                    {
-                        id: imgUserAvatar
-                        objectName: "imgUserAvatar"
-                        imagesCountMax: 1
-                    }
-                }
-
-                IconSimpleButton
-                {
-                    id: buttonCancel
-                    anchors.left: parent.left
-                    anchors.bottom: parent.bottom
-                    anchors.bottomMargin: AppTheme.margin * app.scale
-                    image: "qrc:/resources/img/icon_cancel.png"
-                    KeyNavigation.tab: buttonCreate
-
-                    onSigButtonClicked:
-                    {
-                        showPage(false)
-                        sigClose()
-                    }
-                }
-
-                IconSimpleButton
-                {
-                    id: buttonCreate
-                    anchors.right: parent.right
-                    anchors.bottom: parent.bottom
-                    anchors.bottomMargin: AppTheme.margin * app.scale
-                    image: "qrc:/resources/img/icon_ok.png"
-                    KeyNavigation.tab: textUserName
-
-                    onSigButtonClicked:
-                    {
-                        var imgLink = ""
-
-                        if (imgUserAvatar.selectedImagesList.count > 0)
+                        TextInput
                         {
-                            if (imgUserAvatar.selectedImagesList.get(0).fileLink !== 0)
-                                imgLink = imgUserAvatar.selectedImagesList.get(0).fileLink
-                            else
-                                imgLink = imgUserAvatar.selectedImagesList.get(0).base64data
+                            id: textUserName
+                            placeholderText: qsTr("User name")
+                            width: parent.width
+                            maximumLength: AppDefs.MAX_USERNAME_SIZE
+                            focus: true
+                            text: app.curUserName
+                            KeyNavigation.tab: textUserEmail
                         }
 
-                        app.sigEditAccount(textUserName.text,
-                                           textUserPass.text,
-                                           textUserEmail.text,
-                                           imgLink)
+                        Item { height: 1; width: 1;}
 
-                        showPage(false)
-                        sigClose()
+                        TextInput
+                        {
+                            id: textUserEmail
+                            placeholderText: qsTr("User email")
+                            width: parent.width
+                            maximumLength: AppDefs.MAX_EMAIL_SIZE
+                            focus: true
+                            text: app.curUserEmail
+                            KeyNavigation.tab: textUserPass
+                        }
+
+                        Item { height: 1; width: 1;}
+
+                        TextInput
+                        {
+                            id: textUserPass
+                            placeholderText: qsTr("User password")
+                            width: parent.width
+                            maximumLength: AppDefs.MAX_PASS_SIZE
+                            focus: true
+                            KeyNavigation.tab: buttonCancel
+                        }
+
+                        Item { height: 1; width: 1;}
+
+                        Text
+                        {
+                            verticalAlignment: Text.AlignVCenter
+                            font.family: AppTheme.fontFamily
+                            font.pixelSize: AppTheme.fontNormalSize * app.scale
+                            color: AppTheme.blueColor
+                            text: qsTr("Tank image")
+                        }
+
+                        ImageList
+                        {
+                            id: imgUserAvatar
+                            objectName: "imgUserAvatar"
+                            imagesCountMax: 1
+                        }
+                    }
+
+                    IconSimpleButton
+                    {
+                        id: buttonCancel
+                        anchors.left: parent.left
+                        anchors.bottom: parent.bottom
+                        anchors.bottomMargin: AppTheme.margin * app.scale
+                        image: "qrc:/resources/img/icon_cancel.png"
+                        KeyNavigation.tab: buttonCreate
+
+                        onSigButtonClicked:
+                        {
+                            moveToEdit(false)
+                        }
+                    }
+
+                    IconSimpleButton
+                    {
+                        id: buttonCreate
+                        anchors.right: parent.right
+                        anchors.bottom: parent.bottom
+                        anchors.bottomMargin: AppTheme.margin * app.scale
+                        image: "qrc:/resources/img/icon_ok.png"
+                        KeyNavigation.tab: textUserName
+
+                        onSigButtonClicked:
+                        {
+                            var imgLink = ""
+
+                            if (imgUserAvatar.selectedImagesList.count > 0)
+                            {
+                                if (imgUserAvatar.selectedImagesList.get(0).fileLink !== "")
+                                    imgLink = imgUserAvatar.selectedImagesList.get(0).fileLink
+                                else
+                                    imgLink = imgUserAvatar.selectedImagesList.get(0).base64data
+                            }
+
+                            app.sigEditAccount(textUserName.text,
+                                               textUserPass.text,
+                                               textUserEmail.text,
+                                               imgLink)
+
+                            showPage(false)
+                            sigClosing()
+                        }
                     }
                 }
             }
+        }
+    }
+
+    ConfirmDialog
+    {
+        id: confirmDialog
+        onSigAccept:
+        {
+            page_AccountSett.showPage(false)
+            sigClosing()
+            app.sigDeleteAccount()
         }
     }
 }

@@ -53,5 +53,10 @@
         <file>qml/custom/SideMenu.qml</file>
         <file>qml/Page_AccountSett.qml</file>
         <file>qml/Page_TankSett.qml</file>
+        <file>qml/Page_AppSett.qml</file>
+        <file>resources/langs/lang_be.qm</file>
+        <file>resources/langs/lang_ru.qm</file>
+        <file>resources/langs/lang_en.qm</file>
+        <file>qml/custom/ComboListQuick.qml</file>
     </qresource>
 </RCC>

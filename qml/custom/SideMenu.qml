@@ -38,9 +38,8 @@ Item
         id: menuListModel
 
         ListElement {   name: qsTr("ACCOUNT");      index: AppDefs.Menu_Account;    en: true    }
-        ListElement {   name: qsTr("TANK INFO");    index: AppDefs.Menu_TankInfo;   en: true    }
+        ListElement {   name: qsTr("TANKS");        index: AppDefs.Menu_TankInfo;   en: true    }
         ListElement {   name: qsTr("SETTINGS");     index: AppDefs.Menu_Settings;   en: true    }
-        ListElement {   name: qsTr("UTILITY");      index: AppDefs.Menu_None;       en: false   }
     }
 
     SequentialAnimation
@@ -117,6 +116,7 @@ Item
         MouseArea
         {
             anchors.fill: parent
+            onClicked: showMenu(false)
         }
     }
 

@@ -1,5 +1,26 @@
-var months = [qsTr("January"), "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
-var weekNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+var months = [
+            qsTr("January"),
+            qsTr("February"),
+            qsTr("March"),
+            qsTr("April"),
+            qsTr("May"),
+            qsTr("June"),
+            qsTr("July"),
+            qsTr("August"),
+            qsTr("September"),
+            qsTr("October"),
+            qsTr("November"),
+            qsTr("December")
+        ]
+var weekNames = [
+            qsTr("Sunday"),
+            qsTr("Monday"),
+            qsTr("Tuesday"),
+            qsTr("Wednesday"),
+            qsTr("Thursday"),
+            qsTr("Friday"),
+            qsTr("Saturday")
+        ]
 
 function DateTimeUtil(tm)
 {

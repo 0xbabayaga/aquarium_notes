@@ -135,15 +135,7 @@ Item
             text: qsTr("View period:")
         }
 
-        ListModel
-        {
-            id: viewPeriodListModel
-            ListElement {   name: qsTr("Today");    idx:  AppDefs.ActionView_Today;       }
-            ListElement {   name: qsTr("Week");     idx:  AppDefs.ActionView_ThisWeek;    }
-            ListElement {   name: qsTr("Month");    idx:  AppDefs.ActionView_ThisMonth;   }
-        }
-
-        ComboList
+        ComboListQuick
         {
             id: comboViewPeriod
             anchors.top: textViewPeriod.top
@@ -154,6 +146,14 @@ Item
             width: parent.width
             model: viewPeriodListModel
             currentIndex: 1
+
+            ListModel
+            {
+                id: viewPeriodListModel
+                ListElement {   name: qsTr("Today");    idx:  AppDefs.ActionView_Today;       }
+                ListElement {   name: qsTr("Week");     idx:  AppDefs.ActionView_ThisWeek;    }
+                ListElement {   name: qsTr("Month");    idx:  AppDefs.ActionView_ThisMonth;   }
+            }
 
             onSigSelectedIndexChanged:
             {
@@ -441,17 +441,6 @@ Item
                 //KeyNavigation.tab: textUserEmail
             }
 
-            //Item { height: 1; width: 1;}
-
-            ListModel
-            {
-                id: periodslistModel
-                ListElement {   name: qsTr("Once")      }
-                ListElement {   name: qsTr("Days")     }
-                ListElement {   name: qsTr("Weeks")    }
-                ListElement {   name: qsTr("Months")   }
-            }
-
             Rectangle
             {
                 width: parent.width
@@ -482,13 +471,22 @@ Item
                     //KeyNavigation.tab: textUserEmail
                 }
 
-                ComboList
+                ComboListQuick
                 {
                     id: comboPeriod
                     anchors.right: parent.right
                     propertyName: qsTr("Select a period:");
                     width: 100 * app.scale
                     model: periodslistModel
+
+                    ListModel
+                    {
+                        id: periodslistModel
+                        ListElement {   name: qsTr("Once")      }
+                        ListElement {   name: qsTr("Days")     }
+                        ListElement {   name: qsTr("Weeks")    }
+                        ListElement {   name: qsTr("Months")   }
+                    }
 
                     onCurrentIndexChanged:
                     {
