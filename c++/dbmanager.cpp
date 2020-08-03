@@ -149,7 +149,7 @@ bool DBManager::getParamsList(QString tankId, AquariumType type)
     {
         obj = (ParamObj*) paramsGuiList.at(i);
 
-        obj->setFullName(paramTranslationMap[obj->shortName()]);
+        obj->setFullName(QObject::tr(paramTranslationMap[obj->shortName()].toLocal8Bit()));
     }
 
     return res;
@@ -326,7 +326,7 @@ bool DBManager::getUserTanksList()
     {
         res = true;
         obj = new TankObj(&query);
-        obj->setTypeName(aquariumTypeNames[obj->type()]);
+        obj->setTypeName(QObject::tr(aquariumTypeNames[obj->type()].toLocal8Bit()));
         curSelectedObjs.listOfUserTanks.append(obj);
     }
 
@@ -1079,7 +1079,7 @@ bool DBManager::initDB()
 QString DBManager::getAquariumTypeString(AquariumType type)
 {
     if (type < EndOfList)
-        return aquariumTypeNames[type];
+        return QObject::tr(aquariumTypeNames[type].toLocal8Bit());
     else
         return QString("");
 }

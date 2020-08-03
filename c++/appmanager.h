@@ -28,6 +28,7 @@ private:
     void    getLatestParamsGui();
     void    getActionCalendarGui();
 
+    void    createTankTypesList();
     void    createLangList();
 
 private:

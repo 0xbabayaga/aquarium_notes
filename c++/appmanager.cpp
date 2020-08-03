@@ -42,15 +42,7 @@ AppManager::AppManager(QQmlApplicationEngine *engine, QObject *parent) : DBManag
     qmlEngine->rootContext()->setContextProperty("graphPointsList", QVariant::fromValue(pointList));
     qmlEngine->rootContext()->setContextProperty("datesList", QVariant::fromValue(datesList));
 
-    aquariumTypeList.clear();
-
-    for (int i = 0; i < AquariumType::EndOfList; i++)
-    {
-        TankTypeObj *obj = new TankTypeObj(i, getAquariumTypeString((AquariumType)i));
-        aquariumTypeList.append(obj);
-    }
-
-    qmlEngine->rootContext()->setContextProperty("aquariumTypesListModel", QVariant::fromValue(aquariumTypeList));
+    createTankTypesList();
 
     curSelectedObjs.lastSmpId = getLastSmpId();
     curSelectedObjs.curSmpId = curSelectedObjs.lastSmpId;
@@ -141,6 +133,19 @@ void AppManager::init()
 void AppManager::readAppSett()
 {
 
+}
+
+void AppManager::createTankTypesList()
+{
+    aquariumTypeList.clear();
+
+    for (int i = 0; i < AquariumType::EndOfList; i++)
+    {
+        TankTypeObj *obj = new TankTypeObj(i, getAquariumTypeString((AquariumType)i));
+        aquariumTypeList.append(obj);
+    }
+
+    qmlEngine->rootContext()->setContextProperty("aquariumTypesListModel", QVariant::fromValue(aquariumTypeList));
 }
 
 void AppManager::createLangList()
@@ -585,7 +590,8 @@ void AppManager::onGuiLanguageChanged(int id)
 
             qmlEngine->retranslate();
 
-            //setQmlParam("comboLang", "currentIndex", QVariant(id));
+            createTankTypesList();
+            getCurrentObjs();
         }
     }
 }

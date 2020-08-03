@@ -293,7 +293,6 @@ Item
                         id: columnContainer
                         width: parent.width
                         anchors.top: parent.top
-                        //anchors.topMargin: AppTheme.padding * app.scale
 
                         Row
                         {
@@ -328,7 +327,7 @@ Item
                                 font.family: AppTheme.fontFamily
                                 font.pixelSize: AppTheme.fontSmallSize * app.scale
                                 color: AppTheme.greyColor
-                                text: (tanksListModel.length > 0) ? "(" + tanksListModel[tanksList.currentIndex].desc + ")" : ""
+                                text: (tanksListModel.length > 0) ? "(" + tanksListModel[tanksList.currentIndex].desc + ")" : "()" + qsTr("No desciption") + ")"
                                 wrapMode: Text.WordWrap
                                 visible: isEdit === true
                             }
@@ -350,7 +349,7 @@ Item
                                 font.family: AppTheme.fontFamily
                                 font.pixelSize: AppTheme.fontNormalSize * app.scale
                                 color: AppTheme.greyColor
-                                text: qsTr("Aquarium type: ")
+                                text: qsTr("Aquarium type:") + " "
                             }
 
                             Text
@@ -380,7 +379,7 @@ Item
                                 font.family: AppTheme.fontFamily
                                 font.pixelSize: AppTheme.fontNormalSize * app.scale
                                 color: AppTheme.greyColor
-                                text: qsTr("Date create: ")
+                                text: qsTr("Date create:") + " "
                             }
 
                             Text
@@ -411,7 +410,7 @@ Item
                                 font.family: AppTheme.fontFamily
                                 font.pixelSize: AppTheme.fontNormalSize * app.scale
                                 color: AppTheme.greyColor
-                                text: qsTr("Length: ")
+                                text: qsTr("Length:") + " "
                             }
 
                             Text
@@ -441,7 +440,7 @@ Item
                                 font.family: AppTheme.fontFamily
                                 font.pixelSize: AppTheme.fontNormalSize * app.scale
                                 color: AppTheme.greyColor
-                                text: qsTr("Height: ")
+                                text: qsTr("Height:") + " "
                             }
 
                             Text
@@ -471,7 +470,7 @@ Item
                                 font.family: AppTheme.fontFamily
                                 font.pixelSize: AppTheme.fontNormalSize * app.scale
                                 color: AppTheme.greyColor
-                                text: qsTr("Width: ")
+                                text: qsTr("Width:") + " "
                             }
 
                             Text
@@ -501,7 +500,7 @@ Item
                                 font.family: AppTheme.fontFamily
                                 font.pixelSize: AppTheme.fontNormalSize * app.scale
                                 color: AppTheme.greyColor
-                                text: qsTr("Volume: ")
+                                text: qsTr("Volume:") + " "
                             }
 
                             Text
@@ -581,7 +580,6 @@ Item
                     Column
                     {
                         anchors.top: parent.top
-                        //anchors.topMargin: AppTheme.margin * app.scale
                         anchors.horizontalCenter: parent.horizontalCenter
                         height: 300 * app.scale
                         width: parent.width
