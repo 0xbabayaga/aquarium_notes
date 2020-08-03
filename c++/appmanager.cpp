@@ -14,6 +14,8 @@
 #include "AppDefs.h"
 #include "dbobjects.h"
 
+const static QString SETT_LANG = "lang";
+
 const static QMap<QString, QString> langNamesMap =
 {
     {   "en",   QObject::tr("English")      },
@@ -47,10 +49,9 @@ AppManager::AppManager(QQmlApplicationEngine *engine, QObject *parent) : DBManag
     curSelectedObjs.lastSmpId = getLastSmpId();
     curSelectedObjs.curSmpId = curSelectedObjs.lastSmpId;
 
-    //appSett.setValue("lang", QVariant("ru"));
-    qDebug() << "Sett lang = " << appSett.value("lang");
-
     createLangList();
+
+    loadTranslations(appSett.value(SETT_LANG).toInt());
 }
 
 AppManager::~AppManager()
@@ -107,6 +108,8 @@ void AppManager::init()
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigOpenGallery()), this, SLOT(onGuiOpenGallery()));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigLanguageChanged(int)), this, SLOT(onGuiLanguageChanged(int)));
 
+    setQmlParam("comboLang", "currentIndex", QVariant(appSett.value(SETT_LANG).toInt()));
+
 #ifdef  Q_OS_ANDROID
     setAndroidFlag(true);
 #endif
@@ -134,6 +137,31 @@ void AppManager::readAppSett()
 {
 
 }
+bool AppManager::loadTranslations(int id)
+{
+    LangObj *obj = nullptr;
+
+    if (id < langNamesMap.count())
+    {
+        obj = (LangObj*) langsList.at(id);
+
+        if (obj != nullptr)
+        {
+            qApp->removeTranslator(&translator);
+
+            if (translator.load(obj->fileName()) == true)
+                qApp->installTranslator(&translator);
+            else
+                qDebug() << "Cannot load translation #" << id;
+
+            return true;
+        }
+        else
+            return false;
+    }
+
+    return false;
+}
 
 void AppManager::createTankTypesList()
 {
@@ -153,9 +181,6 @@ void AppManager::createLangList()
     QString curFileName = "";
     QString curLangName = "";
 
-    if (translator.load(":resources/langs/lang_en.qm") == true)
-        qApp->installTranslator(&translator);
-
     QDirIterator it(":/resources/langs", QDirIterator::Subdirectories);
     int id = 0;
 
@@ -174,8 +199,6 @@ void AppManager::createLangList()
         LangObj *obj = new LangObj(id, curLangName, curFileName);
         langsList.append(obj);
     }
-
-    //qmlEngine->rootContext()->setContextProperty("langsModel", QVariant::fromValue(langsList));
 }
 
 bool AppManager::getCurrentObjs()
@@ -571,28 +594,16 @@ void AppManager::onGuiCurrentSmpIdChanged(int smpId)
 
 void AppManager::onGuiLanguageChanged(int id)
 {
-    LangObj *obj = nullptr;
-
     qDebug() << "onGuiLanguageChanged = " << id;
 
-    if (id < langNamesMap.count())
+    if (loadTranslations(id) == true)
     {
-        obj = (LangObj*) langsList.at(id);
+        qmlEngine->retranslate();
 
-        if (obj != nullptr)
-        {
-            qApp->removeTranslator(&translator);
+        createTankTypesList();
+        getCurrentObjs();
 
-            if (translator.load(obj->fileName()) == true)
-                qApp->installTranslator(&translator);
-            else
-                qDebug() << "Cannot load translation #" << id;
-
-            qmlEngine->retranslate();
-
-            createTankTypesList();
-            getCurrentObjs();
-        }
+        appSett.setValue(SETT_LANG, id);
     }
 }
 

@@ -17,7 +17,6 @@ Item
     property alias propertyName: textPropertyName.text
     property alias model: listView.model
     property alias text: textArea.text
-    property int yOffset: 200 * app.scale
 
     function showList(vis)
     {
@@ -78,11 +77,6 @@ Item
             anchors.fill: parent
             onClicked: textArea.forceActiveFocus()
         }
-
-        onTextChanged:
-        {
-
-        }
     }
 
     Rectangle
@@ -134,7 +128,7 @@ Item
         focus: true
         clip: true
         visible: false
-        color: "#00000000"
+        color: "#20000000"
 
         NumberAnimation
         {
@@ -157,136 +151,144 @@ Item
 
         Rectangle
         {
-            color: "#00000000"
-            anchors.fill: parent
+            id: rectShadow
+            anchors.left: parent.left
+            anchors.leftMargin: AppTheme.padding * app.scale
+            anchors.right: parent.right
+            anchors.rightMargin: AppTheme.padding * app.scale
+            anchors.verticalCenter: parent.verticalCenter
+            height: AppTheme.rowHeight * 2 * app.scale + AppTheme.compHeight * app.scale * listView.model.length
+            radius: AppTheme.radius * 2 * app.scale
+            color: AppTheme.whiteColor
+        }
+
+        DropShadow
+        {
+            anchors.fill: rectShadow
+            horizontalOffset: 0
+            verticalOffset: -3
+            radius: 16.0 * app.scale
+            samples: 16
+            color: "#20000000"
+            source: rectShadow
+        }
+
+        Rectangle
+        {
+            anchors.fill: rectShadow
+            radius: AppTheme.radius * 2 * app.scale
+            color: AppTheme.whiteColor
+            clip: true
 
             Rectangle
             {
-                anchors.fill: parent
-                anchors.topMargin: yOffset
-                color: "#ffffffff"
-                clip: true
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: AppTheme.padding * app.scale
+                anchors.rightMargin: AppTheme.padding * app.scale
+                anchors.topMargin: AppTheme.margin * app.scale
+                height: AppTheme.rowHeight * app.scale * 6
+                color: "#00000000"
+
+                MouseArea
+                {
+                    anchors.fill: parent
+                    onClicked: showList(false)
+                }
 
                 Rectangle
                 {
-                    anchors.top: parent.top
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    anchors.leftMargin: AppTheme.margin * app.scale
-                    anchors.rightMargin: AppTheme.margin * app.scale
-                    anchors.topMargin: AppTheme.margin * app.scale
-                    height: AppTheme.rowHeight * app.scale * 6
-                    color: "#00000000"
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.verticalCenterOffset: AppTheme.rowHeight/2 * app.scale
+                    height: 1 * app.scale
+                    color: AppTheme.blueColor
+                    visible: false
+                }
 
-                    MouseArea
+                Rectangle
+                {
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.verticalCenterOffset: -AppTheme.rowHeight/2 * app.scale
+                    height: 1 * app.scale
+                    color: AppTheme.blueColor
+                    visible: false
+                }
+
+                Text
+                {
+                    id: textPropertyName
+                    text: ""
+                    anchors.left: parent.left
+                    anchors.leftMargin: AppTheme.padding * app.scale
+                    font.family: AppTheme.fontFamily
+                    font.pixelSize: AppTheme.fontNormalSize * app.scale
+                    color: AppTheme.greyDarkColor
+                    verticalAlignment: Text.AlignBottom
+                }
+
+                ListView
+                {
+                    id: listView
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.top: parent.top
+                    anchors.topMargin: AppTheme.margin * 2 * app.scale
+                    height: AppTheme.compHeight * app.scale * model.length
+                    clip: true
+
+                    delegate: Rectangle
                     {
-                        anchors.fill: parent
-                        onClicked: showList(false)
-                    }
+                        color: (index === listView.currentIndex) ? AppTheme.lightBlueColor : "#00000000"
+                        width: listView.width
+                        height: AppTheme.compHeight * app.scale
 
-                    Rectangle
-                    {
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.verticalCenterOffset: AppTheme.rowHeight/2 * app.scale
-                        height: 1 * app.scale
-                        color: AppTheme.blueColor
-                        visible: false
-                    }
-
-                    Rectangle
-                    {
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.verticalCenterOffset: -AppTheme.rowHeight/2 * app.scale
-                        height: 1 * app.scale
-                        color: AppTheme.blueColor
-                        visible: false
-                    }
-
-                    Text
-                    {
-                        id: textPropertyName
-                        text: qsTr("Property:")
-                        font.family: AppTheme.fontFamily
-                        font.pixelSize: AppTheme.fontNormalSize * app.scale
-                        color: AppTheme.greyDarkColor
-                        verticalAlignment: Text.AlignBottom
-                    }
-
-                    ListView
-                    {
-                        id: listView
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.top: parent.top
-                        anchors.topMargin: AppTheme.padding * 2 * app.scale
-                        height: AppTheme.compHeight * app.scale * model.length
-                        clip: true
-
-                        delegate: Rectangle
+                        Text
                         {
-                            color: "#00000000"
-                            width: listView.width
-                            height: AppTheme.compHeight * app.scale
-
-                            Text
-                            {
-                                anchors.verticalCenter: parent.verticalCenter
-                                anchors.left: parent.left
-                                font.family: AppTheme.fontFamily
-                                font.pixelSize: AppTheme.fontNormalSize * app.scale
-                                color: AppTheme.blueColor
-                                verticalAlignment: Text.AlignVCenter
-                                horizontalAlignment: Text.AlignHCenter
-                                text: name
-                                opacity: (index === listView.currentIndex) ? AppTheme.opacityEnabled : AppTheme.opacityDisabled
-                            }
-
-                            Rectangle
-                            {
-                                id: rectLine
-                                anchors.left: parent.left
-                                anchors.right: parent.right
-                                anchors.bottom: parent.bottom
-                                height: 1 * app.scale
-                                color: AppTheme.blueColor
-                                visible: index === listView.currentIndex
-                            }
-
-                            MouseArea
-                            {
-                                anchors.fill: parent
-                                onClicked: listView.currentIndex = index
-                            }
-                        }
-
-                        onCurrentIndexChanged:
-                        {
-                            sigSelectedIndexChanged(currentIndex)
-
-                            showList(false)
-                            textArea.text = model[currentIndex].name
-                        }
-
-                        ScrollBar.vertical: ScrollBar
-                        {
-                            policy: ScrollBar.AlwaysOn
-                            parent: listView.parent
-                            anchors.top: listView.top
-                            anchors.left: listView.right
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.left: parent.left
                             anchors.leftMargin: AppTheme.padding * app.scale
-                            anchors.bottom: listView.bottom
+                            font.family: AppTheme.fontFamily
+                            font.pixelSize: AppTheme.fontNormalSize * app.scale
+                            color: AppTheme.blueColor
+                            verticalAlignment: Text.AlignVCenter
+                            horizontalAlignment: Text.AlignHCenter
+                            text: name
+                        }
 
-                            contentItem: Rectangle
-                            {
-                                implicitWidth: 2
-                                implicitHeight: 100
-                                radius: width / 2
-                                color: AppTheme.hideColor
-                            }
+                        MouseArea
+                        {
+                            anchors.fill: parent
+                            onClicked: listView.currentIndex = index
+                        }
+                    }
+
+                    onCurrentIndexChanged:
+                    {
+                        sigSelectedIndexChanged(currentIndex)
+
+                        showList(false)
+                        textArea.text = model[currentIndex].name
+                    }
+
+                    ScrollBar.vertical: ScrollBar
+                    {
+                        policy: ScrollBar.AlwaysOn
+                        parent: listView.parent
+                        anchors.top: listView.top
+                        anchors.left: listView.right
+                        anchors.bottom: listView.bottom
+
+                        contentItem: Rectangle
+                        {
+                            implicitWidth: 2
+                            implicitHeight: 100
+                            radius: width / 2
+                            color: AppTheme.hideColor
                         }
                     }
                 }

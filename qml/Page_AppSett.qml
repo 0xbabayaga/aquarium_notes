@@ -66,7 +66,7 @@ Item
         anchors.fill: rectContainer
         horizontalOffset: 0
         verticalOffset: -3
-        radius: 10.0 * app.scale
+        radius: 16.0 * app.scale
         samples: 16
         color: "#20000000"
         source: rectContainer
@@ -194,7 +194,7 @@ Item
                         {
                             id: comboLang
                             objectName: "comboLang"
-                            propertyName: qsTr("Select language:");
+                            propertyName: qsTr("Language");
                             width: parent.width
                             model: langsModel
                             //KeyNavigation.tab: textFileName
@@ -226,7 +226,7 @@ Item
                         ComboListQuick
                         {
                             id: comboMetrics
-                            propertyName: qsTr("Select a units:");
+                            propertyName: qsTr("Units");
                             width: parent.width
                             model: unitsModel
                             //KeyNavigation.tab: textFileName

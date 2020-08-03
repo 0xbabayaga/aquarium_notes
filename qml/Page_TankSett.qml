@@ -698,7 +698,7 @@ Item
                         ComboList
                         {
                             id: comboTankType
-                            propertyName: qsTr("Select a tank type:");
+                            propertyName: qsTr("Tank type");
                             width: parent.width
                             model: aquariumTypesListModel
                             currentIndex: (tanksListModel.length > 0) ? tanksListModel[tanksList.currentIndex].type : ""

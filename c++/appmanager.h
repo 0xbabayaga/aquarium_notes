@@ -30,6 +30,7 @@ private:
 
     void    createTankTypesList();
     void    createLangList();
+    bool    loadTranslations(int id);
 
 private:
     /* Gui methods */
