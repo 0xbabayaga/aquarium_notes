@@ -222,6 +222,36 @@ Item
                             }
                         }
 
+                        Item { height: AppTheme.padding * app.scale; width: 1;}
+
+                        Text
+                        {
+                            height: AppTheme.compHeight * app.scale
+                            verticalAlignment: Text.AlignVCenter
+                            font.family: AppTheme.fontFamily
+                            font.pixelSize: AppTheme.fontNormalSize * app.scale
+                            color: AppTheme.greyColor
+                            text: qsTr("Date format")
+                        }
+
+                        ComboListQuick
+                        {
+                            id: comboDateFormat
+                            propertyName: qsTr("Date format");
+                            width: parent.width
+                            model: dateFormatModel
+                            //KeyNavigation.tab: textFileName
+
+                            ListModel
+                            {
+                                id: dateFormatModel
+
+                                ListElement { name: qsTr("MM/DD/YYYY")}
+                                ListElement { name: qsTr("DD.MM.YYYY")}
+                                ListElement { name: qsTr("YYYY-MM-DD")}
+                            }
+                        }
+
                     }
 
                     IconSimpleButton

@@ -158,6 +158,7 @@ Item
                     color: AppTheme.backLightBlueColor
                 }
 
+                /*
                 UrlButton
                 {
                     id: buttonSetParams
@@ -165,6 +166,20 @@ Item
                     anchors.bottom: textHeader.bottom
                     buttonText: qsTr("Parameters")
                     width: 80 * app.scale
+
+                    onSigButtonClicked:
+                    {
+                        rectAddRecordDialog.opacity = 0
+                        rectPersonalParamsDialog.opacity = 1
+                    }
+                }
+                */
+
+                IconSmallSimpleButton
+                {
+                    anchors.right: parent.right
+                    anchors.verticalCenter: textHeader.verticalCenter
+                    image: "qrc:/resources/img/icon_mon2.png"
 
                     onSigButtonClicked:
                     {
