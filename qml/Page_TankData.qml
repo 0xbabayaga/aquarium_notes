@@ -185,7 +185,7 @@ Item
                 font.family: AppTheme.fontFamily
                 font.pixelSize: AppTheme.fontBigSize * app.scale
                 color: AppTheme.blueColor
-                text: qsTr("Not defined")
+                text: qsTr("")
             }
 
             Text
@@ -200,7 +200,7 @@ Item
                 font.family: AppTheme.fontFamily
                 font.pixelSize: AppTheme.fontNormalSize * app.scale
                 color: AppTheme.blueColor
-                text: qsTr("Not defined")
+                text: qsTr("")
             }
 
             Text
@@ -215,7 +215,7 @@ Item
                 font.family: AppTheme.fontFamily
                 font.pixelSize: AppTheme.fontNormalSize * app.scale
                 color: AppTheme.greyColor
-                text: qsTr("Not defined")
+                text: qsTr("")
             }
         }
 

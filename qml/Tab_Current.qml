@@ -99,12 +99,14 @@ Item
 
     function showAddParamDialog(isEdit)
     {
+        var i = 0
+
         dialogAddParamNote.setEdit(isEdit)
         dialogAddParamNote.show(true)
 
         if (isEdit === true)
         {
-            for (var i = 0; i < dialogAddParamNote.addParamsListModel.length; i++)
+            for (i = 0; i < dialogAddParamNote.addParamsListModel.length; i++)
             {
                 if (dialogAddParamNote.addParamsListModel[i].en === true)
                 {
@@ -121,7 +123,7 @@ Item
         }
         else
         {
-            for (var i = 0; i < dialogAddParamNote.addParamsListModel.length; i++)
+            for (i = 0; i < dialogAddParamNote.addParamsListModel.length; i++)
             {
                 if (dialogAddParamNote.addParamsListModel[i].en === true)
                     dialogAddParamNote.addParamsListModel[i].value = -1
@@ -168,7 +170,7 @@ Item
                 horizontalAlignment: Text.AlignHCenter
                 width: 250 * app.scale
                 font.family: AppTheme.fontFamily
-                font.pixelSize: AppTheme.fontBigSize * app.scale
+                font.pixelSize: AppTheme.fontNormalSize * app.scale
                 wrapMode: Text.WordWrap
                 color: AppTheme.greyColor
                 text: qsTr("No record found for this aquarium")
@@ -184,6 +186,7 @@ Item
             anchors.right: parent.right
             anchors.rightMargin: -AppTheme.padding * app.scale
             model:  datesList
+            visible: (curValuesListModel.length !== 0)
 
             onModelChanged: currentIndex = 0
             onSigCurIndexChanged:

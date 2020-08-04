@@ -163,7 +163,7 @@ Item
                     id: buttonSetParams
                     anchors.right: parent.right
                     anchors.bottom: textHeader.bottom
-                    buttonText: "Edit params"
+                    buttonText: qsTr("Parameters")
                     width: 80 * app.scale
 
                     onSigButtonClicked:

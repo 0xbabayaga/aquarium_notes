@@ -131,7 +131,7 @@ Item
                 verticalAlignment: Text.AlignVCenter
                 width: 250 * app.scale
                 font.family: AppTheme.fontFamily
-                font.pixelSize: AppTheme.fontBigSize * app.scale
+                font.pixelSize: AppTheme.fontNormalSize * app.scale
                 wrapMode: Text.WordWrap
                 color: AppTheme.greyColor
                 text: qsTr("No data found for this aquarium")

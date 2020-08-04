@@ -106,30 +106,12 @@ Item
                 height: AppTheme.rowHeight * app.scale
                 color: "#00000000"
 
-                Image
-                {
-                    id: imgApp
-                    anchors.left: parent.left
-                    anchors.verticalCenter: parent.verticalCenter
-                    fillMode: Image.PreserveAspectFit
-                    width: 20 * app.scale
-                    height: 20 * app.scale
-                    source: "qrc:/resources/img/icon_app.png"
-                    mipmap: true
-                }
-
-                ColorOverlay
-                {
-                    anchors.fill: imgApp
-                    source: imgApp
-                    color: AppTheme.blueColor
-                }
-
                 Text
                 {
                     id: textHeader
-                    anchors.verticalCenter: imgApp.verticalCenter
-                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: parent.left
+                    anchors.leftMargin: AppTheme.padding * app.scale
                     verticalAlignment: Text.AlignBottom
                     font.family: AppTheme.fontFamily
                     font.pixelSize: AppTheme.fontBigSize * app.scale
