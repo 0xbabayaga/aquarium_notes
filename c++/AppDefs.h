@@ -56,10 +56,53 @@ public:
         MAX_USERTANKS_COUNT = 16
     };
 
+    enum EnumDateFormat
+    {
+        DateFormat_MM_DD_YYYY = 0,
+        DateFormat_DD_MM_YYYY = 1,
+        DateFormat_YYYY_MM_DD = 2,
+        DateFormat_End = 3
+    };
+
+    enum EnumSystemMeasurement
+    {
+        System_Metric = 0,
+        System_Imperial = 1,
+        System_End = 2
+    };
+
+    enum EnumDimensions
+    {
+        Dimensions_CM = 0,
+        Dimensions_INCH = 1,
+        Dimensions_End = 2
+    };
+
+    enum EnumVolume
+    {
+        Volume_L = 0,
+        Volume_G_US = 1,
+        Volume_G_UK = 2,
+        Volume_End = 3
+    };
+
+    enum EnumLang
+    {
+        Lang_English = 0,
+        Lang_Belarussian = 1,
+        Lang_Russian = 2,
+        Lang_End = 3
+    };
+
     Q_ENUMS(AppInitEnum)
     Q_ENUMS(EnumActionRepeat)
     Q_ENUMS(EnumActionViewPeriod)
     Q_ENUMS(EnumMenuSelected)
+    Q_ENUMS(EnumLang)
+    Q_ENUMS(EnumDateFormat)
+    Q_ENUMS(EnumSystemMeasurement)
+    Q_ENUMS(EnumDimensions)
+    Q_ENUMS(EnumVolume)
     Q_ENUMS(AppDefines)
 
     static void declareQML()

@@ -166,6 +166,7 @@ Item
                 id: rectAccountPhoto
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: -AppTheme.padding * app.scale
                 width: AppTheme.margin * 3 * app.scale
                 height: width
                 radius: width / 2
@@ -207,7 +208,7 @@ Item
                 font.family: AppTheme.fontFamily
                 font.pixelSize: AppTheme.fontBigSize * app.scale
                 color: AppTheme.blueColor
-                text: "John Wick"
+                text: ""
             }
 
             Text
@@ -220,7 +221,20 @@ Item
                 font.family: AppTheme.fontFamily
                 font.pixelSize: AppTheme.fontSmallSize * app.scale
                 color: AppTheme.greyColor
-                text: "john.wick007@gmail.com"
+                text: ""
+            }
+
+            Text
+            {
+                id: textLocation
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: textAccountEmail.bottom
+                height: AppTheme.compHeight / 2 * app.scale
+                verticalAlignment: Text.AlignTop
+                font.family: AppTheme.fontFamily
+                font.pixelSize: AppTheme.fontSmallSize * app.scale
+                color: AppTheme.greyColor
+                text: app.global_USERREGION + " " + app.global_USERCOUNTRY + " " + app.global_USERCITY
             }
 
             Rectangle

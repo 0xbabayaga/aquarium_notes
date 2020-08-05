@@ -14,6 +14,7 @@ SOURCES += \
         c++/actionlist.cpp \
         c++/appmanager.cpp \
         c++/dbmanager.cpp \
+        c++/position.cpp \
         main.cpp
 
 RESOURCES += qml.qrc
@@ -45,7 +46,8 @@ HEADERS += \
     c++/appmanager.h \
     c++/dbmanager.h \
     c++/dbobjects.h \
-    c++/galleryobjects.h
+    c++/galleryobjects.h \
+    c++/position.h
 
 #contains(ANDROID_TARGET_ARCH,armeabi-v7a) {
 #    ANDROID_PACKAGE_SOURCE_DIR = \

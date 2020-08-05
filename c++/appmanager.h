@@ -10,6 +10,7 @@
 #include "dbmanager.h"
 #include "dbobjects.h"
 #include "actionlist.h"
+#include "position.h"
 
 class AppManager : public DBManager
 {
@@ -48,6 +49,7 @@ private:
 
     /* App settings */
     void    readAppSett();
+    void    setSettAfterQMLReady();
 
 public slots:
     void    onQmlEngineLoaded(QObject *object, const QUrl &url);
@@ -71,6 +73,11 @@ public slots:
     void    onGuiCurrentSmpIdChanged(int smpId);
     void    onGuiOpenGallery();
     void    onGuiLanguageChanged(int id);
+    void    onGuiDimensionUnitsChanged(int id);
+    void    onGuiVolumeUnitsChanged(int id);
+    void    onGuiDateFormatChanged(int id);
+
+    void    onPositionDetected();
 
 private:
     QSettings appSett;
@@ -78,6 +85,8 @@ private:
     QQmlApplicationEngine   *qmlEngine = nullptr;
 
     QList<QObject*> langsList;
+
+    Position *position = nullptr;
 };
 
 #endif // APPMANAGER_H

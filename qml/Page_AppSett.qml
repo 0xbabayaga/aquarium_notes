@@ -202,24 +202,60 @@ Item
                             font.family: AppTheme.fontFamily
                             font.pixelSize: AppTheme.fontNormalSize * app.scale
                             color: AppTheme.greyColor
-                            text: qsTr("Units")
+                            text: qsTr("Dimension units")
                         }
 
                         ComboListQuick
                         {
-                            id: comboMetrics
-                            propertyName: qsTr("Units");
+                            id: comboDimensions
+                            objectName: "comboDimensions"
+                            propertyName: qsTr("Dimension units");
                             width: parent.width
-                            model: unitsModel
+                            model: dimensionsModel
                             //KeyNavigation.tab: textFileName
 
                             ListModel
                             {
-                                id: unitsModel
+                                id: dimensionsModel
 
-                                ListElement { name: qsTr("Metric")}
-                                ListElement { name: qsTr("Imperial")}
+                                ListElement { name: qsTr("Santimeters")}
+                                ListElement { name: qsTr("Inches")}
                             }
+
+                            onCurrentIndexChanged: app.sigDimensionUnitsChanged(currentIndex)
+                        }
+
+                        Item { height: AppTheme.padding * app.scale; width: 1;}
+
+                        Text
+                        {
+                            height: AppTheme.compHeight * app.scale
+                            verticalAlignment: Text.AlignVCenter
+                            font.family: AppTheme.fontFamily
+                            font.pixelSize: AppTheme.fontNormalSize * app.scale
+                            color: AppTheme.greyColor
+                            text: qsTr("Volume units")
+                        }
+
+                        ComboListQuick
+                        {
+                            id: comboVolumeUnits
+                            objectName: "comboVolumeUnits"
+                            propertyName: qsTr("Volume units");
+                            width: parent.width
+                            model: volumeModel
+                            //KeyNavigation.tab: textFileName
+
+                            ListModel
+                            {
+                                id: volumeModel
+
+                                ListElement { name: qsTr("Liters")}
+                                ListElement { name: qsTr("Gallon US")}
+                                ListElement { name: qsTr("Gallon UK")}
+                            }
+
+                            onCurrentIndexChanged: app.sigVolumeUnitsChanged(currentIndex)
                         }
 
                         Item { height: AppTheme.padding * app.scale; width: 1;}
@@ -237,6 +273,7 @@ Item
                         ComboListQuick
                         {
                             id: comboDateFormat
+                            objectName: "comboDateFormat"
                             propertyName: qsTr("Date format");
                             width: parent.width
                             model: dateFormatModel
@@ -250,6 +287,8 @@ Item
                                 ListElement { name: qsTr("DD.MM.YYYY")}
                                 ListElement { name: qsTr("YYYY-MM-DD")}
                             }
+
+                            onCurrentIndexChanged: app.sigDateFormatChanged(currentIndex)
                         }
 
                     }

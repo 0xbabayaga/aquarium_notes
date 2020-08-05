@@ -230,6 +230,19 @@ Item
                 text: (new DateTimeUtils.DateTimeUtil()).printFullDate(app.curUserDateCreate)
             }
 
+            Text
+            {
+                id: textLocation
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: textAccountDateCreate.bottom
+                height: AppTheme.compHeight / 2 * app.scale
+                verticalAlignment: Text.AlignTop
+                font.family: AppTheme.fontFamily
+                font.pixelSize: AppTheme.fontSmallSize * app.scale
+                color: AppTheme.greyColor
+                text: app.global_USERREGION + " " + app.global_USERCOUNTRY + " " + app.global_USERCITY
+            }
+
             Flickable
             {
                 id: flickView

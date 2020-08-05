@@ -21,6 +21,13 @@ Window
     property string curUserAvatar: ""
     property int curUserDateCreate: 0
 
+    property int global_DIMUNITS:   AppDefs.Dimensions_CM
+    property int global_VOLUNITS:   AppDefs.Volume_L
+    property int global_DATEFORMAT: AppDefs.DateFormat_DD_MM_YYYY
+    property string global_USERREGION: ""
+    property string global_USERCOUNTRY: ""
+    property string global_USERCITY: ""
+
     ListView
     {
         id: tmpParamList
@@ -70,6 +77,9 @@ Window
     signal sigDebug()
     signal sigOpenGallery()
     signal sigLanguageChanged(int id)
+    signal sigDimensionUnitsChanged(int id)
+    signal sigVolumeUnitsChanged(int id)
+    signal sigDateFormatChanged(int id)
 
     function getAllParamsListModel() { return allParamsListModel    }
 

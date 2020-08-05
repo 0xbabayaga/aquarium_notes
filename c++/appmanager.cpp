@@ -13,8 +13,15 @@
 #include <QDirIterator>
 #include "AppDefs.h"
 #include "dbobjects.h"
+#include "position.h"
+
+const static QString settMagicKey = "wAJSD6^&A8293487";
 
 const static QString SETT_LANG = "lang";
+const static QString SETT_MAGICKEY = "magickey";
+const static QString SETT_DIMENSIONUNITS = "dimunits";
+const static QString SETT_VOLUMEUNITS = "volumeunits";
+const static QString SETT_DATEFORMAT = "dateformat";
 
 const static QMap<QString, QString> langNamesMap =
 {
@@ -34,6 +41,8 @@ AppManager::AppManager(QQmlApplicationEngine *engine, QObject *parent) : DBManag
 
     connect(qmlEngine, SIGNAL(objectCreated(QObject*, const QUrl)), this, SLOT(onQmlEngineLoaded(QObject*, const QUrl)));
 
+    readAppSett();
+
     actionList = new ActionList();
 
     /* Initializing all models to avoid Qml reference error */
@@ -52,6 +61,10 @@ AppManager::AppManager(QQmlApplicationEngine *engine, QObject *parent) : DBManag
     createLangList();
 
     loadTranslations(appSett.value(SETT_LANG).toInt());
+
+    position = new Position();
+
+    connect(position, SIGNAL(positionDetected()), this, SLOT(onPositionDetected()));
 }
 
 AppManager::~AppManager()
@@ -77,6 +90,13 @@ AppManager::~AppManager()
     disconnect(qmlEngine, SIGNAL(objectCreated(QObject*, const QUrl)), this, SLOT(onQmlEngineLoaded(QObject*, const QUrl)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigOpenGallery()), this, SLOT(onGuiOpenGallery()));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigLanguageChanged(int)), this, SLOT(onGuiLanguageChanged(int)));
+    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigDimensionUnitsChanged(int)), this, SLOT(onGuiDimensionUnitsChanged(int)));
+    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigVolumeUnitsChanged(int)), this, SLOT(onGuiVolumeUnitsChanged(int)));
+    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigDateFormatChanged(int)), this, SLOT(onGuiDateFormatChanged(int)));
+    disconnect(position, SIGNAL(positionDetected), this, SLOT(onPositionDetected));
+
+    if (position != nullptr)
+        delete position;
 
     if (curSelectedObjs.user != nullptr)
         delete curSelectedObjs.user;
@@ -107,8 +127,11 @@ void AppManager::init()
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigCurrentSmpIdChanged(int)), this, SLOT(onGuiCurrentSmpIdChanged(int)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigOpenGallery()), this, SLOT(onGuiOpenGallery()));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigLanguageChanged(int)), this, SLOT(onGuiLanguageChanged(int)));
+    connect(qmlEngine->rootObjects().first(), SIGNAL(sigDimensionUnitsChanged(int)), this, SLOT(onGuiDimensionUnitsChanged(int)));
+    connect(qmlEngine->rootObjects().first(), SIGNAL(sigVolumeUnitsChanged(int)), this, SLOT(onGuiVolumeUnitsChanged(int)));
+    connect(qmlEngine->rootObjects().first(), SIGNAL(sigDateFormatChanged(int)), this, SLOT(onGuiDateFormatChanged(int)));
 
-    setQmlParam("comboLang", "currentIndex", QVariant(appSett.value(SETT_LANG).toInt()));
+    setSettAfterQMLReady();
 
 #ifdef  Q_OS_ANDROID
     setAndroidFlag(true);
@@ -135,8 +158,49 @@ void AppManager::init()
 
 void AppManager::readAppSett()
 {
+    if (appSett.value(SETT_MAGICKEY) != settMagicKey)
+    {
+        appSett.setValue(SETT_LANG, AppDef::Lang_English);
+        appSett.setValue(SETT_DIMENSIONUNITS, AppDef::Dimensions_CM);
+        appSett.setValue(SETT_VOLUMEUNITS, AppDef::Volume_L);
+        appSett.setValue(SETT_DATEFORMAT, AppDef::DateFormat_DD_MM_YYYY);
+        appSett.setValue(SETT_MAGICKEY, settMagicKey);
 
+        qDebug() << "No magic key found - reset options";
+    }
+    else
+    {
+        qDebug() << "SETT_LANG" << appSett.value(SETT_LANG);
+        qDebug() << "SETT_DIMENSIONUNITS" << appSett.value(SETT_DIMENSIONUNITS);
+        qDebug() << "SETT_VOLUMEUNITS" << appSett.value(SETT_VOLUMEUNITS);
+        qDebug() << "SETT_DATEFORMAT" << appSett.value(SETT_DATEFORMAT);
+
+        if (appSett.value(SETT_LANG) >= AppDef::Lang_End)
+            appSett.setValue(SETT_LANG, AppDef::Lang_English);
+
+        if (appSett.value(SETT_DIMENSIONUNITS) >= AppDef::Dimensions_End)
+            appSett.setValue(SETT_DIMENSIONUNITS, AppDef::Dimensions_CM);
+
+        if (appSett.value(SETT_VOLUMEUNITS) >= AppDef::Volume_End)
+            appSett.setValue(SETT_VOLUMEUNITS, AppDef::Volume_L);
+
+        if (appSett.value(SETT_DATEFORMAT) >= AppDef::DateFormat_End)
+            appSett.setValue(SETT_DATEFORMAT, AppDef::DateFormat_DD_MM_YYYY);
+    }
 }
+
+void AppManager::setSettAfterQMLReady()
+{
+    setQmlParam("app", "global_DIMUNITS", QVariant(appSett.value(SETT_DIMENSIONUNITS).toInt()));
+    setQmlParam("app", "global_VOLUNITS", QVariant(appSett.value(SETT_VOLUMEUNITS).toInt()));
+    setQmlParam("app", "global_DATEFORMAT", QVariant(appSett.value(SETT_DATEFORMAT).toInt()));
+
+    setQmlParam("comboLang", "currentIndex", QVariant(appSett.value(SETT_LANG).toInt()));
+    setQmlParam("comboDimensions", "currentIndex", QVariant(appSett.value(SETT_DIMENSIONUNITS).toInt()));
+    setQmlParam("comboVolumeUnits", "currentIndex", QVariant(appSett.value(SETT_VOLUMEUNITS).toInt()));
+    setQmlParam("comboDateFormat", "currentIndex", QVariant(appSett.value(SETT_DATEFORMAT).toInt()));
+}
+
 bool AppManager::loadTranslations(int id)
 {
     LangObj *obj = nullptr;
@@ -594,17 +658,52 @@ void AppManager::onGuiCurrentSmpIdChanged(int smpId)
 
 void AppManager::onGuiLanguageChanged(int id)
 {
-    qDebug() << "onGuiLanguageChanged = " << id;
-
-    if (loadTranslations(id) == true)
+    if (id < AppDef::Lang_End)
     {
-        qmlEngine->retranslate();
+        if (loadTranslations(id) == true)
+        {
+            qmlEngine->retranslate();
 
-        createTankTypesList();
-        getCurrentObjs();
+            createTankTypesList();
+            getCurrentObjs();
 
-        appSett.setValue(SETT_LANG, id);
+            appSett.setValue(SETT_LANG, id);
+        }
     }
+}
+
+void AppManager::onGuiDimensionUnitsChanged(int id)
+{
+    if (id < AppDef::Dimensions_End)
+    {
+        appSett.setValue(SETT_DIMENSIONUNITS, id);
+        setQmlParam("app", "global_DIMUNITS", id);
+    }
+}
+
+void AppManager::onGuiVolumeUnitsChanged(int id)
+{
+    if (id < AppDef::Volume_End)
+    {
+        appSett.setValue(SETT_VOLUMEUNITS, id);
+        setQmlParam("app", "global_VOLUNITS", id);
+    }
+}
+
+void AppManager::onGuiDateFormatChanged(int id)
+{
+    if (id < AppDef::DateFormat_End)
+    {
+        appSett.setValue(SETT_DATEFORMAT, id);
+        setQmlParam("app", "global_DATEFORMAT", id);
+    }
+}
+
+void AppManager::onPositionDetected()
+{
+    setQmlParam("app", "global_USERREGION", position->userRegion());
+    setQmlParam("app", "global_USERCOUNTRY", position->userCountry());
+    setQmlParam("app", "global_USERCITY", position->userCity());
 }
 
 #ifdef  Q_OS_ANDROID
