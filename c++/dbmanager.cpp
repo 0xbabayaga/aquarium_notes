@@ -456,6 +456,37 @@ bool DBManager::editUser(QString uname, QString upass, QString phone, QString em
         return false;
 }
 
+bool DBManager::saveUserLocationIfRequired(QString country, QString city, double lat, double longt)
+{
+    bool res = false;
+    QSqlQuery query("SELECT COUNTRY FROM USER_TABLE WHERE STATUS != -1");
+
+    res = query.exec();
+
+    if (query.next())
+    {
+        if (query.value(0).toString().size() == 0)
+        {
+            qDebug() << "Save new coor";
+
+            query.prepare("UPDATE USER_TABLE SET "
+                          "COUNTRY = '" + country + "', "
+                          "CITY = '" + city + "', "
+                          "COOR_LAT = " + QString::number(lat) + ", "
+                          "COOR_LONG = '" + QString::number(longt) + "' "
+                          "WHERE MAN_ID = '" + curSelectedObjs.user->man_id + "'");
+
+            res = query.exec();
+
+            qDebug() << query.lastQuery();
+        }
+    }
+    else
+        qDebug() << "saveUserLocation user error: " << query.lastError();
+
+    return res;
+}
+
 bool DBManager::deleteUser()
 {
     QSqlQuery query;
@@ -889,12 +920,28 @@ bool DBManager::initDB()
                 "STATUS integer, "
                 "PHONE varchar(16), "
                 "EMAIL varchar(64), "
+                "COUNTRY varchar(32), "
+                "CITY varchar(32), "
+                "COOR_LAT REAL, "
+                "COOR_LONG REAL, "
                 "AVATAR_IMG blob, "
                 "DATE_CREATE integer, "
                 "DATE_EDIT integer )");
 
     if (res == false)
         qDebug() << query.lastError();
+
+    query.prepare("SELECT COUNTRY FROM USER_TABLE");
+    query.exec();
+
+    if (query.next() == false)
+    {
+        query.exec("ALTER TABLE USER_TABLE ADD COUNTRY VARCHAR(32)");
+        query.exec("ALTER TABLE USER_TABLE ADD CITY VARCHAR(32)");
+        query.exec("ALTER TABLE USER_TABLE ADD COOR_LAT REAL");
+        query.exec("ALTER TABLE USER_TABLE ADD COOR_LONG REAL");
+    }
+
 
     res = query.exec("CREATE TABLE IF NOT EXISTS TANKS_TABLE "
                 "(TANK_ID varchar(16), "

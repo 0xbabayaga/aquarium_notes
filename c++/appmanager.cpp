@@ -133,6 +133,8 @@ void AppManager::init()
 
     setSettAfterQMLReady();
 
+    position->get();
+
 #ifdef  Q_OS_ANDROID
     setAndroidFlag(true);
 #endif
@@ -194,6 +196,10 @@ void AppManager::setSettAfterQMLReady()
     setQmlParam("app", "global_DIMUNITS", QVariant(appSett.value(SETT_DIMENSIONUNITS).toInt()));
     setQmlParam("app", "global_VOLUNITS", QVariant(appSett.value(SETT_VOLUMEUNITS).toInt()));
     setQmlParam("app", "global_DATEFORMAT", QVariant(appSett.value(SETT_DATEFORMAT).toInt()));
+
+    setQmlParam("app", "global_USERREGION", position->userRegion());
+    setQmlParam("app", "global_USERCOUNTRY", position->userCountry());
+    setQmlParam("app", "global_USERCITY", position->userCity());
 
     setQmlParam("comboLang", "currentIndex", QVariant(appSett.value(SETT_LANG).toInt()));
     setQmlParam("comboDimensions", "currentIndex", QVariant(appSett.value(SETT_DIMENSIONUNITS).toInt()));
@@ -704,6 +710,8 @@ void AppManager::onPositionDetected()
     setQmlParam("app", "global_USERREGION", position->userRegion());
     setQmlParam("app", "global_USERCOUNTRY", position->userCountry());
     setQmlParam("app", "global_USERCITY", position->userCity());
+
+    saveUserLocationIfRequired(position->userCountry(), position->userCity(), position->coorLat(), position->coorLong());
 }
 
 #ifdef  Q_OS_ANDROID

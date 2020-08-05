@@ -13,7 +13,6 @@ Item
 
     property bool isOpened: false
     property alias accountName: textAccountName.text
-    property alias accountEmail: textAccountEmail.text
     property alias accountImage: imgAccount.source
 
     function showMenu(vis)
@@ -213,28 +212,35 @@ Item
 
             Text
             {
-                id: textAccountEmail
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: textAccountName.bottom
-                height: AppTheme.compHeight / 2 * app.scale
-                verticalAlignment: Text.AlignTop
-                font.family: AppTheme.fontFamily
-                font.pixelSize: AppTheme.fontSmallSize * app.scale
-                color: AppTheme.greyColor
-                text: ""
-            }
-
-            Text
-            {
                 id: textLocation
                 anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: textAccountEmail.bottom
+                anchors.top: textAccountName.bottom
+                anchors.topMargin: AppTheme.padding/2 * app.scale
                 height: AppTheme.compHeight / 2 * app.scale
-                verticalAlignment: Text.AlignTop
+                verticalAlignment: Text.AlignVCenter
                 font.family: AppTheme.fontFamily
                 font.pixelSize: AppTheme.fontSmallSize * app.scale
                 color: AppTheme.greyColor
-                text: app.global_USERREGION + " " + app.global_USERCOUNTRY + " " + app.global_USERCITY
+                text: app.global_USERCOUNTRY + ", " + app.global_USERCITY
+            }
+
+            Image
+            {
+                id: imgLoc
+                anchors.right: textLocation.left
+                anchors.rightMargin: AppTheme.padding / 4 * app.scale
+                anchors.verticalCenter: textLocation.verticalCenter
+                width: AppTheme.padding * app.scale
+                height: width
+                source: "qrc:/resources/img/icon_loc.png"
+                mipmap: true
+            }
+
+            ColorOverlay
+            {
+                anchors.fill: imgLoc
+                source: imgLoc
+                color: AppTheme.blueColor
             }
 
             Rectangle

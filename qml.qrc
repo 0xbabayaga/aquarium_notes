@@ -59,5 +59,6 @@
         <file>resources/langs/lang_en.qm</file>
         <file>qml/custom/ComboListQuick.qml</file>
         <file>resources/img/icon_mon2.png</file>
+        <file>resources/img/icon_loc.png</file>
     </qresource>
 </RCC>

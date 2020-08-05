@@ -204,7 +204,6 @@ Window
         height: parent.height
 
         accountName: app.curUserName
-        accountEmail: app.curUserEmail
         accountImage: "data:image/png;base64," + app.curUserAvatar
 
         onSigMenuSelected:

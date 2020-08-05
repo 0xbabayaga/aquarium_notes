@@ -206,41 +206,49 @@ Item
 
             Text
             {
-                id: textAccountEmail
+                id: textLocation
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: textAccountName.bottom
-                height: AppTheme.compHeight * app.scale
+                anchors.topMargin: AppTheme.padding/2 * app.scale
+                height: AppTheme.compHeight / 2 * app.scale
                 verticalAlignment: Text.AlignVCenter
                 font.family: AppTheme.fontFamily
                 font.pixelSize: AppTheme.fontSmallSize * app.scale
                 color: AppTheme.greyColor
-                text: app.curUserEmail
+                text: app.global_USERCOUNTRY + ", " + app.global_USERCITY
+            }
+
+            Image
+            {
+                id: imgLoc
+                anchors.right: textLocation.left
+                anchors.rightMargin: AppTheme.padding / 4 * app.scale
+                anchors.verticalCenter: textLocation.verticalCenter
+                width: AppTheme.padding * app.scale
+                height: width
+                source: "qrc:/resources/img/icon_loc.png"
+                mipmap: true
+            }
+
+            ColorOverlay
+            {
+                anchors.fill: imgLoc
+                source: imgLoc
+                color: AppTheme.blueColor
             }
 
             Text
             {
                 id: textAccountDateCreate
                 anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: textAccountEmail.bottom
+                anchors.top: textLocation.bottom
+                anchors.topMargin: AppTheme.padding/2 * app.scale
                 height: AppTheme.compHeight / 2 * app.scale
-                verticalAlignment: Text.AlignTop
+                verticalAlignment: Text.AlignVCenter
                 font.family: AppTheme.fontFamily
                 font.pixelSize: AppTheme.fontSmallSize * app.scale
                 color: AppTheme.greyColor
-                text: (new DateTimeUtils.DateTimeUtil()).printFullDate(app.curUserDateCreate)
-            }
-
-            Text
-            {
-                id: textLocation
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: textAccountDateCreate.bottom
-                height: AppTheme.compHeight / 2 * app.scale
-                verticalAlignment: Text.AlignTop
-                font.family: AppTheme.fontFamily
-                font.pixelSize: AppTheme.fontSmallSize * app.scale
-                color: AppTheme.greyColor
-                text: app.global_USERREGION + " " + app.global_USERCOUNTRY + " " + app.global_USERCITY
+                text: qsTr("Since") + " " + (new DateTimeUtils.DateTimeUtil()).printFullDate(app.curUserDateCreate)
             }
 
             Flickable
