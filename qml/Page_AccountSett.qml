@@ -208,6 +208,7 @@ Item
             {
                 id: textLocation
                 anchors.horizontalCenter: parent.horizontalCenter
+                anchors.horizontalCenterOffset: (AppTheme.padding + AppTheme.padding / 4) * app.scale / 2
                 anchors.top: textAccountName.bottom
                 anchors.topMargin: AppTheme.padding/2 * app.scale
                 height: AppTheme.compHeight / 2 * app.scale
