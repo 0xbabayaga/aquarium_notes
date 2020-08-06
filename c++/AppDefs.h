@@ -53,7 +53,7 @@ public:
         MAX_PASS_SIZE = 16,
         MAX_TANKDIMENSION_SIZE = 4,
 
-        MAX_USERTANKS_COUNT = 16
+        MAX_USERTANKS_COUNT = 16,
     };
 
     enum EnumDateFormat

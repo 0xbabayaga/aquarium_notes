@@ -36,7 +36,6 @@ Item
                 {
                     id: rect
                     anchors.fill: parent
-                    //radius: AppTheme.radius/2 * app.scale
                     color: AppTheme.whiteColor
                     clip: true
                 }
@@ -76,28 +75,11 @@ Item
                         id: imgWave
                         width: parent.width
                         height: parent.width/3
-                        //fillMode: Image.PreserveAspectFit
                         anchors.bottom: parent.bottom
                         source: (type < 4) ? "qrc:/resources/img/wave_blue_2.png" : "qrc:/resources/img/wave_green_2.png"
                         mipmap: true
                         opacity: 0.8
                     }
-
-                    /*
-                    Text
-                    {
-                        anchors.left: parent.left
-                        anchors.leftMargin: AppTheme.padding/2 * app.scale
-                        anchors.bottom: parent.bottom
-                        anchors.bottomMargin: AppTheme.padding/2 * app.scale
-                        text: name
-                        font.family: AppTheme.fontFamily
-                        font.pixelSize: AppTheme.fontSuperSmallSize * app.scale
-                        color: (type < 4) ? AppTheme.whiteColor : AppTheme.whiteColor
-                        verticalAlignment: Text.AlignBottom
-                        height: AppTheme.compHeight * app.scale
-                    }
-                    */
 
                     Text
                     {
@@ -106,7 +88,7 @@ Item
                         anchors.left: parent.left
                         anchors.bottom: parent.bottom
                         anchors.bottomMargin: AppTheme.padding/2 * app.scale
-                        text: Math.ceil(volume) + "L"
+                        text: app.convertVolume(volume) + app.currentVolumeUnitsShort()
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontNormalSize * app.scale
                         color: AppTheme.whiteColor

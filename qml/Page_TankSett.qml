@@ -107,9 +107,9 @@ Item
                 app.sigEditTank(textTankName.text,
                                 textTankDesc.text,
                                 comboTankType.currentIndex,
-                                parseInt(textTankL.text),
-                                parseInt(textTankW.text),
-                                parseInt(textTankH.text),
+                                app.deconvertDimension(parseInt(textTankL.text)),
+                                app.deconvertDimension(parseInt(textTankW.text)),
+                                app.deconvertDimension(parseInt(textTankH.text)),
                                 imgLink)
             }
             else
@@ -117,9 +117,9 @@ Item
                 app.sigCreateTank(textTankName.text,
                                   textTankDesc.text,
                                   comboTankType.currentIndex,
-                                  parseInt(textTankL.text),
-                                  parseInt(textTankW.text),
-                                  parseInt(textTankH.text),
+                                  app.deconvertDimension(parseInt(textTankL.text)),
+                                  app.deconvertDimension(parseInt(textTankW.text)),
+                                  app.deconvertDimension(parseInt(textTankH.text)),
                                   imgLink)
             }
 
@@ -403,7 +403,7 @@ Item
                                 font.family: AppTheme.fontFamily
                                 font.pixelSize: AppTheme.fontNormalSize * app.scale
                                 color: AppTheme.greyColor
-                                text: (tanksListModel.length > 0) ? tanksListModel[tanksList.currentIndex].l + qsTr("cm") : ""
+                                text: (tanksListModel.length > 0) ? app.convertDimension(tanksListModel[tanksList.currentIndex].l) + " " + app.currentDimensionUnits() : ""
                             }
                         }
 
@@ -433,7 +433,7 @@ Item
                                 font.family: AppTheme.fontFamily
                                 font.pixelSize: AppTheme.fontNormalSize * app.scale
                                 color: AppTheme.greyColor
-                                text: (tanksListModel.length > 0) ? tanksListModel[tanksList.currentIndex].h + qsTr("cm") : ""
+                                text: (tanksListModel.length > 0) ? app.convertDimension(tanksListModel[tanksList.currentIndex].h) + " " + app.currentDimensionUnits() : ""
                             }
                         }
 
@@ -463,7 +463,7 @@ Item
                                 font.family: AppTheme.fontFamily
                                 font.pixelSize: AppTheme.fontNormalSize * app.scale
                                 color: AppTheme.greyColor
-                                text: (tanksListModel.length > 0) ? tanksListModel[tanksList.currentIndex].w + qsTr("cm") : ""
+                                text: (tanksListModel.length > 0) ? app.convertDimension(tanksListModel[tanksList.currentIndex].w) + " " + app.currentDimensionUnits() : ""
                             }
                         }
 
@@ -493,7 +493,7 @@ Item
                                 font.family: AppTheme.fontFamily
                                 font.pixelSize: AppTheme.fontNormalSize * app.scale
                                 color: AppTheme.greyColor
-                                text: (tanksListModel.length > 0) ? Math.round(tanksListModel[tanksList.currentIndex].volume / 10) * 10 + qsTr("L") : ""
+                                text: (tanksListModel.length > 0) ? app.convertVolume(tanksListModel[tanksList.currentIndex].volume) + " " + app.currentVolumeUnits() : ""
                             }
                         }
 
@@ -608,7 +608,7 @@ Item
                                 placeholderText: qsTr("100")
                                 width: (parent.width - rectRow.unitWidth * 3) / 3
                                 maximumLength: AppDefs.MAX_TANKDIMENSION_SIZE
-                                text: (tanksListModel.length > 0) ? tanksListModel[tanksList.currentIndex].l : ""
+                                text: (tanksListModel.length > 0) ? app.convertDimension(tanksListModel[tanksList.currentIndex].l) : ""
                                 validator : RegExpValidator { regExp : /[0-9]+[0-9]+/ }
                                 focus: true
                                 KeyNavigation.tab: textTankW
@@ -621,7 +621,7 @@ Item
                                     font.family: AppTheme.fontFamily
                                     font.pixelSize: AppTheme.fontNormalSize * app.scale
                                     color: AppTheme.blueColor
-                                    text: qsTr("cm")
+                                    text: app.currentDimensionUnits()
                                 }
                             }
 
@@ -632,7 +632,7 @@ Item
                                 placeholderText: qsTr("50")
                                 width: (parent.width - rectRow.unitWidth * 3) / 3
                                 maximumLength: AppDefs.MAX_TANKDIMENSION_SIZE
-                                text: (tanksListModel.length > 0) ? tanksListModel[tanksList.currentIndex].w : ""
+                                text: (tanksListModel.length > 0) ? app.convertDimension(tanksListModel[tanksList.currentIndex].w) : ""
                                 validator : RegExpValidator { regExp : /[0-9]+[0-9]+/ }
                                 focus: true
                                 KeyNavigation.tab: textTankH
@@ -645,7 +645,7 @@ Item
                                     font.family: AppTheme.fontFamily
                                     font.pixelSize: AppTheme.fontNormalSize * app.scale
                                     color: AppTheme.blueColor
-                                    text: qsTr("cm")
+                                    text: app.currentDimensionUnits()
                                 }
                             }
 
@@ -656,7 +656,7 @@ Item
                                 placeholderText: qsTr("50")
                                 width: (parent.width - rectRow.unitWidth * 3) / 3
                                 maximumLength: AppDefs.MAX_TANKDIMENSION_SIZE
-                                text: (tanksListModel.length > 0) ? tanksListModel[tanksList.currentIndex].h : ""
+                                text: (tanksListModel.length > 0) ? app.convertDimension(tanksListModel[tanksList.currentIndex].h) : ""
                                 validator : RegExpValidator { regExp : /[0-9]+[0-9]+/ }
                                 focus: true
                                 KeyNavigation.tab: comboTankType
@@ -669,7 +669,7 @@ Item
                                     font.family: AppTheme.fontFamily
                                     font.pixelSize: AppTheme.fontNormalSize * app.scale
                                     color: AppTheme.blueColor
-                                    text: qsTr("cm")
+                                    text: app.currentDimensionUnits()
                                 }
                             }
                         }
@@ -703,8 +703,6 @@ Item
                             imagesCountMax: 1
                         }
                     }
-
-
 
                     IconSimpleButton
                     {

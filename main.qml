@@ -94,6 +94,66 @@ Window
         return 0
     }
 
+    function convertDimension(dim)
+    {
+        var val = dim
+
+        if (global_DIMUNITS === AppDefs.Dimensions_INCH)
+            val = dim / 2.54
+
+        return Math.round(val * 100) / 100
+    }
+
+    function deconvertDimension(dim)
+    {
+        if (global_DIMUNITS === AppDefs.Dimensions_INCH)
+            return dim * 2.54
+        else
+            return dim
+    }
+
+    function convertVolume(vol)
+    {
+        var val = vol
+
+        if (global_VOLUNITS === AppDefs.Volume_L)
+            val = vol
+        else if (global_VOLUNITS === AppDefs.Volume_G_UK)
+            val = vol * 0.219969
+        else
+            val = vol * 0.2641717541633774
+
+        return Math.round(val)
+    }
+
+    function currentDimensionUnits()
+    {
+        if (global_DIMUNITS === AppDefs.Dimensions_CM)
+            return qsTr("cm")
+        else
+            return qsTr("inch")
+    }
+
+    function currentVolumeUnits()
+    {
+        if (global_VOLUNITS === AppDefs.Volume_L)
+            return qsTr("L")
+        else if (global_VOLUNITS === AppDefs.Volume_G_UK)
+            return qsTr("Gal(UK)")
+        else
+            return qsTr("Gal(US)")
+    }
+
+    function currentVolumeUnitsShort()
+    {
+        if (global_VOLUNITS === AppDefs.Volume_L)
+            return qsTr("L")
+        else if (global_VOLUNITS === AppDefs.Volume_G_UK)
+            return qsTr("G")
+        else
+            return qsTr("G")
+    }
+
     Rectangle
     {
         id: rectMain

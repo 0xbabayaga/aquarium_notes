@@ -363,7 +363,7 @@ Item
                                 font.family: AppTheme.fontFamily
                                 font.pixelSize: AppTheme.fontNormalSize * app.scale
                                 color: AppTheme.blueColor
-                                text: qsTr("cm")
+                                text: app.currentDimensionUnits()
                             }
                         }
 
@@ -386,7 +386,7 @@ Item
                                 font.family: AppTheme.fontFamily
                                 font.pixelSize: AppTheme.fontNormalSize * app.scale
                                 color: AppTheme.blueColor
-                                text: qsTr("cm")
+                                text: app.currentDimensionUnits()
                             }
                         }
 
@@ -409,7 +409,7 @@ Item
                                 font.family: AppTheme.fontFamily
                                 font.pixelSize: AppTheme.fontNormalSize * app.scale
                                 color: AppTheme.blueColor
-                                text: qsTr("cm")
+                                text: app.currentDimensionUnits()
                             }
                         }
                     }
@@ -473,9 +473,9 @@ Item
                         app.sigCreateTank(textTankName.text,
                                           "",
                                           comboTankType.currentIndex,
-                                          textTankL.text,
-                                          textTankW.text,
-                                          textTankH.text,
+                                          app.deconvertDimension(textTankL.text),
+                                          app.deconvertDimension(textTankW.text),
+                                          app.deconvertDimension(textTankH.text),
                                           imgLink)
                     }
                 }
