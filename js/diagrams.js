@@ -1,3 +1,5 @@
+.import AppDefs 1.0 as AppDefs
+
 var gridColor       = "#20000000"
 var textColor       = "#50000000"
 var blueColor       = "#00ADBC"
@@ -236,30 +238,8 @@ DiagramView.prototype.drawCurve = function(num)
                             this.oneDiagHeight * num + this.drawHeight + 8 * appScale/2)
 
     var grd = this.ctx.createLinearGradient(0, this.drawHeight, 0, 0)
-    //grd.addColorStop(0, "#00000000")
     grd.addColorStop(1, this.getCurveGradientColor(num))
     grd.addColorStop(1, this.getCurveGradientColor(num))
-
-    /*
-    this.ctx.beginPath()
-    this.ctx.fillStyle = grd
-    this.ctx.strokeStyle = "#00000000"
-    this.ctx.lineWidth   = 1 * appScale
-
-    this.ctx.moveTo(this.leftMargin, this.oneDiagHeight * num + this.drawHeight)
-
-    for (pt in this.points[num])
-    {
-        x = this.leftMargin + (parseInt(pt) - this.xMin[num]) / this.stepX
-        y = this.oneDiagHeight * num + this.drawHeight - parseFloat(this.points[num][pt] - minY) * yScale
-
-        this.ctx.lineTo(x, y)
-    }
-
-    this.ctx.lineTo(this.width - this.rightMargin, this.oneDiagHeight * num + this.drawHeight)
-    this.ctx.closePath()
-    this.ctx.fill()
-    */
 
     this.ctx.beginPath()
     this.ctx.strokeStyle = this.getCurveColor(num)
@@ -362,15 +342,18 @@ DiagramView.prototype.printVal = function(val)
         return Math.round(100 * val) / 100
 }
 
-
 DiagramView.prototype.printDate = function(tm)
 {
     var date = new Date(tm * 1000)
     var day = "0" + date.getDate()
     var month = "0" + date.getMonth()
     var year = "0" + date.getYear()
+    var formattedDate = ""
 
-    var formattedDate = day.substr(-2) + '/' + month.substr(-2)
+    if (app.global_DATEFORMAT === AppDefs.AppDefs.DateFormat_DD_MM_YYYY)
+        formattedDate = day.substr(-2) + '/' + month.substr(-2)
+    else
+        formattedDate = month.substr(-2) + '/' + day.substr(-2)
 
     return formattedDate
 }
