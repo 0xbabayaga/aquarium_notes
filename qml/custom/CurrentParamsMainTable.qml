@@ -18,6 +18,8 @@ Item
 
         if (model.length > 0)
             textTableHeader.text = qsTr("LAST MEASURED") + " [" + dtUtils.printDate(curParamsListView.model[0].dtNow)+ "]"
+        else
+            textTableHeader.text = qsTr("No data found for this aquarium")
 
         currParamsMainTable.height = (currentParamsTable.realModelLength() + 1) * AppTheme.compHeight * app.scale
     }
@@ -108,33 +110,12 @@ Item
                 id: textTableHeader
                 verticalAlignment: Text.AlignVCenter
                 height: parent.height
-                width: 80 * app.scale
+                width: parent.width
                 font.family: AppTheme.fontFamily
                 font.pixelSize: AppTheme.fontNormalSize * app.scale
                 color: AppTheme.greyColor
                 text: qsTr("LAST MEASURED")
-            }
-        }
-
-        Rectangle
-        {
-            anchors.fill: parent
-            visible: (currentParamsTable.realModelLength() === 0)
-            color: "#00000000"
-
-            Text
-            {
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: AppTheme.rowHeight * 2 * app.scale
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-                width: 250 * app.scale
-                font.family: AppTheme.fontFamily
-                font.pixelSize: AppTheme.fontNormalSize * app.scale
                 wrapMode: Text.WordWrap
-                color: AppTheme.greyColor
-                text: qsTr("No data found for this aquarium")
             }
         }
 

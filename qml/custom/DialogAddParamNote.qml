@@ -158,23 +158,6 @@ Item
                     color: AppTheme.backLightBlueColor
                 }
 
-                /*
-                UrlButton
-                {
-                    id: buttonSetParams
-                    anchors.right: parent.right
-                    anchors.bottom: textHeader.bottom
-                    buttonText: qsTr("Parameters")
-                    width: 80 * app.scale
-
-                    onSigButtonClicked:
-                    {
-                        rectAddRecordDialog.opacity = 0
-                        rectPersonalParamsDialog.opacity = 1
-                    }
-                }
-                */
-
                 IconSmallSimpleButton
                 {
                     anchors.right: parent.right

@@ -50,23 +50,23 @@ Item
 
     Text
     {
-        id: textTankName
+        id: textUserTanks
         anchors.top: parent.top
-        anchors.topMargin: AppTheme.margin * app.scale * 2
-        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.topMargin: AppTheme.padding * 3 * app.scale
+        anchors.left: parent.left
+        anchors.leftMargin: AppTheme.padding * app.scale
         verticalAlignment: Text.AlignVCenter
         font.family: AppTheme.fontFamily
-        font.pixelSize: AppTheme.fontSuperBigSize * app.scale
-        color: AppTheme.blueColor
-        text: (tanksList.model.length > 0) ? tanksList.model[0].name : ""
+        font.pixelSize: AppTheme.fontNormalSize * app.scale
+        color: AppTheme.greyColor
+        text: qsTr("USER TANKS")
     }
 
-    TanksList
+    TankListView
     {
         id: tanksList
-        anchors.top: parent.top
-        anchors.topMargin: AppTheme.rowHeightMin * app.scale * 2
-        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.fill: parent
+        anchors.topMargin: AppTheme.padding * 5 * app.scale
         model: tanksListModel
 
         onSigCurrentIndexChanged:
@@ -83,6 +83,43 @@ Item
         }
     }
 
+    Text
+    {
+        id: textTankName
+        anchors.top: parent.top
+        anchors.topMargin: AppTheme.margin * app.scale * 2
+        anchors.horizontalCenter: parent.horizontalCenter
+        verticalAlignment: Text.AlignVCenter
+        font.family: AppTheme.fontFamily
+        font.pixelSize: AppTheme.fontSuperBigSize * app.scale
+        color: AppTheme.blueColor
+        text: (tanksList.model.length > 0) ? tanksList.model[0].name : ""
+        visible: false
+    }
+
+    TanksList
+    {
+        //id: tanksList
+        anchors.top: parent.top
+        anchors.topMargin: AppTheme.rowHeightMin * app.scale * 2
+        anchors.horizontalCenter: parent.horizontalCenter
+        //model: tanksListModel
+        visible: false
+
+        onSigCurrentIndexChanged:
+        {
+            //textTankName.text = model[id].name
+            app.sigTankSelected(currentIndex)
+        }
+
+        //onSigDoubleClicked:
+        //{
+            //textTankName.text = model[id].name
+            //app.sigTankSelected(currentIndex)
+            //openTankPage()
+       //}
+    }
+
     Flickable
     {
         id: flickableContainer
@@ -93,6 +130,7 @@ Item
         anchors.right: parent.right
         anchors.rightMargin: AppTheme.padding * app.scale
         anchors.bottom: parent.bottom
+        visible: false
 
         contentWidth: width
         contentHeight: 700 * app.scale
@@ -104,7 +142,7 @@ Item
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: parent.top
-            model: curValuesListModel
+            //model: curValuesListModel
             height: 300 * app.scale
         }
 
@@ -140,5 +178,6 @@ Item
         image: "qrc:/resources/img/icon_arrow_right.png"
 
         onSigButtonClicked: openTankPage()
+        visible: false
     }
 }

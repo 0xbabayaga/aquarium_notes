@@ -148,7 +148,6 @@ bool DBManager::getParamsList(QString tankId, AquariumType type)
     for (int i = 0; i < paramsGuiList.size(); i++)
     {
         obj = (ParamObj*) paramsGuiList.at(i);
-
         obj->setFullName(QObject::tr(paramTranslationMap[obj->shortName()].toLocal8Bit()));
     }
 
@@ -234,7 +233,6 @@ bool DBManager::getLatestParams()
                              "FROM HISTORY_VALUE_TABLE v "
                              "LEFT JOIN HISTORY_NOTES_TABLE n ON n.SMP_ID = v.SMP_ID "
                              "WHERE v.SMP_ID = '"+QString::number(smpIdList.at(curIdx + 1))+"'");
-
 
             while (query1.next())
             {

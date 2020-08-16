@@ -167,6 +167,7 @@ Window
             width: parent.width
             height: width * 0.75
             source: "qrc:/resources/img/back_waves.png"
+            visible: false
         }
 
         Rectangle

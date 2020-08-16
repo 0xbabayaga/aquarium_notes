@@ -647,8 +647,10 @@ void AppManager::onGuiTankSelected(int tankIdx)
 {
     curSelectedObjs.tankIdx = tankIdx;
 
+    getParamsListGui();
     getLatestParamsGui();
     getHistoryParams();
+    getActionCalendarGui();
 }
 
 void AppManager::onGuiPersonalParamStateChanged(int paramId, bool en)
@@ -693,6 +695,9 @@ void AppManager::onGuiVolumeUnitsChanged(int id)
     {
         appSett.setValue(SETT_VOLUMEUNITS, id);
         setQmlParam("app", "global_VOLUNITS", id);
+
+        createTankTypesList();
+        getCurrentObjs();
     }
 }
 
@@ -702,6 +707,9 @@ void AppManager::onGuiDateFormatChanged(int id)
     {
         appSett.setValue(SETT_DATEFORMAT, id);
         setQmlParam("app", "global_DATEFORMAT", id);
+
+        createTankTypesList();
+        getCurrentObjs();
     }
 }
 
