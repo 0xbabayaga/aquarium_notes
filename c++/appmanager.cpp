@@ -73,7 +73,7 @@ AppManager::~AppManager()
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigEditAccount(QString, QString, QString, QString)), this, SLOT(onGuiUserEdit(QString, QString, QString, QString)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigDeleteAccount()), this, SLOT(onGuiUserDelete()));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateTank(QString, QString, int, int, int, int)), this, SLOT(onGuiTankCreate(QString, QString, int, int, int, int)));
-    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigEditTank(QString, QString, int, int, int, int)), this, SLOT(onGuiTankEdit(QString, QString, int, int, int, int)));
+    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigEditTank(QString, QString, QString, int, int, int, int, QString)), this, SLOT(onGuiTankEdit(QString, QString, QString, int, int, int, int, QString)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigDeleteTank()), this, SLOT(onGuiTankDelete()));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecord(int, int, float)), this, SLOT(onGuiAddRecord(int, int, float)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigEditRecord(int, int, double)), this, SLOT(onGuiEditRecord(int, int, double)));
@@ -111,7 +111,7 @@ void AppManager::init()
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigEditAccount(QString, QString, QString, QString)), this, SLOT(onGuiUserEdit(QString, QString, QString, QString)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigDeleteAccount()), this, SLOT(onGuiUserDelete()));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigCreateTank(QString, QString, int, int, int, int, QString)), this, SLOT(onGuiTankCreate(QString, QString, int, int, int, int, QString)));
-    connect(qmlEngine->rootObjects().first(), SIGNAL(sigEditTank(QString, QString, int, int, int, int, QString)), this, SLOT(onGuiTankEdit(QString, QString, int, int, int, int, QString)));
+    connect(qmlEngine->rootObjects().first(), SIGNAL(sigEditTank(QString, QString, QString, int, int, int, int, QString)), this, SLOT(onGuiTankEdit(QString, QString, QString, int, int, int, int, QString)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigDeleteTank(QString)), this, SLOT(onGuiTankDelete(QString)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigAddRecord(int, int, double)), this, SLOT(onGuiAddRecord(int, int, double)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigEditRecord(int, int, double)), this, SLOT(onGuiEditRecord(int, int, double)));
@@ -449,6 +449,7 @@ void AppManager::setGalleryImageSelected(QString imgUrl)
 {
     setQmlParam("imageList", "galleryImageSelected", imgUrl);
     setQmlParam("imgUserAvatar", "galleryImageSelected", imgUrl);
+    setQmlParam("imgTankAvatar", "galleryImageSelected", imgUrl);
 }
 
 void AppManager::setCurrentUser(QString uname, QString email, QString imgLink, int dt)
@@ -566,9 +567,9 @@ void AppManager::onGuiTankCreate(QString name, QString desc, int type, int l, in
     }
 }
 
-void AppManager::onGuiTankEdit(QString name, QString desc, int type, int l, int w, int h, QString imgFile)
+void AppManager::onGuiTankEdit(QString tankId, QString name, QString desc, int type, int l, int w, int h, QString imgFile)
 {
-    if (editTank(name, desc, type, l, w, h, imgFile) == true)
+    if (editTank(tankId, name, desc, type, l, w, h, imgFile) == true)
     {
         getCurrentObjs();
     }

@@ -104,7 +104,10 @@ Item
         {
             if (page_TankSett.isEdit === true)
             {
-                app.sigEditTank(textTankName.text,
+                console.log("tank edit = ", tanksListModel[tanksList.currentIndex].tankId)
+
+                app.sigEditTank(tanksListModel[tanksList.currentIndex].tankId,
+                                textTankName.text,
                                 textTankDesc.text,
                                 comboTankType.currentIndex,
                                 app.deconvertDimension(parseInt(textTankL.text)),
@@ -125,7 +128,6 @@ Item
 
             moveToEdit(false)
         }
-        //else
     }
 
     onVisibleChanged:
@@ -160,26 +162,7 @@ Item
         anchors.left: parent.left
         anchors.right: parent.right
         height: page_TankSett.height
-        radius: AppTheme.radius * 2 * app.scale
         color: AppTheme.whiteColor
-    }
-
-    DropShadow
-    {
-        anchors.fill: rectContainer
-        horizontalOffset: 0
-        verticalOffset: -3
-        radius: 10.0 * app.scale
-        samples: 16
-        color: "#20000000"
-        source: rectContainer
-    }
-
-    Rectangle
-    {
-        id: rectRealContainer
-        anchors.fill: rectContainer
-        color: "#00000000"
 
         Image
         {
@@ -190,6 +173,62 @@ Item
             height: width * 0.75
             source: "qrc:/resources/img/back_waves.png"
             opacity: 0.3
+        }
+
+        Rectangle
+        {
+            id: rectHeaderShadow
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            height: AppTheme.rowHeightMin * app.scale
+            color: AppTheme.blueColor
+        }
+
+        DropShadow
+        {
+            anchors.fill: rectHeaderShadow
+            horizontalOffset: 0
+            verticalOffset: 5
+            radius: 10.0 * app.scale
+            samples: 16
+            color: "#20000000"
+            source: rectHeaderShadow
+        }
+
+        Rectangle
+        {
+            anchors.fill: rectHeaderShadow
+            height: AppTheme.rowHeightMin * app.scale
+            color: AppTheme.blueColor
+
+            Text
+            {
+                id: textHeader
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.right: parent.right
+                anchors.rightMargin: AppTheme.padding * app.scale
+                verticalAlignment: Text.AlignBottom
+                font.family: AppTheme.fontFamily
+                font.pixelSize: AppTheme.fontNormalSize * app.scale
+                color: AppTheme.whiteColor
+                text: qsTr("TANKS")
+            }
+
+            IconSmallSimpleButton
+            {
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: parent.left
+                anchors.leftMargin: AppTheme.padding * app.scale
+                image: "qrc:/resources/img/icon_arrow_left.png"
+                inverted: true
+
+                onSigButtonClicked:
+                {
+                    showPage(false)
+                    sigClosing()
+                }
+            }
         }
 
         Rectangle
@@ -211,28 +250,8 @@ Item
 
                 onSigCurrentIndexChanged:
                 {
+                    imgTankAvatar.reset()
                     imgTankAvatar.addBase64ImageToList(tanksListModel[tanksList.currentIndex].img)
-                }
-            }
-
-            Rectangle
-            {
-                anchors.top: parent.top
-                anchors.left: parent.left
-                anchors.right: parent.right
-                height: AppTheme.rowHeight * app.scale
-                color: "#00000000"
-
-                Text
-                {
-                    id: textHeader
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.left: parent.left
-                    verticalAlignment: Text.AlignBottom
-                    font.family: AppTheme.fontFamily
-                    font.pixelSize: AppTheme.fontBigSize * app.scale
-                    color: AppTheme.blueColor
-                    text: qsTr("TANKS")
                 }
             }
 
@@ -531,6 +550,7 @@ Item
                         }
                     }
 
+                    /*
                     IconSimpleButton
                     {
                         id: buttonEdit
@@ -545,6 +565,7 @@ Item
                             sigClosing()
                         }
                     }
+                    */
                 }
 
                 Rectangle
@@ -700,6 +721,7 @@ Item
                         ImageList
                         {
                             id: imgTankAvatar
+                            objectName: "imgTankAvatar"
                             imagesCountMax: 1
                         }
                     }

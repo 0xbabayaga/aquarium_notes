@@ -9,6 +9,7 @@ Item
     height: AppTheme.compHeight * app.scale
 
     property alias image: buttonImage.source
+    property bool inverted:  false
 
     signal sigButtonClicked()
 
@@ -41,6 +42,7 @@ Item
             anchors.fill: buttonImage
             source: buttonImage
             color: AppTheme.blueColor
+            visible: !inverted
         }
 
         MouseArea

@@ -6,8 +6,7 @@ import "../"
 Item
 {
     id: pagesTabList
-    height: AppTheme.compHeight * app.scale
-    width: app.width
+    height: AppTheme.rowHeightMin * app.scale
 
     property alias model: listTab.model
     property alias currentIndex: listTab.currentIndex
@@ -20,39 +19,34 @@ Item
         anchors.fill: parent
         color: "#00000000"
 
-        /*
         ListView
         {
             id: listTab
             anchors.fill: parent
             model: modelTabs
             orientation: ListView.Horizontal
-            spacing: AppTheme.rowSpacing
+            //spacing: AppTheme.rowSpacing
             currentIndex: 0
 
-            property int cellWidth: 110 * app.scale
-
-            //highlightRangeMode: ListView.StrictlyEnforceRange
-            //preferredHighlightBegin: (width - cellWidth) / 2
-            //preferredHighlightEnd: (width + cellWidth) / 2
+            property int cellWidth: rectContainer.width / 3
 
             delegate: Component
             {
                 Rectangle
                 {
                     width: listTab.cellWidth
-                    height: AppTheme.rowHeight/2 * app.scale
-                    radius: AppTheme.radius/2 * app.scale
+                    height: AppTheme.rowHeightMin * app.scale
                     color:  "#00000000"
 
                     Text
                     {
-                        anchors.fill: parent
-                        color: AppTheme.blueColor
-                        font.pixelSize: (listTab.currentIndex === index) ? AppTheme.fontBigSize * app.scale : AppTheme.fontNormalSize * app.scale
+                        color: AppTheme.whiteColor
+                        font.pixelSize: (listTab.currentIndex === index) ? AppTheme.fontNormalSize * app.scale : AppTheme.fontNormalSize * app.scale
                         font.family: AppTheme.fontFamily
                         verticalAlignment: Text.AlignVCenter
                         horizontalAlignment: Text.AlignHCenter
+                        width: parent.width
+                        height: parent.height
                         text: tab
 
                         MouseArea
@@ -65,12 +59,21 @@ Item
                             }
                         }
                     }
+
+                    Rectangle
+                    {
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.bottom: parent.bottom
+                        height: 2 * app.scale
+                        color: AppTheme.lightBlueColor
+                        visible: (listTab.currentIndex === index)
+                    }
                 }
             }
         }
-*/
 
-
+/*
         Component
         {
             id: delegate
@@ -138,5 +141,6 @@ Item
 
             onCurrentIndexChanged: sigCurrentIndexChanged(currentIndex)
         }
+        */
     }
 }

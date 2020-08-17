@@ -574,7 +574,7 @@ bool DBManager::createTank(QString name, QString desc, QString manId, int type, 
     return res;
 }
 
-bool DBManager::editTank(QString name, QString desc, int type, int l, int w, int h, QString img)
+bool DBManager::editTank(QString tankId, QString name, QString desc, int type, int l, int w, int h, QString img)
 {
     QString base64ImgString = "";
     QSqlQuery query;
@@ -607,7 +607,7 @@ bool DBManager::editTank(QString name, QString desc, int type, int l, int w, int
                       "H = " + QString::number(h) + ", "
                       "IMG = '" + base64ImgString + "', "
                       "DATE_EDIT = '" + QString::number(QDateTime::currentSecsSinceEpoch()) + "' "
-                      "WHERE TANK_ID = '" + currentTankSelected()->tankId() + "'");
+                      "WHERE TANK_ID = '" + tankId + "'");
 
         res = query.exec();
 
