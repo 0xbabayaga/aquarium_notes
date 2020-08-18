@@ -104,7 +104,8 @@ Item
         {
             if (page_TankSett.isEdit === true)
             {
-                app.sigEditTank(textTankName.text,
+                app.sigEditTank(tanksListModel[tanksList.currentIndex].tankId,
+                                textTankName.text,
                                 textTankDesc.text,
                                 comboTankType.currentIndex,
                                 app.deconvertDimension(parseInt(textTankL.text)),
@@ -125,7 +126,6 @@ Item
 
             moveToEdit(false)
         }
-        //else
     }
 
     onVisibleChanged:
@@ -168,7 +168,7 @@ Item
     {
         anchors.fill: rectContainer
         horizontalOffset: 0
-        verticalOffset: -3
+        verticalOffset: -2
         radius: 10.0 * app.scale
         samples: 16
         color: "#20000000"
@@ -200,6 +200,34 @@ Item
             anchors.rightMargin: AppTheme.padding * app.scale
             color: "#00000000"
 
+            IconSimpleButton
+            {
+                id: imgArrowBack
+                anchors.left: parent.left
+                anchors.top: parent.top
+                anchors.topMargin: AppTheme.padding * app.scale
+                image: "qrc:/resources/img/icon_arrow_left.png"
+
+                onSigButtonClicked:
+                {
+                    showPage(false)
+                    sigClosing()
+                }
+            }
+
+            Text
+            {
+                id: textHeader
+                anchors.verticalCenter: imgArrowBack.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+                verticalAlignment: Text.AlignBottom
+                font.family: AppTheme.fontFamily
+                font.pixelSize: AppTheme.fontBigSize * app.scale
+                color: AppTheme.blueColor
+                text: qsTr("TANKS")
+            }
+
+
             TanksList
             {
                 id: tanksList
@@ -211,28 +239,8 @@ Item
 
                 onSigCurrentIndexChanged:
                 {
+                    imgTankAvatar.reset()
                     imgTankAvatar.addBase64ImageToList(tanksListModel[tanksList.currentIndex].img)
-                }
-            }
-
-            Rectangle
-            {
-                anchors.top: parent.top
-                anchors.left: parent.left
-                anchors.right: parent.right
-                height: AppTheme.rowHeight * app.scale
-                color: "#00000000"
-
-                Text
-                {
-                    id: textHeader
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.left: parent.left
-                    verticalAlignment: Text.AlignBottom
-                    font.family: AppTheme.fontFamily
-                    font.pixelSize: AppTheme.fontBigSize * app.scale
-                    color: AppTheme.blueColor
-                    text: qsTr("TANKS")
                 }
             }
 
@@ -531,6 +539,7 @@ Item
                         }
                     }
 
+                    /*
                     IconSimpleButton
                     {
                         id: buttonEdit
@@ -545,6 +554,7 @@ Item
                             sigClosing()
                         }
                     }
+                    */
                 }
 
                 Rectangle
@@ -700,6 +710,7 @@ Item
                         ImageList
                         {
                             id: imgTankAvatar
+                            objectName: "imgTankAvatar"
                             imagesCountMax: 1
                         }
                     }

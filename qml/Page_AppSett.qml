@@ -65,8 +65,8 @@ Item
     {
         anchors.fill: rectContainer
         horizontalOffset: 0
-        verticalOffset: -3
-        radius: 16.0 * app.scale
+        verticalOffset: -2
+        radius: 10.0 * app.scale
         samples: 16
         color: "#20000000"
         source: rectContainer
@@ -97,34 +97,39 @@ Item
             anchors.rightMargin: AppTheme.padding * app.scale
             color: "#00000000"
 
-
-            Rectangle
+            IconSimpleButton
             {
-                anchors.top: parent.top
+                id: imgArrowBack
                 anchors.left: parent.left
-                anchors.right: parent.right
-                height: AppTheme.rowHeight * app.scale
-                color: "#00000000"
+                anchors.top: parent.top
+                anchors.topMargin: AppTheme.padding * app.scale
+                image: "qrc:/resources/img/icon_arrow_left.png"
 
-                Text
+                onSigButtonClicked:
                 {
-                    id: textHeader
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.left: parent.left
-                    anchors.leftMargin: AppTheme.padding * app.scale
-                    verticalAlignment: Text.AlignBottom
-                    font.family: AppTheme.fontFamily
-                    font.pixelSize: AppTheme.fontBigSize * app.scale
-                    color: AppTheme.blueColor
-                    text: qsTr("SETTINGS")
+                    showPage(false)
+                    sigClosing()
                 }
             }
+
+            Text
+            {
+                id: textHeader
+                anchors.verticalCenter: imgArrowBack.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+                verticalAlignment: Text.AlignBottom
+                font.family: AppTheme.fontFamily
+                font.pixelSize: AppTheme.fontBigSize * app.scale
+                color: AppTheme.blueColor
+                text: qsTr("SETTINGS")
+            }
+
 
             Flickable
             {
                 id: flickView
                 anchors.top: parent.top
-                anchors.topMargin: AppTheme.margin * 2 * app.scale
+                anchors.topMargin: AppTheme.margin * 3 * app.scale
                 anchors.bottom: parent.bottom
                 anchors.left: parent.left
                 anchors.right: parent.right
@@ -293,6 +298,7 @@ Item
 
                     }
 
+                    /*
                     IconSimpleButton
                     {
                         anchors.horizontalCenter: parent.horizontalCenter
@@ -306,6 +312,7 @@ Item
                             sigClosing()
                         }
                     }
+                    */
                 }
             }
         }

@@ -93,7 +93,7 @@ Item
     {
         anchors.fill: rectContainer
         horizontalOffset: 0
-        verticalOffset: -3
+        verticalOffset: -2
         radius: 10.0 * app.scale
         samples: 16
         color: "#20000000"
@@ -223,6 +223,7 @@ Item
         {
             id: pageTabsList
             anchors.left: parent.left
+            anchors.leftMargin: AppTheme.padding * app.scale
             anchors.right: parent.right
             anchors.top: parent.top
             anchors.topMargin: AppTheme.rowHeightMin * 2 * app.scale

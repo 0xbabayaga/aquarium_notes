@@ -60,7 +60,7 @@ Window
     signal sigEditAccount(string uname, string upass, string umail, string img)
     signal sigDeleteAccount()
     signal sigCreateTank(string name, string desc, int type, int l, int w, int h, string img)
-    signal sigEditTank(string name, string desc, int type, int l, int w, int h, string img)
+    signal sigEditTank(string tankId, string name, string desc, int type, int l, int w, int h, string img)
     signal sigDeleteTank(string tankId)
     signal sigAddRecord(int smpId, int paramId, double value)
     signal sigEditRecord(int smpId, int paramId, double value)

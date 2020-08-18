@@ -90,7 +90,7 @@ Item
     {
         anchors.fill: rectContainer
         horizontalOffset: 0
-        verticalOffset: -3
+        verticalOffset: -2
         radius: 10.0 * app.scale
         samples: 16
         color: "#20000000"
@@ -122,25 +122,31 @@ Item
             anchors.rightMargin: AppTheme.padding * app.scale
             color: "#00000000"
 
-            Rectangle
+            IconSimpleButton
             {
-                anchors.top: parent.top
+                id: imgArrowBack
                 anchors.left: parent.left
-                anchors.right: parent.right
-                height: AppTheme.rowHeight * app.scale
-                color: "#00000000"
+                anchors.top: parent.top
+                anchors.topMargin: AppTheme.padding * app.scale
+                image: "qrc:/resources/img/icon_arrow_left.png"
 
-                Text
+                onSigButtonClicked:
                 {
-                    id: textHeader
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.left: parent.left
-                    verticalAlignment: Text.AlignBottom
-                    font.family: AppTheme.fontFamily
-                    font.pixelSize: AppTheme.fontBigSize * app.scale
-                    color: AppTheme.blueColor
-                    text: qsTr("ACCOUNT")
+                    showPage(false)
+                    sigClosing()
                 }
+            }
+
+            Text
+            {
+                id: textHeader
+                anchors.verticalCenter: imgArrowBack.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+                verticalAlignment: Text.AlignBottom
+                font.family: AppTheme.fontFamily
+                font.pixelSize: AppTheme.fontBigSize * app.scale
+                color: AppTheme.blueColor
+                text: qsTr("ACCOUNT")
             }
 
             Rectangle
@@ -148,7 +154,7 @@ Item
                 id: rectAccountPhoto
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top
-                anchors.topMargin: AppTheme.margin * 2 * app.scale
+                anchors.topMargin: AppTheme.margin * 3 * app.scale
                 width: AppTheme.margin * 4 * app.scale
                 height: width
                 radius: width / 2
@@ -311,6 +317,7 @@ Item
                                                                      qsTr("All data assosiated with current account will be deleted!"))
                     }
 
+                    /*
                     IconSimpleButton
                     {
                         id: buttonGoBack
@@ -326,6 +333,7 @@ Item
                             sigClosing()
                         }
                     }
+                    */
                 }
 
                 Rectangle

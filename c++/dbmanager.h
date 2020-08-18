@@ -54,7 +54,7 @@ private:
     bool    saveUserLocationIfRequired(QString country, QString city, double lat, double longt);
     bool    deleteUser();
     bool    createTank(QString name, QString desc, QString manId, int type, int l, int w, int h, QString imgFile);
-    bool    editTank(QString name, QString desc, int type, int l, int w, int h, QString img);
+    bool    editTank(QString tankId, QString name, QString desc, int type, int l, int w, int h, QString img);
     bool    deleteTank(QString tankId);
     bool    createTankDefaultParamSet(QString tankId, AquariumType type);
     bool    addParamRecord(int smpId, int paramId, double value);

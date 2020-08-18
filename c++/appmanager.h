@@ -57,7 +57,7 @@ public slots:
     void    onGuiUserEdit(QString uname, QString upass, QString email, QString img);
     void    onGuiUserDelete();
     void    onGuiTankCreate(QString name, QString desc, int type, int l, int w, int h, QString imgFile);
-    void    onGuiTankEdit(QString name, QString desc, int type, int l, int w, int h, QString imgFile);
+    void    onGuiTankEdit(QString tankId, QString name, QString desc, int type, int l, int w, int h, QString imgFile);
     void    onGuiTankDelete(QString tankId);
     void    onGuiAddRecord(int smpId, int paramId, double value);
     void    onGuiEditRecord(int smpId, int paramId, double value);
