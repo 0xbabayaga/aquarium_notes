@@ -104,8 +104,6 @@ Item
         {
             if (page_TankSett.isEdit === true)
             {
-                console.log("tank edit = ", tanksListModel[tanksList.currentIndex].tankId)
-
                 app.sigEditTank(tanksListModel[tanksList.currentIndex].tankId,
                                 textTankName.text,
                                 textTankDesc.text,
@@ -162,7 +160,26 @@ Item
         anchors.left: parent.left
         anchors.right: parent.right
         height: page_TankSett.height
+        radius: AppTheme.radius * 2 * app.scale
         color: AppTheme.whiteColor
+    }
+
+    DropShadow
+    {
+        anchors.fill: rectContainer
+        horizontalOffset: 0
+        verticalOffset: -2
+        radius: 10.0 * app.scale
+        samples: 16
+        color: "#20000000"
+        source: rectContainer
+    }
+
+    Rectangle
+    {
+        id: rectRealContainer
+        anchors.fill: rectContainer
+        color: "#00000000"
 
         Image
         {
@@ -177,51 +194,19 @@ Item
 
         Rectangle
         {
-            id: rectHeaderShadow
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
-            height: AppTheme.rowHeightMin * app.scale
-            color: AppTheme.blueColor
-        }
+            id: rectTankInfo
+            anchors.fill: parent
+            anchors.leftMargin: AppTheme.padding * app.scale
+            anchors.rightMargin: AppTheme.padding * app.scale
+            color: "#00000000"
 
-        DropShadow
-        {
-            anchors.fill: rectHeaderShadow
-            horizontalOffset: 0
-            verticalOffset: 5
-            radius: 10.0 * app.scale
-            samples: 16
-            color: "#20000000"
-            source: rectHeaderShadow
-        }
-
-        Rectangle
-        {
-            anchors.fill: rectHeaderShadow
-            height: AppTheme.rowHeightMin * app.scale
-            color: AppTheme.blueColor
-
-            Text
+            IconSimpleButton
             {
-                id: textHeader
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.right: parent.right
-                anchors.rightMargin: AppTheme.padding * app.scale
-                verticalAlignment: Text.AlignBottom
-                font.family: AppTheme.fontFamily
-                font.pixelSize: AppTheme.fontNormalSize * app.scale
-                color: AppTheme.whiteColor
-                text: qsTr("TANKS")
-            }
-
-            IconSmallSimpleButton
-            {
-                anchors.verticalCenter: parent.verticalCenter
+                id: imgArrowBack
                 anchors.left: parent.left
-                anchors.leftMargin: AppTheme.padding * app.scale
+                anchors.top: parent.top
+                anchors.topMargin: AppTheme.padding * app.scale
                 image: "qrc:/resources/img/icon_arrow_left.png"
-                inverted: true
 
                 onSigButtonClicked:
                 {
@@ -229,15 +214,19 @@ Item
                     sigClosing()
                 }
             }
-        }
 
-        Rectangle
-        {
-            id: rectTankInfo
-            anchors.fill: parent
-            anchors.leftMargin: AppTheme.padding * app.scale
-            anchors.rightMargin: AppTheme.padding * app.scale
-            color: "#00000000"
+            Text
+            {
+                id: textHeader
+                anchors.verticalCenter: imgArrowBack.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+                verticalAlignment: Text.AlignBottom
+                font.family: AppTheme.fontFamily
+                font.pixelSize: AppTheme.fontBigSize * app.scale
+                color: AppTheme.blueColor
+                text: qsTr("TANKS")
+            }
+
 
             TanksList
             {

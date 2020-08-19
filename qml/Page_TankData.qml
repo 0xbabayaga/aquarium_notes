@@ -85,6 +85,25 @@ Item
         anchors.bottom: parent.bottom
         width: parent.width
         x: parent.width
+        radius: AppTheme.radius * 2 * app.scale
+        color: AppTheme.whiteColor
+    }
+
+    DropShadow
+    {
+        anchors.fill: rectContainer
+        horizontalOffset: 0
+        verticalOffset: -2
+        radius: 10.0 * app.scale
+        samples: 16
+        color: "#20000000"
+        source: rectContainer
+    }
+
+    Rectangle
+    {
+        id: rectRealContainer
+        anchors.fill: rectContainer
         anchors.bottomMargin: AppTheme.rowHeightMin * app.scale
         radius: AppTheme.radius * 2 * app.scale
         color: AppTheme.whiteColor
@@ -104,68 +123,15 @@ Item
 
         Rectangle
         {
-            id: rectHeaderShadow
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
-            height: AppTheme.rowHeightMin * app.scale
-            color: AppTheme.blueColor
-        }
-
-        DropShadow
-        {
-            anchors.fill: rectHeaderShadow
-            horizontalOffset: 0
-            verticalOffset: 5
-            radius: 10.0 * app.scale
-            samples: 16
-            color: "#40000000"
-            source: rectHeaderShadow
-        }
-
-        Rectangle
-        {
-            anchors.fill: rectHeaderShadow
-            height: AppTheme.rowHeightMin * app.scale
-            color: AppTheme.blueColor
-
-            PagesTabList
-            {
-                id: pageTabsList
-                anchors.left: parent.left
-                anchors.leftMargin: AppTheme.padding * 3 * app.scale
-                anchors.right: parent.right
-                anchors.verticalCenter: parent.verticalCenter
-                model: modelTabs
-
-                onCurrentIndexChanged: setPage(currentIndex)
-            }
-
-            IconSmallSimpleButton
-            {
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: parent.left
-                anchors.leftMargin: AppTheme.padding * app.scale
-                image: "qrc:/resources/img/icon_arrow_left.png"
-                inverted: true
-
-                onSigButtonClicked: showPage(false, "")
-            }
-        }
-
-        Rectangle
-        {
             id: rectHeaderContainer
             anchors.left: parent.left
             anchors.leftMargin: AppTheme.padding * app.scale
             anchors.right: parent.right
             anchors.rightMargin: AppTheme.padding * app.scale
             anchors.top: parent.top
-            anchors.topMargin: AppTheme.rowHeightMin * app.scale
             height: AppTheme.rowHeight * app.scale
             color: "#00000000"
 
-            /*
             IconSimpleButton
             {
                 id: imgArrowBack
@@ -175,7 +141,6 @@ Item
 
                 onSigButtonClicked: showPage(false, "")
             }
-            */
 
             Image
             {
@@ -254,11 +219,11 @@ Item
             }
         }
 
-        /*
         PagesTabList
         {
             id: pageTabsList
             anchors.left: parent.left
+            anchors.leftMargin: AppTheme.padding * app.scale
             anchors.right: parent.right
             anchors.top: parent.top
             anchors.topMargin: AppTheme.rowHeightMin * 2 * app.scale
@@ -266,7 +231,6 @@ Item
 
             onCurrentIndexChanged: setPage(currentIndex)
         }
-        */
 
         SwipeView
         {

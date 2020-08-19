@@ -6,7 +6,7 @@ import "../"
 Item
 {
     id: pagesTabList
-    height: AppTheme.rowHeightMin * app.scale
+    height: AppTheme.compHeight * app.scale
 
     property alias model: listTab.model
     property alias currentIndex: listTab.currentIndex
@@ -25,29 +25,31 @@ Item
             anchors.fill: parent
             model: modelTabs
             orientation: ListView.Horizontal
-            //spacing: AppTheme.rowSpacing
+            spacing: AppTheme.rowSpacing
             currentIndex: 0
 
-            property int cellWidth: rectContainer.width / 3
+            property int cellWidth: (rectContainer.width - AppTheme.padding * 4 * app.scale) / 3
 
             delegate: Component
             {
                 Rectangle
                 {
                     width: listTab.cellWidth
-                    height: AppTheme.rowHeightMin * app.scale
+                    height: AppTheme.compHeight * app.scale
                     color:  "#00000000"
 
                     Text
                     {
-                        color: AppTheme.whiteColor
-                        font.pixelSize: (listTab.currentIndex === index) ? AppTheme.fontNormalSize * app.scale : AppTheme.fontNormalSize * app.scale
+                        color: AppTheme.blueColor
+                        font.pixelSize: (listTab.currentIndex === index) ? AppTheme.fontBigSize * app.scale : AppTheme.fontNormalSize * app.scale
                         font.family: AppTheme.fontFamily
                         verticalAlignment: Text.AlignVCenter
                         horizontalAlignment: Text.AlignHCenter
                         width: parent.width
                         height: parent.height
                         text: tab
+
+                        Behavior on font.pixelSize {    NumberAnimation {   duration: 200 } }
 
                         MouseArea
                         {
@@ -60,15 +62,17 @@ Item
                         }
                     }
 
+                    /*
                     Rectangle
                     {
                         anchors.left: parent.left
                         anchors.right: parent.right
                         anchors.bottom: parent.bottom
                         height: 2 * app.scale
-                        color: AppTheme.lightBlueColor
+                        color: AppTheme.blueColor
                         visible: (listTab.currentIndex === index)
                     }
+                    */
                 }
             }
         }

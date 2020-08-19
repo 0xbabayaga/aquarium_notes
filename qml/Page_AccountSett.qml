@@ -82,7 +82,26 @@ Item
         anchors.left: parent.left
         anchors.right: parent.right
         height: page_AccountSett.height
+        radius: AppTheme.radius * 2 * app.scale
         color: AppTheme.whiteColor
+    }
+
+    DropShadow
+    {
+        anchors.fill: rectContainer
+        horizontalOffset: 0
+        verticalOffset: -2
+        radius: 10.0 * app.scale
+        samples: 16
+        color: "#20000000"
+        source: rectContainer
+    }
+
+    Rectangle
+    {
+        id: rectRealContainer
+        anchors.fill: rectContainer
+        color: "#00000000"
 
         Image
         {
@@ -97,67 +116,38 @@ Item
 
         Rectangle
         {
-            id: rectHeaderShadow
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
-            height: AppTheme.rowHeightMin * app.scale
-            color: AppTheme.blueColor
-        }
-
-        DropShadow
-        {
-            anchors.fill: rectHeaderShadow
-            horizontalOffset: 0
-            verticalOffset: 5
-            radius: 10.0 * app.scale
-            samples: 16
-            color: "#20000000"
-            source: rectHeaderShadow
-        }
-
-        Rectangle
-        {
-            anchors.fill: rectHeaderShadow
-            height: AppTheme.rowHeightMin * app.scale
-            color: AppTheme.blueColor
-
-            Text
-            {
-                id: textHeader
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.right: parent.right
-                anchors.rightMargin: AppTheme.padding * app.scale
-                verticalAlignment: Text.AlignBottom
-                font.family: AppTheme.fontFamily
-                font.pixelSize: AppTheme.fontNormalSize * app.scale
-                color: AppTheme.whiteColor
-                text: qsTr("ACCOUNT")
-            }
-
-            IconSmallSimpleButton
-            {
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: parent.left
-                anchors.leftMargin: AppTheme.padding * app.scale
-                image: "qrc:/resources/img/icon_arrow_left.png"
-                inverted: true
-
-                onSigButtonClicked:
-                {
-                    page_AccountSett.showPage(false)
-                    sigClosing()
-                }
-            }
-        }
-
-        Rectangle
-        {
             id: rectAccountInfo
             anchors.fill: parent
             anchors.leftMargin: AppTheme.padding * app.scale
             anchors.rightMargin: AppTheme.padding * app.scale
             color: "#00000000"
+
+            IconSimpleButton
+            {
+                id: imgArrowBack
+                anchors.left: parent.left
+                anchors.top: parent.top
+                anchors.topMargin: AppTheme.padding * app.scale
+                image: "qrc:/resources/img/icon_arrow_left.png"
+
+                onSigButtonClicked:
+                {
+                    showPage(false)
+                    sigClosing()
+                }
+            }
+
+            Text
+            {
+                id: textHeader
+                anchors.verticalCenter: imgArrowBack.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+                verticalAlignment: Text.AlignBottom
+                font.family: AppTheme.fontFamily
+                font.pixelSize: AppTheme.fontBigSize * app.scale
+                color: AppTheme.blueColor
+                text: qsTr("ACCOUNT")
+            }
 
             Rectangle
             {
