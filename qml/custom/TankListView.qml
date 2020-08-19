@@ -25,7 +25,7 @@ Item
             id: view
             anchors.fill: parent
             orientation: ListView.Vertical
-            spacing: AppTheme.padding * app.scale
+            spacing: AppTheme.margin * app.scale
             //clip: true
 
             delegate: Rectangle
@@ -53,7 +53,7 @@ Item
                     anchors.top: parent.top
                     color: AppTheme.whiteColor
                     height: parent.height
-                    radius: AppTheme.radius / 2 * app.scale
+                    radius: AppTheme.radius * app.scale
                 }
 
                 DropShadow
@@ -61,9 +61,9 @@ Item
                     anchors.fill: rect
                     horizontalOffset: 0
                     verticalOffset: 0
-                    radius: 12.0 * app.scale
+                    radius: 10.0 * app.scale
                     samples: 16
-                    color: "#40000000"
+                    color: "#20000000"
                     source: rect
                 }
 
@@ -71,7 +71,7 @@ Item
                 {
                     anchors.fill: rect
                     color: "#00000000"
-                    radius: AppTheme.radius / 2 * app.scale
+                    radius: AppTheme.radius * app.scale
 
                     Image
                     {
@@ -96,7 +96,7 @@ Item
                         anchors.left: parent.left
                         anchors.right: parent.right
                         height: tankListView.tankImageHeight * app.scale
-                        radius: AppTheme.radius / 2 * app.scale
+                        radius: AppTheme.radius * app.scale
                         visible: false
                     }
 
@@ -122,7 +122,7 @@ Item
                         anchors.right: parent.right
                         anchors.rightMargin: AppTheme.padding * app.scale
                         anchors.bottom: imgPhoto.bottom
-                        anchors.bottomMargin: AppTheme.padding * app.scale
+                        anchors.bottomMargin: AppTheme.padding/2 * app.scale
                         text: app.convertVolume(volume) + app.currentVolumeUnitsShort()
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontSuperBigSize * app.scale
@@ -137,7 +137,7 @@ Item
                         anchors.left: parent.left
                         anchors.leftMargin: AppTheme.padding * app.scale
                         anchors.bottom: imgPhoto.bottom
-                        anchors.bottomMargin: AppTheme.padding * app.scale
+                        anchors.bottomMargin: AppTheme.padding/2 * app.scale
                         text: name
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontBigSize * app.scale
