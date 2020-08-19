@@ -40,8 +40,8 @@ Item
 
                     Text
                     {
-                        color: AppTheme.blueColor
-                        font.pixelSize: (listTab.currentIndex === index) ? AppTheme.fontBigSize * app.scale : AppTheme.fontNormalSize * app.scale
+                        color: AppTheme.whiteColor
+                        font.pixelSize: (listTab.currentIndex === index) ? AppTheme.fontNormalSize * app.scale : AppTheme.fontNormalSize * app.scale
                         font.family: AppTheme.fontFamily
                         verticalAlignment: Text.AlignVCenter
                         horizontalAlignment: Text.AlignHCenter
@@ -62,17 +62,15 @@ Item
                         }
                     }
 
-                    /*
                     Rectangle
                     {
                         anchors.left: parent.left
                         anchors.right: parent.right
                         anchors.bottom: parent.bottom
                         height: 2 * app.scale
-                        color: AppTheme.blueColor
+                        color: AppTheme.whiteColor
                         visible: (listTab.currentIndex === index)
                     }
-                    */
                 }
             }
         }

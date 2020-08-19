@@ -368,12 +368,14 @@ Item
         source: "qrc:/resources/img/icon_app.png"
         mipmap: true
 
+        /*
         ColorOverlay
         {
             anchors.fill: imgAppIcon
             source: imgAppIcon
             color: AppTheme.blueColor
         }
+        */
 
         SequentialAnimation
         {

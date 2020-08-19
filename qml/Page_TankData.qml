@@ -89,6 +89,7 @@ Item
         color: AppTheme.whiteColor
     }
 
+    /*
     DropShadow
     {
         anchors.fill: rectContainer
@@ -99,6 +100,7 @@ Item
         color: "#20000000"
         source: rectContainer
     }
+    */
 
     Rectangle
     {
@@ -108,7 +110,50 @@ Item
         radius: AppTheme.radius * 2 * app.scale
         color: AppTheme.whiteColor
 
+        Rectangle
+        {
+            id: rectHeaderShadow
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.topMargin: AppTheme.compHeight * 3 / 4 * app.scale
+            height: AppTheme.compHeight / 4 * app.scale
+            color: AppTheme.blueColor
+        }
+
+        DropShadow
+        {
+            anchors.fill: rectHeaderShadow
+            horizontalOffset: 0
+            verticalOffset: 4
+            radius: 10.0 * app.scale
+            samples: 16
+            color: "#40000000"
+            source: rectHeaderShadow
+        }
+
         MouseArea   {   anchors.fill: parent    }
+
+        Rectangle
+        {
+            id: rectHeader
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
+            height: AppTheme.compHeight * app.scale
+            color: AppTheme.blueColor
+
+            PagesTabList
+            {
+                id: pageTabsList
+                anchors.bottom: parent.bottom
+                anchors.left: parent.left
+                anchors.right: parent.right
+                model: modelTabs
+
+                onCurrentIndexChanged: setPage(currentIndex)
+            }
+        }
 
         Image
         {
@@ -129,6 +174,7 @@ Item
             anchors.right: parent.right
             anchors.rightMargin: AppTheme.padding * app.scale
             anchors.top: parent.top
+            anchors.topMargin: AppTheme.padding * 2 * app.scale
             height: AppTheme.rowHeight * app.scale
             color: "#00000000"
 
@@ -217,19 +263,6 @@ Item
                 color: AppTheme.greyColor
                 text: qsTr("")
             }
-        }
-
-        PagesTabList
-        {
-            id: pageTabsList
-            anchors.left: parent.left
-            anchors.leftMargin: AppTheme.padding * app.scale
-            anchors.right: parent.right
-            anchors.top: parent.top
-            anchors.topMargin: AppTheme.rowHeightMin * 2 * app.scale
-            model: modelTabs
-
-            onCurrentIndexChanged: setPage(currentIndex)
         }
 
         SwipeView

@@ -52,7 +52,7 @@ Item
     {
         id: textUserTanks
         anchors.top: parent.top
-        anchors.topMargin: AppTheme.padding * 3 * app.scale
+        anchors.topMargin: AppTheme.padding * 4 * app.scale
         anchors.left: parent.left
         anchors.leftMargin: AppTheme.padding * app.scale
         verticalAlignment: Text.AlignVCenter
@@ -66,7 +66,7 @@ Item
     {
         id: tanksList
         anchors.fill: parent
-        anchors.topMargin: AppTheme.padding * 5 * app.scale
+        anchors.topMargin: AppTheme.padding * 6 * app.scale
         model: tanksListModel
 
         onSigCurrentIndexChanged:

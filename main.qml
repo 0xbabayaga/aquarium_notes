@@ -178,12 +178,30 @@ Window
 
             Rectangle
             {
-                id: rectHeader
+                id: rectHeaderShadow
                 anchors.top: parent.top
                 anchors.left: parent.left
                 anchors.right: parent.right
                 height: AppTheme.rowHeightMin * app.scale
-                color: "#00000000"
+                color: AppTheme.blueColor
+            }
+
+            DropShadow
+            {
+                anchors.fill: rectHeaderShadow
+                horizontalOffset: 0
+                verticalOffset: 4
+                radius: 10.0 * app.scale
+                samples: 16
+                color: "#40000000"
+                source: rectHeaderShadow
+            }
+
+            Rectangle
+            {
+                id: rectHeader
+                anchors.fill: rectHeaderShadow
+                color: AppTheme.blueColor
 
                 Text
                 {
@@ -194,7 +212,7 @@ Window
                     verticalAlignment: Text.AlignVCenter
                     font.family: AppTheme.fontFamily
                     font.pixelSize: AppTheme.fontNormalSize * app.scale
-                    color: AppTheme.blueColor
+                    color: AppTheme.whiteColor
                     text: qsTr("AQUARIUM NOTES")
                 }
             }
@@ -220,9 +238,8 @@ Window
         Page_TankData
         {
             id: page_TankData
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: AppTheme.rowHeightMin * app.scale
+            anchors.fill: rectBackground
+            anchors.topMargin: AppTheme.rowHeightMin * app.scale
         }
 
         Page_AccountSett
