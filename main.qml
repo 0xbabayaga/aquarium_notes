@@ -158,6 +158,7 @@ Window
     {
         id: rectMain
         anchors.fill: parent
+        z: 1
 
         Image
         {
@@ -175,6 +176,7 @@ Window
             id: rectBackground
             anchors.fill: parent
             color: "#00000000"
+            z: 10
 
             Rectangle
             {
@@ -184,6 +186,7 @@ Window
                 anchors.right: parent.right
                 height: AppTheme.rowHeightMin * app.scale
                 color: AppTheme.blueColor
+                z: 10
             }
 
             DropShadow
@@ -195,6 +198,7 @@ Window
                 samples: 16
                 color: "#40000000"
                 source: rectHeaderShadow
+                z: 10
             }
 
             Rectangle
@@ -202,6 +206,7 @@ Window
                 id: rectHeader
                 anchors.fill: rectHeaderShadow
                 color: AppTheme.blueColor
+                z: 10
 
                 Text
                 {
@@ -223,6 +228,7 @@ Window
             id: page_Main
             anchors.fill: rectBackground
             visible: isAccountCreated === true
+            z: 9
         }
 
         Page_AccountsWizard
@@ -231,6 +237,7 @@ Window
             objectName: "page_AccountWizard"
             anchors.fill: rectBackground
             visible: isAccountCreated === false
+            z: 9
 
             onSigAppInitCompleted: isAccountCreated = true
         }
@@ -240,6 +247,7 @@ Window
             id: page_TankData
             anchors.fill: rectBackground
             anchors.topMargin: AppTheme.rowHeightMin * app.scale
+            z: 11
         }
 
         Page_AccountSett
@@ -248,7 +256,7 @@ Window
             anchors.fill: rectBackground
             anchors.topMargin: AppTheme.rowHeightMin * app.scale
             visible: false
-
+            z: 9
             //onSigClosed: page_Main.showPage(true)
         }
 
@@ -258,7 +266,7 @@ Window
             anchors.fill: rectBackground
             anchors.topMargin: AppTheme.rowHeightMin * app.scale
             visible: false
-
+            z: 9
             //onSigClosed: page_Main.showPage(true)
         }
 
@@ -268,6 +276,7 @@ Window
             anchors.fill: rectBackground
             anchors.topMargin: AppTheme.rowHeightMin * app.scale
             visible: false
+            z: 9
 
             //onSigClosed: page_Main.showPage(true)
         }
@@ -280,6 +289,7 @@ Window
         anchors.right: parent.right
         width: parent.width
         height: parent.height
+        z:11
 
         accountName: app.curUserName
         accountImage: "data:image/png;base64," + app.curUserAvatar

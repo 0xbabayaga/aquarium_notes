@@ -57,26 +57,7 @@ Item
         anchors.left: parent.left
         anchors.right: parent.right
         height: page_AppSett.height
-        radius: AppTheme.radius * 2 * app.scale
         color: AppTheme.whiteColor
-    }
-
-    DropShadow
-    {
-        anchors.fill: rectContainer
-        horizontalOffset: 0
-        verticalOffset: -2
-        radius: 10.0 * app.scale
-        samples: 16
-        color: "#20000000"
-        source: rectContainer
-    }
-
-    Rectangle
-    {
-        id: rectRealContainer
-        anchors.fill: rectContainer
-        color: "#00000000"
 
         Image
         {

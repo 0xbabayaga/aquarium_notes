@@ -121,6 +121,7 @@ Item
             color: AppTheme.blueColor
         }
 
+        /*
         DropShadow
         {
             anchors.fill: rectHeaderShadow
@@ -131,6 +132,7 @@ Item
             color: "#40000000"
             source: rectHeaderShadow
         }
+        */
 
         MouseArea   {   anchors.fill: parent    }
 
