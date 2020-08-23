@@ -21,7 +21,7 @@ Item
         else
             textTableHeader.text = qsTr("No data found for this aquarium")
 
-        currParamsMainTable.height = (currentParamsTable.realModelLength() + 1) * AppTheme.compHeight * app.scale
+        currentParamsTable.height = (currentParamsTable.realModelLength() + 1) * AppTheme.compHeight * app.scale
     }
 
     Behavior on height

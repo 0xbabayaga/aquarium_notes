@@ -48,136 +48,72 @@ Item
         onFinished: page_Main.visible = false
     }
 
-    Text
+    Rectangle
     {
-        id: textUserTanks
-        anchors.top: parent.top
-        anchors.topMargin: AppTheme.padding * 4 * app.scale
-        anchors.left: parent.left
-        anchors.leftMargin: AppTheme.padding * app.scale
-        verticalAlignment: Text.AlignVCenter
-        font.family: AppTheme.fontFamily
-        font.pixelSize: AppTheme.fontNormalSize * app.scale
-        color: AppTheme.greyColor
-        text: qsTr("USER TANKS")
-    }
-
-    TankListView
-    {
-        id: tanksList
+        id: rectHeaderShadow
         anchors.fill: parent
-        anchors.topMargin: AppTheme.padding * 6 * app.scale
-        model: tanksListModel
-
-        onSigCurrentIndexChanged:
-        {
-            textTankName.text = model[id].name
-            app.sigTankSelected(currentIndex)
-        }
-
-        onSigDoubleClicked:
-        {
-            textTankName.text = model[id].name
-            app.sigTankSelected(currentIndex)
-            openTankPage()
-        }
+        color: AppTheme.whiteColor
     }
 
-    Text
+    DropShadow
     {
-        id: textTankName
-        anchors.top: parent.top
-        anchors.topMargin: AppTheme.margin * app.scale * 2
-        anchors.horizontalCenter: parent.horizontalCenter
-        verticalAlignment: Text.AlignVCenter
-        font.family: AppTheme.fontFamily
-        font.pixelSize: AppTheme.fontSuperBigSize * app.scale
-        color: AppTheme.blueColor
-        text: (tanksList.model.length > 0) ? tanksList.model[0].name : ""
-        visible: false
+        anchors.fill: rectHeaderShadow
+        horizontalOffset: 0
+        verticalOffset: -AppTheme.shadowOffset * app.scale
+        radius: AppTheme.shadowSize * app.scale
+        samples: AppTheme.shadowSamples * app.scale
+        color: AppTheme.shadowColor
+        source: rectHeaderShadow
     }
 
-    TanksList
+    Rectangle
     {
-        //id: tanksList
-        anchors.top: parent.top
-        anchors.topMargin: AppTheme.rowHeightMin * app.scale * 2
-        anchors.horizontalCenter: parent.horizontalCenter
-        //model: tanksListModel
-        visible: false
+        anchors.fill: rectHeaderShadow
+        color: AppTheme.whiteColor
 
-        onSigCurrentIndexChanged:
+        Image
         {
-            //textTankName.text = model[id].name
-            app.sigTankSelected(currentIndex)
-        }
-
-        //onSigDoubleClicked:
-        //{
-            //textTankName.text = model[id].name
-            //app.sigTankSelected(currentIndex)
-            //openTankPage()
-       //}
-    }
-
-    Flickable
-    {
-        id: flickableContainer
-        anchors.top:tanksList.bottom
-        anchors.topMargin: AppTheme.compHeight * app.scale * 3
-        anchors.left: parent.left
-        anchors.leftMargin: AppTheme.padding * app.scale
-        anchors.right: parent.right
-        anchors.rightMargin: AppTheme.padding * app.scale
-        anchors.bottom: parent.bottom
-        visible: false
-
-        contentWidth: width
-        contentHeight: 700 * app.scale
-        clip: true
-
-        CurrentParamsMainTable
-        {
-            id: currParamsMainTable
             anchors.left: parent.left
-            anchors.right: parent.right
             anchors.top: parent.top
-            //model: curValuesListModel
-            height: 300 * app.scale
+            anchors.topMargin: AppTheme.padding * app.scale
+            width: parent.width
+            height: width * 0.75
+            source: "qrc:/resources/img/back_waves.png"
         }
 
-        ScrollBar.vertical: ScrollBar
+        Text
         {
-            policy: ScrollBar.AlwaysOn
-            parent: flickableContainer.parent
-            anchors.top: flickableContainer.top
+            id: textUserTanks
+            anchors.top: parent.top
             anchors.topMargin: AppTheme.padding * app.scale
-            anchors.left: flickableContainer.right
-            anchors.leftMargin: AppTheme.padding / 4 * app.scale
-            anchors.bottom: flickableContainer.bottom
-            anchors.bottomMargin: AppTheme.padding * app.scale
+            anchors.left: parent.left
+            anchors.leftMargin: AppTheme.padding * app.scale
+            verticalAlignment: Text.AlignVCenter
+            font.family: AppTheme.fontFamily
+            font.pixelSize: AppTheme.fontNormalSize * app.scale
+            color: AppTheme.greyColor
+            text: qsTr("USER TANKS")
+        }
 
-            contentItem: Rectangle
+        TankListView
+        {
+            id: tanksList
+            anchors.fill: parent
+            anchors.topMargin: AppTheme.padding * 3 * app.scale
+            anchors.bottomMargin: AppTheme.margin * app.scale
+            model: tanksListModel
+
+            onSigTankSelected:
             {
-                implicitWidth: 2
-                implicitHeight: 100
-                radius: width / 2
-                color: AppTheme.hideColor
+                app.sigTankSelected(currentIndex)
+                openTankPage()
+            }
+
+            onSigDoubleClicked:
+            {
+                app.sigTankSelected(currentIndex)
+                openTankPage()
             }
         }
-    }
-
-
-    IconSimpleButton
-    {
-        id: buttonDetails
-        anchors.right: parent.right
-        anchors.rightMargin: AppTheme.padding * app.scale
-        anchors.top: flickableContainer.top
-        anchors.topMargin: -AppTheme.padding * app.scale
-        image: "qrc:/resources/img/icon_arrow_right.png"
-
-        onSigButtonClicked: openTankPage()
-        visible: false
     }
 }

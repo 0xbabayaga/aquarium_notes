@@ -51,11 +51,11 @@ Item
         anchors.top: pointList.bottom
         anchors.topMargin: AppTheme.padding * app.scale
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: AppTheme.margin * app.scale// * 4
+        anchors.bottomMargin: AppTheme.margin * app.scale
         anchors.left: parent.left
         anchors.right: parent.right
         contentWidth: flickableContainer.width
-        contentHeight: 1400 * app.scale
+        contentHeight: flickableContainer.height
         clip: true
 
         DiagramView
@@ -70,10 +70,10 @@ Item
         {
             policy: ScrollBar.AlwaysOn
             parent: flickableContainer.parent
-            anchors.top: flickableContainer.top
-            anchors.left: flickableContainer.right
+            anchors.top: parent.top
+            anchors.left: parent.right
             anchors.leftMargin: -AppTheme.padding * app.scale
-            anchors.bottom: flickableContainer.bottom
+            anchors.bottom: parent.bottom
 
             contentItem: Rectangle
             {

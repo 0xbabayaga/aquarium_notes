@@ -14,6 +14,7 @@ Item
 
     signal sigCurrentIndexChanged(int id)
     signal sigDoubleClicked(int id)
+    signal sigTankSelected(int id)
 
     Rectangle
     {
@@ -39,7 +40,7 @@ Item
                     NumberAnimation
                     {
                         duration: 400
-                        easing.type: Easing.InOutBack
+                        easing.type: Easing.OutBack
                     }
                 }
 
@@ -53,7 +54,7 @@ Item
                     anchors.top: parent.top
                     color: AppTheme.whiteColor
                     height: parent.height
-                    radius: AppTheme.radius * app.scale
+                    //radius: AppTheme.radius * app.scale
                 }
 
                 DropShadow
@@ -61,9 +62,9 @@ Item
                     anchors.fill: rect
                     horizontalOffset: 0
                     verticalOffset: 0
-                    radius: 10.0 * app.scale
-                    samples: 16
-                    color: "#20000000"
+                    radius: AppTheme.shadowSize * app.scale
+                    samples: AppTheme.shadowSamples
+                    color: AppTheme.shadowColor
                     source: rect
                 }
 
@@ -71,7 +72,6 @@ Item
                 {
                     anchors.fill: rect
                     color: "#00000000"
-                    radius: AppTheme.radius * app.scale
 
                     Image
                     {
@@ -82,13 +82,14 @@ Item
                         source: (img.length > 0) ? "data:image/jpg;base64," + img : ""
                         mipmap: true
 
-                        layer.enabled: true
-                        layer.effect: OpacityMask
-                        {
-                            maskSource: rectMask
-                        }
+                        //layer.enabled: true
+                        //layer.effect: OpacityMask
+                        //{
+                        //    maskSource: rectMask
+                        //}
                     }
 
+                    /*
                     Rectangle
                     {
                         id: rectMask
@@ -99,6 +100,7 @@ Item
                         radius: AppTheme.radius * app.scale
                         visible: false
                     }
+                    */
 
                     Image
                     {
@@ -110,11 +112,11 @@ Item
                         mipmap: true
                         opacity: 0.8
 
-                        layer.enabled: true
-                        layer.effect: OpacityMask
-                        {
-                            maskSource: rectMask
-                        }
+                        //layer.enabled: true
+                        //layer.effect: OpacityMask
+                        //{
+                        //    maskSource: rectMask
+                        //}
                     }
 
                     Text
@@ -173,6 +175,7 @@ Item
                         {
                             view.currentIndex = index
                             sigCurrentIndexChanged(index)
+                            sigTankSelected(index)
                         }
                     }
 
@@ -185,12 +188,14 @@ Item
                         image: "qrc:/resources/img/icon_arrow_right.png"
                         inverted: true
 
-                        onSigButtonClicked: openTankPage()
+                        onSigButtonClicked:
+                        {
+                            view.currentIndex = index
+                            sigTankSelected(view.currentIndex)
+                        }
                     }
                 }
             }
-
-            onCurrentIndexChanged: sigCurrentIndexChanged(currentIndex)
 
             ScrollBar.vertical: ScrollBar
             {

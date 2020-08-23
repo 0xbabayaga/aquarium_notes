@@ -24,7 +24,7 @@ Item
         if (visible === true)
         {
             showDialogAnimation.start()
-            rectFakeDataContainer.anchors.topMargin = AppTheme.padding * 9 * app.scale
+            rectFakeDataContainer.anchors.topMargin = AppTheme.padding * 5 * app.scale
             imagesList.reset()
         }
         else
@@ -86,7 +86,7 @@ Item
         id: rectContainer
         anchors.fill: parent
         parent: Overlay.overlay
-        color: "#20000000"
+        color: AppTheme.backHideColor
         opacity: 0
         visible: false
 
@@ -110,9 +110,9 @@ Item
             anchors.fill: rectFakeDataContainer
             horizontalOffset: 0
             verticalOffset: -3
-            radius: 10.0 * app.scale
-            samples: 16
-            color: "#20000000"
+            radius: AppTheme.shadowSize * app.scale
+            samples: AppTheme.shadowSamples
+            color: AppTheme.shadowColor
             source: rectFakeDataContainer
         }
 
@@ -120,7 +120,7 @@ Item
         {
             id: rectDataContainer
             anchors.fill: rectFakeDataContainer
-            radius: AppTheme.radius * 2 * app.scale
+            //radius: AppTheme.radius * 2 * app.scale
 
             Rectangle
             {

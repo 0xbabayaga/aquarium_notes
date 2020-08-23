@@ -11,13 +11,13 @@ Item
     height: 128
 
     property var ctx: null
-    property int curnesCnt: 0
+    property int currentCnt: 0
 
     function add(id, height, xMin, xMax, yMin, yMax, points)
     {
-        curnesCnt++
+        currentCnt++
 
-        diagramView.height = height * curnesCnt
+        diagramView.height = height * currentCnt
 
         if (ctx === null)
             ctx = new Diagrams.DiagramView(app.scale, height)
@@ -34,7 +34,10 @@ Item
     function reset()
     {
         if (ctx !== null)
+        {
             ctx.reset()
+            currentCnt = 0
+        }
     }
 
     function setCurrentPoint(currentPoint)
@@ -46,15 +49,10 @@ Item
         }
     }
 
-    function draw()
-    {
-        canvas.requestPaint()
-    }
-
     Rectangle
     {
         anchors.fill: parent
-        color: "#00000040"
+        color: "#00000000"
 
         Canvas
         {

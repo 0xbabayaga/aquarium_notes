@@ -135,11 +135,11 @@ Item
     {
         id: shadowEffect
         anchors.fill: rectShadow
-        horizontalOffset: -10
+        horizontalOffset: -4 * app.scale
         verticalOffset: 0
-        radius: 8.0 * app.scale
-        samples: 8 * app.scale
-        color: "#10000000"
+        radius: AppTheme.shadowSize * app.scale
+        samples: AppTheme.shadowSamples * app.scale
+        color: AppTheme.shadowColor
         source: rectShadow
         opacity: rectShadow.opacity
         visible: false
@@ -278,24 +278,18 @@ Item
 
                     Behavior on color { ColorAnimation { duration: 200 }    }
 
-                    Image
+                    Text
                     {
-                        id: img
                         anchors.verticalCenter: parent.verticalCenter
+                        anchors.verticalCenterOffset: 3 * app.scale
                         anchors.left: parent.left
-                        anchors.leftMargin: AppTheme.margin * 2 * app.scale
-                        fillMode: Image.PreserveAspectFit
-                        width: 16 * app.scale
-                        height: 16 * app.scale
-                        source: "qrc:/resources/img/icon_app.png"
-                        mipmap: true
-                    }
-
-                    ColorOverlay
-                    {
-                        anchors.fill: img
-                        source: img
+                        anchors.leftMargin: AppTheme.padding * 4 * app.scale
+                        height: AppTheme.rowHeightMin * app.scale
+                        verticalAlignment: Text.AlignVCenter
+                        font.family: AppTheme.fontFamily
+                        font.pixelSize: AppTheme.fontBigSize * app.scale
                         color: AppTheme.blueColor
+                        text: "⠛"
                     }
 
                     Text

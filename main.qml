@@ -158,7 +158,6 @@ Window
     {
         id: rectMain
         anchors.fill: parent
-        z: 1
 
         Image
         {
@@ -168,7 +167,6 @@ Window
             width: parent.width
             height: width * 0.75
             source: "qrc:/resources/img/back_waves.png"
-            visible: false
         }
 
         Rectangle
@@ -176,37 +174,15 @@ Window
             id: rectBackground
             anchors.fill: parent
             color: "#00000000"
-            z: 10
 
             Rectangle
             {
-                id: rectHeaderShadow
+                id: rectHeader
                 anchors.top: parent.top
                 anchors.left: parent.left
                 anchors.right: parent.right
                 height: AppTheme.rowHeightMin * app.scale
                 color: AppTheme.blueColor
-                z: 10
-            }
-
-            DropShadow
-            {
-                anchors.fill: rectHeaderShadow
-                horizontalOffset: 0
-                verticalOffset: 4
-                radius: 10.0 * app.scale
-                samples: 16
-                color: "#40000000"
-                source: rectHeaderShadow
-                z: 10
-            }
-
-            Rectangle
-            {
-                id: rectHeader
-                anchors.fill: rectHeaderShadow
-                color: AppTheme.blueColor
-                z: 10
 
                 Text
                 {
@@ -227,8 +203,8 @@ Window
         {
             id: page_Main
             anchors.fill: rectBackground
+            anchors.topMargin: AppTheme.rowHeightMin * app.scale
             visible: isAccountCreated === true
-            z: 9
         }
 
         Page_AccountsWizard
@@ -237,7 +213,6 @@ Window
             objectName: "page_AccountWizard"
             anchors.fill: rectBackground
             visible: isAccountCreated === false
-            z: 9
 
             onSigAppInitCompleted: isAccountCreated = true
         }
@@ -247,7 +222,6 @@ Window
             id: page_TankData
             anchors.fill: rectBackground
             anchors.topMargin: AppTheme.rowHeightMin * app.scale
-            z: 11
         }
 
         Page_AccountSett
@@ -256,7 +230,6 @@ Window
             anchors.fill: rectBackground
             anchors.topMargin: AppTheme.rowHeightMin * app.scale
             visible: false
-            z: 9
             //onSigClosed: page_Main.showPage(true)
         }
 
@@ -266,7 +239,6 @@ Window
             anchors.fill: rectBackground
             anchors.topMargin: AppTheme.rowHeightMin * app.scale
             visible: false
-            z: 9
             //onSigClosed: page_Main.showPage(true)
         }
 
@@ -276,7 +248,6 @@ Window
             anchors.fill: rectBackground
             anchors.topMargin: AppTheme.rowHeightMin * app.scale
             visible: false
-            z: 9
 
             //onSigClosed: page_Main.showPage(true)
         }
@@ -289,7 +260,6 @@ Window
         anchors.right: parent.right
         width: parent.width
         height: parent.height
-        z:11
 
         accountName: app.curUserName
         accountImage: "data:image/png;base64," + app.curUserAvatar

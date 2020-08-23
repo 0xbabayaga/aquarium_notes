@@ -25,6 +25,7 @@ QtObject
     property color greyColor: "#919191"
     property color greyDarkColor: "#808080"
     property color shideColor: "#20bababa"
+    property color backHideColor: "#40000000"
 
     property color positiveChangesColor: "#D000A000"
     property color negativeChangesColor: "#C0C00000"
@@ -32,6 +33,11 @@ QtObject
     property color backLightBlueColor: "#1000adbc"
     property color lightBlueColor: "#e9feff"
     property color lightGreenColor: "#e7fef2"
+
+    property int shadowSize: 10
+    property int shadowSamples: 16
+    property int shadowOffset: 4
+    property color shadowColor: "#20000000"
 
     property int fontSuperSmallSize: 12
     property int fontSmallSize: 14

@@ -89,50 +89,24 @@ Item
         color: AppTheme.whiteColor
     }
 
-    /*
     DropShadow
     {
         anchors.fill: rectContainer
         horizontalOffset: 0
-        verticalOffset: -2
-        radius: 10.0 * app.scale
-        samples: 16
-        color: "#20000000"
+        verticalOffset: -AppTheme.shadowOffset * app.scale
+        radius: AppTheme.shadowSize * app.scale
+        samples: AppTheme.shadowSamples * app.scale
+        color: AppTheme.shadowColor
         source: rectContainer
     }
-    */
 
     Rectangle
     {
         id: rectRealContainer
         anchors.fill: rectContainer
-        anchors.bottomMargin: AppTheme.rowHeightMin * app.scale
+        //anchors.bottomMargin: AppTheme.rowHeightMin * app.scale
         radius: AppTheme.radius * 2 * app.scale
         color: AppTheme.whiteColor
-
-        Rectangle
-        {
-            id: rectHeaderShadow
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.top: parent.top
-            anchors.topMargin: AppTheme.compHeight * 3 / 4 * app.scale
-            height: AppTheme.compHeight / 4 * app.scale
-            color: AppTheme.blueColor
-        }
-
-        /*
-        DropShadow
-        {
-            anchors.fill: rectHeaderShadow
-            horizontalOffset: 0
-            verticalOffset: 4
-            radius: 10.0 * app.scale
-            samples: 16
-            color: "#40000000"
-            source: rectHeaderShadow
-        }
-        */
 
         MouseArea   {   anchors.fill: parent    }
 
@@ -161,7 +135,7 @@ Item
         {
             anchors.left: parent.left
             anchors.top: parent.top
-            anchors.topMargin: -(AppTheme.rowHeightMin - AppTheme.margin) * app.scale
+            anchors.topMargin: AppTheme.padding * app.scale
             width: parent.width
             height: width * 0.75
             source: "qrc:/resources/img/back_waves.png"
@@ -271,7 +245,7 @@ Item
         {
             id: swipeView
             anchors.fill: parent
-            anchors.topMargin: AppTheme.rowHeightMin * 3 * app.scale
+            anchors.topMargin: AppTheme.rowHeight * 2 * app.scale
             orientation: Qt.Horizontal
             clip: true
             interactive: false

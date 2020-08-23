@@ -34,14 +34,14 @@ Item
     NumberAnimation
     {
         id: showPageAnimation
-        target: rectContainer
+        target: rectContainerShadow
         property: "anchors.topMargin"
         duration: 400
         easing.type: Easing.OutBack
         onStarted: page_AppSett.visible = true
         onFinished:
         {
-            if (rectContainer.anchors.topMargin > 0 && page_AppSett.visible === true)
+            if (rectContainerShadow.anchors.topMargin > 0 && page_AppSett.visible === true)
             {
                 page_AppSett.visible = false
                 sigClosed()
@@ -51,19 +51,38 @@ Item
 
     Rectangle
     {
-        id: rectContainer
+        id: rectContainerShadow
         anchors.top: parent.top
         anchors.topMargin: page_AppSett.height
         anchors.left: parent.left
         anchors.right: parent.right
         height: page_AppSett.height
         color: AppTheme.whiteColor
+    }
+
+
+    DropShadow
+    {
+        anchors.fill: rectContainerShadow
+        horizontalOffset: 0
+        verticalOffset: -AppTheme.shadowOffset * app.scale
+        radius: AppTheme.shadowSize * app.scale
+        samples: AppTheme.shadowSamples * app.scale
+        color: AppTheme.shadowColor
+        source: rectContainerShadow
+    }
+
+    Rectangle
+    {
+        id: rectContainer
+        anchors.fill: rectContainerShadow
+        color: AppTheme.whiteColor
 
         Image
         {
             anchors.left: parent.left
             anchors.top: parent.top
-            anchors.topMargin: -(AppTheme.rowHeightMin - AppTheme.margin) * app.scale
+            anchors.topMargin: AppTheme.padding * app.scale
             width: parent.width
             height: width * 0.75
             source: "qrc:/resources/img/back_waves.png"
@@ -278,22 +297,6 @@ Item
                         }
 
                     }
-
-                    /*
-                    IconSimpleButton
-                    {
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.bottom: parent.bottom
-                        anchors.bottomMargin: AppTheme.margin * app.scale
-                        image: "qrc:/resources/img/icon_arrow_down.png"
-
-                        onSigButtonClicked:
-                        {
-                            showPage(false)
-                            sigClosing()
-                        }
-                    }
-                    */
                 }
             }
         }

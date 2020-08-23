@@ -77,7 +77,7 @@ Item
             property: "anchors.topMargin"
             duration: 200
             from: rectDetailedContainer.height
-            to: AppTheme.padding * 9 * app.scale
+            to: AppTheme.padding * 11 * app.scale
             easing.type: Easing.OutBack
         }
     }
@@ -91,7 +91,7 @@ Item
             target: rectShadowNoteDetails
             property: "anchors.topMargin"
             duration: 200
-            from: AppTheme.padding * 9 * app.scale
+            from: AppTheme.padding * 6 * app.scale
             to: rectDetailedContainer.height
             easing.type: Easing.InBack
         }
@@ -301,7 +301,7 @@ Item
         id: rectDetailedContainer
         anchors.fill: parent
         parent: Overlay.overlay
-        color: "#20000000"
+        color: "#40000000"
         visible: false
 
         MouseArea { anchors.fill: parent    }
@@ -311,7 +311,6 @@ Item
             id: rectShadowNoteDetails
             width: parent.width
             height: imgCurrent.height + AppTheme.rowHeight * 3 * app.scale
-            radius: AppTheme.radius * 2 * app.scale
             anchors.top: parent.top
             anchors.topMargin: rectDetailedContainer.height
             anchors.bottom: parent.bottom
@@ -334,7 +333,6 @@ Item
         {
             id: rectNoteDetails
             anchors.fill: rectShadowNoteDetails
-            radius: AppTheme.radius * 2 * app.scale
             clip: true
 
             Behavior on height { NumberAnimation { duration: 200 } }
@@ -524,8 +522,10 @@ Item
 
             IconSimpleButton
             {
-                anchors.top: parent.top
-                anchors.topMargin: rectDetailedContainer.height - AppTheme.rowHeight / 2 *  app.scale - AppTheme.rowHeight * 3 * app.scale
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: AppTheme.margin * app.scale
+                //anchors.top: parent.top
+                //anchors.topMargin: rectDetailedContainer.height - AppTheme.rowHeight / 2 *  app.scale - AppTheme.rowHeight * 3 * app.scale
                 anchors.horizontalCenter: parent.horizontalCenter
                 image: "qrc:/resources/img/icon_arrow_down.png"
 
