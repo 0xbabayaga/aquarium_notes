@@ -175,7 +175,6 @@ Item
                         {
                             view.currentIndex = index
                             sigCurrentIndexChanged(index)
-                            sigTankSelected(index)
                         }
                     }
 
@@ -196,6 +195,8 @@ Item
                     }
                 }
             }
+
+            onCurrentIndexChanged: sigCurrentIndexChanged(currentIndex)
 
             ScrollBar.vertical: ScrollBar
             {

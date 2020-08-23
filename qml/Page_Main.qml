@@ -103,6 +103,8 @@ Item
             anchors.bottomMargin: AppTheme.margin * app.scale
             model: tanksListModel
 
+            onSigCurrentIndexChanged: app.sigTankSelected(currentIndex)
+
             onSigTankSelected:
             {
                 app.sigTankSelected(currentIndex)
