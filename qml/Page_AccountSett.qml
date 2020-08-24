@@ -61,8 +61,8 @@ Item
         id: showAccountSettAnimation
         target: rectContainerShadow
         property: "anchors.topMargin"
-        duration: 400
-        easing.type: Easing.OutExpo
+        duration: 200
+        easing.type: Easing.OutCubic
         onStarted: page_AccountSett.visible = true
         onFinished:
         {
@@ -154,7 +154,7 @@ Item
                 id: rectAccountPhoto
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top
-                anchors.topMargin: AppTheme.margin * 3 * app.scale
+                anchors.topMargin: AppTheme.padding * 5 * app.scale
                 width: AppTheme.margin * 4 * app.scale
                 height: width
                 radius: width / 2
@@ -210,6 +210,7 @@ Item
                 text: app.curUserName
             }
 
+            /*
             Text
             {
                 id: textLocation
@@ -223,7 +224,7 @@ Item
                 font.pixelSize: AppTheme.fontSmallSize * app.scale
                 color: AppTheme.greyColor
                 text: app.global_USERCOUNTRY + ", " + app.global_USERCITY
-            }
+            } 
 
             Image
             {
@@ -243,12 +244,13 @@ Item
                 source: imgLoc
                 color: AppTheme.blueColor
             }
+            */
 
             Text
             {
                 id: textAccountDateCreate
                 anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: textLocation.bottom
+                anchors.top: textAccountName.bottom
                 anchors.topMargin: AppTheme.padding/2 * app.scale
                 height: AppTheme.compHeight / 2 * app.scale
                 verticalAlignment: Text.AlignVCenter

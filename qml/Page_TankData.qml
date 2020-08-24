@@ -46,7 +46,6 @@ Item
 
             textTankVol.text = tankVol + "L"
             textTankName.text = tankName
-            textTankName.color = (tankType < 4) ? AppTheme.blueColor : AppTheme.greenColor
             textTankVol.color = textTankName.color
             textTankType.text = "["+ tankTypeName +"]"
             imgTank.source = "data:image/jpg;base64," + tankParams[5]

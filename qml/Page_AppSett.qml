@@ -36,8 +36,8 @@ Item
         id: showPageAnimation
         target: rectContainerShadow
         property: "anchors.topMargin"
-        duration: 400
-        easing.type: Easing.OutBack
+        duration: 200
+        easing.type: Easing.OutCubic
         onStarted: page_AppSett.visible = true
         onFinished:
         {

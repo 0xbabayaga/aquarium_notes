@@ -68,7 +68,7 @@ Item
             duration: 200
             from: 0
             to: 1
-            easing.type: Easing.InOutQuad
+            easing.type: Easing.OutCubic
         }
 
         NumberAnimation
@@ -77,8 +77,8 @@ Item
             property: "anchors.topMargin"
             duration: 200
             from: rectDetailedContainer.height
-            to: AppTheme.padding * 11 * app.scale
-            easing.type: Easing.OutBack
+            to: AppTheme.padding * 5 * app.scale
+            easing.type: Easing.OutCubic
         }
     }
 
@@ -91,9 +91,9 @@ Item
             target: rectShadowNoteDetails
             property: "anchors.topMargin"
             duration: 200
-            from: AppTheme.padding * 6 * app.scale
+            from: AppTheme.padding * 5 * app.scale
             to: rectDetailedContainer.height
-            easing.type: Easing.InBack
+            easing.type: Easing.InCubic
         }
 
         NumberAnimation
@@ -103,7 +103,7 @@ Item
             duration: 200
             from: 1
             to: 0
-            easing.type: Easing.InOutQuad
+            easing.type: Easing.InCubic
         }
 
         onFinished: rectDetailedContainer.visible = false
@@ -216,7 +216,6 @@ Item
             anchors.top: parent.top
             anchors.topMargin: AppTheme.compHeight * app.scale
             anchors.right: parent.right
-            //anchors.rightMargin: AppTheme.padding * app.scale
             width: 0
             height: (AppTheme.rowHeightMin + 2) * app.scale
             orientation: ListView.Horizontal
@@ -301,7 +300,7 @@ Item
         id: rectDetailedContainer
         anchors.fill: parent
         parent: Overlay.overlay
-        color: "#40000000"
+        color: AppTheme.backHideColor
         visible: false
 
         MouseArea { anchors.fill: parent    }
@@ -323,9 +322,9 @@ Item
             anchors.fill: rectShadowNoteDetails
             horizontalOffset: 0
             verticalOffset: 3
-            radius: 10.0 * app.scale
-            samples: 16
-            color: "#20000000"
+            radius: AppTheme.shadowSize * app.scale
+            samples: AppTheme.shadowSamples
+            color: AppTheme.shadowColor
             source: rectShadowNoteDetails
         }
 

@@ -139,8 +139,8 @@ Item
         id: showPageAnimation
         target: rectContainerShadow
         property: "anchors.topMargin"
-        duration: 400
-        easing.type: Easing.OutExpo
+        duration: 200
+        easing.type: Easing.OutCubic
         onStarted: page_TankSett.visible = true
         onFinished:
         {

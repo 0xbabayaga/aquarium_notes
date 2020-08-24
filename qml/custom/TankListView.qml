@@ -80,26 +80,7 @@ Item
                         height: tankListView.tankImageHeight * app.scale
                         source: (img.length > 0) ? "data:image/jpg;base64," + img : ""
                         mipmap: true
-
-                        //layer.enabled: true
-                        //layer.effect: OpacityMask
-                        //{
-                        //    maskSource: rectMask
-                        //}
                     }
-
-                    /*
-                    Rectangle
-                    {
-                        id: rectMask
-                        anchors.top: parent.top
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        height: tankListView.tankImageHeight * app.scale
-                        radius: AppTheme.radius * app.scale
-                        visible: false
-                    }
-                    */
 
                     Image
                     {
@@ -110,12 +91,6 @@ Item
                         source: (type < 4) ? "qrc:/resources/img/wave_blue_2.png" : "qrc:/resources/img/wave_green_2.png"
                         mipmap: true
                         opacity: 0.8
-
-                        //layer.enabled: true
-                        //layer.effect: OpacityMask
-                        //{
-                        //    maskSource: rectMask
-                        //}
                     }
 
                     Text
@@ -123,13 +98,13 @@ Item
                         anchors.right: parent.right
                         anchors.rightMargin: AppTheme.padding * app.scale
                         anchors.bottom: imgPhoto.bottom
-                        anchors.bottomMargin: AppTheme.padding/2 * app.scale
+                        anchors.bottomMargin: AppTheme.padding * app.scale
                         text: app.convertVolume(volume) + app.currentVolumeUnitsShort()
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontSuperBigSize * app.scale
                         color: AppTheme.whiteColor
                         horizontalAlignment: Text.AlignRight
-                        verticalAlignment: Text.AlignBottom
+                        verticalAlignment: Text.AlignTop
                         height: AppTheme.compHeight * app.scale
                     }
 
@@ -144,7 +119,7 @@ Item
                         font.pixelSize: AppTheme.fontBigSize * app.scale
                         color: AppTheme.whiteColor
                         horizontalAlignment: Text.AlignRight
-                        verticalAlignment: Text.AlignBottom
+                        verticalAlignment: Text.AlignVCenter
                         height: AppTheme.compHeight * app.scale
                     }
 
