@@ -27,6 +27,7 @@ Item
             orientation: ListView.Horizontal
             spacing: AppTheme.rowSpacing
             currentIndex: 0
+            interactive: false
 
             property int cellWidth: (rectContainer.width - AppTheme.padding * 4 * app.scale) / 3
 

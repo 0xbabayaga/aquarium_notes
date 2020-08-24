@@ -72,8 +72,8 @@ Item
         property: "x"
         from: parent.width
         to: 0
-        easing.type: Easing.OutBack
-        duration: 400
+        easing.type: Easing.OutCubic
+        duration: 200
         running: false
         onFinished: if (to === parent.width) page_TankData.visible = false
     }

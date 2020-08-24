@@ -27,7 +27,7 @@ Item
             anchors.fill: parent
             orientation: ListView.Vertical
             spacing: AppTheme.margin * app.scale
-            //clip: true
+            clip: true
 
             delegate: Rectangle
             {
@@ -39,8 +39,8 @@ Item
                 {
                     NumberAnimation
                     {
-                        duration: 400
-                        easing.type: Easing.OutBack
+                        duration: 200
+                        easing.type: Easing.OutExpo
                     }
                 }
 
@@ -54,7 +54,6 @@ Item
                     anchors.top: parent.top
                     color: AppTheme.whiteColor
                     height: parent.height
-                    //radius: AppTheme.radius * app.scale
                 }
 
                 DropShadow
