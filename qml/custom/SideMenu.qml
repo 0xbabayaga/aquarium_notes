@@ -205,8 +205,8 @@ Item
                 height: AppTheme.compHeight * app.scale
                 verticalAlignment: Text.AlignBottom
                 font.family: AppTheme.fontFamily
-                font.pixelSize: AppTheme.fontBigSize * app.scale
-                color: AppTheme.blueColor
+                font.pixelSize: AppTheme.fontNormalSize * app.scale
+                color: AppTheme.blueFontColor
                 text: ""
             }
 
@@ -278,6 +278,7 @@ Item
 
                     Behavior on color { ColorAnimation { duration: 200 }    }
 
+                    /*
                     Text
                     {
                         anchors.verticalCenter: parent.verticalCenter
@@ -291,9 +292,11 @@ Item
                         color: AppTheme.blueColor
                         text: "⠛"
                     }
+                    */
 
                     Text
                     {
+                        id: textMenu
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.left: parent.left
                         anchors.leftMargin: AppTheme.margin * 3 * app.scale
@@ -304,6 +307,26 @@ Item
                         font.pixelSize: AppTheme.fontNormalSize * app.scale
                         color: AppTheme.blueFontColor
                         text: name
+                    }
+
+                    Image
+                    {
+                        id: buttonImage
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.right: textMenu.left
+                        anchors.rightMargin: AppTheme.padding / 2 * app.scale
+                        width: AppTheme.compHeight / 2 * app.scale
+                        height: width
+                        source: "qrc:/resources/img/icon_menu.png"
+                        mipmap: true
+                    }
+
+                    ColorOverlay
+                    {
+                        anchors.fill: buttonImage
+                        source: buttonImage
+                        color: AppTheme.blueColor
+                        visible: !inverted
                     }
 
                     SequentialAnimation

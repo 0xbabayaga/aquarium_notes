@@ -646,7 +646,7 @@ void AppManager::onGuiActionViewPeriodChanged(int period)
 
 void AppManager::onGuiTankSelected(int tankIdx)
 {
-    if (tankIdx > 0)
+    if (tankIdx >= 0)
     {
         curSelectedObjs.tankIdx = tankIdx;
 

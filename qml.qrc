@@ -61,5 +61,6 @@
         <file>resources/img/icon_mon2.png</file>
         <file>resources/img/icon_loc.png</file>
         <file>qml/custom/TankListView.qml</file>
+        <file>resources/img/icon_menu.png</file>
     </qresource>
 </RCC>

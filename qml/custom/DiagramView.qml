@@ -7,7 +7,7 @@ import ".."
 Item
 {
     id: diagramView
-    width: app.width
+    width: app.width - AppTheme.margin * 4 * app.scale
     height: 128
 
     property var ctx: null

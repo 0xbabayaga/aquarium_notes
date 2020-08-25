@@ -345,7 +345,7 @@ Item
                             font.family: AppTheme.fontFamily
                             font.pixelSize: AppTheme.fontNormalSize * app.scale
                             color: AppTheme.blueFontColor
-                            text: qsTr("Tank image")
+                            text: qsTr("User photo")
                         }
 
                         ImageList

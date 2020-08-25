@@ -148,7 +148,7 @@ Item
                         onClicked:
                         {
                             view.currentIndex = index
-                            sigCurrentIndexChanged(index)
+                            sigCurrentIndexChanged(currentIndex)
                         }
                     }
 
@@ -169,8 +169,6 @@ Item
                     }
                 }
             }
-
-            onCurrentIndexChanged: sigCurrentIndexChanged(currentIndex)
 
             ScrollBar.vertical: ScrollBar
             {

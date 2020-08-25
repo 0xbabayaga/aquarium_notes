@@ -1,4 +1,4 @@
-import QtQuick 2.12
+import QtQuick 2.0
 import QtQuick.Controls 2.12
 import QtGraphicalEffects 1.12
 import "../js/diagrams.js" as Diagrams
@@ -30,7 +30,7 @@ Item
     function addDiagram(num, paramId, xMin, xMax, yMin, yMax, points)
     {
         diagrams.add(paramId, tab_Graph.graphHeight, xMin, xMax, yMin, yMax, points)
-        flickableContainer.contentHeight = (diagrams.curnesCnt + 1) * tab_Graph.graphHeight
+        flickableContainer.contentHeight = diagrams.currentCnt * tab_Graph.graphHeight
     }
 
     PointList
@@ -40,7 +40,6 @@ Item
         anchors.left: parent.left
         anchors.right: parent.right
         model:  graphPointsList
-        z: 2
 
         onSigCurIndexChanged: redraw(id)
     }
@@ -48,14 +47,11 @@ Item
     Flickable
     {
         id: flickableContainer
-        anchors.top: pointList.bottom
-        anchors.topMargin: AppTheme.padding * app.scale
-        anchors.bottom: parent.bottom
+        anchors.fill: parent
+        anchors.topMargin: pointList.height
         anchors.bottomMargin: AppTheme.margin * app.scale
-        anchors.left: parent.left
-        anchors.right: parent.right
-        contentWidth: flickableContainer.width
-        contentHeight: flickableContainer.height
+        contentHeight: height * 2
+        contentWidth: width
         clip: true
 
         DiagramView
@@ -70,15 +66,15 @@ Item
         {
             policy: ScrollBar.AlwaysOn
             parent: flickableContainer.parent
-            anchors.top: parent.top
-            anchors.left: parent.right
+            anchors.top: flickableContainer.top
+            anchors.left: flickableContainer.right
             anchors.leftMargin: -AppTheme.padding * app.scale
-            anchors.bottom: parent.bottom
+            anchors.bottom: flickableContainer.bottom
 
             contentItem: Rectangle
             {
-                implicitWidth: 2
-                implicitHeight: 100
+                implicitWidth: 2 * app.scale
+                implicitHeight: 100 * app.scale
                 radius: width / 2
                 color: AppTheme.hideColor
             }
