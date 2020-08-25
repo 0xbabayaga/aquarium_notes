@@ -221,7 +221,7 @@ Item
                                 height: parent.height
                                 font.family: AppTheme.fontFamily
                                 font.pixelSize: AppTheme.fontNormalSize * app.scale
-                                color: AppTheme.blueColor
+                                color: AppTheme.blueFontColor
                                 text: fullName
                             }
 
@@ -234,7 +234,6 @@ Item
                                 width: 100 * app.scale
                                 maximumLength: AppDefs.MAX_TANKDIMENSION_SIZE
                                 text: (value !== -1) ? value : ""
-                                //text: value
 
                                 onTextChanged: value = Number.parseFloat(textInputValue.text)
 
@@ -279,7 +278,7 @@ Item
                             height: AppTheme.compHeight * app.scale
                             font.family: AppTheme.fontFamily
                             font.pixelSize: AppTheme.fontNormalSize * app.scale
-                            color: AppTheme.blueColor
+                            color: AppTheme.blueFontColor
                             text: qsTr("Add image")
                         }
 
@@ -418,7 +417,7 @@ Item
                             width: 100 * app.scale
                             font.family: AppTheme.fontFamily
                             font.pixelSize: AppTheme.fontNormalSize * app.scale
-                            color: en ? AppTheme.blueColor : AppTheme.greyColor
+                            color: en ? AppTheme.blueFontColor : AppTheme.greyColor
                             text: fullName
                         }
 

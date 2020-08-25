@@ -195,7 +195,7 @@ Item
             verticalAlignment: Text.AlignVCenter
             font.family: AppTheme.fontFamily
             font.pixelSize: AppTheme.fontNormalSize * app.scale
-            color: AppTheme.blueColor
+            color: AppTheme.blueFontColor
             text: qsTr("NOTE FOUND")
         }
 
@@ -515,7 +515,7 @@ Item
                 verticalAlignment: Text.AlignVCenter
                 font.family: AppTheme.fontFamily
                 font.pixelSize: AppTheme.fontSmallSize * app.scale
-                color: AppTheme.blueColor
+                color: AppTheme.blueFontColor
                 text: ""
             }
 

@@ -646,12 +646,15 @@ void AppManager::onGuiActionViewPeriodChanged(int period)
 
 void AppManager::onGuiTankSelected(int tankIdx)
 {
-    curSelectedObjs.tankIdx = tankIdx;
+    if (tankIdx > 0)
+    {
+        curSelectedObjs.tankIdx = tankIdx;
 
-    getParamsListGui();
-    getLatestParamsGui();
-    getHistoryParams();
-    getActionCalendarGui();
+        getParamsListGui();
+        getLatestParamsGui();
+        getHistoryParams();
+        getActionCalendarGui();
+    }
 }
 
 void AppManager::onGuiPersonalParamStateChanged(int paramId, bool en)

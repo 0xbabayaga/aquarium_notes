@@ -43,7 +43,7 @@ Item
 
                     Text
                     {
-                        color: (listTab.currentIndex === index) ? AppTheme.blueColor : AppTheme.whiteColor
+                        color: (listTab.currentIndex === index) ? AppTheme.blueFontColor : AppTheme.whiteColor
                         font.pixelSize: AppTheme.fontNormalSize * app.scale
                         font.family: AppTheme.fontFamily
                         verticalAlignment: Text.AlignVCenter

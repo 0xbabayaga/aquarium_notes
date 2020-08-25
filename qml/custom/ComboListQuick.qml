@@ -69,7 +69,7 @@ Item
         font.pixelSize: AppTheme.fontNormalSize * app.scale
         horizontalAlignment: Text.AlignLeft
         verticalAlignment: Text.AlignVCenter
-        color: enabled ? AppTheme.blueColor : AppTheme.hideColor
+        color: enabled ? AppTheme.blueFontColor : AppTheme.hideColor
         onFocusChanged: focus ? rectUnderLine.color = AppTheme.blueColor : rectUnderLine.color = AppTheme.hideColor
 
         MouseArea
@@ -254,7 +254,7 @@ Item
                             anchors.leftMargin: AppTheme.padding * app.scale
                             font.family: AppTheme.fontFamily
                             font.pixelSize: AppTheme.fontNormalSize * app.scale
-                            color: AppTheme.blueColor
+                            color: AppTheme.blueFontColor
                             verticalAlignment: Text.AlignVCenter
                             horizontalAlignment: Text.AlignHCenter
                             text: name

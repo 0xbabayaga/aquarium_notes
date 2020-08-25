@@ -254,7 +254,7 @@ Item
                             anchors.leftMargin: AppTheme.padding * app.scale
                             font.family: AppTheme.fontFamily
                             font.pixelSize: AppTheme.fontNormalSize * app.scale
-                            color: AppTheme.blueColor
+                            color: AppTheme.blueFontColor
                             verticalAlignment: Text.AlignVCenter
                             horizontalAlignment: Text.AlignHCenter
                             text: name

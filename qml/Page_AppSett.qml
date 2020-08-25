@@ -172,7 +172,7 @@ Item
                             height: AppTheme.compHeight * app.scale
                             verticalAlignment: Text.AlignVCenter
                             font.family: AppTheme.fontFamily
-                            font.pixelSize: AppTheme.fontNormalSize * app.scale
+                            font.pixelSize: AppTheme.fontSmallSize * app.scale
                             color: AppTheme.greyColor
                             text: qsTr("Language")
                         }
@@ -205,7 +205,7 @@ Item
                             height: AppTheme.compHeight * app.scale
                             verticalAlignment: Text.AlignVCenter
                             font.family: AppTheme.fontFamily
-                            font.pixelSize: AppTheme.fontNormalSize * app.scale
+                            font.pixelSize: AppTheme.fontSmallSize * app.scale
                             color: AppTheme.greyColor
                             text: qsTr("Dimension units")
                         }
@@ -237,7 +237,7 @@ Item
                             height: AppTheme.compHeight * app.scale
                             verticalAlignment: Text.AlignVCenter
                             font.family: AppTheme.fontFamily
-                            font.pixelSize: AppTheme.fontNormalSize * app.scale
+                            font.pixelSize: AppTheme.fontSmallSize * app.scale
                             color: AppTheme.greyColor
                             text: qsTr("Volume units")
                         }
@@ -270,7 +270,7 @@ Item
                             height: AppTheme.compHeight * app.scale
                             verticalAlignment: Text.AlignVCenter
                             font.family: AppTheme.fontFamily
-                            font.pixelSize: AppTheme.fontNormalSize * app.scale
+                            font.pixelSize: AppTheme.fontSmallSize * app.scale
                             color: AppTheme.greyColor
                             text: qsTr("Date format")
                         }

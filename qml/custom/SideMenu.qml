@@ -302,7 +302,7 @@ Item
                         verticalAlignment: Text.AlignVCenter
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontNormalSize * app.scale
-                        color: AppTheme.blueColor
+                        color: AppTheme.blueFontColor
                         text: name
                     }
 
@@ -361,15 +361,6 @@ Item
         height: 24 * app.scale
         source: "qrc:/resources/img/icon_app.png"
         mipmap: true
-
-        /*
-        ColorOverlay
-        {
-            anchors.fill: imgAppIcon
-            source: imgAppIcon
-            color: AppTheme.blueColor
-        }
-        */
 
         SequentialAnimation
         {

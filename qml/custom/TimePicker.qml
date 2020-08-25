@@ -93,7 +93,7 @@ Item
         font.pixelSize: AppTheme.fontNormalSize * app.scale
         horizontalAlignment: Text.AlignLeft
         verticalAlignment: Text.AlignVCenter
-        color: enabled ? AppTheme.blueColor : AppTheme.hideColor
+        color: enabled ? AppTheme.blueFontColor : AppTheme.hideColor
         onFocusChanged: focus ? rectUnderLine.color = AppTheme.blueColor : rectUnderLine.color = AppTheme.hideColor
 
         MouseArea

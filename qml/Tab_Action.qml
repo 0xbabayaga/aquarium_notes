@@ -131,7 +131,7 @@ Item
             width: 100 * app.scale
             font.family: AppTheme.fontFamily
             font.pixelSize: AppTheme.fontNormalSize * app.scale
-            color: AppTheme.blueColor
+            color: AppTheme.blueFontColor
             text: qsTr("View period:")
         }
 
@@ -212,7 +212,7 @@ Item
                             verticalAlignment: Text.AlignBottom
                             font.family: AppTheme.fontFamily
                             font.pixelSize: AppTheme.fontNormalSize * app.scale
-                            color: AppTheme.blueColor
+                            color: AppTheme.blueFontColor
                             text: name
                         }
 
@@ -242,7 +242,7 @@ Item
                             horizontalAlignment: Text.AlignRight
                             font.family: AppTheme.fontFamily
                             font.pixelSize: AppTheme.fontNormalSize * app.scale
-                            color: AppTheme.blueColor
+                            color: AppTheme.blueFontColor
                             text: printDay(startDT)
                         }
 
@@ -408,7 +408,7 @@ Item
             width: 100 * app.scale
             font.family: AppTheme.fontFamily
             font.pixelSize: AppTheme.fontBigSize * app.scale
-            color: AppTheme.blueColor
+            color: AppTheme.blueFontColor
             text: qsTr("Add action:")
         }
 

@@ -147,7 +147,7 @@ Item
                         width: 140 * app.scale
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontNormalSize * app.scale
-                        color: AppTheme.blueColor
+                        color: AppTheme.blueFontColor
                         text: app.getParamById(paramId).fullName
                     }
 
@@ -170,7 +170,7 @@ Item
                         verticalAlignment: Text.AlignVCenter
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontNormalSize * app.scale
-                        color: AppTheme.blueColor
+                        color: AppTheme.blueFontColor
                         text: formattedValue(valueNow)
                     }
 

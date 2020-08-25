@@ -33,7 +33,7 @@ Item
         font.pixelSize: AppTheme.fontNormalSize * app.scale
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignLeft
-        color: enabled ? AppTheme.blueColor : AppTheme.hideColor
+        color: enabled ? AppTheme.blueFontColor : AppTheme.hideColor
         wrapMode: Text.WordWrap
         clip: true
 

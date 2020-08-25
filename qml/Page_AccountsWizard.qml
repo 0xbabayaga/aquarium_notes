@@ -188,7 +188,7 @@ Item
                         verticalAlignment: Text.AlignVCenter
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontNormalSize * app.scale
-                        color: AppTheme.blueColor
+                        color: AppTheme.blueFontColor
                         text: qsTr("User photo")
                     }
 
@@ -362,7 +362,7 @@ Item
                                 verticalAlignment: Text.AlignVCenter
                                 font.family: AppTheme.fontFamily
                                 font.pixelSize: AppTheme.fontNormalSize * app.scale
-                                color: AppTheme.blueColor
+                                color: AppTheme.blueFontColor
                                 text: app.currentDimensionUnits()
                             }
                         }
@@ -385,7 +385,7 @@ Item
                                 verticalAlignment: Text.AlignVCenter
                                 font.family: AppTheme.fontFamily
                                 font.pixelSize: AppTheme.fontNormalSize * app.scale
-                                color: AppTheme.blueColor
+                                color: AppTheme.blueFontColor
                                 text: app.currentDimensionUnits()
                             }
                         }
@@ -408,7 +408,7 @@ Item
                                 verticalAlignment: Text.AlignVCenter
                                 font.family: AppTheme.fontFamily
                                 font.pixelSize: AppTheme.fontNormalSize * app.scale
-                                color: AppTheme.blueColor
+                                color: AppTheme.blueFontColor
                                 text: app.currentDimensionUnits()
                             }
                         }
@@ -432,7 +432,7 @@ Item
                         verticalAlignment: Text.AlignVCenter
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontNormalSize * app.scale
-                        color: AppTheme.blueColor
+                        color: AppTheme.blueFontColor
                         text: qsTr("Tank image")
                     }
 

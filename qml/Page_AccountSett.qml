@@ -210,42 +210,6 @@ Item
                 text: app.curUserName
             }
 
-            /*
-            Text
-            {
-                id: textLocation
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.horizontalCenterOffset: (AppTheme.padding + AppTheme.padding / 4) * app.scale / 2
-                anchors.top: textAccountName.bottom
-                anchors.topMargin: AppTheme.padding/2 * app.scale
-                height: AppTheme.compHeight / 2 * app.scale
-                verticalAlignment: Text.AlignVCenter
-                font.family: AppTheme.fontFamily
-                font.pixelSize: AppTheme.fontSmallSize * app.scale
-                color: AppTheme.greyColor
-                text: app.global_USERCOUNTRY + ", " + app.global_USERCITY
-            } 
-
-            Image
-            {
-                id: imgLoc
-                anchors.right: textLocation.left
-                anchors.rightMargin: AppTheme.padding / 4 * app.scale
-                anchors.verticalCenter: textLocation.verticalCenter
-                width: AppTheme.padding * app.scale
-                height: width
-                source: "qrc:/resources/img/icon_loc.png"
-                mipmap: true
-            }
-
-            ColorOverlay
-            {
-                anchors.fill: imgLoc
-                source: imgLoc
-                color: AppTheme.blueColor
-            }
-            */
-
             Text
             {
                 id: textAccountDateCreate
@@ -380,7 +344,7 @@ Item
                             verticalAlignment: Text.AlignVCenter
                             font.family: AppTheme.fontFamily
                             font.pixelSize: AppTheme.fontNormalSize * app.scale
-                            color: AppTheme.blueColor
+                            color: AppTheme.blueFontColor
                             text: qsTr("Tank image")
                         }
 

@@ -19,7 +19,6 @@ Item
         Text
         {
             id: text
-            //text: "[ " + buttonText + " ]"
             text: buttonText
             wrapMode: Text.WordWrap
             height: parent.height

@@ -201,7 +201,7 @@ Item
                         width: 120 * app.scale
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontNormalSize * app.scale
-                        color: AppTheme.blueColor
+                        color: AppTheme.blueFontColor
                         text: app.getParamById(paramId).fullName
                     }
 

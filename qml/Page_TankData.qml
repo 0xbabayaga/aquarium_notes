@@ -220,7 +220,7 @@ Item
                 horizontalAlignment: Text.AlignRight
                 font.family: AppTheme.fontFamily
                 font.pixelSize: AppTheme.fontNormalSize * app.scale
-                color: AppTheme.blueColor
+                color: AppTheme.blueFontColor
                 text: qsTr("")
             }
 

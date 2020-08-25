@@ -17,8 +17,26 @@ Item
 
     Rectangle
     {
-        id: container
+        id: rectShadow
         anchors.fill: parent
+    }
+
+    DropShadow
+    {
+        anchors.fill: rectShadow
+        horizontalOffset: 0
+        verticalOffset: 0
+        radius: AppTheme.shadowSize
+        samples: AppTheme.shadowSamples
+        color: AppTheme.shadowColor
+        source: rectShadow
+    }
+
+
+    Rectangle
+    {
+        id: container
+        anchors.fill: rectShadow
         color: AppTheme.lightBlueColor
 
         ListView
@@ -47,7 +65,7 @@ Item
                     Text
                     {
                         anchors.fill: parent
-                        color: (view.currentIndex === index) ? AppTheme.whiteColor : AppTheme.blueColor
+                        color: (view.currentIndex === index) ? AppTheme.whiteColor : AppTheme.blueFontColor
                         font.pixelSize: (view.currentIndex === index) ? AppTheme.fontNormalSize * app.scale : AppTheme.fontSmallSize * app.scale
                         font.family: AppTheme.fontFamily
                         verticalAlignment: Text.AlignVCenter
@@ -63,16 +81,5 @@ Item
                 }
             }
         }
-    }
-
-    DropShadow
-    {
-        anchors.fill: container
-        horizontalOffset: 0
-        verticalOffset: 0
-        radius: 12.0
-        samples: 16
-        color: "#20000000"
-        source: container
     }
 }
