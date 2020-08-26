@@ -10,13 +10,29 @@ Item
 
     //property alias currentIndex: view.currentIndex
     property int tankImageHeight: 180
+    property int currentViewIndex: 0
 
     signal sigTankStoryClose()
+    signal sigTankStoryLoadIndex(int index)
+
+    function addStoryRecord(smpId, desc, imageList, dt)
+    {
+        storyModel.append({"smpId": smpId, "desc": desc, "imagesList": imageList, "dt": dt})
+    }
+
+    onVisibleChanged: if (visible === true) sigTankStoryLoadIndex(currentViewIndex)
+
+    ListModel
+    {
+        id: storyModel
+
+        ListElement {   smpId: 0;  desc: "Default";    imagesList: ""; dt: 1912341239;   }
+    }
 
     Rectangle
     {
         anchors.fill: parent
-        color: "#20000000"
+        color: "#00000000"
 
         MouseArea
         {
@@ -24,19 +40,19 @@ Item
             onClicked: sigTankStoryClose()
         }
 
-        /*
         ListView
         {
             id: view
             anchors.fill: parent
             orientation: ListView.Vertical
             spacing: AppTheme.margin * app.scale
+            model: storyModel
             clip: true
 
             delegate: Rectangle
             {
                 width: parent.width
-                height: (index === view.currentIndex) ? (tankListView.tankImageHeight * app.scale + (currParamTable.realModelLength() * AppTheme.compHeight + AppTheme.rowHeightMin + AppTheme.padding/2) * app.scale) : tankListView.tankImageHeight * app.scale
+                height: tankImageHeight
                 color: "#00000000"
 
                 Behavior on height
@@ -74,8 +90,22 @@ Item
                 Rectangle
                 {
                     anchors.fill: rect
-                    color: "#20000000"
+                    color: AppTheme.whiteColor
 
+                    Text
+                    {
+                        anchors.left: parent.left
+                        anchors.leftMargin: AppTheme.padding * app.scale
+                        anchors.top: parent.top
+                        anchors.topMargin: AppTheme.padding * app.scale
+                        text: smpId
+                        font.family: AppTheme.fontFamily
+                        font.pixelSize: AppTheme.fontNormalSize * app.scale
+                        color: AppTheme.blueColor
+                        horizontalAlignment: Text.AlignRight
+                        verticalAlignment: Text.AlignVCenter
+                        height: AppTheme.compHeight * app.scale
+                    }
 
                 }
             }
@@ -98,6 +128,5 @@ Item
                 }
             }
         }
-        */
     }
 }

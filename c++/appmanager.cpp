@@ -94,6 +94,7 @@ AppManager::~AppManager()
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigVolumeUnitsChanged(int)), this, SLOT(onGuiVolumeUnitsChanged(int)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigDateFormatChanged(int)), this, SLOT(onGuiDateFormatChanged(int)));
     disconnect(position, SIGNAL(positionDetected), this, SLOT(onPositionDetected));
+    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigTankStorySelected(int)), this, SLOT(onGuiTankStoryLoad(int)));
 
     if (position != nullptr)
         delete position;
@@ -130,6 +131,8 @@ void AppManager::init()
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigDimensionUnitsChanged(int)), this, SLOT(onGuiDimensionUnitsChanged(int)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigVolumeUnitsChanged(int)), this, SLOT(onGuiVolumeUnitsChanged(int)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigDateFormatChanged(int)), this, SLOT(onGuiDateFormatChanged(int)));
+    connect(qmlEngine->rootObjects().first(), SIGNAL(sigTankStorySelected(int)), this, SLOT(onGuiTankStoryLoad(int)));
+
 
     setSettAfterQMLReady();
 
@@ -642,6 +645,29 @@ void AppManager::onGuiActionViewPeriodChanged(int period)
 {
     actionList->setViewPeriod((eActionListView)period);
     getActionCalendarGui();
+}
+
+void AppManager::onGuiTankStoryLoad(int index)
+{
+    getTankStoryList(index);
+
+    QObject *obj = nullptr;
+
+    obj = qmlEngine->rootObjects().first()->findChild<QObject*>("tankStory");
+
+    for (int i = 0; i < tankStoryList.size(); i++)
+    {
+        if (obj != nullptr)
+            QMetaObject::invokeMethod(obj, "addStoryRecord",
+                                      Q_ARG(QVariant, tankStoryList.at(i)->smpId()),
+                                      Q_ARG(QVariant, tankStoryList.at(i)->desc()),
+                                      Q_ARG(QVariant, tankStoryList.at(i)->imgList()),
+                                      Q_ARG(QVariant, tankStoryList.at(i)->dt()));
+
+                                      //Q_ARG(QVariant, QVariant::fromValue(points)));
+        else
+            qDebug() << "tankStory not found!";
+    }
 }
 
 void AppManager::onGuiTankSelected(int tankIdx)

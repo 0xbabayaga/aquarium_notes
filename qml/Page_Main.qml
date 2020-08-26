@@ -7,6 +7,7 @@ import "../"
 Item
 {
     id: page_Main
+    objectName: "page_Main"
 
     function showPage(vis)
     {
@@ -175,7 +176,7 @@ Item
 
             onSigTankStorySelected:
             {
-                app.sigTankStorySelected(currentIndex)
+                //app.sigTankStorySelected(currentIndex)
                 openStoryView(true)
             }
         }
@@ -183,13 +184,15 @@ Item
         TankStoryView
         {
             id: tankStory
+            objectName: "tankStory"
             anchors.fill: parent
             anchors.topMargin: AppTheme.padding * 3 * app.scale
             anchors.bottomMargin: AppTheme.margin * app.scale
             visible: false
-            opacity: 1
+            opacity: 0
 
             onSigTankStoryClose: openStoryView(false)
+            onSigTankStoryLoadIndex: app.sigTankStorySelected(index)
         }
     }
 }

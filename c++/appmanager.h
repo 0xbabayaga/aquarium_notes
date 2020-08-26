@@ -76,6 +76,7 @@ public slots:
     void    onGuiDimensionUnitsChanged(int id);
     void    onGuiVolumeUnitsChanged(int id);
     void    onGuiDateFormatChanged(int id);
+    void    onGuiTankStoryLoad(int index);
 
     void    onPositionDetected();
 

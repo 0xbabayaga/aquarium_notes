@@ -117,6 +117,50 @@ protected:
     QString _desc;
 };
 
+class TankStoryObj : public QObject
+{
+    Q_OBJECT
+
+    Q_PROPERTY(int smpId READ smpId WRITE setSmpId NOTIFY smpIdChanged)
+    Q_PROPERTY(QString desc READ desc WRITE setDesc NOTIFY descChanged)
+    Q_PROPERTY(QString imgList READ imgList WRITE setImgList NOTIFY imgListChanged)
+    Q_PROPERTY(unsigned int dt READ dt WRITE setDt NOTIFY dtChanged)
+
+public:
+    TankStoryObj(QSqlQuery *query)
+    {
+        if (query != nullptr)
+        {
+            _smpId = (char) query->value(query->record().indexOf("SMP_ID")).toInt();
+            _desc = query->value(query->record().indexOf("TEXT")).toString();
+            _imgList = query->value(query->record().indexOf("IMAGELINK")).toString();
+            _dt = query->value(query->record().indexOf("TIMESTAMP")).toInt();
+        }
+    }
+
+    int smpId()                     {   return _smpId;          }
+    QString desc()                  {   return _desc;           }
+    QString imgList()               {   return _imgList;        }
+    unsigned int dt()               {   return _dt;             }
+
+    void setSmpId(int id)           {   _smpId = id;            }
+    void setDesc(QString desc)      {   _desc = desc;           }
+    void setImgList(QString list)   {   _imgList = list;        }
+    void setDt(unsigned int dt)     {   _dt = dt;               }
+
+signals:
+    void smpIdChanged();
+    void descChanged();
+    void imgListChanged();
+    void dtChanged();
+
+protected:
+    int             _smpId;
+    QString         _desc;
+    QString         _imgList;
+    unsigned int    _dt;
+};
+
 class LastDataParamRecObj : public QObject
 {
     Q_OBJECT

@@ -73,6 +73,7 @@ private:
     bool    getActionCalendar();
     bool    getCurrentUser();
     bool    getUserTanksList();
+    bool    getTankStoryList(int id);
 
     bool    getParamIdList(QList<int> *idList);
 
@@ -114,6 +115,7 @@ private:
     QList<QObject*> pointList;
     QList<QObject*> datesList;
     QList<int>      smpIdList;
+    QList<TankStoryObj*> tankStoryList;
 
     /* Currently selected objects */
     UTObj           curSelectedObjs;
