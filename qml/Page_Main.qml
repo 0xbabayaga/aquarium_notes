@@ -28,6 +28,62 @@ Item
         page_TankData.showPage(true, tankParams)
     }
 
+    function openStoryView(isOpen)
+    {
+        if (isOpen === true)
+            openTankStoryViewAnimation.start()
+        else
+            hideTankStoryViewAnimation.start()
+    }
+
+    SequentialAnimation
+    {
+        id: openTankStoryViewAnimation
+
+        NumberAnimation
+        {
+            target: tanksList
+            property: "opacity"
+            from: 1
+            to: 0
+        }
+
+        NumberAnimation
+        {
+            target: tankStory
+            property: "opacity"
+            from: 0
+            to: 1
+        }
+
+        onStarted: tankStory.visible = true
+        onFinished: tanksList.visible = false
+    }
+
+    SequentialAnimation
+    {
+        id: hideTankStoryViewAnimation
+
+        NumberAnimation
+        {
+            target: tankStory
+            property: "opacity"
+            from: 1
+            to: 0
+        }
+
+        NumberAnimation
+        {
+            target: tanksList
+            property: "opacity"
+            from: 0
+            to: 1
+        }
+
+        onStarted: tanksList.visible = true
+        onFinished: tankStory.visible = false
+    }
+
     NumberAnimation
     {
         id: showPageAnimation
@@ -92,7 +148,7 @@ Item
             font.family: AppTheme.fontFamily
             font.pixelSize: AppTheme.fontNormalSize * app.scale
             color: AppTheme.greyColor
-            text: qsTr("USER TANKS")
+            text: qsTr("MY TANKS")
         }
 
         TankListView
@@ -116,6 +172,24 @@ Item
                 app.sigTankSelected(currentIndex)
                 openTankPage()
             }
+
+            onSigTankStorySelected:
+            {
+                app.sigTankStorySelected(currentIndex)
+                openStoryView(true)
+            }
+        }
+
+        TankStoryView
+        {
+            id: tankStory
+            anchors.fill: parent
+            anchors.topMargin: AppTheme.padding * 3 * app.scale
+            anchors.bottomMargin: AppTheme.margin * app.scale
+            visible: false
+            opacity: 1
+
+            onSigTankStoryClose: openStoryView(false)
         }
     }
 }

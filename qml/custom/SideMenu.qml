@@ -326,7 +326,6 @@ Item
                         anchors.fill: buttonImage
                         source: buttonImage
                         color: AppTheme.blueColor
-                        visible: !inverted
                     }
 
                     SequentialAnimation

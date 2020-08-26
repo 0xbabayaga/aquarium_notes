@@ -15,6 +15,7 @@ Item
     signal sigCurrentIndexChanged(int id)
     signal sigDoubleClicked(int id)
     signal sigTankSelected(int id)
+    signal sigTankStorySelected(int id)
 
     Rectangle
     {
@@ -165,6 +166,22 @@ Item
                         {
                             view.currentIndex = index
                             sigTankSelected(view.currentIndex)
+                        }
+                    }
+
+                    IconSimpleButton
+                    {
+                        anchors.left: parent.left
+                        anchors.leftMargin: AppTheme.padding * app.scale
+                        anchors.top: parent.top
+                        anchors.topMargin: AppTheme.padding * app.scale
+                        image: "qrc:/resources/img/icon_app.png"
+                        inverted: true
+
+                        onSigButtonClicked:
+                        {
+                            view.currentIndex = index
+                            sigTankStorySelected(view.currentIndex)
                         }
                     }
                 }

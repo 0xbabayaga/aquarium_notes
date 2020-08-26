@@ -40,6 +40,7 @@ Item
         anchors.left: parent.left
         anchors.right: parent.right
         model:  graphPointsList
+        visible: (graphPointsList.length !== 0)
 
         onSigCurIndexChanged: redraw(id)
     }
@@ -48,7 +49,7 @@ Item
     {
         id: flickableContainer
         anchors.fill: parent
-        anchors.topMargin: pointList.height
+        anchors.topMargin: pointList.height + AppTheme.padding * app.scale
         anchors.bottomMargin: AppTheme.margin * app.scale
         contentHeight: height * 2
         contentWidth: width
@@ -60,6 +61,27 @@ Item
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: parent.top
+        }
+
+        Rectangle
+        {
+            anchors.fill: parent
+            visible: (graphPointsList) ? (graphPointsList.length === 0) : false
+            color: "#00000000"
+
+            Text
+            {
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: -AppTheme.margin * 3 * app.scale
+                horizontalAlignment: Text.AlignHCenter
+                width: 250 * app.scale
+                font.family: AppTheme.fontFamily
+                font.pixelSize: AppTheme.fontNormalSize * app.scale
+                wrapMode: Text.WordWrap
+                color: AppTheme.greyColor
+                text: qsTr("No record found for this aquarium")
+            }
         }
 
         ScrollBar.vertical: ScrollBar
