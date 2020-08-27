@@ -8,8 +8,7 @@ Item
     id: tankStoryView
     width: app.width
 
-    //property alias currentIndex: view.currentIndex
-    property int tankImageHeight: 180
+    property int tankImageHeight: 96
     property int currentViewIndex: 0
 
     signal sigTankStoryClose()
@@ -17,17 +16,12 @@ Item
 
     function addStoryRecord(smpId, desc, imageList, dt)
     {
-        storyModel.append({"smpId": smpId, "desc": desc, "imagesList": imageList, "dt": dt})
+        storyModel.append({"smpId": smpId, "desc": desc, "imgList": imageList, "dt": dt})
     }
 
-    onVisibleChanged: if (visible === true) sigTankStoryLoadIndex(currentViewIndex)
+    onVisibleChanged: if (visible === true) sigTankStoryLoadIndex(0)
 
-    ListModel
-    {
-        id: storyModel
-
-        ListElement {   smpId: 0;  desc: "Default";    imagesList: ""; dt: 1912341239;   }
-    }
+    ListModel { id: storyModel }
 
     Rectangle
     {
@@ -51,62 +45,27 @@ Item
 
             delegate: Rectangle
             {
-                width: parent.width
+                width: view.width
                 height: tankImageHeight
                 color: "#00000000"
 
-                Behavior on height
+                NoteView
                 {
-                    NumberAnimation
+                    id: noteView
+                    anchors.fill: parent
+                    imagesList: imgList
+                    noteText: desc
+                    noteDate: dt
+                }
+
+                MouseArea
+                {
+                    anchors.fill: parent
+                    onClicked:
                     {
-                        duration: 200
-                        easing.type: Easing.OutExpo
+                        view.currentIndex = index
+                        sigTankStoryLoadIndex(index + 1)
                     }
-                }
-
-                Rectangle
-                {
-                    id: rect
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.leftMargin: AppTheme.padding * app.scale
-                    anchors.rightMargin: AppTheme.padding * app.scale
-                    anchors.top: parent.top
-                    color: AppTheme.whiteColor
-                    height: parent.height
-                }
-
-                DropShadow
-                {
-                    anchors.fill: rect
-                    horizontalOffset: 0
-                    verticalOffset: 0
-                    radius: AppTheme.shadowSize * app.scale
-                    samples: AppTheme.shadowSamples
-                    color: AppTheme.shadowColor
-                    source: rect
-                }
-
-                Rectangle
-                {
-                    anchors.fill: rect
-                    color: AppTheme.whiteColor
-
-                    Text
-                    {
-                        anchors.left: parent.left
-                        anchors.leftMargin: AppTheme.padding * app.scale
-                        anchors.top: parent.top
-                        anchors.topMargin: AppTheme.padding * app.scale
-                        text: smpId
-                        font.family: AppTheme.fontFamily
-                        font.pixelSize: AppTheme.fontNormalSize * app.scale
-                        color: AppTheme.blueColor
-                        horizontalAlignment: Text.AlignRight
-                        verticalAlignment: Text.AlignVCenter
-                        height: AppTheme.compHeight * app.scale
-                    }
-
                 }
             }
 

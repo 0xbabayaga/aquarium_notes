@@ -131,7 +131,7 @@ public:
     {
         if (query != nullptr)
         {
-            _smpId = (char) query->value(query->record().indexOf("SMP_ID")).toInt();
+            _smpId = query->value(query->record().indexOf("SMP_ID")).toInt();
             _desc = query->value(query->record().indexOf("TEXT")).toString();
             _imgList = query->value(query->record().indexOf("IMAGELINK")).toString();
             _dt = query->value(query->record().indexOf("TIMESTAMP")).toInt();

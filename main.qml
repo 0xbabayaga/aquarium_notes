@@ -67,7 +67,7 @@ Window
     signal sigAddRecordNotes(int smpId, string note, string imageLink)
     signal sigEditRecordNotes(int smpId, string note, string imageLink)
     signal sigTankSelected(int tankIdx)
-    signal sigTankStorySelected(int tankIdx)
+    signal sigTankStoryLoad(int tankIdx)
     signal sigPersonalParamStateChanged(int paramId, bool en)
     signal sigAddAction(string name, string desc, int type, int period, int dt)
     signal sigEditAction(int id, string name, string desc, int type, int period, int dt)

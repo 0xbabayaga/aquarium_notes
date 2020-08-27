@@ -334,16 +334,23 @@ bool DBManager::getUserTanksList()
 bool DBManager::getTankStoryList(int id)
 {
     bool res = false;
+    int cnt = 0;
     QSqlQuery query("SELECT * FROM HISTORY_NOTES_TABLE WHERE TANK_ID='" + currentTankSelected()->tankId() + "'");
     TankStoryObj *obj = nullptr;
 
     tankStoryList.clear();
 
-    while(query.next())
+    while(query.next() && cnt < (id + 4))
     {
         res = true;
-        obj = new TankStoryObj(&query);
-        tankStoryList.append(obj);
+
+        if (cnt >= id && cnt < (id + 4))
+        {
+            obj = new TankStoryObj(&query);
+            tankStoryList.append(obj);
+        }
+
+        cnt++;
     }
 
     return res;

@@ -11,6 +11,7 @@
 #include <QGuiApplication>
 #include <QTranslator>
 #include <QDirIterator>
+#include <QThread>
 #include "AppDefs.h"
 #include "dbobjects.h"
 #include "position.h"
@@ -94,7 +95,7 @@ AppManager::~AppManager()
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigVolumeUnitsChanged(int)), this, SLOT(onGuiVolumeUnitsChanged(int)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigDateFormatChanged(int)), this, SLOT(onGuiDateFormatChanged(int)));
     disconnect(position, SIGNAL(positionDetected), this, SLOT(onPositionDetected));
-    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigTankStorySelected(int)), this, SLOT(onGuiTankStoryLoad(int)));
+    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigTankStoryLoad(int)), this, SLOT(onGuiTankStoryLoad(int)));
 
     if (position != nullptr)
         delete position;
@@ -131,7 +132,7 @@ void AppManager::init()
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigDimensionUnitsChanged(int)), this, SLOT(onGuiDimensionUnitsChanged(int)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigVolumeUnitsChanged(int)), this, SLOT(onGuiVolumeUnitsChanged(int)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigDateFormatChanged(int)), this, SLOT(onGuiDateFormatChanged(int)));
-    connect(qmlEngine->rootObjects().first(), SIGNAL(sigTankStorySelected(int)), this, SLOT(onGuiTankStoryLoad(int)));
+    connect(qmlEngine->rootObjects().first(), SIGNAL(sigTankStoryLoad(int)), this, SLOT(onGuiTankStoryLoad(int)));
 
 
     setSettAfterQMLReady();
@@ -649,7 +650,15 @@ void AppManager::onGuiActionViewPeriodChanged(int period)
 
 void AppManager::onGuiTankStoryLoad(int index)
 {
+    QDateTime t1, t2;
+
+    t1 = QDateTime::currentDateTime();
+
     getTankStoryList(index);
+
+    t2 = QDateTime::currentDateTime();
+
+    qDebug() << "Done in msec = " << t1.msecsTo(t2);
 
     QObject *obj = nullptr;
 

@@ -129,12 +129,12 @@ Item
             {
                 height = realModelLength() * AppTheme.compHeight * app.scale
 
-                noteView.hide()
+                noteViewDialog.hide()
 
                 if (curValuesListView.model.length > 0)
                 {
-                    noteView.noteText = curValuesListView.model[0].note
-                    noteView.noteImages = curValuesListView.model[0].imgLink
+                    noteViewDialog.noteText = curValuesListView.model[0].note
+                    noteViewDialog.noteImages = curValuesListView.model[0].imgLink
                 }
             }
 
@@ -253,9 +253,9 @@ Item
             }
         }
 
-        NoteView
+        NoteViewDialog
         {
-            id: noteView
+            id: noteViewDialog
             anchors.top: curValuesListView.bottom
             anchors.topMargin: AppTheme.padding * app.scale
             anchors.left: parent.left

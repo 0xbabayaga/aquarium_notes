@@ -47,7 +47,7 @@
         <file>qml/custom/DialogAddParamNote.qml</file>
         <file>resources/img/icon_photo.png</file>
         <file>qml/custom/CheckBoxButton.qml</file>
-        <file>qml/custom/NoteView.qml</file>
+        <file>qml/custom/NoteViewDialog.qml</file>
         <file>resources/img/icon_arrow_down.png</file>
         <file>js/datetimeutility.js</file>
         <file>qml/custom/SideMenu.qml</file>
@@ -63,5 +63,6 @@
         <file>qml/custom/TankListView.qml</file>
         <file>resources/img/icon_menu.png</file>
         <file>qml/custom/TankStoryView.qml</file>
+        <file>qml/custom/NoteView.qml</file>
     </qresource>
 </RCC>

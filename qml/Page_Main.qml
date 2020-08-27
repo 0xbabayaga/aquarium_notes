@@ -192,7 +192,7 @@ Item
             opacity: 0
 
             onSigTankStoryClose: openStoryView(false)
-            onSigTankStoryLoadIndex: app.sigTankStorySelected(index)
+            onSigTankStoryLoadIndex: app.sigTankStoryLoad(index)
         }
     }
 }
