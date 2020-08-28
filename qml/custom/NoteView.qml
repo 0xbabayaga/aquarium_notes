@@ -8,6 +8,7 @@ Item
 {
     id: noteView
     width: app.width
+    height: 300 * app.scale
 
     property string imagesList: ""
     property alias noteText: textNoteDetailed.text
@@ -27,22 +28,23 @@ Item
         if(imagesListModel.count > 0)
         {
             imgCurrent.source = "file:///" + imagesListModel.get(0).fileLink
-            noteView.height = imgCurrent.height + AppTheme.rowHeight * 2 * app.scale
+            //noteView.height = imgCurrent.height + AppTheme.rowHeight * 2 * app.scale
         }
     }
 
     Rectangle
     {
         id: rectNoteDetails
-        anchors.fill: parent
-        clip: true
+        anchors.top: parent.top
+        anchors.left: parent.left
+        width: parent.width
+        height: parent.height
 
         Item
         {
             id: photoFrame
-            anchors.top: parent.top
-            width: parent.width
-            height: parent.height
+            width: rectNoteDetails.width
+            height: rectNoteDetails.height
 
             Image
             {
@@ -56,9 +58,6 @@ Item
                         var sc = sourceSize.width / photoFrame.width
                         photoFrame.height = sourceSize.height / sc
                         photoFrame.scale = 1
-
-                        console.log(photoFrame.width)
-                        console.log(sourceSize.width, sourceSize.height, sc)
 
                         noteView.height = photoFrame.height + AppTheme.rowHeight * 2 * app.scale
 

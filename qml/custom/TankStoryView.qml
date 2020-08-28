@@ -19,6 +19,8 @@ Item
         storyModel.append({"smpId": smpId, "desc": desc, "imgList": imageList, "dt": dt})
     }
 
+    Component.onCompleted: console.log("OnCompleted ", view.width, view.height)
+
     onVisibleChanged: if (visible === true) sigTankStoryLoadIndex(0)
 
     ListModel { id: storyModel }
@@ -43,20 +45,13 @@ Item
             model: storyModel
             clip: true
 
-            delegate: Rectangle
+            delegate: NoteView
             {
+                id: noteView
                 width: view.width
-                height: tankImageHeight
-                color: "#00000000"
-
-                NoteView
-                {
-                    id: noteView
-                    anchors.fill: parent
-                    imagesList: imgList
-                    noteText: desc
-                    noteDate: dt
-                }
+                imagesList: imgList
+                noteText: desc
+                noteDate: dt
 
                 MouseArea
                 {
@@ -68,6 +63,7 @@ Item
                     }
                 }
             }
+
 
             ScrollBar.vertical: ScrollBar
             {
