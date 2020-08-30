@@ -658,7 +658,7 @@ void AppManager::onGuiTankStoryLoad(int index)
 
     t2 = QDateTime::currentDateTime();
 
-    qDebug() << "Done in msec = " << t1.msecsTo(t2);
+    qDebug() << "#" << index << "Done in msec = " << t1.msecsTo(t2);
 
     QObject *obj = nullptr;
 
@@ -671,9 +671,8 @@ void AppManager::onGuiTankStoryLoad(int index)
                                       Q_ARG(QVariant, tankStoryList.at(i)->smpId()),
                                       Q_ARG(QVariant, tankStoryList.at(i)->desc()),
                                       Q_ARG(QVariant, tankStoryList.at(i)->imgList()),
-                                      Q_ARG(QVariant, tankStoryList.at(i)->dt()));
-
-                                      //Q_ARG(QVariant, QVariant::fromValue(points)));
+                                      Q_ARG(QVariant, tankStoryList.at(i)->dt()),
+                                      Q_ARG(QVariant, QVariant::fromValue(*tankStoryList.at(i)->paramsMap())));
         else
             qDebug() << "tankStory not found!";
     }

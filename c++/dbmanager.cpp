@@ -337,6 +337,7 @@ bool DBManager::getTankStoryList(int id)
     int cnt = 0;
     QSqlQuery query("SELECT * FROM HISTORY_NOTES_TABLE WHERE TANK_ID='" + currentTankSelected()->tankId() + "'");
     TankStoryObj *obj = nullptr;
+    QVariantMap params;
 
     tankStoryList.clear();
 
@@ -344,9 +345,17 @@ bool DBManager::getTankStoryList(int id)
     {
         res = true;
 
-        if (cnt >= id && cnt < (id + 4))
+        if (cnt >= id)
         {
-            obj = new TankStoryObj(&query);
+            QSqlQuery queryParams("SELECT PARAM_ID, VALUE FROM HISTORY_VALUE_TABLE WHERE SMP_ID='" + QString::number(query.value(query.record().indexOf("SMP_ID")).toInt()) + "'");
+
+            params.clear();
+
+            while (queryParams.next())
+               params.insert(QString::number(queryParams.value(0).toInt()), queryParams.value(1).toFloat());
+
+
+            obj = new TankStoryObj(&query, &params);
             tankStoryList.append(obj);
         }
 

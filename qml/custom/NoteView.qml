@@ -13,12 +13,19 @@ Item
     property string imagesList: ""
     property alias noteText: textNoteDetailed.text
     property alias noteDate: textNoteDate.text
+    property var parameters: []
 
     ListModel { id: imagesListModel }
+    ListModel { id: paramsModel }
+
+    Behavior on height { NumberAnimation { duration: 200 } }
 
     onImagesListChanged:
     {
         imagesListModel.clear()
+        paramsModel.clear()
+
+        console.log("Changeds = ", noteDate, imagesList)
 
         var imgs = imagesList.split(";")
 
@@ -28,8 +35,12 @@ Item
         if(imagesListModel.count > 0)
         {
             imgCurrent.source = "file:///" + imagesListModel.get(0).fileLink
-            //noteView.height = imgCurrent.height + AppTheme.rowHeight * 2 * app.scale
+            imgCurrent.height = 0
+            noteView.height = textNoteDetailed.contentHeight + AppTheme.rowHeight * 2 * app.scale
         }
+
+        for (var pt in params)
+            paramsModel.append({"name": app.getParamById(parseInt(pt)).shortName, "value": parseFloat(params[pt]), "unit": app.getParamById(parseInt(pt)).unitName })
     }
 
     Rectangle
@@ -40,91 +51,22 @@ Item
         width: parent.width
         height: parent.height
 
-        Item
+        Image
         {
-            id: photoFrame
-            width: rectNoteDetails.width
-            height: rectNoteDetails.height
+            id: imgCurrent
+            width: parent.width
+            mipmap: true
+            fillMode: Image.PreserveAspectFit
 
-            Image
+            Behavior on height { NumberAnimation { duration: 200 } }
+
+            onStatusChanged:
             {
-                id: imgCurrent
-                anchors.fill: parent
-
-                onStatusChanged:
+                if (status == Image.Ready)
                 {
-                    if (status == Image.Ready)
-                    {
-                        var sc = sourceSize.width / photoFrame.width
-                        photoFrame.height = sourceSize.height / sc
-                        photoFrame.scale = 1
-
-                        noteView.height = photoFrame.height + AppTheme.rowHeight * 2 * app.scale
-
-                    }
-                }
-            }
-
-            PinchArea
-            {
-                anchors.fill: parent
-                pinch.target: photoFrame
-                pinch.minimumRotation: 0
-                pinch.maximumRotation: 0
-                pinch.minimumScale: 1
-                pinch.maximumScale: 4
-
-                onPinchUpdated:
-                {
-                    if(photoFrame.x < dragArea.drag.minimumX)
-                        photoFrame.x = dragArea.drag.minimumX
-                    else if(photoFrame.x > dragArea.drag.maximumX)
-                        photoFrame.x = dragArea.drag.maximumX
-
-                    if(photoFrame.y < dragArea.drag.minimumY)
-                        photoFrame.y = dragArea.drag.minimumY
-                    else if(photoFrame.y > dragArea.drag.maximumY)
-                        photoFrame.y = dragArea.drag.maximumY
-                }
-
-                MouseArea
-                {
-                    id: dragArea
-                    hoverEnabled: true
-                    anchors.fill: parent
-                    drag.target: photoFrame
-                    scrollGestureEnabled: false
-                    drag.minimumX: (rectNoteDetails.width - (photoFrame.width * photoFrame.scale))/2
-                    drag.maximumX: -(rectNoteDetails.width - (photoFrame.width * photoFrame.scale))/2
-                    drag.minimumY: (rectNoteDetails.height - (photoFrame.height * photoFrame.scale))/2
-                    drag.maximumY: -(rectNoteDetails.height - (photoFrame.height * photoFrame.scale))/2
-
-                    onDoubleClicked:
-                    {
-                        photoFrame.x = 0
-                        photoFrame.y = 0
-                        photoFrame.scale = 1
-                    }
-
-                    onWheel:
-                    {
-                        var scaleBefore = photoFrame.scale
-                        photoFrame.scale += photoFrame.scale * wheel.angleDelta.y / 120 / 10
-                        if(photoFrame.scale < 1)
-                            photoFrame.scale = 1
-                        else if(photoFrame.scale > 4)
-                            photoFrame.scale = 4
-
-                        if(photoFrame.x < drag.minimumX)
-                            photoFrame.x = drag.minimumX
-                        else if(photoFrame.x > drag.maximumX)
-                            photoFrame.x = drag.maximumX
-
-                        if(photoFrame.y < drag.minimumY)
-                            photoFrame.y = drag.minimumY
-                        else if(photoFrame.y > drag.maximumY)
-                            photoFrame.y = drag.maximumY
-                    }
+                    var sc = sourceSize.width / imgCurrent.width
+                    imgCurrent.height = sourceSize.height / sc
+                    noteView.height = sourceSize.height / sc + textNoteDetailed.contentHeight + AppTheme.rowHeight * 2 * app.scale
                 }
             }
         }
@@ -132,8 +74,8 @@ Item
         ListView
         {
             id: imagesPreviewList
-            anchors.top: photoFrame.bottom
-            anchors.topMargin: AppTheme.padding * app.scale + (photoFrame.scale - 1) * photoFrame.height / 2
+            anchors.top: imgCurrent.bottom
+            anchors.topMargin: AppTheme.padding * app.scale
             anchors.horizontalCenter: parent.horizontalCenter
             width: imagesListModel.count * (AppTheme.compHeight + AppTheme.padding / 2) * app.scale
             height: AppTheme.compHeight * app.scale
