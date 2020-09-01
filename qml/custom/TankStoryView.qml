@@ -26,28 +26,10 @@ Item
 
     Rectangle
     {
-        id: rectContainer
         anchors.fill: parent
         anchors.leftMargin: AppTheme.padding * app.scale
         anchors.rightMargin: AppTheme.padding * app.scale
         color: AppTheme.whiteColor
-    }
-
-    DropShadow
-    {
-        anchors.fill: rectContainer
-        horizontalOffset: 0
-        verticalOffset: -AppTheme.shadowOffset * app.scale
-        radius: AppTheme.shadowSize * app.scale
-        samples: AppTheme.shadowSamples * app.scale
-        color: AppTheme.shadowColor
-        source: rectContainer
-    }
-
-    Rectangle
-    {
-        anchors.fill: rectContainer
-        color: "#00000000"
 
         MouseArea
         {
@@ -72,13 +54,13 @@ Item
                 noteText: desc
                 noteDate: (new DateTimeUtils.DateTimeUtil()).printFullDate(dt)
                 parameters: params
+                isFirstOnList: (index === 0)
             }
 
             onAtYEndChanged:
             {
                 sigTankStoryLoadIndex(view.model.count)
             }
-
 
             ScrollBar.vertical: ScrollBar
             {
@@ -91,8 +73,8 @@ Item
 
                 contentItem: Rectangle
                 {
-                    implicitWidth: 2
-                    implicitHeight: 100
+                    implicitWidth: 2 * app.scale
+                    implicitHeight: AppTheme.rowHeight * app.scale
                     radius: width / 2
                     color: AppTheme.hideColor
                 }

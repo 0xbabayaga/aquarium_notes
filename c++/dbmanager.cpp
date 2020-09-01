@@ -335,7 +335,8 @@ bool DBManager::getTankStoryList(int id)
 {
     bool res = false;
     int cnt = 0;
-    QSqlQuery query("SELECT * FROM HISTORY_NOTES_TABLE WHERE TANK_ID='" + currentTankSelected()->tankId() + "'");
+    QSqlQuery query("SELECT * FROM HISTORY_NOTES_TABLE WHERE TANK_ID='" + currentTankSelected()->tankId() + "' "
+                    "ORDER BY TIMESTAMP DESC");
     TankStoryObj *obj = nullptr;
     QVariantMap params;
 
