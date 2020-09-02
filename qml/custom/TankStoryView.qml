@@ -26,9 +26,27 @@ Item
 
     Rectangle
     {
+        id: rectHeaderShadow
         anchors.fill: parent
         anchors.leftMargin: AppTheme.padding * app.scale
         anchors.rightMargin: AppTheme.padding * app.scale
+        color: AppTheme.whiteColor
+    }
+
+    DropShadow
+    {
+        anchors.fill: rectHeaderShadow
+        horizontalOffset: 0
+        verticalOffset: -AppTheme.shadowOffset * app.scale
+        radius: AppTheme.shadowSize * app.scale
+        samples: AppTheme.shadowSamples * app.scale
+        color: AppTheme.shadowColor
+        source: rectHeaderShadow
+    }
+
+    Rectangle
+    {
+        anchors.fill: rectHeaderShadow
         color: AppTheme.whiteColor
 
         MouseArea
@@ -37,10 +55,22 @@ Item
             onClicked: sigTankStoryClose()
         }
 
+        IconSimpleButton
+        {
+            anchors.top: parent.top
+            anchors.topMargin: AppTheme.padding / 2 * app.scale
+            anchors.left: parent.left
+            anchors.leftMargin: AppTheme.padding/2 * app.scale
+            image: "qrc:/resources/img/icon_arrow_left.png"
+
+            onSigButtonClicked: sigTankStoryClose()
+        }
+
         ListView
         {
             id: view
             anchors.fill: parent
+            anchors.topMargin: AppTheme.rowHeight * app.scale
             orientation: ListView.Vertical
             model: storyModel
             clip: true
@@ -67,9 +97,11 @@ Item
                 policy: ScrollBar.AlwaysOn
                 parent: view.parent
                 anchors.top: view.top
+                anchors.topMargin: AppTheme.compHeight * app.scale
                 anchors.left: view.right
-                anchors.leftMargin: -AppTheme.margin / 3 * app.scale
+                anchors.leftMargin: AppTheme.padding / 4 * app.scale
                 anchors.bottom: view.bottom
+                anchors.bottomMargin: AppTheme.compHeight * app.scale
 
                 contentItem: Rectangle
                 {

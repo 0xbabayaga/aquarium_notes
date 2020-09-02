@@ -8,7 +8,7 @@ Item
 {
     id: noteView
     width: app.width
-    height: imgCurrent.height + textNoteDetailed.contentHeight + AppTheme.rowHeight * 4 * app.scale
+    height: imgCurrent.height + textNoteDetailed.contentHeight + AppTheme.rowHeight * 3 * app.scale
 
     property string imagesList: ""
     property alias noteText: textNoteDetailed.text

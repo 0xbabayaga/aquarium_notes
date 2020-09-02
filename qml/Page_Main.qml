@@ -150,6 +150,7 @@ Item
             font.pixelSize: AppTheme.fontNormalSize * app.scale
             color: AppTheme.greyColor
             text: qsTr("MY TANKS")
+            visible: false
         }
 
         TankListView
