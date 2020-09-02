@@ -49,28 +49,10 @@ Item
         anchors.fill: rectHeaderShadow
         color: AppTheme.whiteColor
 
-        MouseArea
-        {
-            anchors.fill: parent
-            onClicked: sigTankStoryClose()
-        }
-
-        IconSimpleButton
-        {
-            anchors.top: parent.top
-            anchors.topMargin: AppTheme.padding / 2 * app.scale
-            anchors.left: parent.left
-            anchors.leftMargin: AppTheme.padding/2 * app.scale
-            image: "qrc:/resources/img/icon_arrow_left.png"
-
-            onSigButtonClicked: sigTankStoryClose()
-        }
-
         ListView
         {
             id: view
             anchors.fill: parent
-            anchors.topMargin: AppTheme.rowHeight * app.scale
             orientation: ListView.Vertical
             model: storyModel
             clip: true

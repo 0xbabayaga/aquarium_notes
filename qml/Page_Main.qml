@@ -32,9 +32,15 @@ Item
     function openStoryView(isOpen)
     {
         if (isOpen === true)
+        {
             openTankStoryViewAnimation.start()
+            textUserTankName.text = tanksListModel[tanksList.currentIndex].name + " " + qsTr("story")
+        }
         else
+        {
+            textUserTankName.text = ""
             hideTankStoryViewAnimation.start()
+        }
     }
 
     SequentialAnimation
@@ -150,7 +156,26 @@ Item
             font.pixelSize: AppTheme.fontNormalSize * app.scale
             color: AppTheme.greyColor
             text: qsTr("MY TANKS")
-            visible: false
+
+            MouseArea
+            {
+                anchors.fill: parent
+                onClicked: openStoryView(false)
+            }
+        }
+
+        Text
+        {
+            id: textUserTankName
+            anchors.top: parent.top
+            anchors.topMargin: AppTheme.padding * app.scale
+            anchors.right: parent.right
+            anchors.rightMargin: AppTheme.padding * app.scale
+            verticalAlignment: Text.AlignVCenter
+            font.family: AppTheme.fontFamily
+            font.pixelSize: AppTheme.fontNormalSize * app.scale
+            color: AppTheme.blueFontColor
+            text: ""
         }
 
         TankListView
