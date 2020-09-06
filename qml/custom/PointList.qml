@@ -44,6 +44,7 @@ Item
             id: view
             anchors.fill: parent
             orientation: ListView.Horizontal
+            maximumFlickVelocity: 10000
             clip: true
 
             property int cellWidth: 70 * app.scale
@@ -51,8 +52,6 @@ Item
             highlightRangeMode: ListView.StrictlyEnforceRange
             preferredHighlightBegin: (width - cellWidth) / 2
             preferredHighlightEnd: (width + cellWidth) / 2
-
-            onCurrentIndexChanged: sigCurIndexChanged(currentIndex)
 
             delegate: Component
             {
@@ -75,7 +74,11 @@ Item
                         MouseArea
                         {
                             anchors.fill: parent
-                            onClicked: view.currentIndex = index
+                            onClicked:
+                            {
+                                view.currentIndex = index
+                                sigCurIndexChanged(currentIndex)
+                            }
                         }
                     }
                 }

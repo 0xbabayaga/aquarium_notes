@@ -262,7 +262,7 @@ Item
             anchors.right: parent.right
             height: (AppTheme.rowHeight + AppTheme.compHeight) * app.scale
 
-            noteDate: (curValuesListView.model.length > 0) ? (new DateTimeUtils.DateTimeUtil()).printFullDate(curValuesListView.model[0].dtNow) : ""
+            noteDate: (curValuesListView.model.length > 0) ? (new DateTimeUtils.DateTimeUtil()).printShortDate(curValuesListView.model[0].dtNow) : ""
             noteText: (curValuesListView.model.length > 0) ? curValuesListView.model[0].note : ""
             noteImages: (curValuesListView.model.length > 0 && curValuesListView.model[0].imgLink.length > 0) ? curValuesListView.model[0].imgLink : ""
         }

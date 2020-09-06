@@ -34,7 +34,7 @@ Item
         if (isOpen === true)
         {
             openTankStoryViewAnimation.start()
-            textUserTankName.text = tanksListModel[tanksList.currentIndex].name + " " + qsTr("story")
+            textUserTankName.text = tanksListModel[tanksList.currentIndex].name
         }
         else
         {
@@ -160,7 +160,7 @@ Item
             MouseArea
             {
                 anchors.fill: parent
-                onClicked: openStoryView(false)
+                onClicked: if (tankStory.opacity === 1) openStoryView(false)
             }
         }
 
@@ -169,13 +169,33 @@ Item
             id: textUserTankName
             anchors.top: parent.top
             anchors.topMargin: AppTheme.padding * app.scale
-            anchors.right: parent.right
-            anchors.rightMargin: AppTheme.padding * app.scale
+            anchors.right: textStory.left
+            anchors.rightMargin: AppTheme.padding/2 * app.scale
             verticalAlignment: Text.AlignVCenter
             font.family: AppTheme.fontFamily
             font.pixelSize: AppTheme.fontNormalSize * app.scale
             color: AppTheme.blueFontColor
             text: ""
+
+            opacity: textUserTankName.text.length > 0 ? 1 : 0
+            Behavior on opacity { NumberAnimation { duration: 200 } }
+        }
+
+        Text
+        {
+            id: textStory
+            anchors.top: parent.top
+            anchors.topMargin: AppTheme.padding * app.scale
+            anchors.right: parent.right
+            anchors.rightMargin: AppTheme.padding * app.scale
+            verticalAlignment: Text.AlignVCenter
+            font.family: AppTheme.fontFamily
+            font.pixelSize: AppTheme.fontNormalSize * app.scale
+            color: AppTheme.greyColor
+            text: qsTr("story")
+
+            opacity: textUserTankName.text.length > 0 ? 1 : 0
+            Behavior on opacity { NumberAnimation { duration: 200 } }
         }
 
         TankListView
@@ -183,7 +203,6 @@ Item
             id: tanksList
             anchors.fill: parent
             anchors.topMargin: AppTheme.padding * 3 * app.scale
-            anchors.bottomMargin: AppTheme.margin * app.scale
             model: tanksListModel
 
             onSigCurrentIndexChanged: app.sigTankSelected(currentIndex)
@@ -213,7 +232,7 @@ Item
             objectName: "tankStory"
             anchors.fill: parent
             anchors.topMargin: AppTheme.padding * 3 * app.scale
-            anchors.bottomMargin: AppTheme.margin * app.scale
+            anchors.bottomMargin: AppTheme.padding * app.scale
             visible: false
             opacity: 0
 

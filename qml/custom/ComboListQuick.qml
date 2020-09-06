@@ -158,7 +158,7 @@ Item
             anchors.rightMargin: AppTheme.padding * app.scale
             anchors.verticalCenter: parent.verticalCenter
             height: AppTheme.rowHeight * 2 * app.scale + AppTheme.compHeight * app.scale * listView.model.count
-            radius: AppTheme.radius * 2 * app.scale
+            radius: AppTheme.radius / 2 * app.scale
             color: AppTheme.whiteColor
         }
 
@@ -167,16 +167,16 @@ Item
             anchors.fill: rectShadow
             horizontalOffset: 0
             verticalOffset: -3
-            radius: 16.0 * app.scale
-            samples: 16
-            color: "#20000000"
+            radius: AppTheme.shadowSize * app.scale
+            samples: AppTheme.shadowSamples * app.scale
+            color: AppTheme.shadowColor
             source: rectShadow
         }
 
         Rectangle
         {
             anchors.fill: rectShadow
-            radius: AppTheme.radius * 2 * app.scale
+            radius: AppTheme.radius / 2 * app.scale
             color: AppTheme.whiteColor
             clip: true
 

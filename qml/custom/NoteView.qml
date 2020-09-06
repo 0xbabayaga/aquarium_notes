@@ -114,7 +114,7 @@ Item
 
             delegate: Rectangle
             {
-                width: (valuesListView.width - AppTheme.padding / 2 * app.scale * (valuesModel.count + 1)) / valuesModel.count
+                width: (valuesListView.width - AppTheme.padding / 2 * app.scale * valuesModel.count) / valuesModel.count
                 height: valuesListView.height
                 color: AppTheme.whiteColor
 
@@ -168,6 +168,7 @@ Item
                 image: "qrc:/resources/img/icon_arrow_right.png"
                 inverted: true
                 visible: (imagesListModel.count > 1)
+                opacity: 0.5
 
                 onSigButtonClicked:
                 {
@@ -175,6 +176,27 @@ Item
                         imagesPreviewList.currentIndex++
                     else
                         imagesPreviewList.currentIndex = 0
+
+                    loadImage(imagesPreviewList.currentIndex)
+                }
+            }
+
+            IconSimpleButton
+            {
+                anchors.left: parent.left
+                anchors.leftMargin: AppTheme.padding/2 * app.scale
+                anchors.verticalCenter: parent.verticalCenter
+                image: "qrc:/resources/img/icon_arrow_left.png"
+                inverted: true
+                visible: (imagesListModel.count > 1)
+                opacity: 0.5
+
+                onSigButtonClicked:
+                {
+                    if (imagesPreviewList.currentIndex > 0)
+                        imagesPreviewList.currentIndex--
+                    else
+                        imagesPreviewList.currentIndex = imagesListModel.count - 1
 
                     loadImage(imagesPreviewList.currentIndex)
                 }
@@ -201,7 +223,7 @@ Item
                 height: width
                 radius: width / 2
                 scale: (index === imagesPreviewList.currentIndex) ? 1.5 : 1
-                color: AppTheme.greyColor
+                color: (imagesPreviewList.currentIndex === index) ? AppTheme.greyColor : AppTheme.hideColor
 
                 Behavior on scale { NumberAnimation { duration: 200 } }
 

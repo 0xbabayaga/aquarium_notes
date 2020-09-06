@@ -21,16 +21,20 @@ Item
     function redraw(selectedPoint)
     {
         diagrams.setCurrentPoint(selectedPoint)
-    }
-
-    function drawDiagrams()
-    {
+        pointList.currentIndex = selectedPoint
     }
 
     function addDiagram(num, paramId, xMin, xMax, yMin, yMax, points)
     {
         diagrams.add(paramId, tab_Graph.graphHeight, xMin, xMax, yMin, yMax, points)
         flickableContainer.contentHeight = diagrams.currentCnt * tab_Graph.graphHeight
+    }
+
+    onVisibleChanged:
+    {
+        if (visible === true)
+            if (graphPointsList.length > 0)
+                pointList.currentIndex = graphPointsList.length - 1
     }
 
     PointList

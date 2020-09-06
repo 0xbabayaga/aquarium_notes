@@ -12,8 +12,10 @@ TEMPLATE = app
 
 SOURCES += \
         c++/actionlist.cpp \
+        c++/androidnotification.cpp \
         c++/appmanager.cpp \
         c++/dbmanager.cpp \
+        c++/jnimanager.cpp \
         c++/position.cpp \
         main.cpp
 
@@ -29,13 +31,15 @@ MOBILITY =
 
 DISTFILES += \
     android/AndroidManifest.xml \
-#    android/build.gradle \
-#    android/gradle/wrapper/gradle-wrapper.jar \
-#    android/gradle/wrapper/gradle-wrapper.properties \
-#    android/gradlew \
-#    android/gradlew.bat \
-#    android/res/values/libs.xml \
-    android/src/org/tikava/AquariumNotes/AquariumNotes.java
+    android/build.gradle \
+    android/gradle/wrapper/gradle-wrapper.jar \
+    android/gradle/wrapper/gradle-wrapper.properties \
+    android/gradlew \
+    android/gradlew.bat \
+    android/res/values/libs.xml \
+    android/src/org/tikava/AquariumNotes/ActionTaskBackground.java \
+    android/src/org/tikava/AquariumNotes/AquariumNotes.java \
+    android/src/org/tikava/AquariumNotes/AquariumNotesNotification.java
     qml/qmldir \
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
@@ -43,10 +47,12 @@ ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 HEADERS += \
     c++/AppDefs.h \
     c++/actionlist.h \
+    c++/androidnotification.h \
     c++/appmanager.h \
     c++/dbmanager.h \
     c++/dbobjects.h \
     c++/galleryobjects.h \
+    c++/jnimanager.h \
     c++/position.h
 
 #contains(ANDROID_TARGET_ARCH,armeabi-v7a) {

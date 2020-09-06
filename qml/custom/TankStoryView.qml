@@ -53,6 +53,7 @@ Item
         {
             id: view
             anchors.fill: parent
+            anchors.topMargin: AppTheme.padding / 2 * app.scale
             orientation: ListView.Vertical
             model: storyModel
             clip: true

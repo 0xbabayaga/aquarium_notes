@@ -83,7 +83,7 @@ Item
                 anchors.horizontalCenter: parent.horizontalCenter
                 width: parent.width - AppTheme.margin * app.scale
                 height: 240 * app.scale - AppTheme.margin * app.scale
-                radius: AppTheme.radius * app.scale
+                radius: AppTheme.radius / 2 * app.scale
                 color: AppTheme.whiteColor
 
                 Text

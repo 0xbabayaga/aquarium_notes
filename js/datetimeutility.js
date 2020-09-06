@@ -29,6 +29,22 @@ function DateTimeUtil(tm)
     this.tm = tm
 }
 
+DateTimeUtil.prototype.printShortDate = function(tm)
+{
+    var date = new Date(tm * 1000)
+    var day = "0" + date.getDate()
+    var formattedDate = ''
+
+    if (app.global_DATEFORMAT === AppDefs.AppDefs.DateFormat_MM_DD_YYYY)
+        formattedDate = months[date.getMonth()].slice(0,3).toUpperCase() + ' ' + day.substr(-2) + ' ' + date.getFullYear()
+    else if (app.global_DATEFORMAT === AppDefs.AppDefs.DateFormat_YYYY_MM_DD)
+        formattedDate = date.getFullYear() + ' ' + months[date.getMonth()].slice(0,3).toUpperCase() + ' ' + day.substr(-2)
+    else if (app.global_DATEFORMAT === AppDefs.AppDefs.DateFormat_DD_MM_YYYY)
+        formattedDate = day.substr(-2) + ' ' + months[date.getMonth()].slice(0,3).toUpperCase() + ' ' + date.getFullYear()
+
+    return formattedDate
+}
+
 DateTimeUtil.prototype.printDate = function(tm)
 {
     var date = new Date(tm * 1000)

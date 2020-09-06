@@ -171,23 +171,41 @@ Item
 
         Rectangle
         {
-            color: "#00000000"
             anchors.fill: parent
+            color: AppTheme.backHideColor
 
             Rectangle
             {
                 anchors.fill: parent
                 anchors.topMargin: yOffset
-                color: "#ffffffff"
-                clip: true
+                color: AppTheme.whiteColor
+                //clip: true
 
                 Rectangle
                 {
+                    id: rectHeaderShadow
                     anchors.fill: parent
+                    color: AppTheme.whiteColor
+                }
+
+                DropShadow
+                {
+                    anchors.fill: rectHeaderShadow
+                    horizontalOffset: 0
+                    verticalOffset: -AppTheme.shadowOffset * app.scale
+                    radius: AppTheme.shadowSize * app.scale
+                    samples: AppTheme.shadowSamples * app.scale
+                    color: AppTheme.shadowColor
+                    source: rectHeaderShadow
+                }
+
+                Rectangle
+                {
+                    anchors.fill: rectHeaderShadow
                     anchors.leftMargin: AppTheme.margin * app.scale
                     anchors.rightMargin: AppTheme.margin * app.scale
                     anchors.topMargin: AppTheme.margin * app.scale
-                    color: "#00000000"
+                    color: AppTheme.whiteColor
 
                     Text
                     {

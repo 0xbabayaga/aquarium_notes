@@ -45,7 +45,7 @@ private:
     /* Gui diagram drawing */
     void    clearDiagrams();
     void    addDiagram(int num, int paramId, int xMin, int xMax, float yMin, float yMax, QVariantMap points);
-    void    drawDiagrams();
+    void    drawDiagrams(int selectedPoint);
 
     /* App settings */
     void    readAppSett();

@@ -11,6 +11,7 @@ Item
     property alias model: view.model
     property alias currentIndex: view.currentIndex
     property int tankImageHeight: 180
+    property bool isDetailed: false
 
     signal sigCurrentIndexChanged(int id)
     signal sigDoubleClicked(int id)
@@ -26,6 +27,7 @@ Item
         {
             id: view
             anchors.fill: parent
+            anchors.bottomMargin: AppTheme.padding * app.scale
             orientation: ListView.Vertical
             spacing: AppTheme.margin * app.scale
             clip: true
@@ -33,7 +35,7 @@ Item
             delegate: Rectangle
             {
                 width: parent.width
-                height: (index === view.currentIndex) ? (tankListView.tankImageHeight * app.scale + (currParamTable.realModelLength() * AppTheme.compHeight + AppTheme.rowHeightMin + AppTheme.padding/2) * app.scale) : tankListView.tankImageHeight * app.scale
+                height: (index === view.currentIndex) ? (((tankListView.tankImageHeight + currParamTable.realModelLength() * AppTheme.compHeight + AppTheme.rowHeightMin + AppTheme.padding/2) * app.scale)) : tankListView.tankImageHeight * app.scale
                 color: "#00000000"
 
                 Behavior on height
@@ -149,6 +151,7 @@ Item
                         onClicked:
                         {
                             view.currentIndex = index
+                            tankListView.isDetailed = false
                             sigCurrentIndexChanged(currentIndex)
                         }
                     }
@@ -165,6 +168,7 @@ Item
                         onSigButtonClicked:
                         {
                             view.currentIndex = index
+                            tankListView.isDetailed = false
                             sigTankSelected(view.currentIndex)
                         }
                     }
@@ -182,6 +186,7 @@ Item
                         {
                             view.currentIndex = index
                             sigTankStorySelected(view.currentIndex)
+                            tankListView.isDetailed = true
                         }
                     }
                 }

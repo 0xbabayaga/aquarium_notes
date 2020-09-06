@@ -33,6 +33,7 @@ const static QMap<QString, QString> langNamesMap =
 
 #ifdef  Q_OS_ANDROID
 #include <QtAndroidExtras>
+#include <QAndroidIntent>
 const static QStringList permissions = { "android.permission.READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE" };
 #endif
 
@@ -66,6 +67,15 @@ AppManager::AppManager(QQmlApplicationEngine *engine, QObject *parent) : DBManag
     position = new Position();
 
     connect(position, SIGNAL(positionDetected()), this, SLOT(onPositionDetected()));
+
+#ifdef  Q_OS_ANDROID
+    QAndroidIntent serviceIntent(QtAndroid::androidActivity().object(),
+                                        "org/tikava/AquariumNotes/ActionTaskBackground");
+    QAndroidJniObject result = QtAndroid::androidActivity().callObjectMethod(
+                "startService",
+                "(Landroid/content/Intent;)Landroid/content/ComponentName;",
+                serviceIntent.handle().object());
+#endif
 }
 
 AppManager::~AppManager()
@@ -344,6 +354,7 @@ bool AppManager::getHistoryParams()
     QList<int> idList;
     QVariantMap points;
     QList<QVariantMap> curveList;
+    int pointCntMax = 0;
     int xMin = INT_MAX, xMax = INT_MIN;
     float yMin = __FLT_MAX__, yMax = __FLT_MIN__;
 
@@ -373,6 +384,9 @@ bool AppManager::getHistoryParams()
 
             points.insert(QString::number(qParams.value(2).toInt()), qParams.value(1).toFloat());
         }
+
+        if (points.size() > pointCntMax)
+            pointCntMax = points.size();
 
         curveList.append(points);
     }
@@ -423,7 +437,7 @@ bool AppManager::getHistoryParams()
         addDiagram(0, idList.at(i), xMin, xMax, yMin, yMax, curveList.at(i));
     }
 
-    drawDiagrams();
+    drawDiagrams(pointCntMax - 1);
 
     qmlEngine->rootContext()->setContextProperty("graphPointsList", QVariant::fromValue(pointList));
 
@@ -514,14 +528,14 @@ void AppManager::addDiagram(int num, int paramId, int xMin, int xMax, float yMin
         qDebug() << "tab_Graph not found!";
 }
 
-void AppManager::drawDiagrams()
+void AppManager::drawDiagrams(int selectedPoint)
 {
     QObject *obj = nullptr;
 
     obj = qmlEngine->rootObjects().first()->findChild<QObject*>("tab_Graph");
 
     if (obj != nullptr)
-        QMetaObject::invokeMethod(obj, "drawDiagrams");
+        QMetaObject::invokeMethod(obj, "redraw", Q_ARG(QVariant, selectedPoint));
 }
 
 void AppManager::onQmlEngineLoaded(QObject *object, const QUrl &url)
