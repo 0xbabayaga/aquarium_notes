@@ -7,7 +7,7 @@
 #include "c++/appmanager.h"
 #include "c++/AppDefs.h"
 #include "c++/androidnotification.h"
-//#include "c++/jnimanager.h"
+#include "c++/jnimanager.h"
 
 int main(int argc, char *argv[])
 {
@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
         }, Qt::QueuedConnection);
 
 
-        //JNIManager *jni = new JNIManager();
+        JNIManager *jni = new JNIManager();
         AppManager *appMan = new AppManager(&engine);
 
         engine.load(url);
@@ -63,12 +63,6 @@ int main(int argc, char *argv[])
     else
     {
         qDebug() << "SERVICE STARTED";
-        QAndroidService app(argc, argv);
-
-
-        AndroidNotification *notify = new AndroidNotification();
-        notify->setNotification("Lala bla");
-        notify->updateAndroidNotification();
 
 
         return app.exec();

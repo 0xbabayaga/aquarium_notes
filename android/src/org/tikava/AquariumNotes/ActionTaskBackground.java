@@ -8,11 +8,14 @@ import java.lang.Thread;
 import org.qtproject.qt5.android.bindings.QtService;
 import android.util.Log;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+
+
 public class ActionTaskBackground extends QtService
 {
     private static final String TAG = "ActionTaskBackground";
-
-    //private static native void callFromJava(String message);
+    private static native void callFromJava(String message);
 
     @Override
     public void onCreate()
@@ -26,13 +29,13 @@ public class ActionTaskBackground extends QtService
     {
         int ret = super.onStartCommand(intent, flags, startId);
         Log.i("Service", "onStartCommand()");
-/*
+
         try
         {
             while (true)
             {
                 Thread.sleep(5000);
-                //callFromJava("Hello from JAVA!");
+                callFromJava("Hello from JAVA!");
                 Log.i("Service", "waked up");
             }
         }
@@ -40,10 +43,12 @@ public class ActionTaskBackground extends QtService
         {
             e.printStackTrace();
         }
-    */
+
 
         return ret;
     }
+
+
 
     @Override
     public IBinder onBind(Intent intent)
