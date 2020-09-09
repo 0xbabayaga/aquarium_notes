@@ -17,13 +17,15 @@ import android.app.PendingIntent;
 import android.graphics.Color;
 import android.graphics.BitmapFactory;
 import android.app.Activity;
-
+import android.os.CountDownTimer;
 
 public class ActionTaskBackground extends QtService
 {
     private static final String TAG = "ActionTaskBackground";
     private static native void callFromJava(String message);
     private static Context context;
+    static long TIME_LIMIT = 10000;
+    CountDownTimer Count;
 
     private static NotificationManager m_notificationManager;
     private static Notification.Builder m_builder;
@@ -45,46 +47,46 @@ public class ActionTaskBackground extends QtService
         int cnt = 0;
         context = getApplicationContext();
 
+        callFromJava("Java calling");
+
+        Count = new CountDownTimer(TIME_LIMIT, 1000)
+        {
+            public void onTick(long millisUntilFinished)
+            {
+                long seconds = millisUntilFinished / 1000;
+                String time = String.format("%02d:%02d", (seconds % 3600) / 60, (seconds % 60));
+
+                //if (seconds % 2 == 0)
+                //    callFromJava("Java calling " + time);
+
+                //sendBroadcast(i);
+            }
+
+            public void onFinish()
+            {
+                callFromJava("Java calling fin ");
+
+                stopSelf();
+            }
+        };
+
+        Count.start();
+
         try
         {
-            while(true)
-            {
-/*
-                m_notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O)
-                {
-                    int importance = NotificationManager.IMPORTANCE_DEFAULT;
-                    NotificationChannel notificationChannel = new NotificationChannel("Qt", "Qt Notifier", importance);
-                    m_notificationManager.createNotificationChannel(notificationChannel);
-                    m_builder = new Notification.Builder(context, notificationChannel.getId());
-                }
-                else
-                {
-                    m_builder = new Notification.Builder(context);
-                }
 
-                m_builder.setSmallIcon(R.drawable.icon)
-                        .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.icon))
-                        .setContentTitle("Service message")
-                        .setContentText("Counter" + cnt)
-                        .setDefaults(Notification.DEFAULT_SOUND)
-                        .setColor(Color.GREEN)
-                        .setAutoCancel(true);
-
-                m_notificationManager.notify(0, m_builder.build());
-                */
-
-                //callFromJava("Java calling");
+                callFromJava("End startup");
 
                 //cnt++;
-                //Thread.sleep(1000);
-            }
+                //Thread.sleep(5000);
+
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
+
 
         return ret;
     }

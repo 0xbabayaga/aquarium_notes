@@ -59,9 +59,9 @@ int main(int argc, char *argv[])
     {
         qDebug() << "SERVICE STARTED";
 
-        BackgroundService *back = new BackgroundService();
+        //BackgroundService *back = new BackgroundService();
 
-        //JNIManager *jni = new JNIManager();
+        JNIManager *jni = new JNIManager();
 
         return app.exec();
     }

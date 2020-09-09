@@ -4,8 +4,30 @@
 #include <QtAndroid>
 #include <QDebug>
 #include "androidnotification.h"
+#include <jni.h>
 
 JNIManager *JNIManager::_instance = nullptr;
+
+
+#include <jni.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+JNIEXPORT void JNICALL
+  Java_org_tikava_AquariumNotes_ActionTaskBackground_callFromJava(JNIEnv *env,
+                                                    jobject obj,
+                                                    jstring str)
+{
+    AndroidNotification *notify = new AndroidNotification();
+    notify->setNotification("Servcie app" + QString(env->GetStringUTFChars(str, 0)));
+    notify->updateAndroidNotification();
+}
+
+#ifdef __cplusplus
+}
+#endif
 
 static void callFromJava(JNIEnv *env, jobject /*thiz*/, jstring value)
 {
