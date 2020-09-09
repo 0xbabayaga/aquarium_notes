@@ -14,6 +14,7 @@ SOURCES += \
         c++/actionlist.cpp \
         c++/androidnotification.cpp \
         c++/appmanager.cpp \
+        c++/backgroundservice.cpp \
         c++/dbmanager.cpp \
         c++/jnimanager.cpp \
         c++/position.cpp \
@@ -49,6 +50,7 @@ HEADERS += \
     c++/actionlist.h \
     c++/androidnotification.h \
     c++/appmanager.h \
+    c++/backgroundservice.h \
     c++/dbmanager.h \
     c++/dbobjects.h \
     c++/galleryobjects.h \

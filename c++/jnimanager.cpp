@@ -3,6 +3,7 @@
 #include <QAndroidJniEnvironment>
 #include <QtAndroid>
 #include <QDebug>
+#include "androidnotification.h"
 
 JNIManager *JNIManager::_instance = nullptr;
 
@@ -11,6 +12,11 @@ static void callFromJava(JNIEnv *env, jobject /*thiz*/, jstring value)
     //emit JNIManager::instance()->messageFromJava(env->GetStringUTFChars(value, nullptr));
 
     qDebug() << "CALL FROM JAVA" << value;
+
+    AndroidNotification *notify = new AndroidNotification();
+    notify->setNotification("Servcie app");
+    notify->updateAndroidNotification();
+
 }
 
 JNIManager::JNIManager(QObject *parent) : QObject(parent)
