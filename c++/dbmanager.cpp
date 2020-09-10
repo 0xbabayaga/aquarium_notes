@@ -113,10 +113,13 @@ TankObj *DBManager::currentTankSelected()
     return obj;
 }
 
-bool DBManager::getActionCalendar()
+bool DBManager::getActionCalendar(QString tankId)
 {
     bool res = false;
-    QSqlQuery query("SELECT * FROM ACTIONS_TABLE WHERE TANK_ID='"+currentTankSelected()->tankId()+"' ORDER BY STARTDATE ASC");
+    QSqlQuery query("SELECT * FROM ACTIONS_TABLE WHERE TANK_ID='"+tankId+"' ORDER BY STARTDATE ASC");
+
+    if (actionList == nullptr)
+        actionList = new ActionList();
 
     if (actionList->setData(&query) != true)
         qDebug() << "actionList->setData error";

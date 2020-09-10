@@ -74,7 +74,7 @@ public:
     bool    getParamsList(QString tankId, AquariumType type);
     int     getLastSmpId();
     bool    getLatestParams();
-    bool    getActionCalendar();
+    bool    getActionCalendar(QString tankId);
     bool    getCurrentUser();
     bool    getUserTanksList();
     bool    getTankStoryList(int id);
@@ -87,7 +87,8 @@ public:
     /* Utitlity methods */
     QString randId();
     TankObj *currentTankSelected();
-    UTObj   *currentSelectedObjs()  { return &curSelectedObjs; }
+    UTObj   *currentSelectedObjs()  {   return &curSelectedObjs;    }
+    ActionList* currentActionList() {   return actionList;          }
 
 
     static bool    less(QObject *v1, QObject *v2);
@@ -127,7 +128,7 @@ private:
     UTObj           curSelectedObjs;
     bool            isParamDataChanged;
 
-    ActionList      *actionList;
+    ActionList      *actionList = nullptr;
 };
 
 #endif // DBMANAGER_H

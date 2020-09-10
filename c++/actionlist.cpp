@@ -5,7 +5,7 @@
 ActionList::ActionList()
 {
     list.clear();
-    currView = ActionView_ThisWeek;
+    currView = ActionView_Today;
 }
 
 ActionList::~ActionList()
