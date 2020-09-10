@@ -7,30 +7,14 @@
 #include "c++/appmanager.h"
 #include "c++/AppDefs.h"
 #include "c++/androidnotification.h"
-#include "c++/backgroundservice.h"
-#include "c++/jnimanager.h"
+#include "c++/backmanager.h"
 
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
     QStringList args = QCoreApplication::arguments();
-    bool isStartService = false;
 
-    qDebug() << "ARGIUS = " << QCoreApplication::arguments().count();
-    qDebug() << "ARG1 = " << QCoreApplication::arguments();
-
-    for (int i = 0; i < args.count(); i++)
-    {
-        if (args.at(i) == "-service")
-        {
-            isStartService = true;
-            break;
-        }
-    }
-
-    isStartService = (args.count() > 1);
-
-    if (isStartService == false)
+    if ((args.count() > 1) == false)
     {
         qDebug() << "APP STARTED";
 
@@ -57,12 +41,6 @@ int main(int argc, char *argv[])
     }
     else
     {
-        qDebug() << "SERVICE STARTED";
-
-        //BackgroundService *back = new BackgroundService();
-
-        JNIManager *jni = new JNIManager();
-
         return app.exec();
     }
 }

@@ -14,9 +14,8 @@ SOURCES += \
         c++/actionlist.cpp \
         c++/androidnotification.cpp \
         c++/appmanager.cpp \
-        c++/backgroundservice.cpp \
+        c++/backmanager.cpp \
         c++/dbmanager.cpp \
-        c++/jnimanager.cpp \
         c++/position.cpp \
         main.cpp
 
@@ -38,9 +37,9 @@ DISTFILES += \
     android/gradlew \
     android/gradlew.bat \
     android/res/values/libs.xml \
-    android/src/org/tikava/AquariumNotes/ActionTaskBackground.java \
     android/src/org/tikava/AquariumNotes/AquariumNotes.java \
-    android/src/org/tikava/AquariumNotes/AquariumNotesNotification.java
+    android/src/org/tikava/AquariumNotes/AquariumNotesNotification.java \
+    android/src/org/tikava/AquariumNotes/Background.java
     qml/qmldir \
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
@@ -50,11 +49,10 @@ HEADERS += \
     c++/actionlist.h \
     c++/androidnotification.h \
     c++/appmanager.h \
-    c++/backgroundservice.h \
+    c++/backmanager.h \
     c++/dbmanager.h \
     c++/dbobjects.h \
     c++/galleryobjects.h \
-    c++/jnimanager.h \
     c++/position.h
 
 #contains(ANDROID_TARGET_ARCH,armeabi-v7a) {

@@ -37,7 +37,7 @@ const static QMap<QString, QString> langNamesMap =
 const static QStringList permissions = { "android.permission.READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE" };
 #endif
 
-AppManager::AppManager(QQmlApplicationEngine *engine, QObject *parent) : DBManager(parent)
+AppManager::AppManager(QQmlApplicationEngine *engine, QObject *parent) : DBManager(false, parent)
 {
     qmlEngine = engine;
 
@@ -57,6 +57,8 @@ AppManager::AppManager(QQmlApplicationEngine *engine, QObject *parent) : DBManag
 
     createTankTypesList();
 
+    openDB();
+
     curSelectedObjs.lastSmpId = getLastSmpId();
     curSelectedObjs.curSmpId = curSelectedObjs.lastSmpId;
 
@@ -70,7 +72,7 @@ AppManager::AppManager(QQmlApplicationEngine *engine, QObject *parent) : DBManag
 
 #ifdef  Q_OS_ANDROID
     QAndroidIntent serviceIntent(QtAndroid::androidActivity().object(),
-                                        "org/tikava/AquariumNotes/ActionTaskBackground");
+                                        "org/tikava/AquariumNotes/Background");
     QAndroidJniObject result = QtAndroid::androidActivity().callObjectMethod(
                 "startService",
                 "(Landroid/content/Intent;)Landroid/content/ComponentName;",

@@ -28,7 +28,7 @@ class DBManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit DBManager(QObject *parent = nullptr);
+    explicit DBManager(bool isReadOnly, QObject *parent = nullptr);
     ~DBManager();
 
     friend class AppManager;
@@ -46,7 +46,11 @@ public:
 public:
     static QString getAquariumTypeString(AquariumType type);
 
-private:
+public:
+    bool    openDB();
+    bool    closeDB();
+
+public:
     /* Database management */
     bool    initDB();
     bool    createUser(QString uname, QString upass, QString phone, QString email, QString img);
@@ -83,6 +87,8 @@ private:
     /* Utitlity methods */
     QString randId();
     TankObj *currentTankSelected();
+    UTObj   *currentSelectedObjs()  { return &curSelectedObjs; }
+
 
     static bool    less(QObject *v1, QObject *v2);
     QString getImgDbFolder()

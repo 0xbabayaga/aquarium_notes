@@ -44,12 +44,10 @@
             <!-- Background running -->
         </activity>
 
-        <service android:name="org.tikava.AquariumNotes.ActionTaskBackground">
+        <service android:name="org.tikava.AquariumNotes.Background">
             <meta-data android:name="android.app.arguments" android:value="-service"/>
             <meta-data android:name="android.app.background_running" android:value="true"/>
             <meta-data android:name="android.app.lib_name" android:value="-- %%INSERT_APP_LIB_NAME%% --"/>
-
-
         </service>
 
     </application>

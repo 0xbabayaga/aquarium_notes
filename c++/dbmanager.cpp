@@ -51,43 +51,49 @@ const static QMap<QString, QString> paramTranslationMap =
     {   "ORP",  QObject::tr("ORP")               }
 };
 
-DBManager::DBManager(QObject *parent) : QObject(parent)
+DBManager::DBManager(bool isReadOnly, QObject *parent) : QObject(parent)
 {
 #ifdef  Q_OS_ANDROID
     appPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
 
-    if (QDir(appPath + "/" + appFolder).exists() == false)
+    if (isReadOnly == false)
     {
-        qInfo() << "Creating " << appPath + "/" + appFolder << "   "
-                << QDir().mkdir(appPath + "/" + appFolder);
-        qInfo() << "Creating " << appPath + "/" + appFolder + "/" + dbFolder + "/" << "   "
-                << QDir().mkdir(appPath + "/" + appFolder + "/" + dbFolder + "/");
-    }
+        if (QDir(appPath + "/" + appFolder).exists() == false)
+        {
+            qInfo() << "Creating " << appPath + "/" + appFolder << "   "
+                    << QDir().mkdir(appPath + "/" + appFolder);
+            qInfo() << "Creating " << appPath + "/" + appFolder + "/" + dbFolder + "/" << "   "
+                    << QDir().mkdir(appPath + "/" + appFolder + "/" + dbFolder + "/");
+        }
 
-    if (QDir(appPath + "/" + appFolder + "/" + imgFolder).exists() == false)
-        qInfo() << "Creating " << appPath + "/" + appFolder + "/" + imgFolder + "/"
-                << QDir().mkdir(appPath + "/" + appFolder + "/" + imgFolder + "/");
+        if (QDir(appPath + "/" + appFolder + "/" + imgFolder).exists() == false)
+            qInfo() << "Creating " << appPath + "/" + appFolder + "/" + imgFolder + "/"
+                    << QDir().mkdir(appPath + "/" + appFolder + "/" + imgFolder + "/");
+    }
 
     dbFileLink = appPath + "/" + appFolder + "/" + dbFolder + "/" +dbFile;
 
     qWarning() << "dbFileLink = " << dbFileLink;
 #else
-    if (QDir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + dbFolder).exists() == false)
-        QDir().mkdir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + dbFolder);
+    if (isReadOnly == false)
+    {
+        if (QDir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + dbFolder).exists() == false)
+            QDir().mkdir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + dbFolder);
 
-    if (QDir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + imgFolder).exists() == false)
-        QDir().mkdir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + imgFolder);
+        if (QDir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + imgFolder).exists() == false)
+            QDir().mkdir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + imgFolder);
+    }
 
     dbFileLink = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + dbFolder + "/" + dbFile;
 #endif
 
     db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(dbFileLink);
-    db.open();
 
     qDebug() << "DB file = " << dbFileLink;
 
-    initDB();
+    if (isReadOnly == false)
+        initDB();
 
     isParamDataChanged = true;
 }
@@ -938,6 +944,18 @@ QString DBManager::randId()
     }
 
     return randomString;
+}
+
+bool DBManager::openDB()
+{
+    return db.open();
+}
+
+bool DBManager::closeDB()
+{
+    db.close();
+
+    return true;
 }
 
 bool DBManager::initDB()
