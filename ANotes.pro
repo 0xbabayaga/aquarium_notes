@@ -12,12 +12,16 @@ TEMPLATE = app
 
 SOURCES += \
         c++/actionlist.cpp \
-        c++/androidnotification.cpp \
         c++/appmanager.cpp \
-        c++/backmanager.cpp \
         c++/dbmanager.cpp \
         c++/position.cpp \
         main.cpp
+
+android {
+SOURCES += \
+        c++/androidnotification.cpp \
+        c++/backmanager.cpp
+}
 
 RESOURCES += qml.qrc
 
@@ -47,13 +51,18 @@ ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 HEADERS += \
     c++/AppDefs.h \
     c++/actionlist.h \
-    c++/androidnotification.h \
     c++/appmanager.h \
-    c++/backmanager.h \
     c++/dbmanager.h \
     c++/dbobjects.h \
     c++/galleryobjects.h \
     c++/position.h
+
+android {
+HEADERS += \
+    c++/androidnotification.h \
+    c++/backmanager.h \
+}
+
 
 #contains(ANDROID_TARGET_ARCH,armeabi-v7a) {
 #    ANDROID_PACKAGE_SOURCE_DIR = \

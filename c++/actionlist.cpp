@@ -18,7 +18,7 @@ void ActionList::setViewPeriod(eActionListView viewType)
     currView = (eActionListView) (viewType % (ActionView_ThisMonth + 1));
 }
 
-bool ActionList::setData(QSqlQuery *query)
+bool ActionList::setData(QSqlQuery *query, bool background)
 {
     bool res = false;
     int viewStartDate = 0;
@@ -33,6 +33,10 @@ bool ActionList::setData(QSqlQuery *query)
     list.clear();
 
     viewStartDate = tmNow.toSecsSinceEpoch();
+
+    if (background == true)
+        viewStartDate -= 3600;
+
     viewEndDate = viewStartDate;
 
     switch(currView)

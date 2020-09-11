@@ -14,6 +14,9 @@ public class AquariumNotesNotification
 {
     private static NotificationManager m_notificationManager;
     private static Notification.Builder m_builder;
+    private static String channelId = "AquariumNotes";
+    private static String channelName = "Aquarium Notes notification";
+
 
     public AquariumNotesNotification() {}
 
@@ -26,7 +29,7 @@ public class AquariumNotesNotification
 
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                 int importance = NotificationManager.IMPORTANCE_DEFAULT;
-                NotificationChannel notificationChannel = new NotificationChannel("Qt", "Qt Notifier", importance);
+                NotificationChannel notificationChannel = new NotificationChannel(channelId, channelName, importance);
                 m_notificationManager.createNotificationChannel(notificationChannel);
                 m_builder = new Notification.Builder(context, notificationChannel.getId());
             } else {
@@ -35,7 +38,7 @@ public class AquariumNotesNotification
 
             m_builder.setSmallIcon(R.drawable.icon)
                     .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.icon))
-                    .setContentTitle("A message from Qt!")
+                    .setContentTitle(channelName)
                     .setContentText(message)
                     .setDefaults(Notification.DEFAULT_SOUND)
                     .setColor(Color.GREEN)

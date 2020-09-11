@@ -71,7 +71,7 @@ Item
         if (textActionName.text.length > 0 &&
             textDesc.text.length)
         {
-            app.sigEditAction(id, textActionName.text, textDesc.text, 0, comboPeriod.currentIndex, dt)
+            app.sigEditAction(id, textActionName.text, textDesc.text, comboPeriod.currentIndex, parseInt(textPeriod.text), dt)
 
             showActionDialog(false, false, 0)
         }

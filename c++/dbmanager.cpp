@@ -53,6 +53,8 @@ const static QMap<QString, QString> paramTranslationMap =
 
 DBManager::DBManager(bool isReadOnly, QObject *parent) : QObject(parent)
 {
+    readOnly = isReadOnly;
+
 #ifdef  Q_OS_ANDROID
     appPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
 
@@ -87,8 +89,37 @@ DBManager::DBManager(bool isReadOnly, QObject *parent) : QObject(parent)
     dbFileLink = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + dbFolder + "/" + dbFile;
 #endif
 
-    db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName(dbFileLink);
+    if(QSqlDatabase::contains(QSqlDatabase::defaultConnection))
+        db = QSqlDatabase::database();
+    else
+    {
+        db = QSqlDatabase::addDatabase("QSQLITE");
+        db.setDatabaseName(dbFileLink);
+    }
+
+    /*
+    if (readOnly == false)
+    {
+        if (QSqlDatabase::contains("FConnection") == true)
+            db = QSqlDatabase::database("FConnection");
+        else
+        {
+            db = QSqlDatabase::addDatabase("QSQLITE", "FConnection");
+            db.setDatabaseName(dbFileLink);
+        }
+    }
+    else
+    {
+        if (QSqlDatabase::contains("RConnection") == true)
+            db = QSqlDatabase::database("RConnection");
+        else
+        {
+            db = QSqlDatabase::addDatabase("QSQLITE", "RConnection");
+            db.setDatabaseName(dbFileLink);
+        }
+    }
+    */
+
 
     qDebug() << "DB file = " << dbFileLink;
 
@@ -113,7 +144,7 @@ TankObj *DBManager::currentTankSelected()
     return obj;
 }
 
-bool DBManager::getActionCalendar(QString tankId)
+bool DBManager::getActionCalendar(QString tankId, bool backGround)
 {
     bool res = false;
     QSqlQuery query("SELECT * FROM ACTIONS_TABLE WHERE TANK_ID='"+tankId+"' ORDER BY STARTDATE ASC");
@@ -121,7 +152,7 @@ bool DBManager::getActionCalendar(QString tankId)
     if (actionList == nullptr)
         actionList = new ActionList();
 
-    if (actionList->setData(&query) != true)
+    if (actionList->setData(&query, backGround) != true)
         qDebug() << "actionList->setData error";
 
     return res;
@@ -951,6 +982,9 @@ QString DBManager::randId()
 
 bool DBManager::openDB()
 {
+    //if (readOnly == true)
+    //    db.setConnectOptions("QSQLITE_OPEN_READONLY");
+
     return db.open();
 }
 

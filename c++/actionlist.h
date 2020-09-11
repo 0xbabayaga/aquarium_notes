@@ -29,7 +29,7 @@ public:
 
 public:
     void setViewPeriod(eActionListView viewType);
-    bool setData(QSqlQuery *query);
+    bool setData(QSqlQuery *query, bool background);
     QList<QObject*> *getData()   {   return &list;   }
 
 private:

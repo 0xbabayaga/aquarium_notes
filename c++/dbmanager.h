@@ -74,7 +74,7 @@ public:
     bool    getParamsList(QString tankId, AquariumType type);
     int     getLastSmpId();
     bool    getLatestParams();
-    bool    getActionCalendar(QString tankId);
+    bool    getActionCalendar(QString tankId, bool backGround);
     bool    getCurrentUser();
     bool    getUserTanksList();
     bool    getTankStoryList(int id);
@@ -129,6 +129,8 @@ private:
     bool            isParamDataChanged;
 
     ActionList      *actionList = nullptr;
+
+    bool            readOnly = false;
 };
 
 #endif // DBMANAGER_H

@@ -346,7 +346,7 @@ void AppManager::getLatestParamsGui()
 
 void AppManager::getActionCalendarGui()
 {
-    getActionCalendar(currentTankSelected()->tankId());
+    getActionCalendar(currentTankSelected()->tankId(), false);
 
     qmlEngine->rootContext()->setContextProperty("actionsListModel", QVariant::fromValue(*actionList->getData()));
 }
