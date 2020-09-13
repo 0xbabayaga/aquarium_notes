@@ -1,5 +1,6 @@
 package org.tikava.AquariumNotes;
 
+import org.tikava.AquariumNotes.R;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -17,13 +18,10 @@ public class AquariumNotesNotification
     private static String channelId = "AquariumNotes";
     private static String channelName = "Aquarium Notes notification";
 
-
     public AquariumNotesNotification() {}
 
-    public static void notify(Context context, String message)
+    public static void notify(Context context, String message, String title)
     {
-        Log.i("NOTIFY", message);
-
         try {
             m_notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -38,7 +36,7 @@ public class AquariumNotesNotification
 
             m_builder.setSmallIcon(R.drawable.icon)
                     .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.icon))
-                    .setContentTitle(channelName)
+                    .setContentTitle(title)
                     .setContentText(message)
                     .setDefaults(Notification.DEFAULT_SOUND)
                     .setColor(Color.GREEN)

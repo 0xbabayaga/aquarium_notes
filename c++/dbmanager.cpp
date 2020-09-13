@@ -51,6 +51,8 @@ const static QMap<QString, QString> paramTranslationMap =
     {   "ORP",  QObject::tr("ORP")               }
 };
 
+static const QString backgroundDbConn = "backgroundConn";
+
 DBManager::DBManager(bool isReadOnly, QObject *parent) : QObject(parent)
 {
     readOnly = isReadOnly;
@@ -89,36 +91,21 @@ DBManager::DBManager(bool isReadOnly, QObject *parent) : QObject(parent)
     dbFileLink = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + dbFolder + "/" + dbFile;
 #endif
 
-    if(QSqlDatabase::contains(QSqlDatabase::defaultConnection))
-        db = QSqlDatabase::database();
-    else
+    if (readOnly == false)
     {
         db = QSqlDatabase::addDatabase("QSQLITE");
         db.setDatabaseName(dbFileLink);
     }
-
-    /*
-    if (readOnly == false)
-    {
-        if (QSqlDatabase::contains("FConnection") == true)
-            db = QSqlDatabase::database("FConnection");
-        else
-        {
-            db = QSqlDatabase::addDatabase("QSQLITE", "FConnection");
-            db.setDatabaseName(dbFileLink);
-        }
-    }
     else
     {
-        if (QSqlDatabase::contains("RConnection") == true)
-            db = QSqlDatabase::database("RConnection");
+        if (QSqlDatabase::contains(backgroundDbConn) == true)
+            db = QSqlDatabase::database(backgroundDbConn);
         else
         {
-            db = QSqlDatabase::addDatabase("QSQLITE", "RConnection");
+            db = QSqlDatabase::addDatabase("QSQLITE", backgroundDbConn);
             db.setDatabaseName(dbFileLink);
         }
     }
-    */
 
 
     qDebug() << "DB file = " << dbFileLink;
@@ -147,7 +134,7 @@ TankObj *DBManager::currentTankSelected()
 bool DBManager::getActionCalendar(QString tankId, bool backGround)
 {
     bool res = false;
-    QSqlQuery query("SELECT * FROM ACTIONS_TABLE WHERE TANK_ID='"+tankId+"' ORDER BY STARTDATE ASC");
+    QSqlQuery query("SELECT * FROM ACTIONS_TABLE WHERE TANK_ID='"+tankId+"' ORDER BY STARTDATE ASC", db);
 
     if (actionList == nullptr)
         actionList = new ActionList();
@@ -161,8 +148,8 @@ bool DBManager::getActionCalendar(QString tankId, bool backGround)
 bool DBManager::getParamsList(QString tankId, AquariumType type)
 {
     bool res = false;
-    QSqlQuery query("SELECT * FROM DICT_TABLE");
-    QSqlQuery queryPersonal("SELECT * FROM PERSONAL_PARAM_TABLE WHERE TANK_ID = '"+tankId+"'");
+    QSqlQuery query("SELECT * FROM DICT_TABLE", db);
+    QSqlQuery queryPersonal("SELECT * FROM PERSONAL_PARAM_TABLE WHERE TANK_ID = '"+tankId+"'", db);
     ParamObj *obj = nullptr;
 
     mapPersonal.clear();
@@ -201,7 +188,7 @@ bool DBManager::getLatestParams()
     int curIdx = 0;
     unsigned int lastDateRecord = 0;
 
-    QSqlQuery qDt("SELECT MAX(TIMESTAMP) FROM HISTORY_VALUE_TABLE WHERE TANK_ID='"+currentTankSelected()->tankId()+"'");
+    QSqlQuery qDt("SELECT MAX(TIMESTAMP) FROM HISTORY_VALUE_TABLE WHERE TANK_ID='"+currentTankSelected()->tankId()+"'", db);
 
     if (qDt.next())
         lastDateRecord = qDt.value(0).toInt();
@@ -210,7 +197,7 @@ bool DBManager::getLatestParams()
     {
         smpIdList.clear();
 
-        QSqlQuery query0("SELECT SMP_ID FROM HISTORY_VALUE_TABLE WHERE TANK_ID='"+currentTankSelected()->tankId()+"' ORDER BY SMP_ID DESC");
+        QSqlQuery query0("SELECT SMP_ID FROM HISTORY_VALUE_TABLE WHERE TANK_ID='"+currentTankSelected()->tankId()+"' ORDER BY SMP_ID DESC", db);
 
         while (query0.next())
         {
@@ -246,7 +233,7 @@ bool DBManager::getLatestParams()
         QSqlQuery query("SELECT v.SMP_ID, v.TANK_ID, v.PARAM_ID, v.VALUE, v.TIMESTAMP, n.TEXT, n.IMAGELINK "
                         "FROM HISTORY_VALUE_TABLE v "
                         "LEFT JOIN HISTORY_NOTES_TABLE n ON n.SMP_ID = v.SMP_ID "
-                        "WHERE v.SMP_ID = '"+QString::number(smpIdList.at(curIdx))+"'");
+                        "WHERE v.SMP_ID = '"+QString::number(smpIdList.at(curIdx))+"'", db);
 
         while (query.next())
         {
@@ -272,7 +259,7 @@ bool DBManager::getLatestParams()
             QSqlQuery query1("SELECT v.SMP_ID, v.TANK_ID, v.PARAM_ID, v.VALUE, v.TIMESTAMP, n.TEXT, n.IMAGELINK "
                              "FROM HISTORY_VALUE_TABLE v "
                              "LEFT JOIN HISTORY_NOTES_TABLE n ON n.SMP_ID = v.SMP_ID "
-                             "WHERE v.SMP_ID = '"+QString::number(smpIdList.at(curIdx + 1))+"'");
+                             "WHERE v.SMP_ID = '"+QString::number(smpIdList.at(curIdx + 1))+"'", db);
 
             while (query1.next())
             {
@@ -324,7 +311,7 @@ int DBManager::getLastSmpId()
 {
     int id = 0;
 
-    QSqlQuery query("SELECT MAX(SMP_ID) FROM HISTORY_VALUE_TABLE");
+    QSqlQuery query("SELECT MAX(SMP_ID) FROM HISTORY_VALUE_TABLE", db);
 
     if(query.next())
         id = query.value(0).toInt();
@@ -334,7 +321,7 @@ int DBManager::getLastSmpId()
 
 bool DBManager::getCurrentUser()
 {
-    QSqlQuery query("SELECT * FROM USER_TABLE WHERE STATUS != -1");
+    QSqlQuery query("SELECT * FROM USER_TABLE WHERE STATUS != -1", db);
 
     if (curSelectedObjs.user != nullptr)
     {
@@ -346,6 +333,7 @@ bool DBManager::getCurrentUser()
     {
         /* Read only one User */
         curSelectedObjs.user = new UserObj(&query);
+
         return true;
     }
 
@@ -356,7 +344,7 @@ bool DBManager::getUserTanksList()
 {
     bool res = false;
     TankObj *obj = nullptr;
-    QSqlQuery query("SELECT * FROM TANKS_TABLE WHERE MAN_ID='"+curSelectedObjs.user->man_id+"' AND STATUS != -1");
+    QSqlQuery query("SELECT * FROM TANKS_TABLE WHERE MAN_ID='"+curSelectedObjs.user->man_id+"' AND STATUS != -1", db);
 
     curSelectedObjs.listOfUserTanks.clear();
 
@@ -376,7 +364,7 @@ bool DBManager::getTankStoryList(int id)
     bool res = false;
     int cnt = 0;
     QSqlQuery query("SELECT * FROM HISTORY_NOTES_TABLE WHERE TANK_ID='" + currentTankSelected()->tankId() + "' "
-                    "ORDER BY TIMESTAMP DESC");
+                    "ORDER BY TIMESTAMP DESC", db);
     TankStoryObj *obj = nullptr;
     QVariantMap params;
 
@@ -388,7 +376,7 @@ bool DBManager::getTankStoryList(int id)
 
         if (cnt >= id)
         {
-            QSqlQuery queryParams("SELECT PARAM_ID, VALUE FROM HISTORY_VALUE_TABLE WHERE SMP_ID='" + QString::number(query.value(query.record().indexOf("SMP_ID")).toInt()) + "'");
+            QSqlQuery queryParams("SELECT PARAM_ID, VALUE FROM HISTORY_VALUE_TABLE WHERE SMP_ID='" + QString::number(query.value(query.record().indexOf("SMP_ID")).toInt()) + "'", db);
 
             params.clear();
 
@@ -413,7 +401,7 @@ bool DBManager::getParamIdList(QList<int> *idList)
     if (idList != 0)
     {
         QSqlQuery qId("SELECT PARAM_ID FROM HISTORY_VALUE_TABLE "
-                      "WHERE TANK_ID = '"+currentTankSelected()->tankId()+"'");
+                      "WHERE TANK_ID = '"+currentTankSelected()->tankId()+"'", db);
 
         while (qId.next())
         {
@@ -532,7 +520,7 @@ bool DBManager::editUser(QString uname, QString upass, QString phone, QString em
 bool DBManager::saveUserLocationIfRequired(QString country, QString city, double lat, double longt)
 {
     bool res = false;
-    QSqlQuery query("SELECT COUNTRY FROM USER_TABLE WHERE STATUS != -1");
+    QSqlQuery query("SELECT COUNTRY FROM USER_TABLE WHERE STATUS != -1", db);
 
     res = query.exec();
 
@@ -718,7 +706,7 @@ bool DBManager::createTankDefaultParamSet(QString tankId, AquariumType type)
     if (tankId.length() == RAND_ID_LENGTH)
     {
         QSqlQuery query;
-        QSqlQuery q0("SELECT * FROM DICT_TABLE");
+        QSqlQuery q0("SELECT * FROM DICT_TABLE", db);
         ParamObj *obj = nullptr;
         bool res = false;
 
@@ -907,18 +895,16 @@ bool DBManager::addActionRecord(QString tankId, QString name, QString desc, int 
 
 bool DBManager::editActionRecord(int id, QString tankId, QString name, QString desc, int periodType, int period, int tm)
 {
-    QSqlQuery query;
     bool res = false;
-
-    query.prepare("UPDATE ACTIONS_TABLE SET "
-                  "TYPE = " + QString::number(periodType) + ", "
-                  "NAME = '" + name + "', "
-                  "DESC = '" + desc + "', "
-                  "PERIOD = " + QString::number(period) + ", "
-                  "EN = 1, "
-                  "STARTDATE = " + QString::number(tm) + " "
-                  "WHERE id = " + QString::number(id) + " AND "
-                  "TANK_ID = '" + tankId + "'");
+    QSqlQuery query("UPDATE ACTIONS_TABLE SET "
+                    "TYPE = " + QString::number(periodType) + ", "
+                    "NAME = '" + name + "', "
+                    "DESC = '" + desc + "', "
+                    "PERIOD = " + QString::number(period) + ", "
+                    "EN = 1, "
+                    "STARTDATE = " + QString::number(tm) + " "
+                    "WHERE id = " + QString::number(id) + " AND "
+                    "TANK_ID = '" + tankId + "'", db);
 
     res = query.exec();
 
@@ -930,12 +916,10 @@ bool DBManager::editActionRecord(int id, QString tankId, QString name, QString d
 
 bool DBManager::deleteActionRecord(int id, QString tankId)
 {
-    QSqlQuery query;
     bool res = false;
-
-    query.prepare("DELETE FROM ACTIONS_TABLE "
-                  "WHERE ID = " + QString::number(id) + " AND "
-                  "TANK_ID = '" + tankId + "'");
+    QSqlQuery query("DELETE FROM ACTIONS_TABLE "
+                    "WHERE ID = " + QString::number(id) + " AND "
+                    "TANK_ID = '" + tankId + "'", db);
 
     res = query.exec();
 
@@ -947,11 +931,11 @@ bool DBManager::deleteActionRecord(int id, QString tankId)
 
 bool DBManager::editPersonalParamState(QString tankId, int paramId, bool en)
 {
-    QSqlQuery query;
     bool res = false;
+    QSqlQuery query("UPDATE PERSONAL_PARAM_TABLE SET ENABLED = '"+QString::number(en)+"' WHERE "
+                    "TANK_ID = '" +tankId+ "' AND PARAM_ID = '" +QString::number(paramId)+"'", db);
 
-    res = query.exec("UPDATE PERSONAL_PARAM_TABLE SET ENABLED = '"+QString::number(en)+"' WHERE "
-                     "TANK_ID = '" +tankId+ "' AND PARAM_ID = '" +QString::number(paramId)+"'");
+    res = query.exec();
 
     if (res == false)
     {
@@ -982,8 +966,8 @@ QString DBManager::randId()
 
 bool DBManager::openDB()
 {
-    //if (readOnly == true)
-    //    db.setConnectOptions("QSQLITE_OPEN_READONLY");
+    if (readOnly == true)
+        db.setConnectOptions("QSQLITE_OPEN_READONLY");
 
     return db.open();
 }

@@ -3,29 +3,49 @@
 
 AndroidNotification::AndroidNotification(QObject *parent) : QObject(parent)
 {
-    //connect(this, SIGNAL(notificationChanged()), this, SLOT(updateAndroidNotification()));
 }
 
-void AndroidNotification::setNotification(const QString &notification)
+void AndroidNotification::setTitle(const QString &title)
 {
-    if (m_notification == notification)
-        return;
-
-    m_notification = notification;
+    _title = title;
 }
 
-QString AndroidNotification::notification() const
+void AndroidNotification::setMessage(const QString &message)
 {
-    return m_notification;
+    _message = message;
+}
+
+void AndroidNotification::setDetails(const QString &details)
+{
+    _details = details;
+}
+
+QString AndroidNotification::title() const
+{
+    return _title;
+}
+
+QString AndroidNotification::message() const
+{
+    return _message;
+}
+
+QString AndroidNotification::details() const
+{
+    return _details;
 }
 
 void AndroidNotification::updateAndroidNotification()
 {
-    QAndroidJniObject javaNotification = QAndroidJniObject::fromString(m_notification);
+    QAndroidJniObject javaTitle = QAndroidJniObject::fromString(_title);
+    QAndroidJniObject javaMessage = QAndroidJniObject::fromString(_message);
+    QAndroidJniObject javaDetails = QAndroidJniObject::fromString(_details);
+
     QAndroidJniObject::callStaticMethod<void>(
         "org/tikava/AquariumNotes/AquariumNotesNotification",
         "notify",
-        "(Landroid/content/Context;Ljava/lang/String;)V",
+        "(Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;)V",
         QtAndroid::androidContext().object(),
-        javaNotification.object<jstring>());
+        javaTitle.object<jstring>(),
+        javaMessage.object<jstring>());
 }

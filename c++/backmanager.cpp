@@ -13,6 +13,7 @@
 #include <jni.h>
 
 static void debugOut(QString message);
+static void sendNotification(QString title, QString message, QString details);
 
 #ifdef __cplusplus
 extern "C" {
@@ -25,43 +26,39 @@ Java_org_tikava_AquariumNotes_Background_callbackOnTimer(JNIEnv *env, jobject ob
     int n = 0;
     bool background = true;
 
+    sendNotification("Hello, John Wick", "Some activity is planned for your ", "Я считаю до пяти. Не могу до десяти. Раз, два, три, четыре, пять, я иду искать.");
+
     DBManager *dbMan = new DBManager(true);
 
-    dbMan->openDB();
-
-    if (dbMan->getCurrentUser() == true)
+    if (dbMan->openDB() == true)
     {
-        if (dbMan->currentSelectedObjs()->user != nullptr)
+        if (dbMan->getCurrentUser() == true)
         {
-            if (dbMan->getUserTanksList() == true)
+            if (dbMan->currentSelectedObjs()->user != nullptr)
             {
-                for (i = 0; i < dbMan->currentSelectedObjs()->listOfUserTanks.size(); i++)
+                if (dbMan->getUserTanksList() == true)
                 {
-                    QString tankId = ((TankObj*)(dbMan->currentSelectedObjs()->listOfUserTanks.at(i)))->tankId();
-                    quint64 now = QDateTime::currentDateTime().toSecsSinceEpoch();
-
-                    dbMan->getActionCalendar(tankId, background);
-
-                    qDebug() << "size = " << QString::number(dbMan->currentActionList()->getData()->size());
-
-                    for (n = 0; n < dbMan->currentActionList()->getData()->size(); n++)
+                    for (i = 0; i < dbMan->currentSelectedObjs()->listOfUserTanks.size(); i++)
                     {
-                        ActionObj *act = (ActionObj*)(dbMan->currentActionList()->getData()->at(n));
+                        QString tankId = ((TankObj*)(dbMan->currentSelectedObjs()->listOfUserTanks.at(i)))->tankId();
+                        quint64 now = QDateTime::currentDateTime().toSecsSinceEpoch();
 
-                        if (act != 0)
+                        dbMan->getActionCalendar(tankId, background);
+
+                        qDebug() << "size = " << QString::number(dbMan->currentActionList()->getData()->size());
+
+                        for (n = 0; n < dbMan->currentActionList()->getData()->size(); n++)
                         {
-                            if (act->startDT() >= (now - 30) && act->startDT() < (now + 30) )
-                            {
-                                debugOut("Hello, " + dbMan->currentSelectedObjs()->user->uname + "\n "
-                                         "Some activity is planned for your " + ((TankObj*)(dbMan->currentSelectedObjs()->listOfUserTanks.at(i)))->name() + " aquarium");
+                            ActionObj *act = (ActionObj*)(dbMan->currentActionList()->getData()->at(n));
 
-                                /*
-                                qDebug() << "Action found:";
-                                qDebug() << "Hello, " << dbMan->currentSelectedObjs()->user->uname;
-                                qDebug() << "Some activity is planned for your " << ((TankObj*)(dbMan->currentSelectedObjs()->listOfUserTanks.at(i)))->name() << " aquarium";
-                                qDebug() << act->name();
-                                qDebug() << act->desc();
-                                */
+                            if (act != 0)
+                            {
+                                if (act->startDT() >= (now - 30) && act->startDT() < (now + 30) )
+                                {
+                                    debugOut("Hello, " + dbMan->currentSelectedObjs()->user->uname + "\n "
+                                             "Some activity is planned for your " + ((TankObj*)(dbMan->currentSelectedObjs()->listOfUserTanks.at(i)))->name() + " aquarium");
+
+                                }
                             }
                         }
                     }
@@ -70,7 +67,7 @@ Java_org_tikava_AquariumNotes_Background_callbackOnTimer(JNIEnv *env, jobject ob
         }
     }
     else
-        debugOut("Read user failed");
+        qDebug() << "Cannot open DB from back";
 
 
     dbMan->closeDB();
@@ -82,10 +79,22 @@ Java_org_tikava_AquariumNotes_Background_callbackOnTimer(JNIEnv *env, jobject ob
 }
 #endif
 
+
+static void sendNotification(QString title, QString message, QString details)
+{
+    AndroidNotification *notify = new AndroidNotification();
+    notify->setTitle(title);
+    notify->setMessage(message);
+    notify->setDetails(details);
+    notify->updateAndroidNotification();
+}
+
+
 static void debugOut(QString message)
 {
     AndroidNotification *notify = new AndroidNotification();
-    notify->setNotification(message);
+    notify->setTitle("DEBUG");
+    notify->setMessage(message);
     notify->updateAndroidNotification();
 }
 
