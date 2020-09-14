@@ -11,6 +11,8 @@ import android.graphics.BitmapFactory;
 import android.app.NotificationChannel;
 import android.util.Log;
 
+import android.support.v4.app.NotificationCompat;
+
 public class AquariumNotesNotification
 {
     private static NotificationManager m_notificationManager;
@@ -20,9 +22,23 @@ public class AquariumNotesNotification
 
     public AquariumNotesNotification() {}
 
-    public static void notify(Context context, String message, String title)
+    public static void notify(Context context, String title, String message, String details)
     {
         try {
+
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
+                                    .setSmallIcon(R.drawable.icon)
+                                    .setContentTitle(title)
+                                    .setContentText(message)
+                                    .setStyle(new NotificationCompat.BigTextStyle()
+                                             .bigText(details));
+
+            NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            // mId allows you to update the notification later on.
+            mNotificationManager.notify(0, mBuilder.build());
+
+
+            /*
             m_notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
@@ -43,6 +59,7 @@ public class AquariumNotesNotification
                     .setAutoCancel(true);
 
             m_notificationManager.notify(0, m_builder.build());
+            */
         } catch (Exception e) {
             e.printStackTrace();
         }
