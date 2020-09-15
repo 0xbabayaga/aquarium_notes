@@ -44,9 +44,8 @@ void AndroidNotification::updateAndroidNotification()
     QAndroidJniObject::callStaticMethod<void>(
         "org/tikava/AquariumNotes/AquariumNotesNotification",
         "notify",
-        "(Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V",
+        "(Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;)V",
         QtAndroid::androidContext().object(),
         javaTitle.object<jstring>(),
-        javaMessage.object<jstring>(),
-        javaDetails.object<jstring>());
+        javaMessage.object<jstring>());
 }

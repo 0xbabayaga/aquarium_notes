@@ -13,7 +13,7 @@
 #include <jni.h>
 
 static void debugOut(QString message);
-static void sendNotification(QString title, QString message, QString details);
+static void sendNotification(QString title, QString message);
 
 #ifdef __cplusplus
 extern "C" {
@@ -25,8 +25,6 @@ Java_org_tikava_AquariumNotes_Background_callbackOnTimer(JNIEnv *env, jobject ob
     int i = 0;
     int n = 0;
     bool background = true;
-
-    sendNotification("Hello, John Wick", "Some activity is planned for your ", "Я считаю до пяти. Не могу до десяти. Раз, два, три, четыре, пять, я иду искать.");
 
     DBManager *dbMan = new DBManager(true);
 
@@ -55,8 +53,13 @@ Java_org_tikava_AquariumNotes_Background_callbackOnTimer(JNIEnv *env, jobject ob
                             {
                                 if (act->startDT() >= (now - 30) && act->startDT() < (now + 30) )
                                 {
-                                    debugOut("Hello, " + dbMan->currentSelectedObjs()->user->uname + "\n "
-                                             "Some activity is planned for your " + ((TankObj*)(dbMan->currentSelectedObjs()->listOfUserTanks.at(i)))->name() + " aquarium");
+                                    sendNotification("Hello " + dbMan->currentSelectedObjs()->user->uname + ", it's time to action",
+                                                     "\n"
+                                                     "Aquarium: " + ((TankObj*)(dbMan->currentSelectedObjs()->listOfUserTanks.at(i)))->name() + "\n"
+                                                     "Time: " + QDateTime::fromSecsSinceEpoch(act->startDT()).toString("dd-MMMM-yyyy hh:mm") + "\n"
+                                                     "Action: " + act->name() + "\n"
+                                                     "Description: " + act->desc()
+                                                     );
 
                                 }
                             }
@@ -80,12 +83,11 @@ Java_org_tikava_AquariumNotes_Background_callbackOnTimer(JNIEnv *env, jobject ob
 #endif
 
 
-static void sendNotification(QString title, QString message, QString details)
+static void sendNotification(QString title, QString message)
 {
     AndroidNotification *notify = new AndroidNotification();
     notify->setTitle(title);
     notify->setMessage(message);
-    notify->setDetails(details);
     notify->updateAndroidNotification();
 }
 

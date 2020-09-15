@@ -22,23 +22,9 @@ public class AquariumNotesNotification
 
     public AquariumNotesNotification() {}
 
-    public static void notify(Context context, String title, String message, String details)
+    public static void notify(Context context, String title, String message)
     {
         try {
-
-            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
-                                    .setSmallIcon(R.drawable.icon)
-                                    .setContentTitle(title)
-                                    .setContentText(message)
-                                    .setStyle(new NotificationCompat.BigTextStyle()
-                                             .bigText(details));
-
-            NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-            // mId allows you to update the notification later on.
-            mNotificationManager.notify(0, mBuilder.build());
-
-
-            /*
             m_notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
@@ -53,13 +39,12 @@ public class AquariumNotesNotification
             m_builder.setSmallIcon(R.drawable.icon)
                     .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.icon))
                     .setContentTitle(title)
-                    .setContentText(message)
                     .setDefaults(Notification.DEFAULT_SOUND)
                     .setColor(Color.GREEN)
-                    .setAutoCancel(true);
+                    .setAutoCancel(true)
+                    .setStyle(new Notification.BigTextStyle().bigText(message));
 
             m_notificationManager.notify(0, m_builder.build());
-            */
         } catch (Exception e) {
             e.printStackTrace();
         }
