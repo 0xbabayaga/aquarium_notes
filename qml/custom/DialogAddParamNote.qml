@@ -120,7 +120,6 @@ Item
         {
             id: rectDataContainer
             anchors.fill: rectFakeDataContainer
-            //radius: AppTheme.radius * 2 * app.scale
 
             Rectangle
             {

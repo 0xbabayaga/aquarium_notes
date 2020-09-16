@@ -64,5 +64,6 @@
         <file>resources/img/icon_menu.png</file>
         <file>qml/custom/TankStoryView.qml</file>
         <file>qml/custom/NoteView.qml</file>
+        <file>qml/custom/DialogAddAction.qml</file>
     </qresource>
 </RCC>

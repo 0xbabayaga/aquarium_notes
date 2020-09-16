@@ -19,68 +19,30 @@ Item
     {
         if (visible === true)
         {
-            rectAddActionDialog.isEdit = isEdit
+            dialogAddAction.setEdit(isEdit)
 
             if (isEdit === true)
             {
-                rectAddActionDialog.editId = actionList.model[id].actId
-                textActionName.text = actionList.model[id].name
-                textDesc.text = actionList.model[id].desc
-                textPeriod.text = actionList.model[id].period
-                comboPeriod.currentIndex = actionList.model[id].type
-                datePicker.setLinuxDate(actionList.model[id].startDT)
-                timePicker.setLinuxTime(actionList.model[id].startDT)
+                dialogAddAction.setActionParam(actionList.model[id].actId,
+                                               actionList.model[id].name,
+                                               actionList.model[id].desc,
+                                               actionList.model[id].period,
+                                               actionList.model[id].type,
+                                               actionList.model[id].startDT)
             }
             else
             {
-                textActionName.text = ""
-                textDesc.text = ""
-                textPeriod.text = "1"
-                comboPeriod.currentIndex = 0
-                datePicker.setLinuxDate(Date.now() / 1000 | 0)
-                timePicker.setLinuxTime(Date.now() / 1000 | 0)
+                dialogAddAction.setActionParam(0,
+                                               "",
+                                               "",
+                                               "1",
+                                               0,
+                                               Date.now() / 1000 | 0)
+
             }
-
-            rectAddActionDialog.opacity = 1
-            rectDataContainer.opacity = 0
         }
-        else
-        {
-            rectAddActionDialog.opacity = 0
-            rectDataContainer.opacity = 1
-        }
-    }
 
-    function addAction()
-    {
-        var dt = Math.round(new Date(datePicker.getLinuxDate() + " " + timePicker.getLinuxTime()).getTime()/1000)
-
-        if (textActionName.text.length > 0 &&
-            textDesc.text.length)
-        {
-            app.sigAddAction(textActionName.text, textDesc.text, comboPeriod.currentIndex, parseInt(textPeriod.text), dt)
-
-            showActionDialog(false, false, 0)
-        }
-    }
-
-    function editAction(id)
-    {
-        var dt = Math.round(new Date(datePicker.getLinuxDate() + " " + timePicker.getLinuxTime()).getTime()/1000)
-
-        if (textActionName.text.length > 0 &&
-            textDesc.text.length)
-        {
-            app.sigEditAction(id, textActionName.text, textDesc.text, comboPeriod.currentIndex, parseInt(textPeriod.text), dt)
-
-            showActionDialog(false, false, 0)
-        }
-    }
-
-    function deleteAction(id)
-    {
-        app.sigDeleteAction(id)
-        showActionDialog(false, false, 0)
+        dialogAddAction.show(visible)
     }
 
     function printType(type, period)
@@ -125,7 +87,7 @@ Item
         {
             id: textViewPeriod
             anchors.left: parent.left
-            anchors.leftMargin: AppTheme.padding * app.scale
+            //anchors.leftMargin: AppTheme.padding * app.scale
             height: AppTheme.compHeight * app.scale
             verticalAlignment: Text.AlignVCenter
             width: 100 * app.scale
@@ -145,7 +107,6 @@ Item
             propertyName: qsTr("Select a period:");
             width: parent.width
             model: viewPeriodListModel
-            currentIndex: 1
 
             ListModel
             {
@@ -403,182 +364,17 @@ Item
         }
     }
 
-    Rectangle
+    DialogAddAction
     {
-        id: rectAddActionDialog
-        anchors.fill: parent
-        anchors.leftMargin: AppTheme.padding * 2 * app.scale
-        anchors.rightMargin: AppTheme.padding * 2 * app.scale
-        color: "#00000020"
-        opacity: 0
-        visible: (opacity === 0) ? false : true
+        id: dialogAddAction
+        visible: false
 
-        property bool isEdit: false
-        property int editId: -1
-
-        Behavior on opacity
-        {
-            NumberAnimation {   duration: 200 }
-        }
-
-        Text
-        {
-            id: textHeader
-            anchors.top: parent.top
-            anchors.left: parent.left
-            verticalAlignment: Text.AlignVCenter
-            height: AppTheme.rowHeightMin * app.scale
-            width: 100 * app.scale
-            font.family: AppTheme.fontFamily
-            font.pixelSize: AppTheme.fontBigSize * app.scale
-            color: AppTheme.blueFontColor
-            text: qsTr("Add action:")
-        }
-
-        Column
-        {
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: textHeader.bottom
-            anchors.topMargin: AppTheme.margin * app.scale
-            height: 400 * app.scale
-            width: parent.width
-            spacing: AppTheme.padding * app.scale
-
-            TextInput
-            {
-                id: textActionName
-                placeholderText: qsTr("Action name")
-                width: parent.width
-                focus: true
-                //KeyNavigation.tab: textUserEmail
-            }
-
-            //Item { height: 1; width: 1;}
-
-            TextInput
-            {
-                id: textDesc
-                placeholderText: qsTr("Description")
-                width: parent.width
-                focus: true
-                //KeyNavigation.tab: textUserEmail
-            }
-
-            Rectangle
-            {
-                width: parent.width
-                height: AppTheme.compHeight * app.scale
-                color: "#00000000"
-
-                Text
-                {
-                    id: textRepeat
-                    anchors.left: parent.left
-                    height: parent.height
-                    verticalAlignment: Text.AlignVCenter
-                    font.family: AppTheme.fontFamily
-                    font.pixelSize: AppTheme.fontSmallSize * app.scale
-                    color: AppTheme.greyColor
-                    text: qsTr("Repeat: ")
-                }
-
-                TextInput
-                {
-                    id: textPeriod
-                    anchors.right: comboPeriod.left
-                    anchors.rightMargin: AppTheme.padding * app.scale
-                    placeholderText: qsTr("1")
-                    width: 60 * app.scale
-                    focus: true
-                    maximumLength: 2
-                    //KeyNavigation.tab: textUserEmail
-                }
-
-                ComboListQuick
-                {
-                    id: comboPeriod
-                    anchors.right: parent.right
-                    propertyName: qsTr("Select a period:");
-                    width: 100 * app.scale
-                    model: periodslistModel
-
-                    ListModel
-                    {
-                        id: periodslistModel
-                        ListElement {   name: qsTr("Once")      }
-                        ListElement {   name: qsTr("Days")     }
-                        ListElement {   name: qsTr("Weeks")    }
-                        ListElement {   name: qsTr("Months")   }
-                    }
-
-                    onCurrentIndexChanged:
-                    {
-                        if (comboPeriod.currentIndex > 0)
-                        {
-                            textPeriod.enabled = true
-                            textPeriod.visible = true
-                            textRepeat.text = qsTr("Repeat every:")
-                        }
-                        else
-                        {
-                            textPeriod.enabled = false
-                            textPeriod.visible = false
-                            textRepeat.text = qsTr("Repeat:")
-                        }
-                    }
-                }
-            }
-
-            Text
-            {
-                verticalAlignment: Text.AlignVCenter
-                font.family: AppTheme.fontFamily
-                font.pixelSize: AppTheme.fontSmallSize * app.scale
-                color: AppTheme.greyColor
-                text: qsTr("Start Date/Time")
-            }
-
-            DatePicker
-            {
-                id: datePicker
-                width: parent.width
-                title: qsTr("Select a start date:")
-            }
-
-            TimePicker
-            {
-                id: timePicker
-                width: parent.width
-                title: qsTr("Select a start time:")
-            }
-        }
-
-        IconSimpleButton
-        {
-            id: buttonCancel
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: AppTheme.margin * app.scale
-            anchors.left: parent.left
-            image: "qrc:/resources/img/icon_cancel.png"
-
-            onSigButtonClicked: showActionDialog(false, false, 0)
-        }
-
-        IconSimpleButton
-        {
-            id: buttonAdd
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: AppTheme.margin * app.scale
-            anchors.right: parent.right
-            image: "qrc:/resources/img/icon_ok.png"
-
-            onSigButtonClicked: rectAddActionDialog.isEdit ? editAction(rectAddActionDialog.editId) : addAction()
-        }
+        onSigOk: addLogRecord(dialogAddAction.isEdit)
     }
 
     ConfirmDialog
     {
         id: confirmDialog
-        onSigAccept: deleteAction(getParam())
+        onSigAccept: dialogAddAction.deleteAction(getParam())
     }
 }

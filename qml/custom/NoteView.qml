@@ -50,8 +50,6 @@ Item
 
     onImagesListChanged:
     {
-        console.log("onImagesListChanged")
-
         imagesListModel.clear()
         valuesModel.clear()
 
