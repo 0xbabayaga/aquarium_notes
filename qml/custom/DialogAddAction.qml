@@ -130,9 +130,9 @@ Item
         {
             anchors.fill: rectFakeDataContainer
             horizontalOffset: 0
-            verticalOffset: -3
-            radius: AppTheme.shadowSize * app.scale
-            samples: AppTheme.shadowSamples
+            verticalOffset: -AppTheme.shadowOffset * app.scale
+            radius: AppTheme.shadowSize/2 * app.scale
+            samples: AppTheme.shadowSamples * app.scale
             color: AppTheme.shadowColor
             source: rectFakeDataContainer
         }
@@ -140,8 +140,8 @@ Item
         Rectangle
         {
             id: rectAddActionDialog
-            anchors.fill: parent
-            anchors.topMargin: AppTheme.rowHeightMin * 2 * app.scale
+            anchors.fill: rectFakeDataContainer
+            anchors.topMargin: AppTheme.padding * app.scale
             anchors.leftMargin: AppTheme.padding * 2 * app.scale
             anchors.rightMargin: AppTheme.padding * 2 * app.scale
             color: "#00000020"

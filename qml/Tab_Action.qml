@@ -49,10 +49,10 @@ Item
     {
         switch (type)
         {
-            case AppDefs.ActionRepeat_EveryDay:     return qsTr("(Every " + period + " days)");
-            case AppDefs.ActionRepeat_EveryWeek:    return qsTr("(Every " + period + " weeks)");
-            case AppDefs.ActionRepeat_EveryMonth:   return qsTr("(Every " + period + " months");
-            default:                                return "(Once)"
+            case AppDefs.ActionRepeat_EveryDay:     return qsTr("[Every " + period + " days]");
+            case AppDefs.ActionRepeat_EveryWeek:    return qsTr("[Every " + period + " weeks]");
+            case AppDefs.ActionRepeat_EveryMonth:   return qsTr("[Every " + period + " months]");
+            default:                                return "[Once]"
         }
     }
 
@@ -66,6 +66,15 @@ Item
     {
         var date = new Date(tm * 1000)
         return months[date.getMonth()] + " " + date.getDate()
+    }
+
+    function printTime(tm)
+    {
+        var date = new Date(tm * 1000)
+        var hh = "0" + date.getHours()
+        var mm = "0" + date.getMinutes()
+
+        return hh.substr(-2)+":"+mm.substr(-2)
     }
 
     Rectangle
@@ -179,21 +188,23 @@ Item
                     {
                         anchors.fill: parent
                         anchors.leftMargin: AppTheme.padding * app.scale
-                        anchors.rightMargin: AppTheme.padding * app.scale
                         color: "#00000000"
 
-                        Column
+                        Rectangle
                         {
                             id: columnMainInfo
                             anchors.top: parent.top
                             anchors.left: parent.left
-                            height: AppTheme.compHeight * app.scale
+                            height: AppTheme.compHeight * 2 * app.scale
                             width: rectDataContainer.dataWidth
+                            color: (index === actionList.currentIndex) ? AppTheme.lightBlueColor : AppTheme.whiteColor
 
                             Text
                             {
+                                anchors.top: parent.top
+                                anchors.topMargin: AppTheme.padding/4 * app.scale
                                 height: AppTheme.compHeight * app.scale
-                                verticalAlignment: Text.AlignBottom
+                                verticalAlignment: Text.AlignVCenter
                                 font.family: AppTheme.fontFamily
                                 font.pixelSize: AppTheme.fontNormalSize * app.scale
                                 color: AppTheme.blueFontColor
@@ -202,44 +213,82 @@ Item
 
                             Text
                             {
+                                anchors.bottom: parent.bottom
+                                anchors.bottomMargin: AppTheme.padding/4 * app.scale
                                 height: AppTheme.compHeight * app.scale
-                                verticalAlignment: Text.AlignTop
+                                verticalAlignment: Text.AlignVCenter
                                 font.family: AppTheme.fontFamily
-                                font.pixelSize: AppTheme.fontSmallSize * app.scale
+                                font.pixelSize: AppTheme.fontSuperSmallSize * app.scale
                                 color: AppTheme.greyColor
                                 text: printType(type, period)
                             }
                         }
 
-                        Column
+                        Rectangle
                         {
                             anchors.top: parent.top
                             anchors.right: parent.right
-                            height: AppTheme.compHeight * app.scale
+                            height: (index === actionList.currentIndex) ? AppTheme.compHeight * 3 * app.scale : AppTheme.compHeight * 2 * app.scale
                             width: parent.width - rectDataContainer.dataWidth
+                            color: AppTheme.blueColor
 
-                            Text
+                            Behavior on height
                             {
-                                height: AppTheme.compHeight * app.scale
-                                width: parent.width
-                                verticalAlignment: Text.AlignBottom
-                                horizontalAlignment: Text.AlignRight
-                                font.family: AppTheme.fontFamily
-                                font.pixelSize: AppTheme.fontNormalSize * app.scale
-                                color: AppTheme.blueFontColor
-                                text: printDay(startDT)
+                                NumberAnimation {   duration: 100 }
                             }
 
                             Text
                             {
+                                anchors.top: parent.top
+                                anchors.topMargin: AppTheme.compHeight * app.scale
+                                anchors.right: parent.right
+                                anchors.rightMargin: AppTheme.padding * app.scale
                                 height: AppTheme.compHeight * app.scale
                                 width: parent.width
                                 verticalAlignment: Text.AlignTop
                                 horizontalAlignment: Text.AlignRight
                                 font.family: AppTheme.fontFamily
+                                font.pixelSize: AppTheme.fontSuperSmallSize * app.scale
+                                color: AppTheme.whiteColor
+                                text: printDay(startDT)
+                            }
+
+                            Text
+                            {
+                                anchors.top: parent.top
+                                anchors.topMargin: AppTheme.padding/4 * app.scale
+                                anchors.right: parent.right
+                                anchors.rightMargin: AppTheme.padding * app.scale
+                                height: AppTheme.compHeight * app.scale
+                                width: parent.width
+                                verticalAlignment: Text.AlignVCenter
+                                horizontalAlignment: Text.AlignRight
+                                font.family: AppTheme.fontFamily
                                 font.pixelSize: AppTheme.fontNormalSize * app.scale
-                                color: AppTheme.greyColor
-                                text: printShortDate(startDT)
+                                color: AppTheme.whiteColor
+                                text: "<b>" + printShortDate(startDT) + "</b>"
+                            }
+
+                            Text
+                            {
+                                anchors.bottom: parent.bottom
+                                anchors.bottomMargin: AppTheme.padding/4 * app.scale
+                                anchors.right: parent.right
+                                anchors.rightMargin: AppTheme.padding * app.scale
+                                height: AppTheme.compHeight * app.scale
+                                width: parent.width
+                                verticalAlignment: Text.AlignVCenter
+                                horizontalAlignment: Text.AlignRight
+                                font.family: AppTheme.fontFamily
+                                font.pixelSize: AppTheme.fontNormalSize * app.scale
+                                color: AppTheme.whiteColor
+                                text: printTime(startDT)
+                                opacity: (index === actionList.currentIndex) ? 1 : 0
+
+                                Behavior on opacity
+                                {
+                                    NumberAnimation {   duration: 100 }
+                                }
                             }
                         }
 
@@ -249,7 +298,7 @@ Item
                             anchors.top: parent.verticalCenter
                             width: rectDataContainer.dataWidth
                             height: 1 * app.scale
-                            color: AppTheme.backLightBlueColor
+                            color: (index === actionList.currentIndex) ? AppTheme.lightBlueColor : AppTheme.whiteColor
                             opacity: (index === actionList.currentIndex) ? 1 : 0
 
                             Behavior on opacity
@@ -276,7 +325,6 @@ Item
                         Rectangle
                         {
                             anchors.right: parent.right
-                            anchors.rightMargin: -AppTheme.padding * app.scale
                             anchors.bottom: parent.bottom
                             width: AppTheme.compHeight * 2 * app.scale
                             height: AppTheme.compHeight * app.scale
