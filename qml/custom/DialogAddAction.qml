@@ -12,10 +12,11 @@ Item
     height: app.height
 
     property bool isEdit: false
+    property int editId: 0
 
     function setActionParam(id, name, desc, repeatsInterval, period, dateTime)
     {
-        isEdit = id
+        editId = id
         textActionName.text = name
         textDesc.text = desc
         textPeriod.text = repeatsInterval

@@ -85,7 +85,7 @@ Item
         anchors.rightMargin: AppTheme.padding * app.scale
         color: "#00000000"
 
-        property int dataWidth: 240 * app.scale
+        property int dataWidth: 230 * app.scale
 
         Behavior on opacity
         {

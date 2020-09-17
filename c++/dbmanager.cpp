@@ -896,6 +896,10 @@ bool DBManager::addActionRecord(QString tankId, QString name, QString desc, int 
 bool DBManager::editActionRecord(int id, QString tankId, QString name, QString desc, int periodType, int period, int tm)
 {
     bool res = false;
+
+    name.replace("'", "''");
+    desc.replace("'", "''");
+
     QSqlQuery query("UPDATE ACTIONS_TABLE SET "
                     "TYPE = " + QString::number(periodType) + ", "
                     "NAME = '" + name + "', "
