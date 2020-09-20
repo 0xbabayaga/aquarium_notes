@@ -79,6 +79,7 @@ Item
                     {
                         id: imgPhoto
                         anchors.top: parent.top
+                        //fillMode: Image.PreserveAspectFit
                         width: parent.width
                         height: tankListView.tankImageHeight * app.scale
                         source: (img.length > 0) ? "data:image/jpg;base64," + img : ""

@@ -23,6 +23,8 @@ SOURCES += \
         c++/backmanager.cpp
 }
 
+DEFINES += FULL_FEATURES_ENABLED
+
 RESOURCES += qml.qrc
 
 # Default rules for deployment.

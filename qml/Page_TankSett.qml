@@ -57,32 +57,49 @@ Item
 
     function moveToAddNewTank(val)
     {
-        animationToPage.stop()
-
-        isEdit = false
-
-        if (val === true)
+        if (app.isFullFunctionality() === true ||
+            tanksListModel.count < AppDefs.TANKS_COUNT_LIMIT)
         {
-            animationToPage.from = 0
-            animationToPage.to = flickView.height
+            if (tanksListModel.count < AppDefs.TANKS_COUNT_FULL_LIMIT)
+            {
+                animationToPage.stop()
 
-            textTankName.text = ""
-            textTankDesc.text = ""
-            textTankL.text = ""
-            textTankH.text = ""
-            textTankW.text = ""
-            imgTankAvatar.reset()
+                isEdit = false
 
-            textHeader.text = qsTr("TANKS") + qsTr(" :: ADD NEW")
+                if (val === true)
+                {
+                    animationToPage.from = 0
+                    animationToPage.to = flickView.height
+
+                    textTankName.text = ""
+                    textTankDesc.text = ""
+                    textTankL.text = ""
+                    textTankH.text = ""
+                    textTankW.text = ""
+                    imgTankAvatar.reset()
+
+                    textHeader.text = qsTr("TANKS") + qsTr(" :: ADD NEW")
+                }
+                else
+                {
+                    animationToPage.from = flickView.height
+                    animationToPage.to = 0
+                    textHeader.text = qsTr("TANKS")
+                }
+
+                animationToPage.start()
+            }
+            else
+            {
+                tip.tipText = qsTr("TANK max count reached!")
+                tip.show(true)
+            }
         }
         else
         {
-            animationToPage.from = flickView.height
-            animationToPage.to = 0
-            textHeader.text = qsTr("TANKS")
+            tip.tipText = qsTr("TANK creating functionality limitation!")
+            tip.show(true)
         }
-
-        animationToPage.start()
     }
 
     function checkAndCreate()
@@ -509,6 +526,7 @@ Item
 
                         Row
                         {
+                            id: buttonsRow
                             anchors.horizontalCenter: parent.horizontalCenter
                             width: (AppTheme.compHeight * 3 + AppTheme.margin * 2) * app.scale
                             height: AppTheme.compHeight * app.scale
@@ -537,6 +555,15 @@ Item
                                                                              qsTr("All data assosiated with current aquarium will be deleted!"))
                             }
                         }
+                    }
+
+                    Tips
+                    {
+                        id: tip
+                        anchors.bottom: columnContainer.bottom
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        visible: false
+                        tipText: qsTr("")
                     }
                 }
 

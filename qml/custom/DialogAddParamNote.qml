@@ -285,6 +285,28 @@ Item
                         {
                             id: imagesList
                             objectName: "imageList"
+                            imagesCountMax: (app.isFullFunctionality() === true) ? AppDefs.NOTE_IMAGES_COUNT_FULL_LIMIT : AppDefs.NOTE_IMAGES_COUNT_LIMIT
+
+                            onSigImagesLimitReached:
+                            {
+                                if (app.isFullFunctionality() === true &&
+                                    imagesList.selectedImagesList.count === AppDefs.ACTIONS_COUNT_FULL_LIMIT)
+                                {
+                                   tip.tipText = qsTr("NOTE images limit count reached!")
+                                }
+                                else
+                                    tip.tipText = qsTr("NOTE images functionality limitation!")
+
+                                tip.show(true)
+                            }
+
+                            Tips
+                            {
+                                id: tip
+                                anchors.bottom: imagesList.bottom
+                                visible: false
+                                tipText: qsTr("")
+                            }
                         }
                     }
 

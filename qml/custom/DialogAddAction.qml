@@ -192,8 +192,6 @@ Item
                     //KeyNavigation.tab: textUserEmail
                 }
 
-                //Item { height: 1; width: 1;}
-
                 TextInput
                 {
                     id: textDesc

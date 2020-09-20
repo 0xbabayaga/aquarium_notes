@@ -221,6 +221,10 @@ void AppManager::setSettAfterQMLReady()
     setQmlParam("comboDimensions", "currentIndex", QVariant(appSett.value(SETT_DIMENSIONUNITS).toInt()));
     setQmlParam("comboVolumeUnits", "currentIndex", QVariant(appSett.value(SETT_VOLUMEUNITS).toInt()));
     setQmlParam("comboDateFormat", "currentIndex", QVariant(appSett.value(SETT_DATEFORMAT).toInt()));
+
+#ifdef FULL_FEATURES_ENABLED
+    //setQmlParam("app", "global_FULLFEATURES", true);
+#endif
 }
 
 bool AppManager::loadTranslations(int id)

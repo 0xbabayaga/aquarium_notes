@@ -16,6 +16,8 @@ Item
     property alias selectedImagesList: listOfImages
     property string galleryImageSelected: ""
 
+    signal sigImagesLimitReached(int max)
+
     onGalleryImageSelectedChanged: if (galleryImageSelected !== "") addImageToList(galleryImageSelected)
 
     function reset()
@@ -150,14 +152,18 @@ Item
         id: buttonAddImage
         anchors.left: imagesListView.right
         image: "qrc:/resources/img/icon_photo.png"
-        enabled: imagesListView.model.count < imageList.imagesCountMax
 
         onSigButtonClicked:
         {
-            if (app.isAndro === true)
-                app.sigOpenGallery()
+            if (imagesListView.model.count < imageList.imagesCountMax)
+            {
+                if (app.isAndro === true)
+                    app.sigOpenGallery()
+                else
+                    fileDialog.open()
+            }
             else
-                fileDialog.open()
+                sigImagesLimitReached(imageList.imagesCountMax)
         }
     }
 

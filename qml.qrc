@@ -65,5 +65,6 @@
         <file>qml/custom/TankStoryView.qml</file>
         <file>qml/custom/NoteView.qml</file>
         <file>qml/custom/DialogAddAction.qml</file>
+        <file>qml/custom/Tips.qml</file>
     </qresource>
 </RCC>

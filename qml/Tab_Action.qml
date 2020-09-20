@@ -32,17 +32,38 @@ Item
             }
             else
             {
-                dialogAddAction.setActionParam(0,
-                                               "",
-                                               "",
-                                               "1",
-                                               0,
-                                               Date.now() / 1000 | 0)
+                var actionCount = actionList.model.length
+
+                if (app.isFullFunctionality() === true ||
+                    actionCount < AppDefs.ACTIONS_COUNT_LIMIT)
+                {
+                    if (actionCount < AppDefs.ACTIONS_COUNT_FULL_LIMIT)
+                    {
+                        dialogAddAction.setActionParam(0,
+                                                       "",
+                                                       "",
+                                                       "1",
+                                                       0,
+                                                       Date.now() / 1000 | 0)
+
+                        dialogAddAction.show(visible)
+                    }
+                    else
+                    {
+                        tip.tipText = qsTr("ACTIONS max count reached!")
+                        tip.show(true)
+                    }
+                }
+                else
+                {
+                    tip.tipText = qsTr("ACTIONS functionality limitation!")
+                    tip.show(true)
+                }
 
             }
         }
-
-        dialogAddAction.show(visible)
+        else
+            dialogAddAction.show(visible)
     }
 
     function printType(type, period)
@@ -96,7 +117,6 @@ Item
         {
             id: textViewPeriod
             anchors.left: parent.left
-            //anchors.leftMargin: AppTheme.padding * app.scale
             height: AppTheme.compHeight * app.scale
             verticalAlignment: Text.AlignVCenter
             width: 100 * app.scale
@@ -409,6 +429,15 @@ Item
             anchors.bottomMargin: AppTheme.margin * app.scale
 
             onSigButtonClicked: showActionDialog(true, false, 0)
+        }
+
+        Tips
+        {
+            id: tip
+            anchors.bottom: addRecordButton.top
+            anchors.horizontalCenter: parent.horizontalCenter
+            visible: false
+            tipText: qsTr("")
         }
     }
 

@@ -27,6 +27,8 @@ Window
     property string global_USERREGION: ""
     property string global_USERCOUNTRY: ""
     property string global_USERCITY: ""
+    property bool   global_FULLFEATURES: false
+    property string global_FULLFEATURESKEY: ""
 
     ListView
     {
@@ -153,6 +155,11 @@ Window
             return qsTr("G")
         else
             return qsTr("G")
+    }
+
+    function isFullFunctionality()
+    {
+        return global_FULLFEATURES;
     }
 
     Rectangle
