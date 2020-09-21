@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <manifest package="org.tikava.AquariumNotes" xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="1.0" android:versionCode="1" android:installLocation="auto">
     <application android:hardwareAccelerated="true" android:requestLegacyExternalStorage="true" android:name="org.qtproject.qt5.android.bindings.QtApplication" android:label="AquariumNotes" android:icon="@drawable/icon">
-        <activity android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|layoutDirection|locale|fontScale|keyboard|keyboardHidden|navigation" android:name="org.tikava.AquariumNotes.AquariumNotes" android:label="AquariumNotes" android:screenOrientation="unspecified" android:launchMode="singleTop">
+        <activity android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|layoutDirection|locale|fontScale|keyboard|keyboardHidden|navigation" android:name="org.tikava.AquariumNotes.AquariumNotes" android:label="AquariumNotes" android:screenOrientation="unspecified" android:launchMode="singleTop" android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -28,14 +28,7 @@
             <meta-data android:value="@string/ministro_needed_msg" android:name="android.app.ministro_needed_msg"/>
             <meta-data android:value="@string/fatal_error_msg" android:name="android.app.fatal_error_msg"/>
             <!--  Messages maps -->
-            <!-- Splash screen -->
-            <!--
-            <meta-data android:name="android.app.splash_screen_drawable" android:resource="@drawable/logo"/>
-            -->
-            <!-- Splash screen -->
-            <!-- Splash screen -->
             <meta-data android:name="android.app.splash_screen_drawable" android:resource="@drawable/splash"/>
-            <!-- Splash screen -->
             <!-- Background running -->
             <!-- Warning: changing this value to true may cause unexpected crashes if the
                           application still try to draw after
@@ -43,6 +36,11 @@
                           signal is sent! -->
             <meta-data android:name="android.app.background_running" android:value="false"/>
             <!-- Background running -->
+            <!--
+            <meta-data android:name="android.app.splash_screen_drawable" android:resource="@drawable/icon"/>
+            <meta-data android:name="android.app.splash_screen_drawable_portrait" android:resource="@drawable/logo_portrait"/>
+            <meta-data android:name="android.app.splash_screen_drawable_landscape" android:resource="@drawable/logo_landscape"/>
+            -->
         </activity>
         <service android:name="org.tikava.AquariumNotes.Background">
             <meta-data android:name="android.app.background_running" android:value="true"/>

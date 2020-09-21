@@ -5,8 +5,9 @@
             <solid android:color="#FFFFFFFF"/>
         </shape>
     </item>
-    <item>
-         <bitmap android:src="@drawable/icon"
+    <item
+        android:width="200dp"
+        android:height="200dp"
+        android:drawable="@drawable/icon"
         android:gravity="center" />
-    </item>
 </layer-list>

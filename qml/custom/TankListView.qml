@@ -31,11 +31,12 @@ Item
             orientation: ListView.Vertical
             spacing: AppTheme.margin * app.scale
             clip: true
+            cacheBuffer: 6000
 
             delegate: Rectangle
             {
                 width: parent.width
-                height: (index === view.currentIndex) ? (((tankListView.tankImageHeight + currParamTable.realModelLength() * AppTheme.compHeight + AppTheme.rowHeightMin + AppTheme.padding/2) * app.scale)) : tankListView.tankImageHeight * app.scale
+                height: (index === view.currentIndex) ? (((currParamTable.realModelLength() * AppTheme.compHeight + AppTheme.rowHeightMin + AppTheme.padding/2) * app.scale) + imgPhoto.height) : imgPhoto.height
                 color: "#00000000"
 
                 Behavior on height
@@ -79,11 +80,18 @@ Item
                     {
                         id: imgPhoto
                         anchors.top: parent.top
-                        //fillMode: Image.PreserveAspectFit
+                        fillMode: Image.PreserveAspectFit
                         width: parent.width
-                        height: tankListView.tankImageHeight * app.scale
+                        //height: tankListView.tankImageHeight * app.scale
                         source: (img.length > 0) ? "data:image/jpg;base64," + img : ""
                         mipmap: true
+
+                        sourceSize.width: parent.width
+                        //sourceSize.height: 400
+                        //mipmap: true
+                        //fillMode: Image.PreserveAspectFit
+
+                        onStatusChanged: if (image.status == Image.Ready) console.log('Loaded')
                     }
 
                     Image
