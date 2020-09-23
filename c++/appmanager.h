@@ -11,6 +11,7 @@
 #include "dbobjects.h"
 #include "actionlist.h"
 #include "position.h"
+#include "cloudmanager.h"
 
 class AppManager : public DBManager
 {
@@ -84,6 +85,8 @@ private:
     QSettings appSett;
     QTranslator translator;
     QQmlApplicationEngine   *qmlEngine = nullptr;
+
+    CloudManager *cloudMan = nullptr;
 
     QList<QObject*> langsList;
 

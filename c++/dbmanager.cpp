@@ -1001,6 +1001,7 @@ bool DBManager::initDB()
                 "COOR_LAT REAL, "
                 "COOR_LONG REAL, "
                 "AVATAR_IMG blob, "
+                "APP_KEY varchar(64), "
                 "DATE_CREATE integer, "
                 "DATE_EDIT integer )");
 
@@ -1016,6 +1017,7 @@ bool DBManager::initDB()
         query.exec("ALTER TABLE USER_TABLE ADD CITY VARCHAR(32)");
         query.exec("ALTER TABLE USER_TABLE ADD COOR_LAT REAL");
         query.exec("ALTER TABLE USER_TABLE ADD COOR_LONG REAL");
+        query.exec("ALTER TABLE USER_TABLE ADD APP_KEY varchar(64)");
     }
 
 

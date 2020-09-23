@@ -78,6 +78,8 @@ AppManager::AppManager(QQmlApplicationEngine *engine, QObject *parent) : DBManag
                 "(Landroid/content/Intent;)Landroid/content/ComponentName;",
                 serviceIntent.handle().object());
 #endif
+
+    cloudMan = new CloudManager();
 }
 
 AppManager::~AppManager()

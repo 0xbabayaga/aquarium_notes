@@ -13,6 +13,7 @@ TEMPLATE = app
 SOURCES += \
         c++/actionlist.cpp \
         c++/appmanager.cpp \
+        c++/cloudmanager.cpp \
         c++/dbmanager.cpp \
         c++/position.cpp \
         main.cpp
@@ -54,6 +55,7 @@ HEADERS += \
     c++/AppDefs.h \
     c++/actionlist.h \
     c++/appmanager.h \
+    c++/cloudmanager.h \
     c++/dbmanager.h \
     c++/dbobjects.h \
     c++/galleryobjects.h \
