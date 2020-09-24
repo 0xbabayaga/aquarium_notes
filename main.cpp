@@ -22,9 +22,9 @@ int main(int argc, char *argv[])
 
         AppDef::declareQML();
 
-        app.setOrganizationName("AquariumNotes");
-        app.setOrganizationDomain("org.tikava");
-        app.setApplicationName("AquariumNotes");
+        app.setOrganizationName(APP_ORG);
+        app.setOrganizationDomain(APP_DOMAIN);
+        app.setApplicationName(APP_NAME);
 
         QQmlApplicationEngine engine;
         const QUrl url(QStringLiteral("qrc:/main.qml"));

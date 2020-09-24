@@ -4,6 +4,10 @@
 #include <QtGlobal>
 #include <QQmlEngine>
 
+#define APP_ORG         "AquariumNotes"
+#define APP_DOMAIN      "org.tikava"
+#define APP_NAME        "AquariumNotes"
+
 class AppDef : public QObject
 {
     Q_OBJECT

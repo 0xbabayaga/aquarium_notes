@@ -174,6 +174,8 @@ void AppManager::init()
         qDebug() << "Permission " << permissions.at(i) << ((r == QtAndroid::PermissionResult::Denied) ? " DENIED" : " GRANTED ");
     }
 #endif
+
+    cloudMan->request_registerApp(currentSelectedObjs()->user);
 }
 
 void AppManager::readAppSett()
