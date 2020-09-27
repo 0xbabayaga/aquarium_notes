@@ -703,7 +703,7 @@ bool DBManager::deleteTank(QString tankId)
 
 bool DBManager::createTankDefaultParamSet(QString tankId, AquariumType type)
 {
-    if (tankId.length() == RAND_ID_LENGTH)
+    if (tankId.length() == AppDef::MAN_ID_LENGTH)
     {
         QSqlQuery query;
         QSqlQuery q0("SELECT * FROM DICT_TABLE", db);
@@ -953,7 +953,7 @@ bool DBManager::editPersonalParamState(QString tankId, int paramId, bool en)
 QString DBManager::randId()
 {
     const QString possibleCharacters("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
-    const int randomStringLength = RAND_ID_LENGTH;
+    const int randomStringLength = AppDef::MAN_ID_LENGTH;
     QString randomString;
 
     for(int i = 0; i < randomStringLength; ++i)

@@ -66,5 +66,6 @@
         <file>qml/custom/NoteView.qml</file>
         <file>qml/custom/DialogAddAction.qml</file>
         <file>qml/custom/Tips.qml</file>
+        <file>resources/img/icon_cloudsync.png</file>
     </qresource>
 </RCC>

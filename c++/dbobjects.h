@@ -368,6 +368,7 @@ public:
         {
             man_id = query->value(query->record().indexOf("MAN_ID")).toString();
             uname = query->value(query->record().indexOf("UNAME")).toString();
+            upass = query->value(query->record().indexOf("UPASS")).toString();
             email = query->value(query->record().indexOf("EMAIL")).toString();
             phone = query->value(query->record().indexOf("PHONE")).toString();
             avatar_img = query->value(query->record().indexOf("AVATAR_IMG")).toString();
@@ -375,6 +376,10 @@ public:
             selected = query->value(query->record().indexOf("SELECTED")).toInt();
             date_create = query->value(query->record().indexOf("DATE_CREATE")).toInt();
             date_edit = query->value(query->record().indexOf("DATE_EDIT")).toInt();
+            country = query->value(query->record().indexOf("COUNTRY")).toString();
+            city = query->value(query->record().indexOf("CITY")).toString();
+            coor_lat = query->value(query->record().indexOf("COOR_LAT")).toFloat();
+            coor_long = query->value(query->record().indexOf("COOR_LONG")).toFloat();
         }
     }
 
@@ -382,9 +387,14 @@ public:
 
     QString     man_id = "";
     QString     uname = "";
+    QString     upass = "";
     QString     email = "";
     QString     phone = "";
+    QString     country = "";
+    QString     city = "";
     QString     avatar_img = "";
+    float       coor_lat = 0;
+    float       coor_long = 0;
     int         status = 0;
     int         selected = 0;
     int         date_create = 0;

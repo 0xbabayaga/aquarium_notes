@@ -110,6 +110,10 @@ AppManager::~AppManager()
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigDateFormatChanged(int)), this, SLOT(onGuiDateFormatChanged(int)));
     disconnect(position, SIGNAL(positionDetected), this, SLOT(onPositionDetected));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigTankStoryLoad(int)), this, SLOT(onGuiTankStoryLoad(int)));
+    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigRegisterApp()), this, SLOT(onGuiRegisterApp()));
+
+    disconnect(cloudMan, SIGNAL(response_error(int)), this, SLOT(onCloudResponse_Error(int)));
+    disconnect(cloudMan, SIGNAL(response_registerApp(int, QString, QString)), this, SLOT(onCloudResponse_Register(int, QString, QString)));
 
     if (position != nullptr)
         delete position;
@@ -147,6 +151,10 @@ void AppManager::init()
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigVolumeUnitsChanged(int)), this, SLOT(onGuiVolumeUnitsChanged(int)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigDateFormatChanged(int)), this, SLOT(onGuiDateFormatChanged(int)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigTankStoryLoad(int)), this, SLOT(onGuiTankStoryLoad(int)));
+    connect(qmlEngine->rootObjects().first(), SIGNAL(sigRegisterApp()), this, SLOT(onGuiRegisterApp()));
+
+    connect(cloudMan, SIGNAL(response_error(int)), this, SLOT(onCloudResponse_Error(int)));
+    connect(cloudMan, SIGNAL(response_registerApp(int, QString, QString)), this, SLOT(onCloudResponse_Register(int, QString, QString)));
 
 
     setSettAfterQMLReady();
@@ -174,8 +182,6 @@ void AppManager::init()
         qDebug() << "Permission " << permissions.at(i) << ((r == QtAndroid::PermissionResult::Denied) ? " DENIED" : " GRANTED ");
     }
 #endif
-
-    cloudMan->request_registerApp(currentSelectedObjs()->user);
 }
 
 void AppManager::readAppSett()
@@ -702,6 +708,11 @@ void AppManager::onGuiTankStoryLoad(int index)
     }
 }
 
+void AppManager::onGuiRegisterApp()
+{
+    cloudMan->request_registerApp(currentSelectedObjs()->user);
+}
+
 void AppManager::onGuiTankSelected(int tankIdx)
 {
     if (tankIdx >= 0)
@@ -782,6 +793,23 @@ void AppManager::onPositionDetected()
     setQmlParam("app", "global_USERCITY", position->userCity());
 
     saveUserLocationIfRequired(position->userCountry(), position->userCity(), position->coorLat(), position->coorLong());
+}
+
+void AppManager::onCloudResponse_Register(int error, QString manId, QString key)
+{
+    CloudManager::ReponseError err = (CloudManager::ReponseError) error;
+
+    if (err == CloudManager::ReponseError::NoError)
+    {
+        qDebug() << "Application registered: " << manId << key;
+    }
+    else
+        qDebug() << "Application registering error " << error;
+}
+
+void AppManager::onCloudResponse_Error(int error)
+{
+    qDebug() << "Application registering error " << error;
 }
 
 #ifdef  Q_OS_ANDROID

@@ -282,6 +282,17 @@ Item
                                                                      qsTr("Account delete"),
                                                                      qsTr("All data assosiated with current account will be deleted!"))
                     }
+
+                    IconSimpleButton
+                    {
+                        id: registerApp
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.bottom: parent.bottom
+                        anchors.bottomMargin: AppTheme.margin * app.scale
+                        image: "qrc:/resources/img/icon_cloudsync.png"
+
+                        onSigButtonClicked: app.sigRegisterApp()
+                    }
                 }
 
                 Rectangle

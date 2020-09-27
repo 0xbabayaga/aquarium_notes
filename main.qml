@@ -83,6 +83,7 @@ Window
     signal sigDimensionUnitsChanged(int id)
     signal sigVolumeUnitsChanged(int id)
     signal sigDateFormatChanged(int id)
+    signal sigRegisterApp()
 
     function getAllParamsListModel() { return allParamsListModel    }
 

@@ -53,6 +53,7 @@ private:
     void    setSettAfterQMLReady();
 
 public slots:
+    /* GUI handlers */
     void    onQmlEngineLoaded(QObject *object, const QUrl &url);
     void    onGuiUserCreate(QString uname, QString upass, QString email, QString img);
     void    onGuiUserEdit(QString uname, QString upass, QString email, QString img);
@@ -78,8 +79,14 @@ public slots:
     void    onGuiVolumeUnitsChanged(int id);
     void    onGuiDateFormatChanged(int id);
     void    onGuiTankStoryLoad(int index);
+    void    onGuiRegisterApp();
 
+    /* Postioning handlers */
     void    onPositionDetected();
+
+    /* Cloud communication handlers */
+    void    onCloudResponse_Register(int error, QString manId, QString key);
+    void    onCloudResponse_Error(int error);
 
 private:
     QSettings appSett;
