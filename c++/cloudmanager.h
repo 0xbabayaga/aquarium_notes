@@ -14,7 +14,7 @@ class CloudManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit CloudManager(QObject *parent = nullptr);
+    explicit CloudManager(QString id, QObject *parent = nullptr);
     ~CloudManager();
 
     enum ReponseError
@@ -22,7 +22,8 @@ public:
         NoError = 0,
         Error_Timeout = 1,
         Error_Network = 2,
-        Error_Undefined = 3
+        Error_VerificationFailed = 3,
+        Error_Undefined = 0xff
     };
 
 public:
@@ -36,11 +37,14 @@ private slots:
     void onReplyReceived(QNetworkReply *reply);
     void onTimeout();
 
+protected:
+    bool isKeyValid(QString key);
 
 protected:
     QNetworkAccessManager *man = nullptr;
     QUrl                  cloudUrl;
     QTimer                *tmt;
+    QString               manId;
 };
 
 #endif // CLOUDMANAGER_H

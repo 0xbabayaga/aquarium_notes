@@ -52,6 +52,11 @@ public:
     {
         MAN_ID_LENGTH = 32,
 
+        MAN_ID_CUT_MD5 = 7,
+
+        APP_KEY_LENGTH = 256,
+        APP_KEY_SEED = 77,
+
         MAX_TANKNAME_SIZE = 32,
         MAX_TANKDESC_SIZE = 256,
         MAX_USERNAME_SIZE = 32,

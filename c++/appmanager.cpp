@@ -78,8 +78,6 @@ AppManager::AppManager(QQmlApplicationEngine *engine, QObject *parent) : DBManag
                 "(Landroid/content/Intent;)Landroid/content/ComponentName;",
                 serviceIntent.handle().object());
 #endif
-
-    cloudMan = new CloudManager();
 }
 
 AppManager::~AppManager()
@@ -156,7 +154,6 @@ void AppManager::init()
     connect(cloudMan, SIGNAL(response_error(int)), this, SLOT(onCloudResponse_Error(int)));
     connect(cloudMan, SIGNAL(response_registerApp(int, QString, QString)), this, SLOT(onCloudResponse_Register(int, QString, QString)));
 
-
     setSettAfterQMLReady();
 
     position->get();
@@ -169,6 +166,8 @@ void AppManager::init()
     qmlEngine->rootContext()->setContextProperty("aquariumTypesListModel", QVariant::fromValue(aquariumTypeList));
 
     getCurrentObjs();
+
+    cloudMan = new CloudManager(curSelectedObjs.user->man_id);
 
 #ifdef Q_OS_ANDROID
     for (int i = 0; i < permissions.size(); i++)

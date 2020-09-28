@@ -4,9 +4,12 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonParseError>
+#include <QCryptographicHash>
 
-CloudManager::CloudManager(QObject *parent) : QObject(parent)
+CloudManager::CloudManager(QString id, QObject *parent) : QObject(parent)
 {
+    manId = id;
+
     man = new QNetworkAccessManager();
     tmt = new QTimer();
     tmt->stop();
@@ -27,11 +30,20 @@ CloudManager::~CloudManager()
 
 void CloudManager::request_registerApp(UserObj *user)
 {
+    QString md5;
+    QString md5Base;
+
+    md5Base = user->man_id;
+    md5Base = md5Base.remove(0, user->man_id.length() - AppDef::MAN_ID_CUT_MD5);
+    md5Base += QString::number(user->date_create);
+    md5 = QString(QCryptographicHash::hash(md5Base.toLocal8Bit(),QCryptographicHash::Md5).toHex());
+
     QString jsonString = "{"
                          "\"method\": \"register\","
                          "\"user\": \"" + user->uname + "\","
                          "\"email\": \"" + user->email + "\","
                          "\"pass\": \"" + user->upass + "\","
+                         "\"manid\": \"" + user->man_id + "\","
                          "\"phone\": \"" + user->phone + "\","
                          "\"country\": \"" + user->country + "\","
                          "\"city\": \"" + user->city + "\","
@@ -39,14 +51,14 @@ void CloudManager::request_registerApp(UserObj *user)
                          "\"coor_long\": " + QString::number(user->coor_long) + ","
                          "\"date_create\": " + QString::number(user->date_create) + ","
                          "\"date_edit\": " + QString::number(user->date_edit) + ","
-                         "\"key\": \"" + user->man_id.remove(AppDef::MAN_ID_LENGTH/2, AppDef::MAN_ID_LENGTH/2) + "\""
+                         "\"key\": \"" + md5 + "\""
                          "}";
 
     QByteArray json = jsonString.toLocal8Bit();
     QByteArray postDataSize = QByteArray::number(json.size());
     QNetworkRequest request(cloudUrl);
 
-    //qDebug() << "JSON:" << json;
+    qDebug() << "REQUEST: " << json;
 
     request.setRawHeader("User-Agent", APP_ORG);
     request.setRawHeader("X-Custom-User-Agent", APP_NAME);
@@ -59,35 +71,47 @@ void CloudManager::request_registerApp(UserObj *user)
 
 void CloudManager::onReplyReceived(QNetworkReply *reply)
 {
-    tmt->stop();
+    QString md5 = "";
 
-    qDebug() << "RESP:" << reply->readAll();
+    tmt->stop();
 
     if (reply->error() == QNetworkReply::NetworkError::NoError)
     {
         QJsonParseError error;
         QJsonDocument jsonDoc = QJsonDocument::fromJson(reply->readAll(), &error);
-        QJsonObject::const_iterator objMethod = jsonDoc.object().find("method");
-        QJsonObject::const_iterator objManId = jsonDoc.object().find("manId");
-        QJsonObject::const_iterator objResult = jsonDoc.object().find("result");
-        QJsonObject::const_iterator objKey = jsonDoc.object().find("key");
 
-        if (objMethod->isUndefined() == false &&
-            objResult->isUndefined() == false &&
-            objManId->isUndefined() == false &&
-            objKey->isUndefined() == false)
+        if (error.error != QJsonParseError::NoError)
+            qDebug() << "JSON ERROR = " << error.errorString() << "on char" << error.offset;
+
+        QJsonObject::const_iterator objMethod = jsonDoc.object().find("method");
+
+        if (objMethod->isUndefined() == false)
         {
-            qDebug() << "PARCED:" << objMethod.value().toString();
-            qDebug() << "PARCED:" << objResult.value().toInt();
-            qDebug() << "PARCED:" << objKey.value().toString();
-            qDebug() << "PARCED:" << objManId.value().toString();
+            if (objMethod.value().toString() == "register")
+            {
+                QJsonObject::const_iterator objManId = jsonDoc.object().find("manId");
+                QJsonObject::const_iterator objResult = jsonDoc.object().find("result");
+                QJsonObject::const_iterator objKey = jsonDoc.object().find("key");
+
+                if (objResult->isUndefined() == false &&
+                    objManId->isUndefined() == false &&
+                    objKey->isUndefined() == false)
+                {
+                    if (objResult.value().toInt() == CloudManager::ReponseError::NoError &&
+                        objManId.value().toString() == manId &&
+                        isKeyValid(objKey.value().toString()) == true)
+                    {
+                        emit response_registerApp(objResult.value().toInt(), manId, objKey.value().toString());
+                    }
+                }
+                else
+                    emit response_error((int)CloudManager::ReponseError::Error_VerificationFailed);
+            }
+            else
+                emit response_error((int)CloudManager::ReponseError::Error_VerificationFailed);
         }
         else
-            emit response_error((int)CloudManager::ReponseError::Error_Network);
-
-
-        if (objMethod->toString() == "register")
-            emit response_registerApp(objResult.value().toInt(), objManId.value().toString(), objKey.value().toString());
+            emit response_error((int)CloudManager::ReponseError::Error_VerificationFailed);
     }
     else
         emit response_error((int)CloudManager::ReponseError::Error_Network);
@@ -100,4 +124,22 @@ void CloudManager::onTimeout()
 {
     tmt->stop();
     emit response_error((int)CloudManager::ReponseError::Error_Timeout);
+}
+
+bool CloudManager::isKeyValid(QString key)
+{
+    QString tmp = "";
+    int i = 0;
+    QString id = manId;
+
+    while (tmp.length() < AppDef::APP_KEY_LENGTH)
+    {
+        tmp += QString(QCryptographicHash::hash(id.toLocal8Bit(), QCryptographicHash::Md5).toHex());
+        id += QString::number(i);
+        i += AppDef::APP_KEY_SEED;
+    }
+
+    qDebug() << "CALC = " << tmp;
+
+    return (tmp == key);
 }
