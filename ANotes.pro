@@ -77,3 +77,10 @@ TRANSLATIONS += \
     resources/langs/lang_en.ts \
     resources/langs/lang_ru.ts \
     resources/langs/lang_be.ts
+android: include(F:/Dev/android_openssl-master/openssl.pri)
+
+contains(ANDROID_TARGET_ARCH,armeabi-v7a) {
+    ANDROID_EXTRA_LIBS = \
+    $$PWD/../../../Dev/android_openssl-master/Qt-5.12.4_5.13.0/arm/libcrypto.so \
+    $$PWD/../../../Dev/android_openssl-master/Qt-5.12.4_5.13.0/arm/libssl.so
+}

@@ -6,25 +6,17 @@ import "../"
 
 Item
 {
-    id: confirmDialog
+    id: waitDialog
     width: app.width
     height: app.height
     opacity: enabled ? AppTheme.opacityEnabled : AppTheme.opacityDisabled
 
-    signal sigAccept()
+    property alias header: textHeader.text
+    property alias message: textMessage.text
+
+    signal sigOk()
     signal sigCancel()
 
-    property var param: 0
-
-    function setParam(p)
-    {
-        param = p
-    }
-
-    function getParam()
-    {
-        return param
-    }
 
     function showDialog(vis, header, message)
     {
@@ -120,33 +112,16 @@ Item
 
                 IconSimpleButton
                 {
-                    id: buttonCancel
+                    id: buttonOk
                     anchors.bottom: parent.bottom
                     anchors.bottomMargin: AppTheme.padding * app.scale
-                    anchors.left: parent.left
-                    anchors.leftMargin: AppTheme.padding * app.scale
-                    image: "qrc:/resources/img/icon_cancel.png"
-
-                    onSigButtonClicked:
-                    {
-                        showDialog(false, 0, 0)
-                        sigCancel()
-                    }
-                }
-
-                IconSimpleButton
-                {
-                    id: buttonAdd
-                    anchors.bottom: parent.bottom
-                    anchors.bottomMargin: AppTheme.padding * app.scale
-                    anchors.right: parent.right
-                    anchors.rightMargin: AppTheme.padding * app.scale
+                    anchors.horizontalCenter: parent.horizontalCenter
                     image: "qrc:/resources/img/icon_ok.png"
 
                     onSigButtonClicked:
                     {
                         showDialog(false, 0, 0)
-                        sigAccept()
+                        sigOk()
                     }
                 }
             }

@@ -190,9 +190,9 @@ Item
                 anchors.fill: rectAccountPhoto
                 horizontalOffset: 0
                 verticalOffset: 0
-                radius: 12.0
-                samples: 16
-                color: "#60000000"
+                radius: AppTheme.shadowSize * app.scale
+                samples: AppTheme.shadowSamples * app.scale
+                color: AppTheme.shideColor
                 source: rectAccountPhoto
             }
 
@@ -291,7 +291,13 @@ Item
                         anchors.bottomMargin: AppTheme.margin * app.scale
                         image: "qrc:/resources/img/icon_cloudsync.png"
 
-                        onSigButtonClicked: app.sigRegisterApp()
+                        onSigButtonClicked:
+                        {
+                            cloudCommWaitDialog.showDialog(true,
+                                                  qsTr("Communicating with cloud"),
+                                                  qsTr("Please wait ... "))
+                            app.sigRegisterApp()
+                        }
                     }
                 }
 
@@ -426,5 +432,11 @@ Item
             sigClosing()
             app.sigDeleteAccount()
         }
+    }
+
+    WaitDialog
+    {
+        id: cloudCommWaitDialog
+        objectName: "cloudCommWaitDialog"
     }
 }
