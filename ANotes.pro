@@ -65,22 +65,17 @@ android {
 HEADERS += \
     c++/androidnotification.h \
     c++/backmanager.h \
+
+ANDROID_EXTRA_LIBS = \
+    $$PWD/../../../Dev/android_openssl-master/Qt-5.12.4_5.13.0/arm/libcrypto.so \
+    $$PWD/../../../Dev/android_openssl-master/Qt-5.12.4_5.13.0/arm/libssl.so
+    #$$PWD/../../../Dev/android_openssl-master/latest/arm/libcrypto_1_1.so \
+    #$$PWD/../../../Dev/android_openssl-master/latest/arm/libssl_1_1.so
 }
-
-
-#contains(ANDROID_TARGET_ARCH,armeabi-v7a) {
-#    ANDROID_PACKAGE_SOURCE_DIR = \
-#        $$PWD/android
-#}
 
 TRANSLATIONS += \
     resources/langs/lang_en.ts \
     resources/langs/lang_ru.ts \
     resources/langs/lang_be.ts
-android: include(F:/Dev/android_openssl-master/openssl.pri)
 
-contains(ANDROID_TARGET_ARCH,armeabi-v7a) {
-    ANDROID_EXTRA_LIBS = \
-    $$PWD/../../../Dev/android_openssl-master/Qt-5.12.4_5.13.0/arm/libcrypto.so \
-    $$PWD/../../../Dev/android_openssl-master/Qt-5.12.4_5.13.0/arm/libssl.so
-}
+ANDROID_ABIS = armeabi-v7a

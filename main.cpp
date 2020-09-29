@@ -1,5 +1,6 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QSslSocket>
 #include <QDebug>
 
 #include "c++/appmanager.h"
@@ -15,6 +16,8 @@ int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
     QStringList args = QCoreApplication::arguments();
+
+    qDebug() << "Device supports OpenSSL: " << QSslSocket::supportsSsl();
 
     if ((args.count() > 1) == false)
     {
