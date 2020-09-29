@@ -21,8 +21,10 @@ public:
     {
         NoError = 0,
         Error_Timeout = 1,
-        Error_Network = 2,
-        Error_VerificationFailed = 3,
+        Error_CommunicationError = 2,
+        Error_ProtocolError = 3,
+        Error_VerificationFailed = 4,
+        Error_Specific = 5,
         Error_Undefined = 0xff
     };
 
@@ -30,8 +32,8 @@ public:
     void request_registerApp(UserObj *user);
 
 signals:
-    void response_registerApp(int error, QString manId, QString key);
-    void response_error(int error);
+    void response_registerApp(int error, QString errorText,  QString manId, QString key);
+    void response_error(int error, QString errorText);
 
 private slots:
     void onReplyReceived(QNetworkReply *reply);

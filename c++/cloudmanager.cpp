@@ -84,42 +84,52 @@ void CloudManager::onReplyReceived(QNetworkReply *reply)
         QJsonDocument jsonDoc = QJsonDocument::fromJson(rsp, &error);
 
         if (error.error != QJsonParseError::NoError)
+        {
+            qDebug() << "";
+            qDebug() << rsp;
             qDebug().noquote() << "JSON ERROR = " << error.errorString() << "on char" << error.offset;
+        }
 
         QJsonObject::const_iterator objMethod = jsonDoc.object().find("method");
 
-        if (objMethod->isNull() == false)
+        if (objMethod.value() != QJsonValue::Undefined)
         {
             if (objMethod.value().toString() == "register")
             {
                 QJsonObject::const_iterator objManId = jsonDoc.object().find("manid");
                 QJsonObject::const_iterator objResult = jsonDoc.object().find("result");
                 QJsonObject::const_iterator objKey = jsonDoc.object().find("key");
+                QJsonObject::const_iterator objErrorText = jsonDoc.object().find("errortext");
 
-                if (objResult->isNull() == false &&
-                    objManId->isNull() == false &&
-                    objKey->isNull() == false)
+                if (objResult.value() != QJsonValue::Undefined &&
+                    objManId.value() != QJsonValue::Undefined &&
+                    objKey.value() != QJsonValue::Undefined &&
+                    objErrorText.value() != QJsonValue::Undefined)
                 {
-                    if (objResult.value().toInt() == CloudManager::ReponseError::NoError &&
-                        objManId.value().toString() == manId &&
-                        isKeyValid(objKey.value().toString()) == true)
+                    if (objResult.value().toInt() == CloudManager::ReponseError::NoError)
                     {
-                        emit response_registerApp(objResult.value().toInt(), manId, objKey.value().toString());
+                        if (objManId.value().toString() == manId &&
+                            isKeyValid(objKey.value().toString()) == true)
+                        {
+                            emit response_registerApp(objResult.value().toInt(), objErrorText.value().toString(), manId, objKey.value().toString());
+                        }
+                        else
+                            emit response_registerApp(CloudManager::ReponseError::Error_VerificationFailed, "", "", "");
                     }
                     else
-                        emit response_error((int)CloudManager::ReponseError::Error_VerificationFailed);
+                        emit response_registerApp(objResult.value().toInt(), objErrorText.value().toString(), "", "");
                 }
                 else
-                    emit response_error((int)CloudManager::ReponseError::Error_VerificationFailed);
+                    emit response_registerApp(CloudManager::ReponseError::Error_ProtocolError, "", "", "");
             }
             else
-                emit response_error((int)CloudManager::ReponseError::Error_VerificationFailed);
+                emit response_registerApp(CloudManager::ReponseError::Error_ProtocolError, "", "", "");
         }
         else
-            emit response_error((int)CloudManager::ReponseError::Error_VerificationFailed);
+            emit response_registerApp(CloudManager::ReponseError::Error_ProtocolError, "", "", "");
     }
     else
-        emit response_error((int)CloudManager::ReponseError::Error_Network);
+        emit response_registerApp(CloudManager::ReponseError::Error_CommunicationError, "", "", "");
 
 
     reply->deleteLater();
@@ -128,7 +138,7 @@ void CloudManager::onReplyReceived(QNetworkReply *reply)
 void CloudManager::onTimeout()
 {
     tmt->stop();
-    emit response_error((int)CloudManager::ReponseError::Error_Timeout);
+    emit response_error((int)CloudManager::ReponseError::Error_Timeout, "");
 }
 
 bool CloudManager::isKeyValid(QString key)

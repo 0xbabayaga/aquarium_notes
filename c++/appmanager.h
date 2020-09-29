@@ -85,8 +85,8 @@ public slots:
     void    onPositionDetected();
 
     /* Cloud communication handlers */
-    void    onCloudResponse_Register(int error, QString manId, QString key);
-    void    onCloudResponse_Error(int error);
+    void    onCloudResponse_Register(int error, QString errorText, QString manId, QString key);
+    void    onCloudResponse_Error(int error, QString errorText);
 
 private:
     QSettings appSett;

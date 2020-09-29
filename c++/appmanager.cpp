@@ -111,7 +111,7 @@ AppManager::~AppManager()
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigRegisterApp()), this, SLOT(onGuiRegisterApp()));
 
     disconnect(cloudMan, SIGNAL(response_error(int)), this, SLOT(onCloudResponse_Error(int)));
-    disconnect(cloudMan, SIGNAL(response_registerApp(int, QString, QString)), this, SLOT(onCloudResponse_Register(int, QString, QString)));
+    disconnect(cloudMan, SIGNAL(response_registerApp(int, QString, QString, QString)), this, SLOT(onCloudResponse_Register(int, QString, QString, QString)));
 
     if (position != nullptr)
         delete position;
@@ -166,8 +166,8 @@ void AppManager::init()
 
     cloudMan = new CloudManager(curSelectedObjs.user->man_id);
 
-    connect(cloudMan, SIGNAL(response_error(int)), this, SLOT(onCloudResponse_Error(int)));
-    connect(cloudMan, SIGNAL(response_registerApp(int, QString, QString)), this, SLOT(onCloudResponse_Register(int, QString, QString)));
+    connect(cloudMan, SIGNAL(response_error(int, QString)), this, SLOT(onCloudResponse_Error(int, QString)));
+    connect(cloudMan, SIGNAL(response_registerApp(int, QString, QString, QString)), this, SLOT(onCloudResponse_Register(int, QString, QString, QString)));
 
 
 #ifdef Q_OS_ANDROID
@@ -795,28 +795,39 @@ void AppManager::onPositionDetected()
     saveUserLocationIfRequired(position->userCountry(), position->userCity(), position->coorLat(), position->coorLong());
 }
 
-void AppManager::onCloudResponse_Register(int error, QString manId, QString key)
+void AppManager::onCloudResponse_Register(int error, QString errorText, QString manId, QString key)
 {
     CloudManager::ReponseError err = (CloudManager::ReponseError) error;
 
     if (err == CloudManager::ReponseError::NoError)
     {
-        //qDebug() << "Application registered: " << manId << key;
-
         setQmlParam("cloudCommWaitDialog", "message", tr("Application is successfully registered!"));
+        setQmlParam("app", "global_FULLFEATURES", true);
+    }
+    else if (error == CloudManager::ReponseError::Error_Specific)
+    {
+        setQmlParam("cloudCommWaitDialog", "header", tr("Application is not registered!"));
+        setQmlParam("cloudCommWaitDialog", "message", tr("Error: ") + errorText);
     }
     else
     {
-        //qDebug() << "Application registering error " << error;
-
-        setQmlParam("cloudCommWaitDialog", "message", tr("Application is not registered!") + "\n(error #"+ QString::number(error) +")");
+        setQmlParam("cloudCommWaitDialog", "message", tr("Application is not registered!"));
+        setQmlParam("cloudCommWaitDialog", "message", tr("Error: #") + QString::number(error));
     }
 }
 
-void AppManager::onCloudResponse_Error(int error)
+void AppManager::onCloudResponse_Error(int error, QString errorText)
 {
-    //qDebug() << "Application registering error " << error;
-    setQmlParam("cloudCommWaitDialog", "message", tr("Application is not registered!") + "\n(error #"+ QString::number(error) +")");
+    if (error == CloudManager::ReponseError::Error_Specific)
+    {
+        setQmlParam("cloudCommWaitDialog", "header", tr("Application is not registered!"));
+        setQmlParam("cloudCommWaitDialog", "message", tr("Error: ") + errorText);
+    }
+    else
+    {
+        setQmlParam("cloudCommWaitDialog", "message", tr("Application is not registered!"));
+        setQmlParam("cloudCommWaitDialog", "message", tr("Error: #") + QString::number(error));
+    }
 }
 
 #ifdef  Q_OS_ANDROID
