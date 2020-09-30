@@ -225,6 +225,8 @@ void AppManager::setSettAfterQMLReady()
     setQmlParam("app", "global_DATEFORMAT", QVariant(appSett.value(SETT_DATEFORMAT).toInt()));
 
     setQmlParam("app", "global_APP_VERSION", APP_VERSION);
+    setQmlParam("app", "global_APP_NAME", APP_NAME);
+    setQmlParam("app", "global_APP_DOMAIN", APP_DOMAIN);
     setQmlParam("app", "global_USERREGION", position->userRegion());
     setQmlParam("app", "global_USERCOUNTRY", position->userCountry());
     setQmlParam("app", "global_USERCITY", position->userCity());

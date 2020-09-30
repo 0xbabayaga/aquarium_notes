@@ -114,5 +114,3 @@ TRANSLATIONS += \
     resources/langs/lang_en.ts \
     resources/langs/lang_ru.ts \
     resources/langs/lang_be.ts
-
-ANDROID_ABIS = armeabi-v7a

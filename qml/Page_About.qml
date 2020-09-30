@@ -118,10 +118,57 @@ Item
                 text: qsTr("ABOUT")
             }
 
+            Column
+            {
+                anchors.top: parent.top
+                anchors.topMargin: AppTheme.rowHeight * 2 * app.scale
+                anchors.left: parent.left
+                anchors.right: parent.right
+
+                Text
+                {
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignBottom
+                    width: parent.width
+                    height: AppTheme.compHeight * app.scale
+                    font.family: AppTheme.fontFamily
+                    font.pixelSize: AppTheme.fontNormalSize * app.scale
+                    color: AppTheme.blueColor
+                    text: app.global_APP_NAME
+                }
+
+                Text
+                {
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignBottom
+                    width: parent.width
+                    height: AppTheme.compHeight * app.scale
+                    font.family: AppTheme.fontFamily
+                    font.pixelSize: AppTheme.fontSmallSize * app.scale
+                    color: AppTheme.blueColor
+                    wrapMode: Text.WordWrap
+                    text: app.global_APP_DOMAIN
+                }
+
+                Text
+                {
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignBottom
+                    width: parent.width
+                    height: AppTheme.compHeight * app.scale
+                    font.family: AppTheme.fontFamily
+                    font.pixelSize: AppTheme.fontSmallSize * app.scale
+                    color: AppTheme.greyColor
+                    wrapMode: Text.WordWrap
+                    text: qsTr("Application version: ") + app.global_APP_VERSION
+                }
+            }
+
 
             Rectangle
             {
                 anchors.top: parent.top
+                anchors.topMargin: AppTheme.rowHeight * 2 * app.scale
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
@@ -129,21 +176,6 @@ Item
                 color: "#00000000"
                 opacity: (app.isFullFunctionality() === true) ? 0 : 1
                 visible: !(opacity === 0)
-
-                Text
-                {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.top: parent.top
-                    width: parent.width
-                    height: AppTheme.compHeight / 2 * app.scale
-                    verticalAlignment: Text.AlignVCenter
-                    horizontalAlignment: Text.AlignHCenter
-                    font.family: AppTheme.fontFamily
-                    font.pixelSize: AppTheme.fontSmallSize * app.scale
-                    color: AppTheme.greyColor
-                    wrapMode: Text.WordWrap
-                    text: qsTr("Application version: ") + app.global_APP_VERSION
-                }
 
                 Text
                 {
@@ -165,7 +197,7 @@ Item
                     id: registerApp
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.bottom: parent.bottom
-                    image: "qrc:/resources/img/icon_cloudsync.png"
+                    image: "qrc:/resources/img/icon_app_reg.png"
 
                     onSigButtonClicked:
                     {
