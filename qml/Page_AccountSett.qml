@@ -282,49 +282,6 @@ Item
                                                                      qsTr("Account delete"),
                                                                      qsTr("All data assosiated with current account will be deleted!"))
                     }
-
-                    Rectangle
-                    {
-                        anchors.top: parent.top
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.bottom: parent.bottom
-                        anchors.bottomMargin: AppTheme.margin * app.scale
-                        color: "#00000000"
-                        opacity: (app.isFullFunctionality() === true) ? 0 : 1
-                        visible: !(opacity === 0)
-
-                        Text
-                        {
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: parent.width
-                            height: AppTheme.compHeight / 2 * app.scale
-                            verticalAlignment: Text.AlignVCenter
-                            horizontalAlignment: Text.AlignHCenter
-                            font.family: AppTheme.fontFamily
-                            font.pixelSize: AppTheme.fontSmallSize * app.scale
-                            color: AppTheme.greyColor
-                            wrapMode: Text.WordWrap
-                            text: qsTr("You have a limited version of application. To get a full version of application please buy <b>Aquarium Story Pro</b> or register (by pressing button below).")
-                        }
-
-                        IconSimpleButton
-                        {
-                            id: registerApp
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            anchors.bottom: parent.bottom
-                            image: "qrc:/resources/img/icon_cloudsync.png"
-
-                            onSigButtonClicked:
-                            {
-                                cloudCommWaitDialog.showDialog(true,
-                                                      qsTr("Communicating with cloud"),
-                                                      qsTr("Please wait ... "))
-                                app.sigRegisterApp()
-                            }
-                        }
-                    }
                 }
 
                 Rectangle
@@ -458,11 +415,5 @@ Item
             sigClosing()
             app.sigDeleteAccount()
         }
-    }
-
-    WaitDialog
-    {
-        id: cloudCommWaitDialog
-        objectName: "cloudCommWaitDialog"
     }
 }

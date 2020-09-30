@@ -5,6 +5,7 @@
 
 #include "c++/appmanager.h"
 #include "c++/AppDefs.h"
+#include "c++/version.h"
 
 #ifdef Q_OS_ANDROID
 #include <QAndroidService>
@@ -17,6 +18,7 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
     QStringList args = QCoreApplication::arguments();
 
+    qDebug() << "App version = " << APP_VERSION;
     qDebug() << "Device supports OpenSSL: " << QSslSocket::supportsSsl();
 
     if ((args.count() > 1) == false)

@@ -45,7 +45,8 @@ public:
         Menu_None = 0,
         Menu_Account = 1,
         Menu_TankInfo = 2,
-        Menu_Settings = 3
+        Menu_Settings = 3,
+        Menu_About = 4
     };
 
     enum AppDefines

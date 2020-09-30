@@ -15,6 +15,7 @@
 #include "AppDefs.h"
 #include "dbobjects.h"
 #include "position.h"
+#include "version.h"
 
 const static QString settMagicKey = "wAJSD6^&A8293487";
 
@@ -223,6 +224,7 @@ void AppManager::setSettAfterQMLReady()
     setQmlParam("app", "global_VOLUNITS", QVariant(appSett.value(SETT_VOLUMEUNITS).toInt()));
     setQmlParam("app", "global_DATEFORMAT", QVariant(appSett.value(SETT_DATEFORMAT).toInt()));
 
+    setQmlParam("app", "global_APP_VERSION", APP_VERSION);
     setQmlParam("app", "global_USERREGION", position->userRegion());
     setQmlParam("app", "global_USERCOUNTRY", position->userCountry());
     setQmlParam("app", "global_USERCITY", position->userCity());

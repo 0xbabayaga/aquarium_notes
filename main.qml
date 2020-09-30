@@ -21,6 +21,7 @@ Window
     property string curUserAvatar: ""
     property int curUserDateCreate: 0
 
+    property string global_APP_VERSION: "Undefined"
     property int global_DIMUNITS:   AppDefs.Dimensions_CM
     property int global_VOLUNITS:   AppDefs.Volume_L
     property int global_DATEFORMAT: AppDefs.DateFormat_DD_MM_YYYY
@@ -260,6 +261,16 @@ Window
 
             //onSigClosed: page_Main.showPage(true)
         }
+
+        Page_About
+        {
+            id: page_About
+            anchors.fill: rectBackground
+            anchors.topMargin: AppTheme.rowHeightMin * app.scale
+            visible: false
+
+            //onSigClosed: page_Main.showPage(true)
+        }
     }
 
     SideMenu
@@ -282,6 +293,7 @@ Window
                     page_TankSett.moveToEdit(false)
                     page_TankSett.showPage(false)
                     page_AppSett.showPage(false)
+                    page_About.showPage(false)
                     page_AccountSett.showPage(true)
                 }
                 else if (id === AppDefs.Menu_TankInfo)
@@ -289,6 +301,7 @@ Window
                     page_AccountSett.moveToEdit(false)
                     page_AccountSett.showPage(false)
                     page_AppSett.showPage(false)
+                    page_About.showPage(false)
                     page_TankSett.showPage(true)
                 }
                 else if (id === AppDefs.Menu_Settings)
@@ -296,7 +309,16 @@ Window
                     page_AccountSett.moveToEdit(false)
                     page_AccountSett.showPage(false)
                     page_TankSett.showPage(false)
+                    page_About.showPage(false)
                     page_AppSett.showPage(true)
+                }
+                else if (id === AppDefs.Menu_About)
+                {
+                    page_AccountSett.moveToEdit(false)
+                    page_AccountSett.showPage(false)
+                    page_TankSett.showPage(false)
+                    page_AppSett.showPage(false)
+                    page_About.showPage(true)
                 }
             }
         }

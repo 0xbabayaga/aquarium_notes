@@ -39,6 +39,7 @@ Item
         ListElement {   name: qsTr("ACCOUNT");      index: AppDefs.Menu_Account;    en: true    }
         ListElement {   name: qsTr("TANKS");        index: AppDefs.Menu_TankInfo;   en: true    }
         ListElement {   name: qsTr("SETTINGS");     index: AppDefs.Menu_Settings;   en: true    }
+        ListElement {   name: qsTr("ABOUT");        index: AppDefs.Menu_About;      en: true    }
     }
 
     SequentialAnimation
