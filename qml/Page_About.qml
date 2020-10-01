@@ -118,10 +118,21 @@ Item
                 text: qsTr("ABOUT")
             }
 
+            Image
+            {
+                anchors.top: parent.top
+                anchors.topMargin: AppTheme.rowHeight * app.scale
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: AppTheme.rowHeight * 2 * app.scale
+                height: width
+                source: "qrc:/resources/img/icon.png"
+                mipmap: true
+            }
+
             Column
             {
                 anchors.top: parent.top
-                anchors.topMargin: AppTheme.rowHeight * 2 * app.scale
+                anchors.topMargin: AppTheme.rowHeight * 3 * app.scale
                 anchors.left: parent.left
                 anchors.right: parent.right
 

@@ -70,5 +70,6 @@
         <file>qml/custom/WaitDialog.qml</file>
         <file>qml/Page_About.qml</file>
         <file>resources/img/icon_app_reg.png</file>
+        <file>resources/img/icon.png</file>
     </qresource>
 </RCC>
