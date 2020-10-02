@@ -17,6 +17,8 @@ public:
     explicit CloudManager(QString id, QObject *parent = nullptr);
     ~CloudManager();
 
+    friend class AppManager;
+
     enum ReponseError
     {
         NoError = 0,
@@ -29,6 +31,7 @@ public:
     };
 
 public:
+    void setUserId(QString id)  {  manId = id; }
     void request_registerApp(UserObj *user);
 
 signals:

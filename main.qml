@@ -24,6 +24,7 @@ Window
     property string global_APP_DOMAIN: "Undefined"
     property string global_APP_NAME: "Undefined"
     property string global_APP_VERSION: "Undefined"
+    property int global_APP_TYPE: AppDefs.UStatus_Blocked
     property int global_DIMUNITS:   AppDefs.Dimensions_CM
     property int global_VOLUNITS:   AppDefs.Volume_L
     property int global_DATEFORMAT: AppDefs.DateFormat_DD_MM_YYYY

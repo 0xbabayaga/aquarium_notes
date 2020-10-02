@@ -8,19 +8,13 @@
 #include <QStandardPaths>
 #include "dbobjects.h"
 #include "actionlist.h"
+#include "AppDefs.h"
 
 #define DIAGRAMM_DRAW_GAP_TOP       0.30  //Means +20% of full scale
 #define DIAGRAMM_DRAW_GAP_BOTTOM    0.30  //Means +20% of full scale
 
 #define USER_IMAGE_WIDTH            256
 #define USER_IMAGE_HEIGHT           256
-
-typedef enum
-{
-    UStatus_Disabled = 0,
-    UStatus_Enabled = 1,
-    UStatus_Blocked = 2
-}   eUStatus;
 
 class DBManager : public QObject
 {
@@ -51,8 +45,10 @@ public:
 public:
     /* Database management */
     bool    initDB();
-    bool    createUser(QString uname, QString upass, QString phone, QString email, QString img);
+    bool    createUser(QString uname, QString upass, QString phone, QString email, QString img, AppDef::AppUserStatus status);
     bool    editUser(QString uname, QString upass, QString phone, QString email, QString img);
+    bool    setAppKey(QString key);
+    QString getAppKey();
     bool    saveUserLocationIfRequired(QString country, QString city, double lat, double longt);
     bool    deleteUser();
     bool    createTank(QString name, QString desc, QString manId, int type, int l, int w, int h, QString imgFile);

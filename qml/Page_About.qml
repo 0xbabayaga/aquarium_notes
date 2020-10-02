@@ -26,6 +26,18 @@ Item
         showPageAnimation.start()
     }
 
+    function getAppType()
+    {
+        if (app.global_APP_TYPE === AppDefs.UStatus_Enabled && app.global_FULLFEATURES === true)
+            return qsTr("Registered")
+        else if (app.global_APP_TYPE === AppDefs.UStatus_Enabled)
+            return qsTr("Limited")
+        else if (app.global_APP_TYPE === AppDefs.UStatus_EnabledPro)
+            return qsTr("Pro")
+        else
+            return qsTr("Blocked")
+    }
+
     NumberAnimation
     {
         id: showPageAnimation
@@ -172,6 +184,19 @@ Item
                     color: AppTheme.greyColor
                     wrapMode: Text.WordWrap
                     text: qsTr("Application version: ") + app.global_APP_VERSION
+                }
+
+                Text
+                {
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignBottom
+                    width: parent.width
+                    height: AppTheme.compHeight * app.scale
+                    font.family: AppTheme.fontFamily
+                    font.pixelSize: AppTheme.fontSmallSize * app.scale
+                    color: AppTheme.greyColor
+                    wrapMode: Text.WordWrap
+                    text: qsTr("Application type: ") + getAppType()
                 }
             }
 

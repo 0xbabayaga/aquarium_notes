@@ -111,7 +111,10 @@ DBManager::DBManager(bool isReadOnly, QObject *parent) : QObject(parent)
     qDebug() << "DB file = " << dbFileLink;
 
     if (isReadOnly == false)
+    {
+        db.open();
         initDB();
+    }
 
     isParamDataChanged = true;
 }
@@ -423,7 +426,7 @@ bool DBManager::getParamIdList(QList<int> *idList)
         return false;
 }
 
-bool DBManager::createUser(QString uname, QString upass, QString phone, QString email, QString img)
+bool DBManager::createUser(QString uname, QString upass, QString phone, QString email, QString img, AppDef::AppUserStatus status)
 {
     QByteArray base64Img = 0;
 
@@ -452,7 +455,7 @@ bool DBManager::createUser(QString uname, QString upass, QString phone, QString 
         query.bindValue(":uname", uname);
         query.bindValue(":upass", upass);
         query.bindValue(":selected", true);
-        query.bindValue(":status", UStatus_Enabled);
+        query.bindValue(":status", status);
         query.bindValue(":phone", phone);
         query.bindValue(":email", email);
         query.bindValue(":avatar_img", QString(base64Img));
@@ -462,7 +465,10 @@ bool DBManager::createUser(QString uname, QString upass, QString phone, QString 
         res = query.exec();
 
         if (res == false)
+        {
             qDebug() << "Create user error: " << query.lastError();
+            qDebug() << "Create user error: " << query.lastQuery();
+        }
 
         return res;
     }
@@ -515,6 +521,26 @@ bool DBManager::editUser(QString uname, QString upass, QString phone, QString em
     }
     else
         return false;
+}
+
+bool DBManager::setAppKey(QString key)
+{
+    QSqlQuery query("UPDATE USER_TABLE SET "
+                     "APP_KEY = '" + key + "', "
+                     "DATE_EDIT = '" + QString::number(QDateTime::currentSecsSinceEpoch()) + "' "
+                     "WHERE MAN_ID = '" + curSelectedObjs.user->man_id + "'");
+
+    return query.exec();
+}
+
+QString DBManager::getAppKey()
+{
+    QSqlQuery query("SELECT APP_KEY FROM USER_TABLE WHERE MAN_ID = '"+ curSelectedObjs.user->man_id +"'", db);
+
+    if (query.exec() == true && query.next() == true)
+         return query.value(0).toString();
+    else
+        return "";
 }
 
 bool DBManager::saveUserLocationIfRequired(QString country, QString city, double lat, double longt)
@@ -582,6 +608,12 @@ bool DBManager::createTank(QString name, QString desc, QString manId, int type, 
     QFile *file = nullptr;
     QString img = "";
 
+#ifdef FULL_FEATURES_ENABLED
+    AppDef::AppUserStatus status = AppDef::UStatus_EnabledPro;
+#else
+    AppDef::AppUserStatus status = AppDef::UStatus_Enabled;
+#endif
+
     if (name.length() > 0 && name.length() <= 64)
     {
         QSqlQuery query;
@@ -617,7 +649,7 @@ bool DBManager::createTank(QString name, QString desc, QString manId, int type, 
         query.bindValue(":name", name);
         query.bindValue(":desc", desc);
         query.bindValue(":img", img);
-        query.bindValue(":status", UStatus_Enabled);
+        query.bindValue(":status", status);
         query.bindValue(":l", l);
         query.bindValue(":w", w);
         query.bindValue(":h", h);
@@ -988,7 +1020,7 @@ bool DBManager::initDB()
     QSqlQuery query;
     bool res = false;
 
-    res = query.exec("CREATE TABLE IF NOT EXISTS USER_TABLE"
+    query = QSqlQuery("CREATE TABLE IF NOT EXISTS USER_TABLE"
                 "(MAN_ID varchar(16), "
                 "UNAME varchar(64), "
                 "UPASS varchar(128), "
@@ -1001,12 +1033,12 @@ bool DBManager::initDB()
                 "COOR_LAT REAL, "
                 "COOR_LONG REAL, "
                 "AVATAR_IMG blob, "
-                "APP_KEY varchar(64), "
+                "APP_KEY varchar(512), "
                 "DATE_CREATE integer, "
-                "DATE_EDIT integer )");
+                "DATE_EDIT integer )", db);
 
-    if (res == false)
-        qDebug() << query.lastError();
+    if (query.exec() == false)
+        qDebug() << "Create USER_TABLE" << query.lastError();
 
     query.prepare("SELECT COUNTRY FROM USER_TABLE");
     query.exec();
@@ -1017,8 +1049,13 @@ bool DBManager::initDB()
         query.exec("ALTER TABLE USER_TABLE ADD CITY VARCHAR(32)");
         query.exec("ALTER TABLE USER_TABLE ADD COOR_LAT REAL");
         query.exec("ALTER TABLE USER_TABLE ADD COOR_LONG REAL");
-        query.exec("ALTER TABLE USER_TABLE ADD APP_KEY varchar(64)");
     }
+
+    query.prepare("SELECT APP_KEY FROM USER_TABLE");
+    query.exec();
+
+    if (query.next() == false)
+        query.exec("ALTER TABLE USER_TABLE ADD APP_KEY varchar(512)");
 
 
     res = query.exec("CREATE TABLE IF NOT EXISTS TANKS_TABLE "

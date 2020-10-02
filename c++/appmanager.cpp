@@ -165,11 +165,15 @@ void AppManager::init()
 
     getCurrentObjs();
 
-    cloudMan = new CloudManager(curSelectedObjs.user->man_id);
+    if (curSelectedObjs.user != 0)
+        cloudMan = new CloudManager(curSelectedObjs.user->man_id);
+    else
+        cloudMan = new CloudManager("");
 
     connect(cloudMan, SIGNAL(response_error(int, QString)), this, SLOT(onCloudResponse_Error(int, QString)));
     connect(cloudMan, SIGNAL(response_registerApp(int, QString, QString, QString)), this, SLOT(onCloudResponse_Register(int, QString, QString, QString)));
 
+    checkAppRegistered();
 
 #ifdef Q_OS_ANDROID
     for (int i = 0; i < permissions.size(); i++)
@@ -235,9 +239,24 @@ void AppManager::setSettAfterQMLReady()
     setQmlParam("comboDimensions", "currentIndex", QVariant(appSett.value(SETT_DIMENSIONUNITS).toInt()));
     setQmlParam("comboVolumeUnits", "currentIndex", QVariant(appSett.value(SETT_VOLUMEUNITS).toInt()));
     setQmlParam("comboDateFormat", "currentIndex", QVariant(appSett.value(SETT_DATEFORMAT).toInt()));
+}
 
+void AppManager::checkAppRegistered()
+{
 #ifdef FULL_FEATURES_ENABLED
-    //setQmlParam("app", "global_FULLFEATURES", true);
+    setQmlParam("app", "global_FULLFEATURES", true);
+    setQmlParam("app", "global_APP_TYPE", AppDef::UStatus_EnabledPro);
+#else
+
+    if (currentSelectedObjs()->user != 0)
+    {
+        QString appKey = getAppKey();
+
+        if (cloudMan->isKeyValid(appKey) == true)
+            setQmlParam("app", "global_FULLFEATURES", true);
+
+        setQmlParam("app", "global_APP_TYPE", AppDef::UStatus_Enabled);
+    }
 #endif
 }
 
@@ -568,10 +587,19 @@ void AppManager::onQmlEngineLoaded(QObject *object, const QUrl &url)
 
 void AppManager::onGuiUserCreate(QString uname, QString upass, QString email, QString img)
 {
-    if (createUser(uname, upass, "", email, img) == true)
+#ifdef FULL_FEATURES_ENABLED
+    AppDef::AppUserStatus status = AppDef::UStatus_EnabledPro;
+#else
+    AppDef::AppUserStatus status = AppDef::UStatus_Enabled;
+#endif
+
+    if (createUser(uname, upass, "", email, img, status) == true)
     {
         getCurrentUser();
         setInitialDialogStage(AppDef::AppInit_UserExist, curSelectedObjs.user->uname);
+
+        cloudMan->setUserId(curSelectedObjs.user->man_id);
+        checkAppRegistered();
     }
 }
 
@@ -805,8 +833,14 @@ void AppManager::onCloudResponse_Register(int error, QString errorText, QString 
 
     if (err == CloudManager::ReponseError::NoError)
     {
-        setQmlParam("cloudCommWaitDialog", "message", tr("Application is successfully registered!"));
-        setQmlParam("app", "global_FULLFEATURES", true);
+        if (currentSelectedObjs()->user->man_id == manId)
+        {
+            setAppKey(key);
+
+            setQmlParam("cloudCommWaitDialog", "message", tr("Application is successfully registered!"));
+            setQmlParam("app", "global_FULLFEATURES", true);
+            setQmlParam("app", "global_APP_TYPE", AppDef::UStatus_Enabled);
+        }
     }
     else if (error == CloudManager::ReponseError::Error_Specific)
     {

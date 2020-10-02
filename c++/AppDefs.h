@@ -24,6 +24,14 @@ public:
         AppInit_Completed = AppInit_TankExist
     };
 
+    enum AppUserStatus
+    {
+        UStatus_Disabled = 0,
+        UStatus_Enabled = 1,
+        UStatus_EnabledPro = 2,
+        UStatus_Blocked = -1
+    };
+
     enum EnumActionRepeat
     {
         ActionRepeat_None = 0,
@@ -126,6 +134,7 @@ public:
     Q_ENUMS(EnumDimensions)
     Q_ENUMS(EnumVolume)
     Q_ENUMS(AppDefines)
+    Q_ENUMS(AppUserStatus)
 
     static void declareQML()
     {

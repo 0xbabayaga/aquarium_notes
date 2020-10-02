@@ -36,6 +36,9 @@ void CloudManager::request_registerApp(UserObj *user)
     md5Base = user->man_id;
     md5Base = md5Base.remove(0, user->man_id.length() - AppDef::MAN_ID_CUT_MD5);
     md5Base += QString::number(user->date_create);
+
+    qDebug() << "PREMD5:" << md5Base;
+
     md5 = QString(QCryptographicHash::hash(md5Base.toLocal8Bit(),QCryptographicHash::Md5).toHex());
 
     QString jsonString = "{"
@@ -58,7 +61,7 @@ void CloudManager::request_registerApp(UserObj *user)
     QByteArray postDataSize = QByteArray::number(json.size());
     QNetworkRequest request(cloudUrl);
 
-    //qDebug() << "REQUEST: " << json;
+    qDebug() << "REQUEST: " << jsonString;
 
     request.setRawHeader("User-Agent", APP_ORG);
     request.setRawHeader("X-Custom-User-Agent", APP_NAME);
@@ -82,6 +85,8 @@ void CloudManager::onReplyReceived(QNetworkReply *reply)
 
         QJsonParseError error;
         QJsonDocument jsonDoc = QJsonDocument::fromJson(rsp, &error);
+
+        qDebug() << "RESP: " << rsp;
 
         if (error.error != QJsonParseError::NoError)
         {
