@@ -3,6 +3,7 @@ import QtQuick.Controls 2.12
 import QtGraphicalEffects 1.12
 import "../../js/datetimeutility.js" as DateTimeUtils
 import "../"
+import AppDefs 1.0
 
 Item
 {
@@ -72,7 +73,16 @@ Item
 
             onAtYEndChanged:
             {
-                sigTankStoryLoadIndex(view.model.count)
+                if (app.isFullFunctionality() === false)
+                {
+                    if (view.model.count > 1)
+                    {
+                        if ((view.model.get(0).dt - view.model.get(view.model.count - 1).dt) / (30 * 86400) < AppDefs.STORY_VIEW_MONTH_LIMIT)
+                            sigTankStoryLoadIndex(view.model.count)
+                    }
+                }
+                else
+                    sigTankStoryLoadIndex(view.model.count)
             }
 
             ScrollBar.vertical: ScrollBar

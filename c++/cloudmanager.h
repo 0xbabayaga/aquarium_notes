@@ -27,6 +27,8 @@ public:
         Error_ProtocolError = 3,
         Error_VerificationFailed = 4,
         Error_Specific = 5,
+        Error_AlreadyRegistered = 6,
+        Error_InternalServer = 7,
         Error_Undefined = 0xff
     };
 

@@ -84,6 +84,8 @@ Item
         anchors.fill: rectContainerShadow
         color: AppTheme.whiteColor
 
+        MouseArea { anchors.fill: parent }
+
         Image
         {
             anchors.left: parent.left
@@ -153,7 +155,7 @@ Item
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignBottom
                     width: parent.width
-                    height: AppTheme.compHeight * app.scale
+                    height: AppTheme.rowHeightMin/2 * app.scale
                     font.family: AppTheme.fontFamily
                     font.pixelSize: AppTheme.fontNormalSize * app.scale
                     color: AppTheme.blueColor
@@ -165,7 +167,7 @@ Item
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignBottom
                     width: parent.width
-                    height: AppTheme.compHeight * app.scale
+                    height: AppTheme.rowHeightMin/2 * app.scale
                     font.family: AppTheme.fontFamily
                     font.pixelSize: AppTheme.fontSmallSize * app.scale
                     color: AppTheme.blueColor
@@ -178,7 +180,7 @@ Item
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignBottom
                     width: parent.width
-                    height: AppTheme.compHeight * app.scale
+                    height: AppTheme.rowHeightMin/2 * app.scale
                     font.family: AppTheme.fontFamily
                     font.pixelSize: AppTheme.fontSmallSize * app.scale
                     color: AppTheme.greyColor
@@ -191,7 +193,7 @@ Item
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignBottom
                     width: parent.width
-                    height: AppTheme.compHeight * app.scale
+                    height: AppTheme.rowHeightMin/2 * app.scale
                     font.family: AppTheme.fontFamily
                     font.pixelSize: AppTheme.fontSmallSize * app.scale
                     color: AppTheme.greyColor
@@ -215,8 +217,10 @@ Item
 
                 Text
                 {
+                    id: textWarning
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
+                    //anchors.verticalCenterOffset: AppTheme.rowHeight * app.scale
                     width: parent.width
                     height: AppTheme.compHeight / 2 * app.scale
                     verticalAlignment: Text.AlignVCenter
@@ -225,7 +229,30 @@ Item
                     font.pixelSize: AppTheme.fontSmallSize * app.scale
                     color: AppTheme.greyColor
                     wrapMode: Text.WordWrap
-                    text: qsTr("You have a limited version of application. To get a full version of application please buy <b>Aquarium Story Pro</b> or register (by pressing button below).")
+                    text: qsTr("This is a limited version of application.<br> To get a full version of application please buy <b>Aquarium Story Pro</b> or register (by pressing button below).")
+                }
+
+                Text
+                {
+                    anchors.top: textWarning.bottom
+                    anchors.topMargin: AppTheme.rowHeightMin * app.scale
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    width: parent.width
+                    height: AppTheme.compHeight / 2 * app.scale
+                    verticalAlignment: Text.AlignVCenter
+                    horizontalAlignment: Text.AlignHCenter
+                    font.family: AppTheme.fontFamily
+                    font.pixelSize: AppTheme.fontSmallSize * app.scale
+                    font.underline: true
+                    color: AppTheme.blueColor
+                    wrapMode: Text.WordWrap
+                    text: qsTr("See limitations")
+
+                    MouseArea
+                    {
+                        anchors.fill: parent
+                        onClicked: limitationDialog.showDialog(true)
+                    }
                 }
 
                 IconSimpleButton
@@ -251,5 +278,10 @@ Item
     {
         id: cloudCommWaitDialog
         objectName: "cloudCommWaitDialog"
+    }
+
+    LimitationDialog
+    {
+        id: limitationDialog
     }
 }
