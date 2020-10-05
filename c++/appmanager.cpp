@@ -670,8 +670,18 @@ void AppManager::onGuiRefreshData()
 
 void AppManager::onGuiAddRecordNote(int smpId, QString note, QString imageLink)
 {
-    if (addNoteRecord(smpId, note, imageLink) == true)
+    if (smpId >= 0)
     {
+        if (addNoteRecord(smpId, note, imageLink) == true)
+        {
+            curSelectedObjs.curSmpId = getLastSmpId();
+            getLatestParamsGui();
+            getHistoryParams();
+        }
+    }
+    else
+    {
+        curSelectedObjs.curSmpId = getLastSmpId();
         getLatestParamsGui();
         getHistoryParams();
     }
@@ -679,8 +689,18 @@ void AppManager::onGuiAddRecordNote(int smpId, QString note, QString imageLink)
 
 void AppManager::onGuiEditRecordNote(int smpId, QString note, QString imageLink)
 {
-    if (editNoteRecord(smpId, note, imageLink) == true)
+    if (smpId >= 0)
     {
+        if (editNoteRecord(smpId, note, imageLink) == true)
+        {
+            curSelectedObjs.curSmpId = getLastSmpId();
+            getLatestParamsGui();
+            getHistoryParams();
+        }
+    }
+    else
+    {
+        curSelectedObjs.curSmpId = getLastSmpId();
         getLatestParamsGui();
         getHistoryParams();
     }

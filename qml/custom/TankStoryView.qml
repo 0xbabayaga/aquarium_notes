@@ -50,6 +50,29 @@ Item
         anchors.fill: rectHeaderShadow
         color: AppTheme.whiteColor
 
+        Rectangle
+        {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            width: parent.width
+            height: 200 * app.scale
+            visible: (storyModel.count === 0)
+            color: "#00000000"
+
+            Text
+            {
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                horizontalAlignment: Text.AlignHCenter
+                width: 250 * app.scale
+                font.family: AppTheme.fontFamily
+                font.pixelSize: AppTheme.fontNormalSize * app.scale
+                wrapMode: Text.WordWrap
+                color: AppTheme.greyColor
+                text: qsTr("No record found for this aquarium")
+            }
+        }
+
         ListView
         {
             id: view

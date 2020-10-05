@@ -219,7 +219,7 @@ bool DBManager::getLatestParams()
                 smpIdList.append(query0.value(0).toInt());
         }
 
-        isParamDataChanged = true;
+        isParamDataChanged = false;
     }
 
     for (int i = 0; i < smpIdList.size(); i++)
@@ -808,8 +808,6 @@ bool DBManager::editParamRecord(int smpId, int paramId, double value)
     bool res = false;
     TankObj *tank = (TankObj*) curSelectedObjs.listOfUserTanks.at(curSelectedObjs.tankIdx);
 
-    qDebug() << "editParamRecord";
-
     query.prepare("UPDATE HISTORY_VALUE_TABLE SET "
                   "VALUE = " + QString::number(value) + ", "
                   "TIMESTAMP = " + QString::number(QDateTime::currentSecsSinceEpoch()) + " "
@@ -821,6 +819,8 @@ bool DBManager::editParamRecord(int smpId, int paramId, double value)
 
     if (res == false)
         qDebug() << "Edit record error: " << query.lastError();
+
+    isParamDataChanged = true;
 
     return res;
 }
@@ -889,8 +889,6 @@ bool DBManager::editNoteRecord(int smpId, QString note, QString imageLink)
                       "TANK_ID = '" + tank->tankId() + "'");
 
         res = query.exec();
-
-        qDebug() << query.lastQuery();
 
         if (res == false)
             qDebug() << "Edit Note record error: " << query.lastError();

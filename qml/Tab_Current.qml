@@ -59,6 +59,13 @@ Item
                                    links)
             }
         }
+        else
+        {
+            if (isEdit === false)
+                sigAddRecordNotes(-1, "", "")
+            else
+                sigEditRecordNotes(-1, "", "")
+        }
 
         sigRefreshData()
     }
