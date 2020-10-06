@@ -175,6 +175,8 @@ void AppManager::init()
 
     checkAppRegistered();
 
+    cloudMan->request_getAppUpdates();
+
 #ifdef Q_OS_ANDROID
     for (int i = 0; i < permissions.size(); i++)
     {

@@ -28,6 +28,12 @@ CloudManager::~CloudManager()
         delete man;
 }
 
+void CloudManager::request_getAppUpdates()
+{
+    man->get(QNetworkRequest(QUrl(CLOUD_SERVICE_VER_URL)));
+    //tmt->start();
+}
+
 void CloudManager::request_registerApp(UserObj *user)
 {
     QString md5;
@@ -124,6 +130,20 @@ void CloudManager::onReplyReceived(QNetworkReply *reply)
                 }
                 else
                     emit response_registerApp(CloudManager::ReponseError::Error_ProtocolError, "", "", "");
+            }
+            else if (objMethod.value().toString() == "version")
+            {
+                QJsonObject::const_iterator objVer = jsonDoc.object().find("version");
+                QJsonObject::const_iterator objDate = jsonDoc.object().find("releasedate");
+
+                if (objVer.value() != QJsonValue::Undefined &&
+                    objDate.value() != QJsonValue::Undefined)
+                {
+                    emit response_appUpdates(objVer.value().toInt(), objDate.value().toInt());
+                    qDebug() << "New application version available: ";
+                    qDebug() << "Ver = " << objVer.value().toInt();
+                    qDebug() << "Date = " << objDate.value().toInt();
+                }
             }
             else
                 emit response_registerApp(CloudManager::ReponseError::Error_ProtocolError, "", "", "");

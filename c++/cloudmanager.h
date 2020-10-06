@@ -9,6 +9,7 @@
 
 #define CLOUDMAN_RESPONSE_TMT   5000
 #define CLOUD_SERVICE_URL       "https://as.tikava.by/reg.php"
+#define CLOUD_SERVICE_VER_URL   "https://as.tikava.by/ver.php"
 
 class CloudManager : public QObject
 {
@@ -35,9 +36,11 @@ public:
 public:
     void setUserId(QString id)  {  manId = id; }
     void request_registerApp(UserObj *user);
+    void request_getAppUpdates();
 
 signals:
     void response_registerApp(int error, QString errorText,  QString manId, QString key);
+    void response_appUpdates(int version, int releasedate);
     void response_error(int error, QString errorText);
 
 private slots:
