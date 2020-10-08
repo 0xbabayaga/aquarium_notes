@@ -113,6 +113,7 @@ AppManager::~AppManager()
 
     disconnect(cloudMan, SIGNAL(response_error(int)), this, SLOT(onCloudResponse_Error(int)));
     disconnect(cloudMan, SIGNAL(response_registerApp(int, QString, QString, QString)), this, SLOT(onCloudResponse_Register(int, QString, QString, QString)));
+    disconnect(cloudMan, SIGNAL(response_appUpdates(int, int)), this, SLOT(onCloudResponse_AppUpdates(int, int)));
 
     if (position != nullptr)
         delete position;
@@ -172,6 +173,7 @@ void AppManager::init()
 
     connect(cloudMan, SIGNAL(response_error(int, QString)), this, SLOT(onCloudResponse_Error(int, QString)));
     connect(cloudMan, SIGNAL(response_registerApp(int, QString, QString, QString)), this, SLOT(onCloudResponse_Register(int, QString, QString, QString)));
+    connect(cloudMan, SIGNAL(response_appUpdates(int, int)), this, SLOT(onCloudResponse_AppUpdates(int, int)));
 
     checkAppRegistered();
 
@@ -550,6 +552,20 @@ void AppManager::clearDiagrams()
         QMetaObject::invokeMethod(obj, "clearDiagrams");
 }
 
+void AppManager::showAppUpdateNotification(int version, int releasedate)
+{
+    QObject *obj = nullptr;
+
+    obj = qmlEngine->rootObjects().first()->findChild<QObject*>("page_Main");
+
+    if (obj != nullptr)
+        QMetaObject::invokeMethod(obj, "showAppUpdated",
+                                  Q_ARG(QVariant, version),
+                                  Q_ARG(QVariant, releasedate));
+    else
+        qDebug() << "page_Main not found!";
+}
+
 void AppManager::addDiagram(int num, int paramId, int xMin, int xMax, float yMin, float yMax, QVariantMap points)
 {
     QObject *obj = nullptr;
@@ -847,6 +863,12 @@ void AppManager::onPositionDetected()
     setQmlParam("app", "global_USERCITY", position->userCity());
 
     saveUserLocationIfRequired(position->userCountry(), position->userCity(), position->coorLat(), position->coorLong());
+}
+
+void AppManager::onCloudResponse_AppUpdates(int version, int date)
+{
+    if (version > APP_VERSION)
+        showAppUpdateNotification(version, date);
 }
 
 void AppManager::onCloudResponse_Register(int error, QString errorText, QString manId, QString key)

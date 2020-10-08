@@ -48,6 +48,7 @@ private:
     void    clearDiagrams();
     void    addDiagram(int num, int paramId, int xMin, int xMax, float yMin, float yMax, QVariantMap points);
     void    drawDiagrams(int selectedPoint);
+    void    showAppUpdateNotification(int version, int releasedate);
 
     /* App settings */
     void    readAppSett();
@@ -87,6 +88,7 @@ public slots:
 
     /* Cloud communication handlers */
     void    onCloudResponse_Register(int error, QString errorText, QString manId, QString key);
+    void    onCloudResponse_AppUpdates(int version, int date);
     void    onCloudResponse_Error(int error, QString errorText);
 
 private:

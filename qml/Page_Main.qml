@@ -43,6 +43,13 @@ Item
         }
     }
 
+    function showAppUpdated(version, releasedate)
+    {
+        appUpdateNotifyDialog.showDialog(true,
+                                         qsTr("Update"),
+                                         qsTr("Updated version of application available (v") + app.getAppVersion(version)+ ")")
+    }
+
     SequentialAnimation
     {
         id: openTankStoryViewAnimation
@@ -239,5 +246,10 @@ Item
             onSigTankStoryClose: openStoryView(false)
             onSigTankStoryLoadIndex: app.sigTankStoryLoad(index)
         }
+    }
+
+    WaitDialog
+    {
+        id: appUpdateNotifyDialog
     }
 }

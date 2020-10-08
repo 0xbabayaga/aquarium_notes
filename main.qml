@@ -167,6 +167,17 @@ Window
         return global_FULLFEATURES;
     }
 
+    function getAppVersion(version)
+    {
+        var ver = ""
+
+        ver += ((parseInt(version / 1000000)) % 1000).toString()+"."
+        ver += ((parseInt(version / 1000)) % 1000).toString()+"."
+        ver += (parseInt(version) % 1000).toString()
+
+        return ver
+    }
+
     Rectangle
     {
         id: rectMain

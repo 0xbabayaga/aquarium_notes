@@ -38,17 +38,6 @@ Item
             return qsTr("Blocked")
     }
 
-    function getAppVersion()
-    {
-        var ver = ""
-
-        ver += ((parseInt(app.global_APP_VERSION / 1000000)) % 1000).toString()+"."
-        ver += ((parseInt(app.global_APP_VERSION / 1000)) % 10000).toString()+"."
-        ver += (parseInt(app.global_APP_VERSION) % 1000).toString()
-
-        return ver
-    }
-
     NumberAnimation
     {
         id: showPageAnimation
@@ -196,7 +185,7 @@ Item
                     font.pixelSize: AppTheme.fontSmallSize * app.scale
                     color: AppTheme.greyColor
                     wrapMode: Text.WordWrap
-                    text: qsTr("Application version: ") + getAppVersion()
+                    text: qsTr("Application version: ") + getAppVersion(app.global_APP_VERSION)
                 }
 
                 Text

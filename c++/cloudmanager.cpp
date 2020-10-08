@@ -140,9 +140,6 @@ void CloudManager::onReplyReceived(QNetworkReply *reply)
                     objDate.value() != QJsonValue::Undefined)
                 {
                     emit response_appUpdates(objVer.value().toInt(), objDate.value().toInt());
-                    qDebug() << "New application version available: ";
-                    qDebug() << "Ver = " << objVer.value().toInt();
-                    qDebug() << "Date = " << objDate.value().toInt();
                 }
             }
             else
@@ -155,7 +152,7 @@ void CloudManager::onReplyReceived(QNetworkReply *reply)
         emit response_registerApp(CloudManager::ReponseError::Error_CommunicationError, "", "", "");
 
 
-    reply->deleteLater();
+    //reply->deleteLater();
 }
 
 void CloudManager::onTimeout()
