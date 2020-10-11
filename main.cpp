@@ -1,6 +1,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QSslSocket>
+#include <QLocale>
 #include <QDebug>
 
 #include "c++/appmanager.h"
@@ -20,6 +21,7 @@ int main(int argc, char *argv[])
 
     qDebug() << "App version = " << APP_VERSION;
     qDebug() << "Device supports OpenSSL: " << QSslSocket::supportsSsl();
+    qDebug() << "Locale = " << QLocale::system().name().section(' ', 0, 0);
 
     if ((args.count() > 1) == false)
     {

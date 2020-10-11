@@ -18,6 +18,7 @@ public:
     enum AppInitEnum
     {
         AppInit_NoData = 0,
+        AppInit_CreateUser = 1,
         AppInit_UserExist = 2,
         AppInit_CreateTank = 3,
         AppInit_TankExist = 4,

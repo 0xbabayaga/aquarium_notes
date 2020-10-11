@@ -30,7 +30,7 @@ Item
             anchors.bottomMargin: AppTheme.padding * app.scale
             orientation: ListView.Vertical
             spacing: AppTheme.margin * app.scale
-            clip: true
+            //clip: true
             cacheBuffer: 6000
 
             delegate: Rectangle
@@ -82,14 +82,10 @@ Item
                         anchors.top: parent.top
                         fillMode: Image.PreserveAspectFit
                         width: parent.width
-                        //height: tankListView.tankImageHeight * app.scale
                         source: (img.length > 0) ? "data:image/jpg;base64," + img : ""
                         mipmap: true
 
                         sourceSize.width: parent.width
-                        //sourceSize.height: 400
-                        //mipmap: true
-                        //fillMode: Image.PreserveAspectFit
 
                         onStatusChanged: if (image.status == Image.Ready) console.log('Loaded')
                     }

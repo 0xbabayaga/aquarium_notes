@@ -12,12 +12,13 @@
 #include <QTranslator>
 #include <QDirIterator>
 #include <QThread>
+#include <QLocale>
 #include "AppDefs.h"
 #include "dbobjects.h"
 #include "position.h"
 #include "version.h"
 
-const static QString settMagicKey = "wAJSD6^&A8293487";
+const static QString settMagicKey = "ww2SD6^&A8293487";
 
 const static QString SETT_LANG = "lang";
 const static QString SETT_MAGICKEY = "magickey";
@@ -197,11 +198,19 @@ void AppManager::readAppSett()
 {
     if (appSett.value(SETT_MAGICKEY) != settMagicKey)
     {
-        appSett.setValue(SETT_LANG, AppDef::Lang_English);
+        //appSett.setValue(SETT_LANG, AppDef::Lang_English);
         appSett.setValue(SETT_DIMENSIONUNITS, AppDef::Dimensions_CM);
         appSett.setValue(SETT_VOLUMEUNITS, AppDef::Volume_L);
         appSett.setValue(SETT_DATEFORMAT, AppDef::DateFormat_DD_MM_YYYY);
         appSett.setValue(SETT_MAGICKEY, settMagicKey);
+
+        if (QLocale::system().name().section(' ', 0, 0) == "ru_RU" ||
+            QLocale::system().name().section(' ', 0, 0) == "ru_BY")
+            appSett.setValue(SETT_LANG, AppDef::Lang_Russian);
+        else if (QLocale::system().name().section(' ', 0, 0) == "be_BY")
+            appSett.setValue(SETT_LANG, AppDef::Lang_Belarussian);
+        else
+            appSett.setValue(SETT_LANG, AppDef::Lang_English);
 
         qDebug() << "No magic key found - reset options";
     }
@@ -366,7 +375,7 @@ bool AppManager::getCurrentObjs()
             setInitialDialogStage(AppDef::AppInit_UserExist, curSelectedObjs.user->uname);
     }
     else
-        setInitialDialogStage(AppDef::AppInit_NoData, "User");
+        setInitialDialogStage(AppDef::AppInit_NoData, "");
 
     return false;
 }
@@ -389,6 +398,7 @@ void AppManager::getActionCalendarGui()
 {
     getActionCalendar(currentTankSelected()->tankId(), false);
 
+    setQmlParam("tab_Action", "totalActionsCnt", actionList->getTotalCnt());
     qmlEngine->rootContext()->setContextProperty("actionsListModel", QVariant::fromValue(*actionList->getData()));
 }
 

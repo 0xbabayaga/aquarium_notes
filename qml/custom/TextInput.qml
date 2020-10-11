@@ -24,6 +24,16 @@ Item
         }
     }
 
+    function setError()
+    {
+        rectUnderLine.color = AppTheme.redColor
+    }
+
+    function clearError()
+    {
+        rectUnderLine.color = AppTheme.blueColor
+    }
+
     TextInput
     {
         id: textArea
@@ -36,6 +46,8 @@ Item
         color: enabled ? AppTheme.blueFontColor : AppTheme.hideColor
         wrapMode: Text.WordWrap
         clip: true
+
+        onTextChanged: clearError()
 
         Text
         {

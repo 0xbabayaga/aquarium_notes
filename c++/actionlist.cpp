@@ -47,11 +47,17 @@ bool ActionList::setData(QSqlQuery *query, bool background)
         default:                    viewEndDate += 86400;     break;
     }
 
+    totalCnt = 0;
+
     while (query->next())
     {
         repeatPeriod = query->value(query->record().indexOf("TYPE")).toInt();
         period = query->value(query->record().indexOf("PERIOD")).toInt();
         startDate = query->value(query->record().indexOf("STARTDATE")).toInt();
+
+        if ((repeatPeriod == ActionRepeat_None && startDate > tmNow.toSecsSinceEpoch()) ||
+            repeatPeriod > ActionRepeat_None)
+            totalCnt++;
 
         switch ((eActionRepeat) repeatPeriod)
         {

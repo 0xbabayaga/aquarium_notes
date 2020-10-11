@@ -31,6 +31,7 @@ public:
     void setViewPeriod(eActionListView viewType);
     bool setData(QSqlQuery *query, bool background);
     QList<QObject*> *getData()   {   return &list;   }
+    int getTotalCnt()   {   return totalCnt;    }
 
 private:
     static bool less(QObject *v1, QObject *v2);
@@ -38,6 +39,7 @@ private:
 private:
     eActionListView currView;
     QList<QObject*>  list;
+    int              totalCnt = 0;
 };
 
 #endif // ACTIONLIST_H

@@ -431,7 +431,7 @@ bool DBManager::createUser(QString uname, QString upass, QString phone, QString 
     QByteArray base64Img = 0;
 
     if (uname.length() > 0 && uname.length() <= AppDef::MAX_USERNAME_SIZE &&
-        upass.length() > 0 && upass.length() <= AppDef::MAX_PASS_SIZE &&
+        /*upass.length() > 0 && upass.length() <= AppDef::MAX_PASS_SIZE &&*/
         email.length() > 0 && email.length() <= AppDef::MAX_EMAIL_SIZE)
     {
         QSqlQuery query;

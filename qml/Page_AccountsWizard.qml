@@ -10,7 +10,7 @@ Item
 {
     id: page_AccountWizard
 
-    property string currentUName: qsTr("User")
+    property string currentUName: qsTr("")
     property int stage: -1
 
     onStageChanged: if (stage !== -1)   openAccountDialog(stage)
@@ -31,6 +31,43 @@ Item
         }
 
         animationToPage.start()
+    }
+
+    function isCredentialsGood()
+    {
+        var uname = textUserName.text
+        //var upass = textUserPass.text
+        var email = textUserEmail.text
+
+        if (uname.length > 0 && uname.length <= AppDefs.MAX_USERNAME_SIZE)
+        {
+            if (email.includes('@') === true && email.includes('.') === true)
+                return true
+            else
+                textUserEmail.setError()
+        }
+        else
+        {
+            textUserName.setError()
+        }
+
+        return false
+    }
+
+    function isTankParamsGood()
+    {
+        var name = textTankName.text
+        var imgCnt = imgTankAvatar.selectedImagesList.count
+
+        if (name.length > 0 && name.length <= AppDefs.MAX_TANKNAME_SIZE)
+        {
+            if (imgCnt > 0)
+                return true
+        }
+        else
+            textTankName.setError()
+
+        return false
     }
 
     Rectangle
@@ -84,22 +121,30 @@ Item
                     {
                         anchors.horizontalCenter: parent.horizontalCenter
                         height: AppTheme.compHeight * app.scale
+                        width: parent.width - AppTheme.padding * 2 * app.scale
                         verticalAlignment: Text.AlignVCenter
+                        horizontalAlignment: Text.AlignHCenter
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontBigSize * app.scale
                         color: AppTheme.blueColor
-                        text: qsTr("Hello") + ", " + currentUName
+                        text: qsTr("Hello") + ((currentUName.length > 0) ? ", " + currentUName : "")
+                        wrapMode: Text.WordWrap
                     }
+
+                    Item {  width: 1; height: 1;    }
 
                     Text
                     {
                         anchors.horizontalCenter: parent.horizontalCenter
                         height: AppTheme.compHeight * app.scale
+                        width: parent.width - AppTheme.padding * 2 * app.scale
                         verticalAlignment: Text.AlignVCenter
+                        horizontalAlignment: Text.AlignHCenter
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontNormalSize * app.scale
                         color: AppTheme.greyColor
                         text: qsTr("There is no active account found")
+                        wrapMode: Text.WordWrap
                     }
                 }
 
@@ -110,7 +155,7 @@ Item
                     anchors.bottomMargin: AppTheme.margin * app.scale
                     anchors.horizontalCenter: parent.horizontalCenter
 
-                    onSigButtonClicked: page_AccountWizard.openAccountDialog(1)
+                    onSigButtonClicked: stage = AppDefs.AppInit_CreateUser
                 }
             }
 
@@ -138,11 +183,14 @@ Item
                     {
                         anchors.horizontalCenter: parent.horizontalCenter
                         height: AppTheme.compHeight * app.scale
+                        width: parent.width - AppTheme.padding * 2 * app.scale
                         verticalAlignment: Text.AlignVCenter
+                        horizontalAlignment: Text.AlignHCenter
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontBigSize * app.scale
                         color: AppTheme.blueColor
                         text: qsTr("Creating account")
+                        wrapMode: Text.WordWrap
                     }
 
                     Item { height: 1; width: 1;}
@@ -167,10 +215,12 @@ Item
                         maximumLength: AppDefs.MAX_EMAIL_SIZE
                         focus: true
                         KeyNavigation.tab: textUserPass
+                        validator: RegExpValidator { regExp:/^[0-9a-zA-Z]+([0-9a-zA-Z]*[-._+])*[0-9a-zA-Z]+@[0-9a-zA-Z]+([-.][0-9a-zA-Z]+)*([0-9a-zA-Z]*[.])[a-zA-Z]{2,6}$/ }
                     }
 
                     Item { height: 1; width: 1;}
 
+                    /*
                     TextInput
                     {
                         id: textUserPass
@@ -182,6 +232,7 @@ Item
                     }
 
                     Item { height: 1; width: 1;}
+                    */
 
                     Text
                     {
@@ -208,7 +259,7 @@ Item
                     image: "qrc:/resources/img/icon_cancel.png"
                     KeyNavigation.tab: buttonCreate
 
-                    onSigButtonClicked: page_AccountWizard.openAccountDialog()
+                    onSigButtonClicked: stage = AppDefs.AppInit_NoData
                 }
 
                 IconSimpleButton
@@ -226,10 +277,13 @@ Item
                         if (imgAccountAvatar.selectedImagesList.count > 0)
                             imgLink = imgAccountAvatar.selectedImagesList.get(0).fileLink
 
-                        app.sigCreateAccount(textUserName.text,
-                                             textUserPass.text,
+                        if (isCredentialsGood() === true)
+                        {
+                            app.sigCreateAccount(textUserName.text,
+                                             "",//textUserPass.text,
                                              textUserEmail.text,
                                              imgLink)
+                        }
                     }
                 }
             }
@@ -256,22 +310,30 @@ Item
                     {
                         anchors.horizontalCenter: parent.horizontalCenter
                         height: AppTheme.compHeight * app.scale
+                        width: parent.width - AppTheme.padding * 2 * app.scale
                         verticalAlignment: Text.AlignVCenter
+                        horizontalAlignment: Text.AlignHCenter
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontBigSize * app.scale
                         color: AppTheme.blueColor
                         text: qsTr("Hello") + ", " + currentUName
+                        wrapMode: Text.WordWrap
                     }
+
+                    Item {  width: 1; height: 1;    }
 
                     Text
                     {
                         anchors.horizontalCenter: parent.horizontalCenter
                         height: AppTheme.compHeight * app.scale
+                        width: parent.width - AppTheme.padding * 2 * app.scale
                         verticalAlignment: Text.AlignVCenter
+                        horizontalAlignment: Text.AlignHCenter
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontNormalSize * app.scale
                         color: AppTheme.greyColor
                         text: qsTr("There is no active tank found")
+                        wrapMode: Text.WordWrap
                     }
                 }
 
@@ -314,11 +376,14 @@ Item
                     {
                         anchors.horizontalCenter: parent.horizontalCenter
                         height: AppTheme.compHeight * app.scale
+                        width: parent.width - AppTheme.padding * 2 * app.scale
                         verticalAlignment: Text.AlignVCenter
+                        horizontalAlignment: Text.AlignHCenter
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontBigSize * app.scale
                         color: AppTheme.blueColor
                         text: qsTr("Creating tank profile")
+                        wrapMode: Text.WordWrap
                     }
 
                     Item { height: 1; width: 1;}
@@ -452,7 +517,7 @@ Item
                     image: "qrc:/resources/img/icon_cancel.png"
                     KeyNavigation.tab: buttonCreate2
 
-                    onSigButtonClicked: page_AccountWizard.openAccountDialog(2)
+                    onSigButtonClicked: stage = AppDefs.AppInit_UserExist
                 }
 
                 IconSimpleButton
@@ -470,13 +535,16 @@ Item
                         if (imgTankAvatar.selectedImagesList.count > 0)
                             imgLink = imgTankAvatar.selectedImagesList.get(0).fileLink
 
-                        app.sigCreateTank(textTankName.text,
-                                          "",
-                                          comboTankType.currentIndex,
-                                          app.deconvertDimension(textTankL.text),
-                                          app.deconvertDimension(textTankW.text),
-                                          app.deconvertDimension(textTankH.text),
-                                          imgLink)
+                        if (isTankParamsGood() === true)
+                        {
+                            app.sigCreateTank(textTankName.text,
+                                              "",
+                                              comboTankType.currentIndex,
+                                              app.deconvertDimension(textTankL.text),
+                                              app.deconvertDimension(textTankW.text),
+                                              app.deconvertDimension(textTankH.text),
+                                              imgLink)
+                        }
                     }
                 }
             }

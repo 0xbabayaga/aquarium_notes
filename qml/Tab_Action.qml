@@ -10,10 +10,11 @@ import ".."
 Item
 {
     id: tab_Action
+    objectName: "tab_Action"
 
     property var days: ["Monday", "Tuesday", "Wensday", "Thursday", "Friday", "Saturday", "Sunday"]
     property var months: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-
+    property int totalActionsCnt: 0
 
     function showActionDialog(visible, isEdit, id)
     {
@@ -32,12 +33,10 @@ Item
             }
             else
             {
-                var actionCount = actionList.model.length
-
                 if (app.isFullFunctionality() === true ||
-                    actionCount < AppDefs.ACTIONS_COUNT_LIMIT)
+                    totalActionsCnt < AppDefs.ACTIONS_COUNT_LIMIT)
                 {
-                    if (actionCount < AppDefs.ACTIONS_COUNT_FULL_LIMIT)
+                    if (totalActionsCnt < AppDefs.ACTIONS_COUNT_FULL_LIMIT)
                     {
                         dialogAddAction.setActionParam(0,
                                                        "",
@@ -248,7 +247,7 @@ Item
                         {
                             anchors.top: parent.top
                             anchors.right: parent.right
-                            height: (index === actionList.currentIndex) ? AppTheme.compHeight * 3 * app.scale : AppTheme.compHeight * 2 * app.scale
+                            height: (index === actionList.currentIndex) ? AppTheme.compHeight * 4 * app.scale : AppTheme.compHeight * 2 * app.scale
                             width: parent.width - rectDataContainer.dataWidth
                             color: AppTheme.blueColor
 
@@ -292,7 +291,7 @@ Item
                             Text
                             {
                                 anchors.bottom: parent.bottom
-                                anchors.bottomMargin: AppTheme.padding/4 * app.scale
+                                anchors.bottomMargin: (AppTheme.compHeight + AppTheme.padding/4) * app.scale
                                 anchors.right: parent.right
                                 anchors.rightMargin: AppTheme.padding * app.scale
                                 height: AppTheme.compHeight * app.scale
@@ -360,6 +359,7 @@ Item
                             {
                                 anchors.right: parent.right
                                 anchors.verticalCenter: parent.verticalCenter
+                                inverted: true
 
                                 onSigButtonClicked:
                                 {
@@ -373,6 +373,7 @@ Item
                                 anchors.left: parent.left
                                 anchors.verticalCenter: parent.verticalCenter
                                 image: "qrc:/resources/img/icon_edit.png"
+                                inverted: true
 
                                 onSigButtonClicked: showActionDialog(true, true, index)
                             }
