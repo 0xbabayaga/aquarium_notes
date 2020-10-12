@@ -7,7 +7,7 @@
 #include <QTimer>
 #include "dbobjects.h"
 
-#define CLOUDMAN_RESPONSE_TMT   5000
+#define CLOUDMAN_RESPONSE_TMT   10000
 #define CLOUD_SERVICE_URL       "https://as.tikava.by/reg.php"
 #define CLOUD_SERVICE_VER_URL   "https://as.tikava.by/ver.php"
 

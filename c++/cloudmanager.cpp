@@ -65,7 +65,7 @@ void CloudManager::request_registerApp(UserObj *user)
     QByteArray postDataSize = QByteArray::number(json.size());
     QNetworkRequest request(cloudUrl);
 
-    //qDebug() << "REQUEST: " << jsonString;
+    qDebug() << "REQUEST: " << jsonString;
 
     request.setRawHeader("User-Agent", APP_ORG);
     request.setRawHeader("X-Custom-User-Agent", APP_NAME);
@@ -90,7 +90,7 @@ void CloudManager::onReplyReceived(QNetworkReply *reply)
         QJsonParseError error;
         QJsonDocument jsonDoc = QJsonDocument::fromJson(rsp, &error);
 
-        //qDebug() << "RESP: " << rsp;
+        qDebug() << "RESP: " << rsp;
 
         if (error.error != QJsonParseError::NoError)
         {
@@ -103,6 +103,8 @@ void CloudManager::onReplyReceived(QNetworkReply *reply)
 
         if (objMethod.value() != QJsonValue::Undefined)
         {
+
+            qDebug() << "Method = " << objMethod.value().toString();
             if (objMethod.value().toString() == "register")
             {
                 QJsonObject::const_iterator objManId = jsonDoc.object().find("manid");
@@ -129,7 +131,10 @@ void CloudManager::onReplyReceived(QNetworkReply *reply)
                         emit response_registerApp(objResult.value().toInt(), objErrorText.value().toString(), "", "");
                 }
                 else
+                {
+                    qDebug() << "ERROR #3.1";
                     emit response_registerApp(CloudManager::ReponseError::Error_ProtocolError, "", "", "");
+                }
             }
             else if (objMethod.value().toString() == "version")
             {
@@ -143,10 +148,16 @@ void CloudManager::onReplyReceived(QNetworkReply *reply)
                 }
             }
             else
+            {
+                qDebug() << "ERROR #3.2";
                 emit response_registerApp(CloudManager::ReponseError::Error_ProtocolError, "", "", "");
+            }
         }
         else
+        {
+            qDebug() << "ERROR #3.3";
             emit response_registerApp(CloudManager::ReponseError::Error_ProtocolError, "", "", "");
+        }
     }
     else
         emit response_registerApp(CloudManager::ReponseError::Error_CommunicationError, "", "", "");
