@@ -15,7 +15,7 @@ import android.os.CountDownTimer;
 public class Background extends QtService
 {
     private static native void callbackOnTimer(int callNum);
-    static long TIME_LIMIT = 10000;
+    static long TIME_LIMIT = 60000;
     CountDownTimer Count;
     private static int cnt = 0;
 

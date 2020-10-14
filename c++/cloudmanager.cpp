@@ -18,7 +18,7 @@ CloudManager::CloudManager(QString id, QObject *parent) : QObject(parent)
 
     cloudUrl = QUrl(CLOUD_SERVICE_URL);
 
-    connect(man, &QNetworkAccessManager::finished, this, &CloudManager::onReplyReceived);
+    connect(man, SIGNAL(finished(QNetworkReply*)), this, SLOT(onReplyReceived(QNetworkReply*)));
     connect(tmt, &QTimer::timeout, this, &CloudManager::onTimeout);
 }
 
@@ -30,7 +30,7 @@ CloudManager::~CloudManager()
 
 void CloudManager::request_getAppUpdates()
 {
-    man->get(QNetworkRequest(QUrl(CLOUD_SERVICE_VER_URL)));
+    //man->get(QNetworkRequest(QUrl(CLOUD_SERVICE_VER_URL)));
     //tmt->start();
 }
 
@@ -83,14 +83,15 @@ void CloudManager::onReplyReceived(QNetworkReply *reply)
 
     tmt->stop();
 
+    //qDebug() << "REPLY RECEIVED";
+
     if (reply->error() == QNetworkReply::NetworkError::NoError)
     {
         rsp = reply->readAll();
 
         QJsonParseError error;
-        QJsonDocument jsonDoc = QJsonDocument::fromJson(rsp, &error);
-
-        qDebug() << "RESP: " << rsp;
+        QJsonDocument jsonDoc = QJsonDocument::fromJson(QString(rsp).toUtf8(), &error);
+        QJsonObject obj = jsonDoc.object();
 
         if (error.error != QJsonParseError::NoError)
         {
@@ -99,68 +100,50 @@ void CloudManager::onReplyReceived(QNetworkReply *reply)
             qDebug().noquote() << "JSON ERROR = " << error.errorString() << "on char" << error.offset;
         }
 
-        QJsonObject::const_iterator objMethod = jsonDoc.object().find("method");
-
-        if (objMethod.value() != QJsonValue::Undefined)
+        if (obj["method"].isNull() == false)
         {
-
-            qDebug() << "Method = " << objMethod.value().toString();
-            if (objMethod.value().toString() == "register")
+            if (obj["method"].toString() == "register")
             {
-                QJsonObject::const_iterator objManId = jsonDoc.object().find("manid");
-                QJsonObject::const_iterator objResult = jsonDoc.object().find("result");
-                QJsonObject::const_iterator objKey = jsonDoc.object().find("key");
-                QJsonObject::const_iterator objErrorText = jsonDoc.object().find("errortext");
-
-                if (objResult.value() != QJsonValue::Undefined &&
-                    objManId.value() != QJsonValue::Undefined &&
-                    objKey.value() != QJsonValue::Undefined &&
-                    objErrorText.value() != QJsonValue::Undefined)
+                if (obj["manid"].isNull() == false &&
+                    obj["result"].isNull() == false &&
+                    obj["key"].isNull() == false &&
+                    obj["errortext"].isNull() == false)
                 {
-                    if (objResult.value().toInt() == CloudManager::ReponseError::NoError)
+                    if (obj["result"].toInt() == CloudManager::ReponseError::NoError)
                     {
-                        if (objManId.value().toString() == manId &&
-                            isKeyValid(objKey.value().toString()) == true)
+                        if (obj["manid"].toString() == manId &&
+                            isKeyValid(obj["key"].toString()) == true)
                         {
-                            emit response_registerApp(objResult.value().toInt(), objErrorText.value().toString(), manId, objKey.value().toString());
+                            emit response_registerApp(obj["result"].toInt(), obj["errortext"].toString(), manId, obj["key"].toString());
                         }
                         else
                             emit response_registerApp(CloudManager::ReponseError::Error_VerificationFailed, "", "", "");
                     }
                     else
-                        emit response_registerApp(objResult.value().toInt(), objErrorText.value().toString(), "", "");
+                        emit response_registerApp(obj["result"].toInt(), obj["errortext"].toString(), "", "");
                 }
                 else
-                {
-                    qDebug() << "ERROR #3.1";
                     emit response_registerApp(CloudManager::ReponseError::Error_ProtocolError, "", "", "");
-                }
             }
-            else if (objMethod.value().toString() == "version")
+            else if (obj["method"].toString() == "version")
             {
-                QJsonObject::const_iterator objVer = jsonDoc.object().find("version");
-                QJsonObject::const_iterator objDate = jsonDoc.object().find("releasedate");
-
-                if (objVer.value() != QJsonValue::Undefined &&
-                    objDate.value() != QJsonValue::Undefined)
+                if (obj["version"].isNull() == false &&
+                    obj["releasedate"].isNull() == false)
                 {
-                    emit response_appUpdates(objVer.value().toInt(), objDate.value().toInt());
+                    emit response_appUpdates(obj["version"].toInt(), obj["releasedate"].toInt());
                 }
             }
             else
-            {
-                qDebug() << "ERROR #3.2";
                 emit response_registerApp(CloudManager::ReponseError::Error_ProtocolError, "", "", "");
-            }
         }
         else
-        {
-            qDebug() << "ERROR #3.3";
             emit response_registerApp(CloudManager::ReponseError::Error_ProtocolError, "", "", "");
-        }
     }
     else
+    {
+        qDebug() << "REPLY ERROR = " << reply->errorString();
         emit response_registerApp(CloudManager::ReponseError::Error_CommunicationError, "", "", "");
+    }
 
 
     //reply->deleteLater();
