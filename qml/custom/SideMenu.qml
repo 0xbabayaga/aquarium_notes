@@ -11,6 +11,7 @@ Item
 
     signal sigMenuSelected(int id)
 
+    property bool en: false
     property bool isOpened: false
     property alias accountName: textAccountName.text
     property alias accountImage: imgAccount.source
@@ -411,6 +412,7 @@ Item
         MouseArea
         {
             anchors.fill: parent
+            enabled: sideMenu.en
             onPressed: imgAppAnimation.start()
             onReleased: showMenu(!isOpened)
         }

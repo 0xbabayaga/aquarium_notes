@@ -30,7 +30,7 @@ CloudManager::~CloudManager()
 
 void CloudManager::request_getAppUpdates()
 {
-    //man->get(QNetworkRequest(QUrl(CLOUD_SERVICE_VER_URL)));
+    man->get(QNetworkRequest(QUrl(CLOUD_SERVICE_VER_URL)));
     //tmt->start();
 }
 

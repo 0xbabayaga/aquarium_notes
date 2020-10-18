@@ -101,6 +101,7 @@ AppManager::~AppManager()
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigTankSelected(int)), this, SLOT(onGuiTankSelected(int)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigPersonalParamStateChanged(int, bool)), this, SLOT(onGuiPersonalParamStateChanged(int, bool)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigRefreshData()), this, SLOT(onGuiRefreshData()));
+    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigFullRefreshData()), this, SLOT(onGuiFullRefreshData()));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigCurrentSmpIdChanged(int)), this, SLOT(onGuiCurrentSmpIdChanged(int)));
     disconnect(qmlEngine, SIGNAL(objectCreated(QObject*, const QUrl)), this, SLOT(onQmlEngineLoaded(QObject*, const QUrl)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigOpenGallery()), this, SLOT(onGuiOpenGallery()));
@@ -145,6 +146,7 @@ void AppManager::init()
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigTankSelected(int)), this, SLOT(onGuiTankSelected(int)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigPersonalParamStateChanged(int, bool)), this, SLOT(onGuiPersonalParamStateChanged(int, bool)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigRefreshData()), this, SLOT(onGuiRefreshData()));
+    connect(qmlEngine->rootObjects().first(), SIGNAL(sigFullRefreshData()), this, SLOT(onGuiFullRefreshData()));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigCurrentSmpIdChanged(int)), this, SLOT(onGuiCurrentSmpIdChanged(int)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigOpenGallery()), this, SLOT(onGuiOpenGallery()));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigLanguageChanged(int)), this, SLOT(onGuiLanguageChanged(int)));
@@ -633,7 +635,7 @@ void AppManager::onGuiUserCreate(QString uname, QString upass, QString email, QS
 
 void AppManager::onGuiUserEdit(QString uname, QString upass, QString email, QString img)
 {
-    if (editUser(uname, upass, "", email, img) == true)
+    if (editUser(uname, "", "", email, img) == true)
     {
         getCurrentUser();
 
@@ -694,6 +696,14 @@ void AppManager::onGuiRefreshData()
 
     getLatestParamsGui();
     getHistoryParams();
+}
+
+void AppManager::onGuiFullRefreshData()
+{
+    getCurrentObjs();
+
+    curSelectedObjs.lastSmpId = getLastSmpId();
+    setLastSmpId(curSelectedObjs.lastSmpId);
 }
 
 void AppManager::onGuiAddRecordNote(int smpId, QString note, QString imageLink)

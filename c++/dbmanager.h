@@ -84,6 +84,8 @@ public:
     UTObj   *currentSelectedObjs()  {   return &curSelectedObjs;    }
     ActionList* currentActionList() {   return actionList;          }
 
+    bool isParamEnabled(char paramId);
+
 
     static bool    less(QObject *v1, QObject *v2);
     QString getImgDbFolder()

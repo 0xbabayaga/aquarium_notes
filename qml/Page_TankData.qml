@@ -103,7 +103,6 @@ Item
     {
         id: rectRealContainer
         anchors.fill: rectContainer
-        //anchors.bottomMargin: AppTheme.rowHeightMin * app.scale
         radius: AppTheme.radius * 2 * app.scale
         color: AppTheme.whiteColor
 

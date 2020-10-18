@@ -124,6 +124,21 @@ DBManager::~DBManager()
 
 }
 
+bool DBManager::isParamEnabled(char paramId)
+{
+    for (int i = 0; i < paramsGuiList.size(); i++)
+    {
+        ParamObj *obj = (ParamObj*) paramsGuiList.at(i);
+
+       // qDebug() << i << obj->paramId() << obj->en();
+
+        if (obj != 0 && obj->paramId() == paramId && obj->en() == true)
+            return true;
+    }
+
+    return false;
+}
+
 TankObj *DBManager::currentTankSelected()
 {
     TankObj *obj = nullptr;
@@ -416,7 +431,7 @@ bool DBManager::getParamIdList(QList<int> *idList)
                     found = true;
             }
 
-            if (found == false)
+            if (found == false && isParamEnabled(qId.value(0).toInt()))
                 idList->append(qId.value(0).toInt());
         }
 
@@ -485,7 +500,7 @@ bool DBManager::editUser(QString uname, QString upass, QString phone, QString em
     bool res = false;
 
     if (uname.length() > 0 && uname.length() <= AppDef::MAX_USERNAME_SIZE &&
-        upass.length() > 0 && upass.length() <= AppDef::MAX_PASS_SIZE &&
+        /*upass.length() > 0 && upass.length() <= AppDef::MAX_PASS_SIZE &&*/
         email.length() > 0 && email.length() <= AppDef::MAX_EMAIL_SIZE)
     {
         if (img.length() > 0)

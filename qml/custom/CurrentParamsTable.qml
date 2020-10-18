@@ -123,11 +123,14 @@ Item
             anchors.right: parent.right
             anchors.topMargin: AppTheme.compHeight * app.scale
             spacing: 0
-            interactive: false
+            interactive: (realModelLength() * AppTheme.compHeight * app.scale > height)
 
             onModelChanged:
             {
                 height = realModelLength() * AppTheme.compHeight * app.scale
+
+                if (height > AppTheme.compHeight * 8 * app.scale)
+                    height = AppTheme.compHeight * 8 * app.scale
 
                 noteViewDialog.hide()
 
@@ -251,13 +254,34 @@ Item
                     }
                 }
             }
+
+            ScrollBar.vertical: ScrollBar
+            {
+                policy: ScrollBar.AlwaysOn
+                parent: curValuesListView.parent
+                anchors.top: curValuesListView.top
+                anchors.topMargin: AppTheme.padding * app.scale
+                anchors.left: curValuesListView.right
+                anchors.leftMargin: AppTheme.padding / 4 * app.scale
+                anchors.bottom: curValuesListView.bottom
+                anchors.bottomMargin: AppTheme.padding * app.scale
+                visible: (realModelLength() * AppTheme.compHeight * app.scale > height)
+
+                contentItem: Rectangle
+                {
+                    implicitWidth: 2 * app.scale
+                    implicitHeight: AppTheme.rowHeight * app.scale
+                    radius: width / 2
+                    color: AppTheme.hideColor
+                }
+            }
         }
 
         NoteViewDialog
         {
             id: noteViewDialog
             anchors.top: curValuesListView.bottom
-            anchors.topMargin: AppTheme.padding * app.scale
+            anchors.topMargin: AppTheme.margin * app.scale
             anchors.left: parent.left
             anchors.right: parent.right
             height: (AppTheme.rowHeight + AppTheme.compHeight) * app.scale

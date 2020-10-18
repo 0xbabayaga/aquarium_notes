@@ -53,6 +53,9 @@ Item
         rectPersonalParamsDialog.opacity = 0
         rectAddRecordDialog.opacity = 1
 
+        if (isSave === true)
+            app.sigFullRefreshData()
+
         dialogAddParamNote.addParamsListModel = app.getAllParamsListModel()
     }
 

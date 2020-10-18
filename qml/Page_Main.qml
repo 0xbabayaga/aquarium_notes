@@ -8,6 +8,7 @@ Item
 {
     id: page_Main
     objectName: "page_Main"
+    property alias interactive: tanksList.interactive
 
     function showPage(vis)
     {

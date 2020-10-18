@@ -29,7 +29,7 @@ Item
     function setCurrentImage(img)
     {
         imgTankAvatar.addBase64ImageToList(img)
-        imgAccount.source = "data:image/png;base64," + img
+        imgAccount.source = "data:image/jpg;base64," + img
     }
 
     function moveToEdit(val)
@@ -327,6 +327,7 @@ Item
 
                         Item { height: 1; width: 1;}
 
+                        /*
                         TextInput
                         {
                             id: textUserPass
@@ -338,6 +339,7 @@ Item
                         }
 
                         Item { height: 1; width: 1;}
+                        */
 
                         Text
                         {
@@ -393,7 +395,7 @@ Item
                             }
 
                             app.sigEditAccount(textUserName.text,
-                                               textUserPass.text,
+                                               "" /* textUserPass.text */,
                                                textUserEmail.text,
                                                imgLink)
 

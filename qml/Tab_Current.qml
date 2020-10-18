@@ -161,7 +161,7 @@ Item
             anchors.left: parent.left
             anchors.right: parent.right
             model: curValuesListModel
-            height: 300 * app.scale
+            height: AppTheme.compHeight * 8 * app.scale
         }
 
         Rectangle

@@ -80,6 +80,7 @@ Window
     signal sigDeleteAction(int id)
     signal sigActionViewPeriodChanged(int p)
     signal sigRefreshData()
+    signal sigFullRefreshData()
     signal sigCurrentSmpIdChanged(int smpId)
     signal sigDebug()
     signal sigOpenGallery()
@@ -229,6 +230,7 @@ Window
             anchors.fill: rectBackground
             anchors.topMargin: AppTheme.rowHeightMin * app.scale
             visible: isAccountCreated === true
+            interactive: page_TankData.visible === false
         }
 
         Page_AccountsWizard
@@ -296,7 +298,8 @@ Window
         height: parent.height
 
         accountName: app.curUserName
-        accountImage: "data:image/png;base64," + app.curUserAvatar
+        accountImage: "data:image/jpg;base64," + app.curUserAvatar
+        en: app.isAccountCreated
 
         onSigMenuSelected:
         {

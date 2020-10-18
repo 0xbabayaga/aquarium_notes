@@ -12,6 +12,7 @@ Item
     property alias currentIndex: view.currentIndex
     property int tankImageHeight: 180
     property bool isDetailed: false
+    property alias interactive: view.interactive
 
     signal sigCurrentIndexChanged(int id)
     signal sigDoubleClicked(int id)
@@ -32,6 +33,7 @@ Item
             spacing: AppTheme.margin * app.scale
             //clip: true
             cacheBuffer: 6000
+
 
             delegate: Rectangle
             {
@@ -86,8 +88,6 @@ Item
                         mipmap: true
 
                         sourceSize.width: parent.width
-
-                        onStatusChanged: if (image.status == Image.Ready) console.log('Loaded')
                     }
 
                     Image

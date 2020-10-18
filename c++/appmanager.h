@@ -74,6 +74,7 @@ public slots:
     void    onGuiTankSelected(int tankIdx);
     void    onGuiPersonalParamStateChanged(int paramId, bool en);
     void    onGuiRefreshData();
+    void    onGuiFullRefreshData();
     void    onGuiCurrentSmpIdChanged(int smpId);
     void    onGuiOpenGallery();
     void    onGuiLanguageChanged(int id);
