@@ -112,7 +112,7 @@ Item
 
             delegate: Rectangle
             {
-                width: (valuesListView.width - AppTheme.padding / 2 * app.scale * valuesModel.count) / valuesModel.count
+                width: (valuesListView.width - AppTheme.padding / 2 * app.scale * ((valuesModel.count > 6) ? 6 : valuesModel.count)) / ((valuesModel.count > 6) ? 6 : valuesModel.count)
                 height: valuesListView.height
                 color: AppTheme.whiteColor
 

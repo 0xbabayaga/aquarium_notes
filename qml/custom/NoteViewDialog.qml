@@ -147,11 +147,11 @@ Item
         {
             noteViewDialog.visible = false
 
-            if (noteText.length > 0)
-            {
-                getImages()
+            getImages()
+
+
+            if (noteText.length > 0 || listOfImages.count > 0)
                 showAnimation.start()
-            }
         }
     }
 
