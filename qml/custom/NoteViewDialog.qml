@@ -3,6 +3,7 @@ import QtQuick.Controls 2.12
 import QtQuick.Window 2.1
 import QtGraphicalEffects 1.12
 import "../"
+import AppDefs 1.0
 
 Item
 {
@@ -11,7 +12,7 @@ Item
     opacity: 0
 
     property bool   isOpened: false
-    property alias  noteText: textNote.text
+    property string noteText: ""
     property alias  noteDate: textNoteDate.text
     property string noteImages: ""
 
@@ -21,6 +22,11 @@ Item
     {
         hideAnimation.stop()
         showAnimation.stop()
+
+        if (noteViewDialog.noteText.length > AppDefs.MAX_NOTETEXT_SIZE)
+            textNote.text = trimText(noteViewDialog.noteText)
+        else
+            textNote.text = noteViewDialog.noteText
 
         hideAnimation.start()
     }
@@ -49,10 +55,26 @@ Item
         if (vis === true)
         {
             rectDetailedContainer.visible = true
+            textNoteDetailed.text = noteText
             showDetailsAnimation.start()
         }
         else
+        {
+            if (noteText.length > AppDefs.MAX_NOTETEXT_SIZE)
+                textNote.text = trimText(noteViewDialog.noteText)
+            else
+                textNote.text = noteViewDialog.noteText
+
             hideDetailsAnimation.start()
+        }
+    }
+
+    function trimText(str)
+    {
+        var trimStr = str.substr(0, AppDefs.MAX_NOTETEXT_SIZE)
+        trimStr = trimStr.substr(0, Math.min(trimStr.length, trimStr.lastIndexOf(" ")))
+
+        return trimStr
     }
 
     SequentialAnimation
@@ -148,7 +170,6 @@ Item
             noteViewDialog.visible = false
 
             getImages()
-
 
             if (noteText.length > 0 || listOfImages.count > 0)
                 showAnimation.start()

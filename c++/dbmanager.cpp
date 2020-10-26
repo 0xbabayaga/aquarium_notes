@@ -846,6 +846,7 @@ bool DBManager::addNoteRecord(int smpId, QString note, QString imageLink)
     QString fileName;
     QString dbFiles;
     QSqlQuery query;
+    QImage img;
     bool res = false;
     TankObj *tank = (TankObj*) curSelectedObjs.listOfUserTanks.at(curSelectedObjs.tankIdx);
 
@@ -854,7 +855,17 @@ bool DBManager::addNoteRecord(int smpId, QString note, QString imageLink)
     for (int i = 0; i < imgLinksList.size(); i++)
     {
         fileName = getImgDbFolder() + createDbImgFileName(i) + "." + QFileInfo(imgLinksList.at(i)).completeSuffix();
-        QFile::copy(imgLinksList.at(i), fileName);
+
+        img = QImage(imgLinksList.at(i));
+
+        if (img.width() > AppDef::MAX_IMAGE_WIDTH ||
+            img.height() > AppDef::MAX_IMAGE_HEIGHT)
+        {
+            img = img.scaled(AppDef::MAX_IMAGE_WIDTH, AppDef::MAX_IMAGE_HEIGHT, Qt::KeepAspectRatio);
+            img.save(fileName);
+        }
+        else
+            QFile::copy(imgLinksList.at(i), fileName);
 
         if (i != 0)
             dbFiles += ";";
@@ -884,7 +895,11 @@ bool DBManager::addNoteRecord(int smpId, QString note, QString imageLink)
 
 bool DBManager::editNoteRecord(int smpId, QString note, QString imageLink)
 {
+    QStringList imgLinksList;
     QSqlQuery query;
+    QString fileName;
+    QString dbFiles;
+    QImage img;
     bool res = false;
     TankObj *tank = (TankObj*) curSelectedObjs.listOfUserTanks.at(curSelectedObjs.tankIdx);
 
@@ -895,13 +910,43 @@ bool DBManager::editNoteRecord(int smpId, QString note, QString imageLink)
 
     if (query.first() != 0)
     {
+        //Delete previous files
+        imgLinksList = query.value(query.record().indexOf("IMAGELINK")).toString().split(";");
+
+        for (int i = 0; i< imgLinksList.size(); i++)
+            QFile::remove(imgLinksList.at(i));
+
+        imgLinksList = imageLink.split(';');
+
+        for (int i = 0; i < imgLinksList.size(); i++)
+        {
+            fileName = getImgDbFolder() + createDbImgFileName(i) + "." + QFileInfo(imgLinksList.at(i)).completeSuffix();
+
+            img = QImage(imgLinksList.at(i));
+
+            if (img.width() > AppDef::MAX_IMAGE_WIDTH ||
+                img.height() > AppDef::MAX_IMAGE_HEIGHT)
+            {
+                img = img.scaled(AppDef::MAX_IMAGE_WIDTH, AppDef::MAX_IMAGE_HEIGHT, Qt::KeepAspectRatio);
+                img.save(fileName);
+            }
+            else
+                QFile::copy(imgLinksList.at(i), fileName);
+
+            if (i != 0)
+                dbFiles += ";";
+
+            dbFiles += fileName;
+        }
+
         query.prepare("UPDATE HISTORY_NOTES_TABLE SET "
                       "TEXT = '" + note + "', "
                       "IMAGEDATA = '', "
-                      "IMAGELINK = '" + imageLink + "', "
+                      "IMAGELINK = '" + dbFiles + "', "
                       "TIMESTAMP = " + QString::number(QDateTime::currentSecsSinceEpoch()) + " "
                       "WHERE SMP_ID = " + QString::number(smpId) + " AND "
                       "TANK_ID = '" + tank->tankId() + "'");
+
 
         res = query.exec();
 
@@ -1274,7 +1319,7 @@ QString DBManager::createDbImgFileName(int i)
     QString num;
     TankObj *tank = (TankObj*) curSelectedObjs.listOfUserTanks.at(curSelectedObjs.tankIdx);
 
-    fileName = tank->tankId();
+    fileName = tank->tankId().remove(tank->tankId().size() / 2, tank->tankId().size() / 2);
     fileName += "_" + QDateTime::currentDateTime().toString("yyyyMMdd_hhmm");
     fileName += "_" + num.asprintf("%02u", i);
 

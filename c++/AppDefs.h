@@ -84,6 +84,10 @@ public:
         NOTE_IMAGES_COUNT_FULL_LIMIT = 8,
         STORY_VIEW_MONTH_LIMIT = 1,
 
+        MAX_NOTETEXT_SIZE = 128,
+
+        MAX_IMAGE_WIDTH = 1280,
+        MAX_IMAGE_HEIGHT = 1280,
         APP_TIP_SHOW_TIME = 5000
     };
 

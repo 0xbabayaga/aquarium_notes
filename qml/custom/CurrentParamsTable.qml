@@ -132,10 +132,10 @@ Item
                 if (height > AppTheme.compHeight * 8 * app.scale)
                     height = AppTheme.compHeight * 8 * app.scale
 
-                noteViewDialog.hide()
-
                 if (curValuesListView.model.length > 0)
                 {
+                    noteViewDialog.hide()
+
                     noteViewDialog.noteText = curValuesListView.model[0].note
                     noteViewDialog.noteImages = curValuesListView.model[0].imgLink
                 }
