@@ -180,7 +180,7 @@ Item
                     anchors.topMargin: AppTheme.compHeight * 2 * app.scale
                     anchors.bottomMargin: AppTheme.margin * 3 * app.scale
                     contentWidth: width
-                    contentHeight: (addRecordListView.model) ? addRecordListView.model.length * AppTheme.rowHeightMin * app.scale : 0
+                    contentHeight: (addRecordListView.model) ? (addRecordListView.model.length * AppTheme.rowHeightMin * app.scale + imagesList.height) : 0
                     clip:true
 
                     ListView
@@ -258,7 +258,7 @@ Item
                         anchors.top: addRecordListView.bottom
                         anchors.topMargin: AppTheme.padding * app.scale
                         width: parent.width
-                        height: 120 * app.scale
+                        height: 580 * app.scale
                         spacing: AppTheme.padding * app.scale
 
                         TextInput
