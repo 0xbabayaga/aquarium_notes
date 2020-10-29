@@ -290,6 +290,12 @@ Item
                             objectName: "imageList"
                             imagesCountMax: (app.isFullFunctionality() === true) ? AppDefs.NOTE_IMAGES_COUNT_FULL_LIMIT : AppDefs.NOTE_IMAGES_COUNT_LIMIT
 
+                            onHeightChanged:
+                            {
+                                flickableContainer.contentHeight = (addRecordListView.model) ? (addRecordListView.model.length * AppTheme.rowHeightMin * app.scale + imagesList.height) : 0
+                                console.log("Height = ", height)
+                            }
+
                             onSigImagesLimitReached:
                             {
                                 if (app.isFullFunctionality() === true &&

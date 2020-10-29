@@ -23,7 +23,7 @@ Item
 
     Component.onCompleted:
     {
-        inRowItemsCnt = (imageList.width - (AppTheme.rowHeightMin + AppTheme.padding) * app.scale) / ((AppTheme.rowHeightMin + AppTheme.padding) * app.scale)
+        inRowItemsCnt = (imageList.width - (AppTheme.rowHeightMin + 2 * AppTheme.padding) * app.scale) / ((AppTheme.rowHeightMin + AppTheme.padding) * app.scale)
         inRowItemsCnt = parseInt(inRowItemsCnt)
     }
 
@@ -86,9 +86,14 @@ Item
 
         if (listOfImages.count > 0)
         {
-            cnt = parseInt(listOfImages.count / inRowItemsCnt) + 1
-            return (AppTheme.rowHeightMin + AppTheme.padding) * cnt * app.scale
+            cnt = parseInt(listOfImages.count / inRowItemsCnt)
 
+            console.log("cnt = ", cnt)
+
+            if (cnt < 1)
+                cnt = 1
+
+            return (AppTheme.rowHeightMin + AppTheme.padding) * cnt * app.scale
         }
         else
             return (AppTheme.rowHeightMin + AppTheme.padding) * app.scale
