@@ -86,12 +86,7 @@ Item
 
         if (listOfImages.count > 0)
         {
-            cnt = parseInt(listOfImages.count / inRowItemsCnt)
-
-            console.log("cnt = ", cnt)
-
-            if (cnt < 1)
-                cnt = 1
+            cnt = parseInt(listOfImages.count / (inRowItemsCnt + 1)) + 1
 
             return (AppTheme.rowHeightMin + AppTheme.padding) * cnt * app.scale
         }
@@ -112,8 +107,6 @@ Item
         width: 0
         height: calcHeight()
         contentHeight: height
-        //orientation: ListView.Horizontal
-        //spacing: AppTheme.padding * app.scale
         cellHeight: (AppTheme.rowHeightMin + AppTheme.padding) * app.scale
         cellWidth: cellHeight
         clip: true
