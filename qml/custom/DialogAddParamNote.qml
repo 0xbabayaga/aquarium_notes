@@ -202,8 +202,7 @@ Item
                         onModelChanged:
                         {
                             height = getParamListRealCount() * AppTheme.rowHeightMin * app.scale
-                            flickableContainer.contentHeight = addRecordListView.height
-                            flickableContainer.contentHeight += AppTheme.rowHeightMin * 4 * app.scale
+                            flickableContainer.contentHeight = addRecordListView.height + AppTheme.rowHeightMin * 6 * app.scale
                         }
 
                         delegate: Rectangle
