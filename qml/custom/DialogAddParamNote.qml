@@ -202,7 +202,7 @@ Item
                         onModelChanged:
                         {
                             height = getParamListRealCount() * AppTheme.rowHeightMin * app.scale
-                            flickableContainer.contentHeight = addRecordListView.height + AppTheme.rowHeightMin * 6 * app.scale
+                            flickableContainer.contentHeight = addRecordListView.height + AppTheme.rowHeightMin * 8 * app.scale
                         }
 
                         delegate: Rectangle
@@ -296,12 +296,12 @@ Item
                             onSigImagesLimitReached:
                             {
                                 if (app.isFullFunctionality() === true &&
-                                    imagesList.selectedImagesList.count === AppDefs.ACTIONS_COUNT_FULL_LIMIT)
+                                    imagesList.selectedImagesList.count === AppDefs.NOTE_IMAGES_COUNT_FULL_LIMIT)
                                 {
-                                   tip.tipText = qsTr("NOTE images limit count reached!")
+                                   tip.tipText = qsTr("Available count of images is reached")
                                 }
                                 else
-                                    tip.tipText = qsTr("NOTE images functionality limitation!")
+                                    tip.tipText = qsTr("Limitation of non-registered version")
 
                                 tip.show(true)
                             }

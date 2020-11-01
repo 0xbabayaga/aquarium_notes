@@ -10,8 +10,8 @@
 #include "actionlist.h"
 #include "AppDefs.h"
 
-#define DIAGRAMM_DRAW_GAP_TOP       0.30  //Means +20% of full scale
-#define DIAGRAMM_DRAW_GAP_BOTTOM    0.30  //Means +20% of full scale
+#define DIAGRAMM_DRAW_GAP_TOP       0.50  //Means +50% of full scale
+#define DIAGRAMM_DRAW_GAP_BOTTOM    0.50  //Means +50% of full scale
 
 #define USER_IMAGE_WIDTH            256
 #define USER_IMAGE_HEIGHT           256

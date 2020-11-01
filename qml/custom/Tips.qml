@@ -68,7 +68,8 @@ Item
     {
         anchors.fill: parent
         radius: AppTheme.radius * 2 * app.scale
-        color: AppTheme.lightBlueColor
+        //color: AppTheme.lightBlueColor
+        color: AppTheme.blueColor
 
         Text
         {
@@ -79,7 +80,8 @@ Item
             width: parent.width
             font.family: AppTheme.fontFamily
             font.pixelSize: AppTheme.fontSuperSmallSize * app.scale
-            color: AppTheme.blueColor
+            color: AppTheme.whiteColor
+            //color: AppTheme.blueColor
             text: "None"
         }
 
