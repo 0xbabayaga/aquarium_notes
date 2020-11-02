@@ -134,10 +134,8 @@ Item
 
                 if (curValuesListView.model.length > 0)
                 {
-                    noteViewDialog.hide()
-
-                    noteViewDialog.noteText = curValuesListView.model[0].note
-                    noteViewDialog.noteImages = curValuesListView.model[0].imgLink
+                    noteViewDialog.update(curValuesListView.model[0].note,
+                                          curValuesListView.model[0].imgLink)
                 }
             }
 

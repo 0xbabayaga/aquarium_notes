@@ -234,6 +234,7 @@ bool DBManager::getLatestParams()
                 smpIdList.append(query0.value(0).toInt());
         }
 
+
         isParamDataChanged = false;
     }
 
@@ -341,21 +342,24 @@ bool DBManager::getCurrentUser()
 {
     QSqlQuery query("SELECT * FROM USER_TABLE WHERE STATUS != -1", db);
 
-    if (curSelectedObjs.user != nullptr)
+    if (curSelectedObjs.user == nullptr)
     {
-        delete curSelectedObjs.user;
-        curSelectedObjs.user = nullptr;
+        //delete curSelectedObjs.user;
+        //curSelectedObjs.user = nullptr;
+    //}
+
+        while (query.next())
+        {
+            /* Read only one User */
+            curSelectedObjs.user = new UserObj(&query);
+
+            return true;
+        }
+
+        return false;
     }
-
-    while (query.next())
-    {
-        /* Read only one User */
-        curSelectedObjs.user = new UserObj(&query);
-
+    else
         return true;
-    }
-
-    return false;
 }
 
 bool DBManager::getUserTanksList()

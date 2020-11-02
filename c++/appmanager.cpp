@@ -829,7 +829,7 @@ void AppManager::onGuiCurrentSmpIdChanged(int smpId)
 
 void AppManager::onGuiLanguageChanged(int id)
 {
-    if (id < AppDef::Lang_End)
+    if (id < AppDef::Lang_End && appSett.value(SETT_LANG).toInt() != id)
     {
         if (loadTranslations(id) == true)
         {
@@ -866,7 +866,7 @@ void AppManager::onGuiVolumeUnitsChanged(int id)
 
 void AppManager::onGuiDateFormatChanged(int id)
 {
-    if (id < AppDef::DateFormat_End)
+    if (id < AppDef::DateFormat_End && appSett.value(SETT_DATEFORMAT).toInt() != id)
     {
         appSett.setValue(SETT_DATEFORMAT, id);
         setQmlParam("app", "global_DATEFORMAT", id);

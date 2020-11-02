@@ -18,16 +18,18 @@ Item
 
     ListModel { id: listOfImages }
 
+    function update(note, imgs)
+    {
+        noteText = note
+        noteImages = imgs
+
+        hide()
+    }
+
     function hide()
     {
         hideAnimation.stop()
         showAnimation.stop()
-
-        if (noteViewDialog.noteText.length > AppDefs.MAX_NOTETEXT_SIZE)
-            textNote.text = trimText(noteViewDialog.noteText)
-        else
-            textNote.text = noteViewDialog.noteText
-
         hideAnimation.start()
     }
 
@@ -165,9 +167,15 @@ Item
         from: 1
         to: 0
         easing.type: Easing.InOutQuad
+
         onFinished:
         {
             noteViewDialog.visible = false
+
+            if (noteViewDialog.noteText.length > AppDefs.MAX_NOTETEXT_SIZE)
+                textNote.text = trimText(noteViewDialog.noteText)
+            else
+                textNote.text = noteViewDialog.noteText
 
             getImages()
 
