@@ -59,6 +59,20 @@ Item
         dialogAddParamNote.addParamsListModel = app.getAllParamsListModel()
     }
 
+    function verifyInputParams()
+    {
+        for (var i = 0; i < dialogAddParamNote.addParamsListModel.length; i++)
+        {
+            if (dialogAddParamNote.addParamsListModel[i].en === true &&
+                dialogAddParamNote.addParamsListModel[i].value === -1)
+            {
+                return false
+            }
+        }
+
+        return true
+    }
+
     NumberAnimation
     {
         id: showDialogAnimation
@@ -239,8 +253,11 @@ Item
                                 width: 100 * app.scale
                                 maximumLength: AppDefs.MAX_TANKDIMENSION_SIZE
                                 text: (value !== -1) ? value : ""
+                                validator : RegExpValidator { regExp : /[0-9]+\.[0-9]+/ }
 
                                 onTextChanged: value = Number.parseFloat(textInputValue.text)
+                                Keys.onReturnPressed:  nextItemInFocusChain().forceActiveFocus()
+                                //KeyNavigation.tab: bottomRight
 
                                 Text
                                 {
@@ -360,8 +377,11 @@ Item
 
                     onSigButtonClicked:
                     {
-                        dialogAddParamNote.show(false)
-                        sigOk()
+                        if (verifyInputParams() === true)
+                        {
+                            dialogAddParamNote.show(false)
+                            sigOk()
+                        }
                     }
                 }
             }
