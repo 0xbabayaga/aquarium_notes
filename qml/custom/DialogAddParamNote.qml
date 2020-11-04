@@ -41,22 +41,51 @@ Item
 
     function savePersonalParams(isSave)
     {
+        var en = false
+
         if (isSave === true)
         {
-            for (var i = 0; i < personalParamsListView.model.length; i++)
+            var i
+
+            for (i = 0; i < personalParamsListView.model.length; i++)
             {
-                app.sigPersonalParamStateChanged(personalParamsListView.model[i].paramId,
-                                                 personalParamsListView.model[i].en)
+                if (personalParamsListView.model[i].en === true)
+                {
+                    en = true
+                    break
+                }
+            }
+
+            if (en === true)
+            {
+                for (i = 0; i < personalParamsListView.model.length; i++)
+                {
+                    app.sigPersonalParamStateChanged(personalParamsListView.model[i].paramId,
+                                                     personalParamsListView.model[i].en)
+                }
+
+                rectPersonalParamsDialog.opacity = 0
+                rectAddRecordDialog.opacity = 1
+
+                if (isSave === true)
+                    app.sigFullRefreshData()
+
+                dialogAddParamNote.addParamsListModel = app.getAllParamsListModel()
+            }
+            else
+            {
+                warningDialog.showDialog(true, qsTr("Warning"), qsTr("At least one parameter must be enabled!"))
             }
         }
+        else
+        {
+            rectPersonalParamsDialog.opacity = 0
+            rectAddRecordDialog.opacity = 1
 
-        rectPersonalParamsDialog.opacity = 0
-        rectAddRecordDialog.opacity = 1
-
-        if (isSave === true)
             app.sigFullRefreshData()
 
-        dialogAddParamNote.addParamsListModel = app.getAllParamsListModel()
+            dialogAddParamNote.addParamsListModel = app.getAllParamsListModel()
+        }
     }
 
     function verifyInputParams()
@@ -382,6 +411,8 @@ Item
                             dialogAddParamNote.show(false)
                             sigOk()
                         }
+                        else
+                            warningDialog.showDialog(true, qsTr("Warning"), qsTr("Please fill in each of the parameters"))
                     }
                 }
             }
@@ -473,7 +504,8 @@ Item
                             anchors.right: parent.right
                             anchors.verticalCenter: parent.verticalCenter
                             checked: en
-                            onCheckedChanged: {
+                            onCheckedChanged:
+                            {
                                 en = checked
                                 textFullName.color = en ? AppTheme.blueColor : AppTheme.greyColor
                             }
@@ -521,6 +553,12 @@ Item
                     onSigButtonClicked: savePersonalParams(true)
                 }
             }
+        }
+
+        WaitDialog
+        {
+            id: warningDialog
+
         }
     }
 }

@@ -167,7 +167,7 @@ void AppManager::init()
 
     qmlEngine->rootContext()->setContextProperty("aquariumTypesListModel", QVariant::fromValue(aquariumTypeList));
 
-    getCurrentObjs();
+    getCurrentObjs(true);
 
     if (curSelectedObjs.user != 0)
         cloudMan = new CloudManager(curSelectedObjs.user->man_id);
@@ -339,7 +339,7 @@ void AppManager::createLangList()
     }
 }
 
-bool AppManager::getCurrentObjs()
+bool AppManager::getCurrentObjs(bool isFullUpdate)
 {
     getCurrentUser();
 
@@ -359,7 +359,8 @@ bool AppManager::getCurrentObjs()
         {
             setInitialDialogStage(AppDef::AppInit_Completed, curSelectedObjs.user->uname);
 
-            curSelectedObjs.tankIdx = 0;
+            if (isFullUpdate == true)
+                curSelectedObjs.tankIdx = 0;
 
             qmlEngine->rootContext()->setContextProperty("tanksListModel", QVariant::fromValue(curSelectedObjs.listOfUserTanks));
 
@@ -650,7 +651,7 @@ void AppManager::onGuiUserDelete()
 {
     if (deleteUser() == true)
     {
-        getCurrentObjs();
+        getCurrentObjs(true);
     }
 }
 
@@ -658,7 +659,7 @@ void AppManager::onGuiTankCreate(QString name, QString desc, int type, int l, in
 {
     if (createTank(name, desc, curSelectedObjs.user->man_id, type, l, w, h, imgFile) == true)
     {
-        getCurrentObjs();
+        getCurrentObjs(true);
         setInitialDialogStage(AppDef::AppInit_Completed, curSelectedObjs.user->uname);
     }
 }
@@ -667,7 +668,7 @@ void AppManager::onGuiTankEdit(QString tankId, QString name, QString desc, int t
 {
     if (editTank(tankId, name, desc, type, l, w, h, imgFile) == true)
     {
-        getCurrentObjs();
+        getCurrentObjs(true);
     }
 }
 
@@ -675,7 +676,7 @@ void AppManager::onGuiTankDelete(QString tankId)
 {
     if (deleteTank(tankId) == true)
     {
-        getCurrentObjs();
+        getCurrentObjs(true);
     }
 }
 
@@ -700,7 +701,7 @@ void AppManager::onGuiRefreshData()
 
 void AppManager::onGuiFullRefreshData()
 {
-    getCurrentObjs();
+    getCurrentObjs(false);
 
     curSelectedObjs.lastSmpId = getLastSmpId();
     setLastSmpId(curSelectedObjs.lastSmpId);
@@ -808,6 +809,7 @@ void AppManager::onGuiTankSelected(int tankIdx)
     if (tankIdx >= 0)
     {
         curSelectedObjs.tankIdx = tankIdx;
+        isParamDataChanged = true;
 
         getParamsListGui();
         getLatestParamsGui();
@@ -836,7 +838,7 @@ void AppManager::onGuiLanguageChanged(int id)
             qmlEngine->retranslate();
 
             createTankTypesList();
-            getCurrentObjs();
+            getCurrentObjs(false);
 
             appSett.setValue(SETT_LANG, id);
         }
@@ -860,7 +862,7 @@ void AppManager::onGuiVolumeUnitsChanged(int id)
         setQmlParam("app", "global_VOLUNITS", id);
 
         createTankTypesList();
-        getCurrentObjs();
+        getCurrentObjs(false);
     }
 }
 
@@ -872,7 +874,7 @@ void AppManager::onGuiDateFormatChanged(int id)
         setQmlParam("app", "global_DATEFORMAT", id);
 
         createTankTypesList();
-        getCurrentObjs();
+        getCurrentObjs(false);
     }
 }
 

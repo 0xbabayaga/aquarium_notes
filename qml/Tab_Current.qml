@@ -46,6 +46,8 @@ Item
                 links += dialogAddParamNote.selectedImagesList.get(i).fileLink
             }
 
+            console.log("links = ", links, links.length)
+
             if (isEdit === false)
             {
                 sigAddRecordNotes(app.lastSmpId,

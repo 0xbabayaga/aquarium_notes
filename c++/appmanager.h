@@ -23,7 +23,7 @@ public:
 private:
     void    init();
 
-    bool    getCurrentObjs();
+    bool    getCurrentObjs(bool isFullUpdate);
     bool    getHistoryParams();
 
     void    getParamsListGui();

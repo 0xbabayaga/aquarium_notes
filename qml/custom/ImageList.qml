@@ -59,6 +59,8 @@ Item
         {
             listOfImages.remove(index, 1)
             resize()
+
+            console.log("img cnt = ", listOfImages.count)
         }
     }
 

@@ -322,7 +322,7 @@ Item
                             maximumLength: AppDefs.MAX_EMAIL_SIZE
                             focus: true
                             text: app.curUserEmail
-                            KeyNavigation.tab: textUserPass
+                            //KeyNavigation.tab: textUserPass
                         }
 
                         Item { height: 1; width: 1;}
