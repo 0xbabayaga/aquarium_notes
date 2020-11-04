@@ -58,9 +58,9 @@ Item
     function moveToAddNewTank(val)
     {
         if (app.isFullFunctionality() === true ||
-            tanksListModel.count < AppDefs.TANKS_COUNT_LIMIT)
+            tanksListModel.length < AppDefs.TANKS_COUNT_LIMIT)
         {
-            if (tanksListModel.count < AppDefs.TANKS_COUNT_FULL_LIMIT)
+            if (tanksListModel.length < AppDefs.TANKS_COUNT_FULL_LIMIT)
             {
                 animationToPage.stop()
 

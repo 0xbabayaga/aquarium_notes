@@ -858,23 +858,26 @@ bool DBManager::addNoteRecord(int smpId, QString note, QString imageLink)
 
     for (int i = 0; i < imgLinksList.size(); i++)
     {
-        fileName = getImgDbFolder() + createDbImgFileName(i) + "." + QFileInfo(imgLinksList.at(i)).completeSuffix();
-
-        img = QImage(imgLinksList.at(i));
-
-        if (img.width() > AppDef::MAX_IMAGE_WIDTH ||
-            img.height() > AppDef::MAX_IMAGE_HEIGHT)
+        if (imgLinksList.at(i).size() > 0)
         {
-            img = img.scaled(AppDef::MAX_IMAGE_WIDTH, AppDef::MAX_IMAGE_HEIGHT, Qt::KeepAspectRatio);
-            img.save(fileName);
+            fileName = getImgDbFolder() + createDbImgFileName(i) + "." + QFileInfo(imgLinksList.at(i)).completeSuffix();
+
+            img = QImage(imgLinksList.at(i));
+
+            if (img.width() > AppDef::MAX_IMAGE_WIDTH ||
+                img.height() > AppDef::MAX_IMAGE_HEIGHT)
+            {
+                img = img.scaled(AppDef::MAX_IMAGE_WIDTH, AppDef::MAX_IMAGE_HEIGHT, Qt::KeepAspectRatio);
+                img.save(fileName);
+            }
+            else
+                QFile::copy(imgLinksList.at(i), fileName);
+
+            if (i != 0)
+                dbFiles += ";";
+
+            dbFiles += fileName;
         }
-        else
-            QFile::copy(imgLinksList.at(i), fileName);
-
-        if (i != 0)
-            dbFiles += ";";
-
-        dbFiles += fileName;
     }
 
     query.prepare("INSERT INTO HISTORY_NOTES_TABLE (SMP_ID, TANK_ID, TEXT, IMAGEDATA, IMAGELINK, TIMESTAMP) "
@@ -924,23 +927,26 @@ bool DBManager::editNoteRecord(int smpId, QString note, QString imageLink)
 
         for (int i = 0; i < imgLinksList.size(); i++)
         {
-            fileName = getImgDbFolder() + createDbImgFileName(i) + "." + QFileInfo(imgLinksList.at(i)).completeSuffix();
-
-            img = QImage(imgLinksList.at(i));
-
-            if (img.width() > AppDef::MAX_IMAGE_WIDTH ||
-                img.height() > AppDef::MAX_IMAGE_HEIGHT)
+            if (imgLinksList.at(i).size() > 0)
             {
-                img = img.scaled(AppDef::MAX_IMAGE_WIDTH, AppDef::MAX_IMAGE_HEIGHT, Qt::KeepAspectRatio);
-                img.save(fileName);
+                fileName = getImgDbFolder() + createDbImgFileName(i) + "." + QFileInfo(imgLinksList.at(i)).completeSuffix();
+
+                img = QImage(imgLinksList.at(i));
+
+                if (img.width() > AppDef::MAX_IMAGE_WIDTH ||
+                    img.height() > AppDef::MAX_IMAGE_HEIGHT)
+                {
+                    img = img.scaled(AppDef::MAX_IMAGE_WIDTH, AppDef::MAX_IMAGE_HEIGHT, Qt::KeepAspectRatio);
+                    img.save(fileName);
+                }
+                else
+                    QFile::copy(imgLinksList.at(i), fileName);
+
+                if (i != 0)
+                    dbFiles += ";";
+
+                dbFiles += fileName;
             }
-            else
-                QFile::copy(imgLinksList.at(i), fileName);
-
-            if (i != 0)
-                dbFiles += ";";
-
-            dbFiles += fileName;
         }
 
         query.prepare("UPDATE HISTORY_NOTES_TABLE SET "

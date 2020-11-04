@@ -133,10 +133,10 @@ Item
                     height = AppTheme.compHeight * 8 * app.scale
 
                 if (curValuesListView.model.length > 0)
-                {
                     noteViewDialog.update(curValuesListView.model[0].note,
                                           curValuesListView.model[0].imgLink)
-                }
+                else
+                    noteViewDialog.update("", "")
             }
 
             delegate: Rectangle

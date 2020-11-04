@@ -42,10 +42,8 @@ Item
         imgs = noteImages.split(';')
 
         for (var i = 0; i < imgs.length; i++)
-        {
             if (imgs[i].length > 0)
                 listOfImages.append( { "fileLink": imgs[i] })
-        }
 
         if (imgs.length === 0)
             imagesListView.width = 0
@@ -277,7 +275,7 @@ Item
                     anchors.topMargin: 2 * app.scale
                     anchors.bottomMargin: 2 * app.scale
 
-                    source: (fileLink.length > 0) ? "" : "file:///" + fileLink
+                    source: (fileLink.length > 0) ? "file:///" + fileLink : ""
                     mipmap: true
                     layer.enabled: true
                     layer.effect: OpacityMask
