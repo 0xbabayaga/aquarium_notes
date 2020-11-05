@@ -540,13 +540,10 @@ void AppManager::resetStoryView()
 
     obj = qmlEngine->rootObjects().first()->findChild<QObject*>("tankStory");
 
-    for (int i = 0; i < tankStoryList.size(); i++)
-    {
-        if (obj != nullptr)
-            QMetaObject::invokeMethod(obj, "clearStory");
-        else
-            qDebug() << "tankStory not found!";
-    }
+    if (obj != nullptr)
+        QMetaObject::invokeMethod(obj, "clearStory");
+    else
+        qDebug() << "tankStory not found!";
 }
 
 bool AppManager::setQmlParam(QString objName, QString name, QVariant value)
@@ -821,19 +818,22 @@ void AppManager::onGuiRegisterApp()
 
 void AppManager::onGuiTankSelected(int tankIdx)
 {
+    //qDebug() << "onGuiTankSelected" << curSelectedObjs.tankIdx << tankIdx;
+
     if (tankIdx >= 0)
     {
         if (curSelectedObjs.tankIdx != tankIdx)
+        {
             resetStoryView();
 
+            curSelectedObjs.tankIdx = tankIdx;
+            isParamDataChanged = true;
 
-        curSelectedObjs.tankIdx = tankIdx;
-        isParamDataChanged = true;
-
-        getParamsListGui();
-        getLatestParamsGui();
-        getHistoryParams();
-        getActionCalendarGui();
+            getParamsListGui();
+            getLatestParamsGui();
+            getHistoryParams();
+            getActionCalendarGui();
+        }
     }
 }
 

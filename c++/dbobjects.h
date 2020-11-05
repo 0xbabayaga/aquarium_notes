@@ -271,12 +271,14 @@ public:
             _value = -1;
             _en = true;
 
+            /*
             int rec = query->record().indexOf("COLOR");
 
             if (rec != -1)
                 _color = query->value(rec).toString();
             else
                 _color = "";
+                */
         }
     }
 
