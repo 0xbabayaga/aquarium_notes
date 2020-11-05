@@ -21,6 +21,11 @@ Item
         storyModel.append({"smpId": smpId, "desc": desc, "imgList": imageList, "dt": dt, "params": params})
     }
 
+    function clearStory()
+    {
+        storyModel.clear()
+    }
+
     onVisibleChanged: if (visible === true) sigTankStoryLoadIndex(0)
 
     ListModel { id: storyModel }

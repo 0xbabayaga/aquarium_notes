@@ -534,6 +534,21 @@ void AppManager::setCurrentUser(QString uname, QString email, QString imgLink, i
     setQmlParam("app", "curUserDateCreate", dt);
 }
 
+void AppManager::resetStoryView()
+{
+    QObject *obj = nullptr;
+
+    obj = qmlEngine->rootObjects().first()->findChild<QObject*>("tankStory");
+
+    for (int i = 0; i < tankStoryList.size(); i++)
+    {
+        if (obj != nullptr)
+            QMetaObject::invokeMethod(obj, "clearStory");
+        else
+            qDebug() << "tankStory not found!";
+    }
+}
+
 bool AppManager::setQmlParam(QString objName, QString name, QVariant value)
 {
     QObject *obj = nullptr;
@@ -808,6 +823,10 @@ void AppManager::onGuiTankSelected(int tankIdx)
 {
     if (tankIdx >= 0)
     {
+        if (curSelectedObjs.tankIdx != tankIdx)
+            resetStoryView();
+
+
         curSelectedObjs.tankIdx = tankIdx;
         isParamDataChanged = true;
 
