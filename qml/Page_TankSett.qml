@@ -15,6 +15,7 @@ Item
 
     signal sigClosing()
     signal sigClosed()
+    signal sigTankDeleting()
 
     function showPage(vis)
     {
@@ -23,7 +24,10 @@ Item
         if (vis === true)
             showPageAnimation.to = 0
         else
+        {
+            moveToEdit(false)
             showPageAnimation.to = page_TankSett.height
+        }
 
         showPageAnimation.start()
     }
@@ -43,7 +47,7 @@ Item
         {
             animationToPage.from = 0
             animationToPage.to = flickView.height
-            textHeader.text = qsTr("TANKS") + qsTr(" :: EDIT")
+            textHeader.text = qsTr("TANKS") + "\n" + qsTr("EDIT")
         }
         else
         {
@@ -78,7 +82,7 @@ Item
                     textTankW.text = ""
                     imgTankAvatar.reset()
 
-                    textHeader.text = qsTr("TANKS") + qsTr(" :: ADD NEW")
+                    textHeader.text = qsTr("TANKS") + "\n" + qsTr("ADD NEW")
                 }
                 else
                 {
@@ -238,6 +242,7 @@ Item
                 anchors.verticalCenter: imgArrowBack.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
                 verticalAlignment: Text.AlignBottom
+                horizontalAlignment: Text.AlignHCenter
                 font.family: AppTheme.fontFamily
                 font.pixelSize: AppTheme.fontBigSize * app.scale
                 color: AppTheme.blueColor
@@ -762,6 +767,7 @@ Item
         id: confirmDialog
         onSigAccept:
         {
+            sigTankDeleting()
             app.sigDeleteTank(tanksList.model[tanksList.currentIndex].tankId)
         }
     }

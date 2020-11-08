@@ -42,13 +42,7 @@ Item
         return str
     }
 
-
-    ListModel { id: imagesListModel }
-    ListModel { id: valuesModel }
-
-    Behavior on height { NumberAnimation { duration: 100 } }
-
-    onImagesListChanged:
+    function createContent()
     {
         imagesListModel.clear()
         valuesModel.clear()
@@ -59,8 +53,18 @@ Item
             valuesModel.append({"value": formattedValue(parseFloat(params[pt])), "name": app.getParamById(parseInt(pt)).shortName})
 
         for (var i = 0; i < imgs.length; i++)
-            imagesListModel.append({"fileLink": imgs[i]})
+            if (imgs[i].length > 0)
+                imagesListModel.append({"fileLink": imgs[i]})
     }
+
+
+    ListModel { id: imagesListModel }
+    ListModel { id: valuesModel }
+
+    Behavior on height { NumberAnimation { duration: 100 } }
+
+    //onImagesListChanged:    createContent()
+    onParametersChanged:    createContent()
 
     Rectangle
     {

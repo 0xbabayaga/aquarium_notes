@@ -257,6 +257,7 @@ Window
             anchors.topMargin: AppTheme.rowHeightMin * app.scale
             visible: false
             //onSigClosed: page_Main.showPage(true)
+            onSigDeleting: page_TankData.showPage(false, 0)
         }
 
         Page_TankSett
@@ -266,6 +267,7 @@ Window
             anchors.topMargin: AppTheme.rowHeightMin * app.scale
             visible: false
             //onSigClosed: page_Main.showPage(true)
+            onSigTankDeleting: page_TankData.showPage(false, 0)
         }
 
         Page_AppSett

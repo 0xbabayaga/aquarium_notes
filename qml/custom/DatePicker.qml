@@ -218,7 +218,7 @@ Item
                         {
                             id: calendarModel
                             from: new Date(new Date().getFullYear(), 0, 1)
-                            to: new Date(new Date().getFullYear(), 11, 31)
+                            to: new Date(new Date().getFullYear() + 5, 11, 31)
 
                             function  setYear(newYear)
                             {
@@ -300,7 +300,7 @@ Item
                                 {
                                     height: datePicker.cellSize
                                     width: datePicker.cellSize
-                                    radius: height * 0.5
+                                    //radius: height * 0.5
 
                                     property bool highlighted: enabled && model.day === calendar.currentDay && model.month == calendar.currentMonth
 

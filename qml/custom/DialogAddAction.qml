@@ -187,6 +187,7 @@ Item
                 {
                     id: textActionName
                     placeholderText: qsTr("Action name")
+                    maximumLength: AppDefs.MAX_ACTIONNAME_SIZE
                     width: parent.width
                     focus: true
                     //KeyNavigation.tab: textUserEmail
@@ -196,6 +197,7 @@ Item
                 {
                     id: textDesc
                     placeholderText: qsTr("Description")
+                    maximumLength: AppDefs.MAX_ACTIONDESC_SIZE
                     width: parent.width
                     focus: true
                     //KeyNavigation.tab: textUserEmail
@@ -225,6 +227,7 @@ Item
                         anchors.right: comboPeriod.left
                         anchors.rightMargin: AppTheme.padding * app.scale
                         placeholderText: qsTr("1")
+                        validator : RegExpValidator { regExp : /[0-9]+[0-9]+/ }
                         width: 60 * app.scale
                         focus: true
                         maximumLength: 2

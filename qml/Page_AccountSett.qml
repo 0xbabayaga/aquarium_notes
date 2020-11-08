@@ -13,6 +13,7 @@ Item
 
     signal sigClosing()
     signal sigClosed()
+    signal sigDeleting()
 
     function showPage(vis)
     {
@@ -21,7 +22,10 @@ Item
         if (vis === true)
             showAccountSettAnimation.to = 0
         else
+        {
+            moveToEdit(false)
             showAccountSettAnimation.to = page_AccountSett.height
+        }
 
         showAccountSettAnimation.start()
     }
@@ -415,6 +419,7 @@ Item
         {
             page_AccountSett.showPage(false)
             sigClosing()
+            sigDeleting()
             app.sigDeleteAccount()
         }
     }

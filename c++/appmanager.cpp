@@ -664,6 +664,8 @@ void AppManager::onGuiUserDelete()
     if (deleteUser() == true)
     {
         getCurrentObjs(true);
+
+        setCurrentUser("", "", "", 0);
     }
 }
 
@@ -699,7 +701,9 @@ void AppManager::onGuiAddRecord(int smpId, int paramId, double value)
 
 void AppManager::onGuiEditRecord(int smpId, int paramId, double value)
 {
-    editParamRecord(smpId, paramId, value);
+    if (editParamRecord(smpId, paramId, value) == false)
+        /* Means there is no such records. So create a new one. */
+        addParamRecord(smpId, paramId, value);
 }
 
 void AppManager::onGuiRefreshData()

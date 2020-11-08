@@ -30,25 +30,26 @@ const static QString aquariumTypeNames[AquariumType::EndOfList] =
 
 const static QMap<QString, QString> paramTranslationMap =
 {
-    {   "TEMP", QObject::tr("Temperature")   },
-    {   "SAL",  QObject::tr("Salinity")      },
-    {   "CA",   QObject::tr("Calcium")           },
-    {   "PH",   QObject::tr("pH")                },
-    {   "KH",   QObject::tr("kH")                },
-    {   "GH",   QObject::tr("gH")                },
-    {   "PO4",  QObject::tr("Phosphates")        },
-    {   "NO2",  QObject::tr("Nitrite")           },
-    {   "NO3",  QObject::tr("Nitrate")           },
-    {   "NH3",  QObject::tr("Ammonia")           },
-    {   "MG",   QObject::tr("Magnesium")         },
-    {   "SI",   QObject::tr("Silicates")         },
-    {   "K",    QObject::tr("Potassium")         },
-    {   "I",    QObject::tr("Iodine")            },
-    {   "SR",   QObject::tr("Strontium")         },
-    {   "FE",   QObject::tr("Ferrum")            },
-    {   "B",    QObject::tr("Boron")             },
-    {   "MO",   QObject::tr("Molybdenum")        },
-    {   "ORP",  QObject::tr("ORP")               }
+    {   "TEMP", QObject::tr("Temperature")      },
+    {   "SAL",  QObject::tr("Salinity")         },
+    {   "CA",   QObject::tr("Calcium")          },
+    {   "PH",   QObject::tr("pH")               },
+    {   "KH",   QObject::tr("kH")               },
+    {   "GH",   QObject::tr("gH")               },
+    {   "PO4",  QObject::tr("Phosphates")       },
+    {   "NO2",  QObject::tr("Nitrite")          },
+    {   "NO3",  QObject::tr("Nitrate")          },
+    {   "NH3",  QObject::tr("Ammonia")          },
+    {   "CO2",  QObject::tr("Carbon")           },
+    {   "MG",   QObject::tr("Magnesium")        },
+    {   "SI",   QObject::tr("Silicates")        },
+    {   "K",    QObject::tr("Potassium")        },
+    {   "I",    QObject::tr("Iodine")           },
+    {   "SR",   QObject::tr("Strontium")        },
+    {   "FE",   QObject::tr("Ferrum")           },
+    {   "B",    QObject::tr("Boron")            },
+    {   "MO",   QObject::tr("Molybdenum")       },
+    {   "ORP",  QObject::tr("ORP")              }
 };
 
 static const QString backgroundDbConn = "backgroundConn";
@@ -344,10 +345,6 @@ bool DBManager::getCurrentUser()
 
     if (curSelectedObjs.user == nullptr)
     {
-        //delete curSelectedObjs.user;
-        //curSelectedObjs.user = nullptr;
-    //}
-
         while (query.next())
         {
             /* Read only one User */
@@ -615,6 +612,16 @@ bool DBManager::deleteUser()
 
     res = query.exec();
 
+    if (res == true)
+    {
+        if (curSelectedObjs.user != nullptr)
+        {
+            delete curSelectedObjs.user;
+            curSelectedObjs.user = nullptr;
+            curSelectedObjs.listOfUserTanks.clear();
+        }
+    }
+
     if (res == false)
         qDebug() << "Delete user error: " << query.lastError();
 
@@ -640,8 +647,6 @@ bool DBManager::createTank(QString name, QString desc, QString manId, int type, 
 
         if (imgFile != "")
         {
-            qDebug() << "IMG: " << imgFile;
-
             file = new QFile(imgFile.replace("file:///", ""));
 
             if (file->exists() == true && file->open(QFile::OpenModeFlag::ReadOnly) == true)
@@ -824,20 +829,32 @@ bool DBManager::addParamRecord(int smpId, int paramId, double value)
 bool DBManager::editParamRecord(int smpId, int paramId, double value)
 {
     QSqlQuery query;
+    QSqlQuery preQuery;
     bool res = false;
     TankObj *tank = (TankObj*) curSelectedObjs.listOfUserTanks.at(curSelectedObjs.tankIdx);
 
-    query.prepare("UPDATE HISTORY_VALUE_TABLE SET "
-                  "VALUE = " + QString::number(value) + ", "
-                  "TIMESTAMP = " + QString::number(QDateTime::currentSecsSinceEpoch()) + " "
-                  "WHERE smp_id = " + QString::number(smpId) + " AND "
-                  "PARAM_ID = " + QString::number(paramId) + " AND "
-                  "TANK_ID = '" + tank->tankId() + "'");
 
-    res = query.exec();
+    preQuery.prepare("SELECT SMP_ID FROM HISTORY_VALUE_TABLE WHERE "
+                     "SMP_ID = " + QString::number(smpId) + " AND "
+                     "PARAM_ID = " + QString::number(paramId) + " AND "
+                     "TANK_ID = '" + tank->tankId() + "'");
 
-    if (res == false)
-        qDebug() << "Edit record error: " << query.lastError();
+    preQuery.exec();
+
+    if (preQuery.next())
+    {
+        query.prepare("UPDATE HISTORY_VALUE_TABLE SET "
+                      "VALUE = " + QString::number(value) + ", "
+                      "TIMESTAMP = " + QString::number(QDateTime::currentSecsSinceEpoch()) + " "
+                      "WHERE smp_id = " + QString::number(smpId) + " AND "
+                      "PARAM_ID = " + QString::number(paramId) + " AND "
+                      "TANK_ID = '" + tank->tankId() + "'");
+
+        res = query.exec();
+
+        if (res == false)
+            qDebug() << "Edit record error: " << query.lastError();
+    }
 
     isParamDataChanged = true;
 
@@ -1239,7 +1256,7 @@ bool DBManager::initDB()
 
         res = query.exec("INSERT INTO DICT_TABLE "
                    "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"
-                   "VALUES (11, 'CO2', 'Carbon', 'ppm, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 4, 30, 4, 30')");
+                   "VALUES (11, 'CO2', 'CO2', 'mg/l', -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 4, 30, 4, 30)");
 
         res = query.exec("INSERT INTO DICT_TABLE "
                    "(PARAM_ID, SHORT_NAME, FULL_NAME, UNIT_NAME, MIN_1, MAX_1, MIN_2, MAX_2, MIN_3, MAX_3, MIN_4, MAX_4, MIN_5, MAX_5, MIN_6, MAX_6, MIN_7, MAX_7, MIN_8, MAX_8)"

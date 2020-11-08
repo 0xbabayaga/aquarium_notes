@@ -30,6 +30,7 @@ Item
                                                actionList.model[id].period,
                                                actionList.model[id].type,
                                                actionList.model[id].startDT)
+                dialogAddAction.show(visible)
             }
             else
             {
@@ -95,6 +96,14 @@ Item
         var mm = "0" + date.getMinutes()
 
         return hh.substr(-2)+":"+mm.substr(-2)
+    }
+
+    function trimText(str)
+    {
+        var trimStr = str.substr(0, AppDefs.MAX_ACTIONDESCSHORT_SIZE)
+        trimStr = trimStr.substr(0, Math.min(trimStr.length, trimStr.lastIndexOf(" ")))
+
+        return trimStr
     }
 
     Rectangle
@@ -330,13 +339,14 @@ Item
                                 anchors.top: parent.top
                                 anchors.topMargin: AppTheme.padding/2 * app.scale
                                 anchors.left: parent.left
-                                width: rectDataContainer.dataWidth
+                                anchors.right: parent.right
+                                anchors.rightMargin: AppTheme.padding / 2 * app.scale
                                 height: AppTheme.compHeight * app.scale
                                 verticalAlignment: Text.AlignTop
                                 font.family: AppTheme.fontFamily
                                 font.pixelSize: AppTheme.fontSmallSize * app.scale
                                 color: AppTheme.greyColor
-                                text: desc
+                                text: trimText(desc)
                                 wrapMode: Text.WordWrap
                             }
                         }
