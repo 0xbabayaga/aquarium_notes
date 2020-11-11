@@ -12,8 +12,8 @@
 #define MAX_EXPORT_IMGFILES_COUNT       2047
 #define MAX_EXPORT_FILE_READBUF_SIZE    0x8000
 #define MAX_MD32_SIZE                   64
-#define MAX_IMG_FILESIZE                0x200000 //2Mb
-#define MAX_DB_FILESIZE                 0x400000 //64Mb
+#define MAX_IMG_FILESIZE                0x400000 //4Mb
+#define MAX_DB_FILESIZE                 0x2000000 //64Mb
 
 typedef enum
 {
