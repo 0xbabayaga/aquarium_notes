@@ -72,11 +72,13 @@ public:
     bool    getCurrentUser();
     bool    getUserTanksList();
     bool    getTankStoryList(int id);
-
     bool    getParamIdList(QList<int> *idList);
-
-    /* Preparation for GUI start */
     bool    getCurrentObjs();
+
+    /* Import/Export */
+    bool    exportToFile(QString name);
+    bool    importFromFile(QString name);
+    QString generateKey(quint64 tm, unsigned int crc);
 
     /* Utitlity methods */
     QString randId();

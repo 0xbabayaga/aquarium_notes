@@ -8,6 +8,13 @@
 #include <QSqlQuery>
 #include <QVariant>
 
+#define MAX_FILERECORD_NAME_SIZE        48
+#define MAX_EXPORT_IMGFILES_COUNT       2047
+#define MAX_EXPORT_FILE_READBUF_SIZE    0x8000
+#define MAX_MD32_SIZE                   64
+#define MAX_IMG_FILESIZE                0x200000 //2Mb
+#define MAX_DB_FILESIZE                 0x400000 //64Mb
+
 typedef enum
 {
     Reef_Fish = 0,
@@ -20,6 +27,21 @@ typedef enum
     Fresh_FullScape = 7,
     EndOfList = Fresh_FullScape + 1
 }   AquariumType;
+
+typedef struct
+{
+    unsigned int    offset;
+    unsigned int    size;
+    char            name[MAX_FILERECORD_NAME_SIZE];
+}   FileRecord;
+
+typedef struct
+{
+    FileRecord      dbFile;
+    FileRecord      imgFiles[MAX_EXPORT_IMGFILES_COUNT];
+    quint64         timestamp;
+    char            md5[MAX_MD32_SIZE];
+}   ArchiveTable;
 
 class LangObj : public QObject
 {
@@ -120,11 +142,6 @@ protected:
 class TankStoryObj : public QObject
 {
     Q_OBJECT
-
-//    Q_PROPERTY(int smpId READ smpId WRITE setSmpId NOTIFY smpIdChanged)
-//    Q_PROPERTY(QString desc READ desc WRITE setDesc NOTIFY descChanged)
-//    Q_PROPERTY(QString imgList READ imgList WRITE setImgList NOTIFY imgListChanged)
-//    Q_PROPERTY(unsigned int dt READ dt WRITE setDt NOTIFY dtChanged)
 
 public:
     TankStoryObj(QSqlQuery *query, QVariantMap *curParamsList)
