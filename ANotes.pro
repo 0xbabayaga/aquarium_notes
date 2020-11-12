@@ -3,6 +3,7 @@ QT += quick
 QT += sql
 QT += core
 QT += multimedia
+QT += concurrent
 android: QT += androidextras
 
 CONFIG += c++11
@@ -19,6 +20,7 @@ SOURCES += \
         c++/actionlist.cpp \
         c++/appmanager.cpp \
         c++/cloudmanager.cpp \
+        c++/db_importexport.cpp \
         c++/dbmanager.cpp \
         c++/position.cpp \
         main.cpp

@@ -7,6 +7,7 @@
 #include <QStandardPaths>
 #include <QSettings>
 #include <QTranslator>
+#include <QFutureWatcher>
 #include "dbmanager.h"
 #include "dbobjects.h"
 #include "actionlist.h"
@@ -99,6 +100,10 @@ public slots:
     void    onCloudResponse_AppUpdates(int version, int date);
     void    onCloudResponse_Error(int error, QString errorText);
 
+    /* Parallel tasks */
+    void    onExportFinished();
+    void    onImportFinished();
+
 private:
     QSettings appSett;
     QTranslator translator;
@@ -109,6 +114,13 @@ private:
     QList<QObject*> langsList;
 
     Position *position = nullptr;
+
+    QString                 exportFileName = "";
+
+    QFuture<bool>           exportFuture;
+    QFuture<bool>           importFuture;
+    QFutureWatcher<bool>    exportWatcher;
+    QFutureWatcher<bool>    importWatcher;
 };
 
 #endif // APPMANAGER_H

@@ -13,6 +13,8 @@
 #include <QDirIterator>
 #include <QThread>
 #include <QLocale>
+#include <QFuture>
+#include <QtConcurrent>
 #include "AppDefs.h"
 #include "dbobjects.h"
 #include "position.h"
@@ -839,16 +841,36 @@ void AppManager::onGuiRegisterApp()
 
 void AppManager::onGuiExportData(QString fileName)
 {
-    QString exportFileName = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + "/" + generateExportFileName();
+    exportFileName = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + "/" + generateExportFileName();
 
-    if (exportToFile(exportFileName) == true)
-        setExportingState("Data exported to file: " + exportFileName + "\n\n"
-                          "Now you can Import this data on another device.");
-    else
-        setExportingState(tr("Error on data exporting"));
+    db.close();
+
+    connect(&exportWatcher, &QFutureWatcher<int>::finished, this, &AppManager::onExportFinished);
+    exportFuture = QtConcurrent::run(exportToFile, exportFileName);
+    exportWatcher.setFuture(exportFuture);
 }
 
 void AppManager::onGuiImportData(QString fileName)
+{
+
+}
+
+void AppManager::onExportFinished()
+{
+    bool exportResult = exportFuture.result();
+
+    disconnect(&exportWatcher, &QFutureWatcher<int>::finished, this, &AppManager::onExportFinished);
+
+    if (exportResult == true)
+        setExportingState("Data exported to file:  " + exportFileName + "\n\n"
+                          "Now you can Import this data on another device.");
+    else
+        setExportingState(tr("Error on data exporting"));
+
+    db.open();
+}
+
+void AppManager::onImportFinished()
 {
 
 }

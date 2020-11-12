@@ -16,6 +16,10 @@
 #define USER_IMAGE_WIDTH            256
 #define USER_IMAGE_HEIGHT           256
 
+/* Import/Export */
+bool    exportToFile(QString name);
+bool    importFromFile(QString name);
+
 class DBManager : public QObject
 {
     Q_OBJECT
@@ -75,10 +79,13 @@ public:
     bool    getParamIdList(QList<int> *idList);
     bool    getCurrentObjs();
 
-    /* Import/Export */
-    bool    exportToFile(QString name);
-    bool    importFromFile(QString name);
-    QString generateKey(quint64 tm, unsigned int crc);
+    static QString generateKey(quint64 tm, unsigned int crc);
+    static QString getDbFolder()        {   return dbFolder;    }
+    static QString getImgFolder()       {   return imgFolder;   }
+    static QString getDbFile()          {   return dbFile;      }
+    static QString getDbFilePath()      {   return dbFileLink;  }
+
+    static bool    less(QObject *v1, QObject *v2);
 
     /* Utitlity methods */
     QString randId();
@@ -88,8 +95,6 @@ public:
 
     bool isParamEnabled(char paramId);
 
-
-    static bool    less(QObject *v1, QObject *v2);
     QString getImgDbFolder()
     {
         #ifdef  Q_OS_ANDROID
@@ -103,14 +108,15 @@ public:
     QString createDbImgAccountFileName();
 
 public:
-    const QString   dbFolder = "db";
-    const QString   imgFolder = "imagesbase";
-    const QString   dbFile = "db.db";
-    const QString   appFolder = "AquariumNotes";
+    static const QString   dbFolder;
+    static const QString   imgFolder;
+    static const QString   dbFile;
+    static const QString   appFolder;
 
 private:
-    QString         appPath;
-    QString         dbFileLink;
+    static QString         appPath;
+    static QString         dbFileLink;
+
     QSqlDatabase    db;
 
     /* Store params enumeration */

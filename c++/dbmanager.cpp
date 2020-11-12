@@ -52,6 +52,13 @@ const static QMap<QString, QString> paramTranslationMap =
     {   "ORP",  QObject::tr("ORP")              }
 };
 
+const QString  DBManager::dbFolder = "db";
+const QString  DBManager::imgFolder = "imagesbase";
+const QString  DBManager::dbFile = "db.db";
+const QString  DBManager::appFolder = QString(APP_NAME);
+QString        DBManager::appPath = "";
+QString        DBManager::dbFileLink = "";
+
 static const QString backgroundDbConn = "backgroundConn";
 
 DBManager::DBManager(bool isReadOnly, QObject *parent) : QObject(parent)
@@ -59,38 +66,24 @@ DBManager::DBManager(bool isReadOnly, QObject *parent) : QObject(parent)
     readOnly = isReadOnly;
 
 #ifdef  Q_OS_ANDROID
-    appPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
-
-    if (isReadOnly == false)
-    {
-        if (QDir(appPath + "/" + appFolder).exists() == false)
-        {
-            qInfo() << "Creating " << appPath + "/" + appFolder << "   "
-                    << QDir().mkdir(appPath + "/" + appFolder);
-            qInfo() << "Creating " << appPath + "/" + appFolder + "/" + dbFolder + "/" << "   "
-                    << QDir().mkdir(appPath + "/" + appFolder + "/" + dbFolder + "/");
-        }
-
-        if (QDir(appPath + "/" + appFolder + "/" + imgFolder).exists() == false)
-            qInfo() << "Creating " << appPath + "/" + appFolder + "/" + imgFolder + "/"
-                    << QDir().mkdir(appPath + "/" + appFolder + "/" + imgFolder + "/");
-    }
-
-    dbFileLink = appPath + "/" + appFolder + "/" + dbFolder + "/" +dbFile;
-
-    qWarning() << "dbFileLink = " << dbFileLink;
+    appPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/" + appFolder;
 #else
+    appPath = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+#endif
+
     if (isReadOnly == false)
     {
-        if (QDir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + dbFolder).exists() == false)
-            QDir().mkdir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + dbFolder);
+        if (QDir(appPath).exists() == false)
+            QDir().mkdir(appPath);
 
-        if (QDir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + imgFolder).exists() == false)
-            QDir().mkdir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + imgFolder);
+        if (QDir(appPath + "/" + dbFolder).exists() == false)
+            QDir().mkdir(appPath + "/" + dbFolder);
+
+        if (QDir(appPath + "/" + imgFolder).exists() == false)
+            QDir().mkdir(appPath + "/" + imgFolder);
     }
 
-    dbFileLink = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + dbFolder + "/" + dbFile;
-#endif
+    dbFileLink = appPath + "/" + dbFolder + "/" + dbFile;
 
     if (readOnly == false)
     {
@@ -117,315 +110,11 @@ DBManager::DBManager(bool isReadOnly, QObject *parent) : QObject(parent)
     }
 
     isParamDataChanged = true;
-
-    //exportToFile("tmp.as");
-    //importFromFile(QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + "/tmp.as");
 }
 
 DBManager::~DBManager()
 {
 
-}
-
-QString DBManager::generateKey(quint64 tm, unsigned int crc)
-{
-    QString tmp = QString::number(crc, 16) + QString::number(tm);
-
-    return QString(QCryptographicHash::hash(tmp.toLocal8Bit(), QCryptographicHash::Md5).toHex());
-}
-
-bool DBManager::exportToFile(QString name)
-{
-    ArchiveTable *table = nullptr;
-    QFile exportFile(name);
-    QFile tmpFile;
-    unsigned int cnt = 0;
-    unsigned int read = 0;
-    unsigned int offset = 0;
-    unsigned int tmpSize = 0;
-    unsigned int i = 0;
-    char *tmpBuf = nullptr;
-    unsigned int crc = 0;
-    QString key = "";
-    bool res = false;
-
-    table = new ArchiveTable();
-    memset(table, 0, sizeof (ArchiveTable));
-
-    tmpBuf = (char*) malloc(MAX_EXPORT_FILE_READBUF_SIZE);
-
-    if (table != nullptr && tmpBuf != nullptr)
-    {
-        if (exportFile.open(QIODevice::WriteOnly) == true)
-        {
-            QDir expImgDir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + imgFolder);
-            QStringList imgList = expImgDir.entryList(QStringList() << "*.jpg" << "*.JPG", QDir::Files);
-
-            exportFile.seek(sizeof(ArchiveTable));
-            offset = sizeof(ArchiveTable);
-
-            tmpSize = 0;
-            table->dbFile.offset = offset;
-            tmpFile.setFileName(dbFileLink);
-
-            if (tmpFile.open(QIODevice::ReadOnly) == true)
-            {
-                do
-                {
-                    read = tmpFile.read(tmpBuf, MAX_EXPORT_FILE_READBUF_SIZE);
-
-                    if (read > 0)
-                    {
-                        exportFile.write(tmpBuf, read);
-                        tmpSize += read;
-
-                        for (i = 0; i < read; i++)
-                            crc += tmpBuf[i];
-                    }
-                }
-                while (read != 0);
-
-                tmpFile.close();
-
-                table->dbFile.size = tmpSize;
-                strcpy(table->dbFile.name, dbFile.toLocal8Bit());
-                offset += tmpSize;
-
-                foreach(QString imgFileName, imgList)
-                {
-                    tmpFile.setFileName(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + imgFolder + "/" + imgFileName);
-                    table->imgFiles[cnt].offset = offset;
-                    tmpSize = 0;
-
-                    if (tmpFile.open(QIODevice::ReadOnly) == true)
-                    {
-                        do
-                        {
-                            read = tmpFile.read(tmpBuf, MAX_EXPORT_FILE_READBUF_SIZE);
-
-                            if (read > 0)
-                            {
-                                exportFile.write(tmpBuf, read);
-                                tmpSize += read;
-
-                                for (i = 0; i < read; i++)
-                                    crc += tmpBuf[i];
-                            }
-                        }
-                        while (read != 0);
-
-                        tmpFile.close();
-                    }
-
-                    table->imgFiles[cnt].size = tmpSize;
-                    strcpy(table->imgFiles[cnt].name, imgFileName.toLocal8Bit());
-                    offset += tmpSize;
-                    cnt++;
-                }
-
-                table->timestamp = QDateTime::currentSecsSinceEpoch();
-                key = generateKey(table->timestamp, crc);
-                strcpy(table->md5, key.toLocal8Bit());
-
-                qDebug() << "CRC = " << QString::number(crc, 16) << key;
-
-                exportFile.seek(0);
-                exportFile.write((char*)table, sizeof(ArchiveTable));
-
-                res = true;
-            }
-
-            exportFile.close();
-        }
-
-        free(tmpBuf);
-        delete table;
-    }
-
-    return res;
-}
-
-bool DBManager::importFromFile(QString name)
-{
-    ArchiveTable *table = nullptr;
-    QFile importFile(name);
-    QFile tmpFile;
-    unsigned int cnt = 0;
-    unsigned int read = 0;
-    unsigned int tmpSize = 0;
-    unsigned int sz = 0;
-    unsigned int i = 0;
-    char *tmpBuf = nullptr;
-    unsigned int crc = 0;
-    QString key = "";
-    bool res = false;
-    QString imgTmpDir = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/_" + imgFolder;
-    QString dbTmpDir = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/_" + dbFolder;
-    QString imgBackupDir = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + imgFolder + "_backup";
-    QString dbBackupDir = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + dbFolder + "_backup";
-
-
-    QDir().rmdir(imgBackupDir);
-    QDir().rmdir(dbBackupDir);
-
-    QDir().rmdir(imgTmpDir);
-    QDir().rmdir(dbTmpDir);
-
-    QDir().mkdir(imgTmpDir);
-    QDir().mkdir(dbTmpDir);
-
-    table = new ArchiveTable();
-    memset(table, 0, sizeof (ArchiveTable));
-
-    tmpBuf = (char*) malloc(MAX_EXPORT_FILE_READBUF_SIZE);
-
-    if (table != nullptr && tmpBuf != nullptr)
-    {
-        if (importFile.open(QIODevice::ReadOnly) == true)
-        {
-            if (importFile.read((char*)table, sizeof(ArchiveTable)) == sizeof(ArchiveTable))
-            {
-                tmpFile.setFileName(dbTmpDir + "/" + table->dbFile.name);
-                importFile.seek(table->dbFile.offset);
-                sz = table->dbFile.size;
-
-                if (sz > MAX_DB_FILESIZE)
-                {
-                    qDebug() << "Import: DB's size is oversized " << sz;
-                }
-                else
-                {
-                    if (tmpFile.open(QIODevice::WriteOnly) == true)
-                    {
-                        do
-                        {
-                            if (sz > MAX_EXPORT_FILE_READBUF_SIZE)
-                                read = importFile.read(tmpBuf, MAX_EXPORT_FILE_READBUF_SIZE);
-                            else
-                                read = importFile.read(tmpBuf, sz);
-
-                            if (read > 0)
-                            {
-                                tmpFile.write(tmpBuf, read);
-                                tmpSize += read;
-                                sz -= read;
-
-                                for (i = 0; i < read; i++)
-                                    crc += tmpBuf[i];
-                            }
-                        }
-                        while (sz != 0 && read > 0);
-
-                        tmpFile.close();
-                    }
-                }
-
-                if (tmpSize == table->dbFile.size)
-                {
-                    while(table->imgFiles[cnt].size != 0)
-                    {
-                        tmpSize = 0;
-                        tmpFile.setFileName(imgTmpDir + "/" + table->imgFiles[cnt].name);
-                        importFile.seek(table->imgFiles[cnt].offset);
-                        sz = table->imgFiles[cnt].size;
-
-                        if (sz > MAX_IMG_FILESIZE)
-                        {
-                            qDebug() << "Import: image's size is oversized " << sz;
-                            break;
-                        }
-
-                        qDebug() << "Import IMG: " << table->imgFiles[cnt].name << table->imgFiles[cnt].size << "bytes";
-
-                        if (tmpFile.open(QIODevice::WriteOnly) == true)
-                        {
-                            do
-                            {
-                                if (sz > MAX_EXPORT_FILE_READBUF_SIZE)
-                                    read = importFile.read(tmpBuf, MAX_EXPORT_FILE_READBUF_SIZE);
-                                else
-                                    read = importFile.read(tmpBuf, sz);
-
-                                if (read > 0)
-                                {
-                                    tmpFile.write(tmpBuf, read);
-                                    tmpSize += read;
-
-                                    for (i = 0; i < read; i++)
-                                        crc += tmpBuf[i];
-
-                                    sz -= read;
-                                }
-                            }
-                            while (sz != 0 && read > 0);
-
-                            tmpFile.close();
-
-                            if (tmpSize != table->imgFiles[cnt].size)
-                            {
-                                qDebug() << "Import: Wrong IMG size";
-                                res = false;
-                                break;
-                            }
-                            else
-                                res = true;
-                        }
-                        else
-                        {
-                            qDebug() << "Import: Cannot open file to save";
-                            res = false;
-                            break;
-                        }
-
-                        cnt++;
-                    }
-
-                    key = generateKey(table->timestamp, crc);
-
-                    if (strcmp(table->md5, key.toLocal8Bit()) != 0)
-                    {
-                        qDebug() << "Wrong md5 summ";
-                        res = false;
-                    }
-                }
-                else
-                    qDebug() << "Import: Wrong DB size";
-            }
-            else
-                qDebug() << "Import: Wrong header";
-
-            importFile.close();
-        }
-
-        delete tmpBuf;
-        delete table;
-    }
-
-    if (res == true)
-    {
-        db.close();
-
-        QDir().rename(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + dbFolder,
-                      dbBackupDir);
-        QDir().rename(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + imgFolder,
-                      imgBackupDir);
-
-        QDir().rename(dbTmpDir, QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + dbFolder);
-        QDir().rename(imgTmpDir, QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + imgFolder);
-
-        db.open();
-
-        qDebug() << "Import: DONE!";
-    }
-    else
-    {
-        QDir().rmdir(dbTmpDir);
-        QDir().rmdir(imgTmpDir);
-
-        qDebug() << "Import: FAILED!";
-    }
-
-    return res;
 }
 
 bool DBManager::isParamEnabled(char paramId)
