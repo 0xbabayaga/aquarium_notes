@@ -286,6 +286,32 @@ Item
                                                                      qsTr("Account delete"),
                                                                      qsTr("All data assosiated with current account will be deleted!"))
                     }
+
+                    Text
+                    {
+                        id: textExport
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.top: parent.top
+                        anchors.topMargin: AppTheme.rowHeightMin * 2 * app.scale
+                        height: AppTheme.compHeight / 2 * app.scale
+                        verticalAlignment: Text.AlignVCenter
+                        font.family: AppTheme.fontFamily
+                        font.underline: true
+                        font.pixelSize: AppTheme.fontSmallSize * app.scale
+                        color: AppTheme.blueFontColor
+                        text: qsTr("EXPORT DATA")
+
+                        MouseArea
+                        {
+                            anchors.fill: parent
+
+                            onClicked:
+                            {
+                                exportDialog.showDialog(true, qsTr("Please wait until data is exporting"))
+                                app.sigExportData("")
+                            }
+                        }
+                    }
                 }
 
                 Rectangle
@@ -422,5 +448,16 @@ Item
             sigDeleting()
             app.sigDeleteAccount()
         }
+    }
+
+    DialogFileSelection
+    {
+        id: dialogFileSelection
+    }
+
+    ExportDialog
+    {
+        id: exportDialog
+        objectName: "exportDialog"
     }
 }

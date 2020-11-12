@@ -4,9 +4,10 @@
 #include <QtGlobal>
 #include <QQmlEngine>
 
-#define APP_ORG         "AquariumNotes"
-#define APP_DOMAIN      "www.tikava.by"
-#define APP_NAME        "AquariumNotes"
+#define APP_ORG                         "AquariumNotes"
+#define APP_DOMAIN                      "www.tikava.by"
+#define APP_NAME                        "AquariumNotes"
+#define APP_EXPORT_FILE_TEMPLATE        "ExportedData_%1.as"
 
 class AppDef : public QObject
 {
@@ -76,6 +77,8 @@ public:
         MAX_ACTIONDESC_SIZE = 256,
         MAX_ACTIONNAME_SIZE = 128,
         MAX_ACTIONDESCSHORT_SIZE = 64,
+
+        MAX_FILENAME_SIZE = 32,
 
         MAX_USERTANKS_COUNT = 16,
 

@@ -43,6 +43,7 @@ private:
     void    setGalleryImageSelected(QString imgUrl);
     void    setAndroidFlag(bool flag);
     void    setCurrentUser(QString uname, QString email, QString imgLink, int dt);
+    void    setExportingState(QString message);
     void    resetStoryView();
 
     /* Gui diagram drawing */
@@ -54,6 +55,9 @@ private:
     /* App settings */
     void    readAppSett();
     void    setSettAfterQMLReady();
+
+    /* App utility */
+    QString generateExportFileName();
 
 public slots:
     /* GUI handlers */
@@ -84,6 +88,8 @@ public slots:
     void    onGuiDateFormatChanged(int id);
     void    onGuiTankStoryLoad(int index);
     void    onGuiRegisterApp();
+    void    onGuiExportData(QString fileName);
+    void    onGuiImportData(QString fileName);
 
     /* Postioning handlers */
     void    onPositionDetected();

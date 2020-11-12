@@ -89,6 +89,8 @@ Window
     signal sigVolumeUnitsChanged(int id)
     signal sigDateFormatChanged(int id)
     signal sigRegisterApp()
+    signal sigExportData(string fileName)
+    signal sigImportData(string fileName)
 
     function getAllParamsListModel() { return allParamsListModel    }
 

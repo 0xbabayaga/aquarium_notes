@@ -112,6 +112,8 @@ AppManager::~AppManager()
     disconnect(position, SIGNAL(positionDetected), this, SLOT(onPositionDetected));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigTankStoryLoad(int)), this, SLOT(onGuiTankStoryLoad(int)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigRegisterApp()), this, SLOT(onGuiRegisterApp()));
+    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigExportData(QString)), this, SLOT(onGuiExportData(QString)));
+    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigImportData(QString)), this, SLOT(onGuiImportData(QString)));
 
     disconnect(cloudMan, SIGNAL(response_error(int)), this, SLOT(onCloudResponse_Error(int)));
     disconnect(cloudMan, SIGNAL(response_registerApp(int, QString, QString, QString)), this, SLOT(onCloudResponse_Register(int, QString, QString, QString)));
@@ -155,6 +157,8 @@ void AppManager::init()
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigDateFormatChanged(int)), this, SLOT(onGuiDateFormatChanged(int)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigTankStoryLoad(int)), this, SLOT(onGuiTankStoryLoad(int)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigRegisterApp()), this, SLOT(onGuiRegisterApp()));
+    connect(qmlEngine->rootObjects().first(), SIGNAL(sigExportData(QString)), this, SLOT(onGuiExportData(QString)));
+    connect(qmlEngine->rootObjects().first(), SIGNAL(sigImportData(QString)), this, SLOT(onGuiImportData(QString)));
 
     setSettAfterQMLReady();
 
@@ -534,6 +538,12 @@ void AppManager::setCurrentUser(QString uname, QString email, QString imgLink, i
     setQmlParam("app", "curUserDateCreate", dt);
 }
 
+void AppManager::setExportingState(QString message)
+{
+    setQmlParam("exportDialog", "inProgress", false);
+    setQmlParam("exportDialog", "message", message);
+}
+
 void AppManager::resetStoryView()
 {
     QObject *obj = nullptr;
@@ -565,6 +575,13 @@ bool AppManager::setQmlParam(QString objName, QString name, QVariant value)
         qDebug() << "Cannot find "<< objName << "object";
 
     return res;
+}
+
+QString AppManager::generateExportFileName()
+{
+    QString name = QString(APP_EXPORT_FILE_TEMPLATE).arg(QDateTime::currentDateTime().toString("yyyyMMdd_hhmm"));
+
+    return name;
 }
 
 void AppManager::clearDiagrams()
@@ -818,6 +835,22 @@ void AppManager::onGuiTankStoryLoad(int index)
 void AppManager::onGuiRegisterApp()
 {
     cloudMan->request_registerApp(currentSelectedObjs()->user);
+}
+
+void AppManager::onGuiExportData(QString fileName)
+{
+    QString exportFileName = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + "/" + generateExportFileName();
+
+    if (exportToFile(exportFileName) == true)
+        setExportingState("Data exported to file: " + exportFileName + "\n\n"
+                          "Now you can Import this data on another device.");
+    else
+        setExportingState(tr("Error on data exporting"));
+}
+
+void AppManager::onGuiImportData(QString fileName)
+{
+
 }
 
 void AppManager::onGuiTankSelected(int tankIdx)

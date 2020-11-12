@@ -119,7 +119,7 @@ DBManager::DBManager(bool isReadOnly, QObject *parent) : QObject(parent)
     isParamDataChanged = true;
 
     //exportToFile("tmp.as");
-    importFromFile(QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + "/tmp.as");
+    //importFromFile(QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + "/tmp.as");
 }
 
 DBManager::~DBManager()
@@ -137,7 +137,7 @@ QString DBManager::generateKey(quint64 tm, unsigned int crc)
 bool DBManager::exportToFile(QString name)
 {
     ArchiveTable *table = nullptr;
-    QFile exportFile(QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + "/" + name);
+    QFile exportFile(name);
     QFile tmpFile;
     unsigned int cnt = 0;
     unsigned int read = 0;

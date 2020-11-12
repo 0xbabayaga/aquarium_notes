@@ -71,5 +71,7 @@
         <file>resources/img/icon_app_reg.png</file>
         <file>resources/img/icon.png</file>
         <file>qml/custom/LimitationDialog.qml</file>
+        <file>qml/custom/DialogFileSelection.qml</file>
+        <file>qml/custom/ExportDialog.qml</file>
     </qresource>
 </RCC>
