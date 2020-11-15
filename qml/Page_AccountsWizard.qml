@@ -143,19 +143,39 @@ Item
                         font.family: AppTheme.fontFamily
                         font.pixelSize: AppTheme.fontNormalSize * app.scale
                         color: AppTheme.greyColor
-                        text: qsTr("There is no active account found")
+                        text: (app.global_FULLFEATURES === true)  ? qsTr("There is no active account found.\nYou can create a new one or import data from existing account.") : qsTr("There is no active account found.\nYou can create a new one.")
                         wrapMode: Text.WordWrap
                     }
                 }
+
+
 
                 IconSimpleButton
                 {
                     id: buttonGoToAccount
                     anchors.bottom: parent.bottom
                     anchors.bottomMargin: AppTheme.margin * app.scale
-                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.left: parent.left
+                    anchors.leftMargin: (app.global_FULLFEATURES === true) ? (AppTheme.margin * app.scale) : (parent.width - AppTheme.rowHeightMin * app.scale) / 2
 
                     onSigButtonClicked: stage = AppDefs.AppInit_CreateUser
+                }
+
+                IconSimpleButton
+                {
+                    id: buttonImport
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: AppTheme.margin * app.scale
+                    anchors.right: parent.right
+                    anchors.rightMargin: AppTheme.margin * app.scale
+                    image: "qrc:/resources/img/icon_import.png"
+                    visible: (app.global_FULLFEATURES === true)
+
+                    onSigButtonClicked:
+                    {
+                        app.sigGetImportFilesList()
+                        dialogFileSelection.show(true)
+                    }
                 }
             }
 
@@ -548,6 +568,24 @@ Item
                     }
                 }
             }
+        }
+    }
+
+    ExportDialog
+    {
+        id: importDialog
+        isImport: true
+        objectName: "importDialog"
+    }
+
+    DialogFileSelection
+    {
+        id: dialogFileSelection
+        filesListModel: importFileListModel
+        onSigOk:
+        {
+            importDialog.showDialog(true, qsTr("Please wait until data is importing"))
+            app.sigImportData(file)
         }
     }
 }

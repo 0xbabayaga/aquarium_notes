@@ -12,8 +12,10 @@
 #define MAX_EXPORT_IMGFILES_COUNT       2047
 #define MAX_EXPORT_FILE_READBUF_SIZE    0x8000
 #define MAX_MD32_SIZE                   64
-#define MAX_IMG_FILESIZE                0x400000 //4Mb
+#define MAX_IMG_FILESIZE                0x800000 //4Mb
 #define MAX_DB_FILESIZE                 0x2000000 //64Mb
+
+#define DB_IMAGE_LIST_SEPARATOR         ';'
 
 typedef enum
 {
@@ -42,6 +44,48 @@ typedef struct
     quint64         timestamp;
     char            md5[MAX_MD32_SIZE];
 }   ArchiveTable;
+
+class FileObj : public QObject
+{
+    Q_OBJECT
+
+    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
+    Q_PROPERTY(QString fullPath READ fullPath WRITE setFullPath NOTIFY fullPathChanged)
+    Q_PROPERTY(int dt READ dt WRITE setDt NOTIFY dtChanged)
+    Q_PROPERTY(int size READ size WRITE setSize NOTIFY sizeChanged)
+
+public:
+    FileObj(QString name, QString fullPath, int dt, int size)
+    {
+        _name = name;
+        _fullPath = fullPath;
+        _dt = dt;
+        _size = size;
+    }
+
+public:
+    QString name()              {   return _name;       }
+    QString fullPath()          {   return _fullPath;   }
+    int     dt()                {   return _dt;         }
+    int     size()              {   return _size;       }
+
+    void setName(QString name)  {   _name = name;       }
+    void setFullPath(QString p) {   _fullPath = p;      }
+    void setDt(int dt)          {   _dt = dt;           }
+    void setSize(int size)      {   _size = size;       }
+
+signals:
+    void nameChanged();
+    void fullPathChanged();
+    void dtChanged();
+    void sizeChanged();
+
+protected:
+    QString _name;
+    QString _fullPath;
+    int     _dt;
+    int     _size;
+};
 
 class LangObj : public QObject
 {
@@ -144,7 +188,7 @@ class TankStoryObj : public QObject
     Q_OBJECT
 
 public:
-    TankStoryObj(QSqlQuery *query, QVariantMap *curParamsList)
+    TankStoryObj(QSqlQuery *query, QString imgs, QVariantMap *curParamsList)
     {
         _curParamsList.clear();
 
@@ -152,7 +196,7 @@ public:
         {
             _smpId = query->value(query->record().indexOf("SMP_ID")).toInt();
             _desc = query->value(query->record().indexOf("TEXT")).toString();
-            _imgList = query->value(query->record().indexOf("IMAGELINK")).toString();
+            _imgList = imgs;
             _dt = query->value(query->record().indexOf("TIMESTAMP")).toInt();
 
             _curParamsList = *curParamsList;

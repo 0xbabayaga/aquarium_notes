@@ -91,6 +91,7 @@ Window
     signal sigRegisterApp()
     signal sigExportData(string fileName)
     signal sigImportData(string fileName)
+    signal sigGetImportFilesList()
 
     function getAllParamsListModel() { return allParamsListModel    }
 

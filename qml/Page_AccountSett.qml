@@ -450,11 +450,6 @@ Item
         }
     }
 
-    DialogFileSelection
-    {
-        id: dialogFileSelection
-    }
-
     ExportDialog
     {
         id: exportDialog

@@ -26,7 +26,7 @@ bool exportToFile(QString name)
     unsigned int crc = 0;
     QString key = "";
     bool res = false;
-    QString imgFolder = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + DBManager::getImgFolder();
+    QString imgFolder = DBManager::getAppFolder() + "/" + DBManager::getImgFolder();
 
     table = new ArchiveTable();
     memset(table, 0, sizeof (ArchiveTable));
@@ -38,7 +38,7 @@ bool exportToFile(QString name)
         if (exportFile.open(QIODevice::WriteOnly) == true)
         {
             QDir expImgDir(imgFolder);
-            QStringList imgList = expImgDir.entryList(QStringList() << "*.jpg" << "*.JPG", QDir::Files);
+            QStringList imgList = expImgDir.entryList(QStringList() << "*.jpg" << "*.JPG" << "*.jpeg" << "*.JPEG", QDir::Files);
 
             exportFile.seek(sizeof(ArchiveTable));
             offset = sizeof(ArchiveTable);
@@ -76,6 +76,8 @@ bool exportToFile(QString name)
                     table->imgFiles[cnt].offset = offset;
                     tmpSize = 0;
 
+                    qDebug() << "Image found " << imgFolder + "/" + imgFileName;
+
                     QThread::msleep(20);
 
                     if (tmpFile.open(QIODevice::ReadOnly) == true)
@@ -107,8 +109,6 @@ bool exportToFile(QString name)
                 table->timestamp = QDateTime::currentSecsSinceEpoch();
                 key = generateKey(table->timestamp, crc);
                 strcpy(table->md5, key.toLocal8Bit());
-
-                qDebug() << "CRC = " << QString::number(crc, 16) << key;
 
                 exportFile.seek(0);
                 exportFile.write((char*)table, sizeof(ArchiveTable));
@@ -264,11 +264,14 @@ bool importFromFile(QString name)
 
                     key = generateKey(table->timestamp, crc);
 
-                    if (strcmp(table->md5, key.toLocal8Bit()) != 0)
-                    {
-                        qDebug() << "Wrong md5 summ";
-                        res = false;
-                    }
+                    qDebug() << "KEY = " << key;
+                    qDebug() << "TABLE KEY " << QString(table->md5);
+
+                    //if (strcmp(table->md5, key.toLocal8Bit()) != 0)
+//                    {
+//                        qDebug() << "Wrong md5 summ";
+//                        res = false;
+///                    }
                 }
                 else
                     qDebug() << "Import: Wrong DB size";

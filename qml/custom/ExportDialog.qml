@@ -12,6 +12,7 @@ Item
     opacity: enabled ? AppTheme.opacityEnabled : AppTheme.opacityDisabled
 
     property bool inProgress: false
+    property bool isImport: false
     property alias message: textMessage.text
 
     signal sigAccept()
@@ -95,7 +96,7 @@ Item
                     font.family: AppTheme.fontFamily
                     font.pixelSize: AppTheme.fontNormalSize * app.scale
                     color: AppTheme.blueFontColor
-                    text: qsTr("Exporting")
+                    text: (isImport === true) ? qsTr("Importing") : qsTr("Exporting")
                 }
 
                 Text

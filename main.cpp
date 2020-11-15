@@ -25,8 +25,6 @@ int main(int argc, char *argv[])
 
     if ((args.count() > 1) == false)
     {
-        qDebug() << "APP STARTED";
-
         AppDef::declareQML();
 
         app.setOrganizationName(APP_ORG);

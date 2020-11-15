@@ -22,6 +22,7 @@ SOURCES += \
         c++/cloudmanager.cpp \
         c++/db_importexport.cpp \
         c++/dbmanager.cpp \
+        c++/filemanager.cpp \
         c++/position.cpp \
         main.cpp
 
@@ -65,6 +66,7 @@ HEADERS += \
     c++/cloudmanager.h \
     c++/dbmanager.h \
     c++/dbobjects.h \
+    c++/filemanager.h \
     c++/galleryobjects.h \
     c++/position.h \
     c++/version.h

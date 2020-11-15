@@ -7,7 +7,8 @@
 #define APP_ORG                         "AquariumNotes"
 #define APP_DOMAIN                      "www.tikava.by"
 #define APP_NAME                        "AquariumNotes"
-#define APP_EXPORT_FILE_TEMPLATE        "ExportedData_%1.as"
+#define APP_IMPORT_FILE_EXT             "as"
+#define APP_EXPORT_FILE_TEMPLATE        "ExportedData_%1." APP_IMPORT_FILE_EXT
 
 class AppDef : public QObject
 {

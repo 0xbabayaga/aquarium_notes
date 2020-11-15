@@ -73,5 +73,7 @@
         <file>qml/custom/LimitationDialog.qml</file>
         <file>qml/custom/DialogFileSelection.qml</file>
         <file>qml/custom/ExportDialog.qml</file>
+        <file>resources/img/icon_export.png</file>
+        <file>resources/img/icon_import.png</file>
     </qresource>
 </RCC>

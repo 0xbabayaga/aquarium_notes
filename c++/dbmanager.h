@@ -80,8 +80,10 @@ public:
     bool    getCurrentObjs();
 
     static QString generateKey(quint64 tm, unsigned int crc);
+    static QString getAppFolder()       {   return appPath;     }
     static QString getDbFolder()        {   return dbFolder;    }
     static QString getImgFolder()       {   return imgFolder;   }
+    static QString getImgFolderPath()   {   return appPath + "/" + imgFolder + "/";   }
     static QString getDbFile()          {   return dbFile;      }
     static QString getDbFilePath()      {   return dbFileLink;  }
 
@@ -92,17 +94,9 @@ public:
     TankObj *currentTankSelected();
     UTObj   *currentSelectedObjs()  {   return &curSelectedObjs;    }
     ActionList* currentActionList() {   return actionList;          }
+    QString createFullImagesLink(QString link);
 
     bool isParamEnabled(char paramId);
-
-    QString getImgDbFolder()
-    {
-        #ifdef  Q_OS_ANDROID
-        return appPath + "/" + appFolder + "/" + imgFolder + "/";
-        #else
-        return QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + imgFolder + "/";
-        #endif
-    }
 
     QString createDbImgFileName(int i);
     QString createDbImgAccountFileName();

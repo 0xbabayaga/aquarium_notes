@@ -70,6 +70,8 @@ AppManager::AppManager(QQmlApplicationEngine *engine, QObject *parent) : DBManag
 
     loadTranslations(appSett.value(SETT_LANG).toInt());
 
+    fMan = new FileManager(QStandardPaths::writableLocation(QStandardPaths::DownloadLocation));
+
     position = new Position();
 
     connect(position, SIGNAL(positionDetected()), this, SLOT(onPositionDetected()));
@@ -116,6 +118,7 @@ AppManager::~AppManager()
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigRegisterApp()), this, SLOT(onGuiRegisterApp()));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigExportData(QString)), this, SLOT(onGuiExportData(QString)));
     disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigImportData(QString)), this, SLOT(onGuiImportData(QString)));
+    disconnect(qmlEngine->rootObjects().first(), SIGNAL(sigGetImportFilesList()), this, SLOT(onGuiGetImportFilesList()));
 
     disconnect(cloudMan, SIGNAL(response_error(int)), this, SLOT(onCloudResponse_Error(int)));
     disconnect(cloudMan, SIGNAL(response_registerApp(int, QString, QString, QString)), this, SLOT(onCloudResponse_Register(int, QString, QString, QString)));
@@ -161,6 +164,7 @@ void AppManager::init()
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigRegisterApp()), this, SLOT(onGuiRegisterApp()));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigExportData(QString)), this, SLOT(onGuiExportData(QString)));
     connect(qmlEngine->rootObjects().first(), SIGNAL(sigImportData(QString)), this, SLOT(onGuiImportData(QString)));
+    connect(qmlEngine->rootObjects().first(), SIGNAL(sigGetImportFilesList()), this, SLOT(onGuiGetImportFilesList()));
 
     setSettAfterQMLReady();
 
@@ -264,6 +268,8 @@ void AppManager::setSettAfterQMLReady()
 
 void AppManager::checkAppRegistered()
 {
+#define FULL_FEATURES_ENABLED
+
 #ifdef FULL_FEATURES_ENABLED
     setQmlParam("app", "global_FULLFEATURES", true);
     setQmlParam("app", "global_APP_TYPE", AppDef::UStatus_EnabledPro);
@@ -546,6 +552,12 @@ void AppManager::setExportingState(QString message)
     setQmlParam("exportDialog", "message", message);
 }
 
+void AppManager::setImportingState(QString message)
+{
+    setQmlParam("importDialog", "inProgress", false);
+    setQmlParam("importDialog", "message", message);
+}
+
 void AppManager::resetStoryView()
 {
     QObject *obj = nullptr;
@@ -806,15 +818,15 @@ void AppManager::onGuiActionViewPeriodChanged(int period)
 
 void AppManager::onGuiTankStoryLoad(int index)
 {
-    QDateTime t1, t2;
+    //QDateTime t1, t2;
 
-    t1 = QDateTime::currentDateTime();
+    //t1 = QDateTime::currentDateTime();
 
     getTankStoryList(index);
 
-    t2 = QDateTime::currentDateTime();
+    //t2 = QDateTime::currentDateTime();
 
-    qDebug() << "#" << index << "Done in msec = " << t1.msecsTo(t2);
+    //qDebug() << "#" << index << "Done in msec = " << t1.msecsTo(t2);
 
     QObject *obj = nullptr;
 
@@ -839,6 +851,13 @@ void AppManager::onGuiRegisterApp()
     cloudMan->request_registerApp(currentSelectedObjs()->user);
 }
 
+void AppManager::onGuiGetImportFilesList()
+{
+    fMan->scanDirectory("*." + QString(APP_IMPORT_FILE_EXT));
+
+    qmlEngine->rootContext()->setContextProperty("importFileListModel", QVariant::fromValue(fMan->getFileList()));
+}
+
 void AppManager::onGuiExportData(QString fileName)
 {
     exportFileName = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + "/" + generateExportFileName();
@@ -852,7 +871,13 @@ void AppManager::onGuiExportData(QString fileName)
 
 void AppManager::onGuiImportData(QString fileName)
 {
+    exportFileName = fileName;
 
+    db.close();
+
+    connect(&importWatcher, &QFutureWatcher<int>::finished, this, &AppManager::onImportFinished);
+    importFuture = QtConcurrent::run(importFromFile, exportFileName);
+    importWatcher.setFuture(importFuture);
 }
 
 void AppManager::onExportFinished()
@@ -872,13 +897,22 @@ void AppManager::onExportFinished()
 
 void AppManager::onImportFinished()
 {
+    bool importResult = importFuture.result();
 
+    disconnect(&importWatcher, &QFutureWatcher<int>::finished, this, &AppManager::onImportFinished);
+
+    if (importResult == true)
+        setImportingState("Data imported from file:  " + exportFileName + "\nsuccessfully");
+    else
+        setImportingState(tr("Error on data importing"));
+
+    db.open();
+
+    getCurrentObjs(true);
 }
 
 void AppManager::onGuiTankSelected(int tankIdx)
 {
-    //qDebug() << "onGuiTankSelected" << curSelectedObjs.tankIdx << tankIdx;
-
     if (tankIdx >= 0)
     {
         if (curSelectedObjs.tankIdx != tankIdx)

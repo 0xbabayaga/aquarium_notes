@@ -11,10 +11,11 @@ Item
     width: app.width
     height: app.height
 
-    property bool isSelectFile: false
+    property alias filesListModel: filesListView.model
+    property bool isSelectFile: true
 
     signal sigCancel()
-    signal sigOk()
+    signal sigOk(string file)
 
     function show(visible)
     {
@@ -114,7 +115,7 @@ Item
                 font.family: AppTheme.fontFamily
                 font.pixelSize: AppTheme.fontBigSize * app.scale
                 color: AppTheme.blueFontColor
-                text: (dialogFileSelection.isSelectFile === true) ? qsTr("SELECT A FILE") : qsTr("ENTER A FILE NAME")
+                text: (dialogFileSelection.isSelectFile === true) ? qsTr("SELECT A FILE FOR IMPORT") : qsTr("ENTER A FILE NAME")
             }
 
             Rectangle
@@ -125,33 +126,64 @@ Item
                 color: AppTheme.backLightBlueColor
             }
 
-            TextInput
+            ListView
             {
-                id: textFileName
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: -AppTheme.rowHeight * app.scale
-                placeholderText: qsTr("Export file name")
-                maximumLength: AppDefs.MAX_FILENAME_SIZE
-                width: parent.width
-                focus: true
-                //KeyNavigation.tab: textUserEmail
+                id: filesListView
+                anchors.fill: parent
+                anchors.topMargin: AppTheme.rowHeight * app.scale
+                spacing: 0
+                interactive: true
+
+                delegate: Rectangle
+                {
+                    width: parent.width
+                    height: AppTheme.compHeight * app.scale
+                    color: (index === filesListView.currentIndex) ? AppTheme.backLightBlueColor : AppTheme.whiteColor
+
+                    Row
+                    {
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+
+                        Text
+                        {
+                            verticalAlignment: Text.AlignVCenter
+                            height: AppTheme.compHeight * app.scale
+                            width: 140 * app.scale
+                            font.family: AppTheme.fontFamily
+                            font.pixelSize: AppTheme.fontNormalSize * app.scale
+                            color: AppTheme.blueFontColor
+                            text: name
+                        }
+
+                        /*
+                        Text
+                        {
+                            verticalAlignment: Text.AlignVCenter
+                            height: AppTheme.compHeight * app.scale
+                            width: 50 * app.scale
+                            font.family: AppTheme.fontFamily
+                            font.pixelSize: AppTheme.fontNormalSize * app.scale
+                            color: AppTheme.greyColor
+                            text: fullPath
+                        }
+                        */
+                    }
+
+                    MouseArea
+                    {
+                        anchors.fill: parent
+                        onClicked: filesListView.currentIndex = index
+                        onDoubleClicked:
+                        {
+                            filesListView.currentIndex = index
+                            show(false)
+                            sigOk(filesListView.model[filesListView.currentIndex].fullPath)
+                        }
+                    }
+                }
             }
 
-            Text
-            {
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: textFileName.bottom
-                anchors.topMargin: AppTheme.compHeight/2 * app.scale
-                verticalAlignment: Text.AlignVCenter
-                height: AppTheme.rowHeightMin * app.scale
-                width: parent.width
-                font.family: AppTheme.fontFamily
-                font.pixelSize: AppTheme.fontSuperSmallSize * app.scale
-                color: AppTheme.greyColor
-                wrapMode: Text.WordWrap
-                text: qsTr("Exported data file will be saved into \"Downloads\" directory.")
-            }
 
             IconSimpleButton
             {
@@ -161,7 +193,7 @@ Item
                 anchors.left: parent.left
                 image: "qrc:/resources/img/icon_cancel.png"
 
-                onSigButtonClicked: showActionDialog(false, false, 0)
+                onSigButtonClicked: show(false)
             }
 
             IconSimpleButton
@@ -172,7 +204,11 @@ Item
                 anchors.right: parent.right
                 image: "qrc:/resources/img/icon_ok.png"
 
-                onSigButtonClicked: show(false)
+                onSigButtonClicked:
+                {
+                    show(false)
+                    sigOk(filesListView.model[filesListView.currentIndex].fullPath)
+                }
             }
         }
     }

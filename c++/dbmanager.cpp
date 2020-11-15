@@ -63,6 +63,8 @@ static const QString backgroundDbConn = "backgroundConn";
 
 DBManager::DBManager(bool isReadOnly, QObject *parent) : QObject(parent)
 {
+    QString tmp = "";
+
     readOnly = isReadOnly;
 
 #ifdef  Q_OS_ANDROID
@@ -71,16 +73,34 @@ DBManager::DBManager(bool isReadOnly, QObject *parent) : QObject(parent)
     appPath = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
 #endif
 
+    tmp = appPath;
+    tmp = tmp.replace("/" + QString(APP_NAME) + "/", "/");
+
     if (isReadOnly == false)
     {
+        if (QDir(tmp).exists() == false)
+        {
+            qDebug() << "Creating folder " << tmp;
+            qDebug() << "res = " << QDir().mkdir(tmp);
+        }
+
         if (QDir(appPath).exists() == false)
-            QDir().mkdir(appPath);
+        {
+            qDebug() << "Creating folder " << appPath;
+            qDebug() << "res = " << QDir().mkdir(appPath);
+        }
 
         if (QDir(appPath + "/" + dbFolder).exists() == false)
-            QDir().mkdir(appPath + "/" + dbFolder);
+        {
+            qDebug() << "Creating folder " << appPath + "/" + dbFolder;
+            qDebug() << "res = " << QDir().mkdir(appPath + "/" + dbFolder);
+        }
 
         if (QDir(appPath + "/" + imgFolder).exists() == false)
-            QDir().mkdir(appPath + "/" + imgFolder);
+        {
+            qDebug() << "Creating folder " << appPath + "/" + imgFolder;
+            qDebug() << "res = " << QDir().mkdir(appPath + "/" + imgFolder);
+        }
     }
 
     dbFileLink = appPath + "/" + dbFolder + "/" + dbFile;
@@ -110,6 +130,10 @@ DBManager::DBManager(bool isReadOnly, QObject *parent) : QObject(parent)
     }
 
     isParamDataChanged = true;
+
+    //db.close();
+    //importFromFile("C:/Users/navi/Downloads/ep.as");
+    //db.open();
 }
 
 DBManager::~DBManager()
@@ -192,12 +216,26 @@ bool DBManager::getParamsList(QString tankId, AquariumType type)
     return res;
 }
 
+QString DBManager::createFullImagesLink(QString link)
+{
+    if (link.size() > 0)
+    {
+        link = getImgFolderPath() + link;
+
+        if (link.contains(DB_IMAGE_LIST_SEPARATOR) == true)
+            link.replace(";", ";" + getImgFolderPath());
+    }
+
+    return link;
+}
+
 bool DBManager::getLatestParams()
 {
     bool found = false;
     LastDataParamRecObj *recObj = nullptr;
     int curIdx = 0;
     unsigned int lastDateRecord = 0;
+    QString fullImagesLink = "";
 
     QSqlQuery qDt("SELECT MAX(TIMESTAMP) FROM HISTORY_VALUE_TABLE WHERE TANK_ID='"+currentTankSelected()->tankId()+"'", db);
 
@@ -249,6 +287,8 @@ bool DBManager::getLatestParams()
 
         while (query.next())
         {
+            fullImagesLink = createFullImagesLink(query.value(query.record().indexOf("IMAGELINK")).toString());
+
             recObj = new LastDataParamRecObj(query.value(query.record().indexOf("PARAM_ID")).toInt(),
                                              query.value(query.record().indexOf("SMP_ID")).toInt(),
                                              -1,
@@ -258,7 +298,7 @@ bool DBManager::getLatestParams()
                                              0,
                                              lastDateRecord,
                                              query.value(query.record().indexOf("TEXT")).toString(),
-                                             query.value(query.record().indexOf("IMAGELINK")).toString());
+                                             fullImagesLink);
 
             if (mapPersonal.size() > 0)
                 recObj->setEn(mapPersonal[recObj->paramId()]);
@@ -296,6 +336,8 @@ bool DBManager::getLatestParams()
 
                 if (found == false)
                 {
+                    fullImagesLink = createFullImagesLink(query.value(query.record().indexOf("IMAGELINK")).toString());
+
                     recObj = new LastDataParamRecObj(query1.value(query1.record().indexOf("PARAM_ID")).toInt(),
                                                      -1,
                                                      query1.value(query1.record().indexOf("SMP_ID")).toInt(),
@@ -305,7 +347,7 @@ bool DBManager::getLatestParams()
                                                      (unsigned int)query.value(query.record().indexOf("TIMESTAMP")).toInt(),
                                                      lastDateRecord,
                                                      query.value(query.record().indexOf("TEXT")).toString(),
-                                                     query.value(query.record().indexOf("IMAGELINK")).toString());
+                                                     fullImagesLink);
 
                     if (mapPersonal.size() > 0)
                         recObj->setEn(mapPersonal[recObj->paramId()]);
@@ -378,6 +420,7 @@ bool DBManager::getTankStoryList(int id)
                     "ORDER BY TIMESTAMP DESC", db);
     TankStoryObj *obj = nullptr;
     QVariantMap params;
+    QString fullImagesLink = "";
 
     tankStoryList.clear();
 
@@ -389,13 +432,14 @@ bool DBManager::getTankStoryList(int id)
         {
             QSqlQuery queryParams("SELECT PARAM_ID, VALUE FROM HISTORY_VALUE_TABLE WHERE SMP_ID='" + QString::number(query.value(query.record().indexOf("SMP_ID")).toInt()) + "'", db);
 
+            fullImagesLink = createFullImagesLink(query.value(query.record().indexOf("IMAGELINK")).toString());
+
             params.clear();
 
             while (queryParams.next())
                params.insert(QString::number(queryParams.value(0).toInt()), queryParams.value(1).toFloat());
 
-
-            obj = new TankStoryObj(&query, &params);
+            obj = new TankStoryObj(&query, fullImagesLink, &params);
             tankStoryList.append(obj);
         }
 
@@ -869,7 +913,7 @@ bool DBManager::addNoteRecord(int smpId, QString note, QString imageLink)
     {
         if (imgLinksList.at(i).size() > 0)
         {
-            fileName = getImgDbFolder() + createDbImgFileName(i) + "." + QFileInfo(imgLinksList.at(i)).completeSuffix();
+            fileName = createDbImgFileName(i) + "." + QFileInfo(imgLinksList.at(i)).completeSuffix();
 
             img = QImage(imgLinksList.at(i));
 
@@ -877,10 +921,10 @@ bool DBManager::addNoteRecord(int smpId, QString note, QString imageLink)
                 img.height() > AppDef::MAX_IMAGE_HEIGHT)
             {
                 img = img.scaled(AppDef::MAX_IMAGE_WIDTH, AppDef::MAX_IMAGE_HEIGHT, Qt::KeepAspectRatio);
-                img.save(fileName);
+                img.save(getImgFolderPath() + fileName);
             }
             else
-                QFile::copy(imgLinksList.at(i), fileName);
+                QFile::copy(imgLinksList.at(i), getImgFolderPath() + fileName);
 
             if (i != 0)
                 dbFiles += ";";
@@ -938,7 +982,7 @@ bool DBManager::editNoteRecord(int smpId, QString note, QString imageLink)
         {
             if (imgLinksList.at(i).size() > 0)
             {
-                fileName = getImgDbFolder() + createDbImgFileName(i) + "." + QFileInfo(imgLinksList.at(i)).completeSuffix();
+                fileName = createDbImgFileName(i) + "." + QFileInfo(imgLinksList.at(i)).completeSuffix();
 
                 img = QImage(imgLinksList.at(i));
 
@@ -946,10 +990,10 @@ bool DBManager::editNoteRecord(int smpId, QString note, QString imageLink)
                     img.height() > AppDef::MAX_IMAGE_HEIGHT)
                 {
                     img = img.scaled(AppDef::MAX_IMAGE_WIDTH, AppDef::MAX_IMAGE_HEIGHT, Qt::KeepAspectRatio);
-                    img.save(fileName);
+                    img.save(getImgFolderPath() + fileName);
                 }
                 else
-                    QFile::copy(imgLinksList.at(i), fileName);
+                    QFile::copy(imgLinksList.at(i), getImgFolderPath() + fileName);
 
                 if (i != 0)
                     dbFiles += ";";

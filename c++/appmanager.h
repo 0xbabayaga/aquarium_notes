@@ -13,6 +13,7 @@
 #include "actionlist.h"
 #include "position.h"
 #include "cloudmanager.h"
+#include "filemanager.h"
 
 class AppManager : public DBManager
 {
@@ -45,6 +46,7 @@ private:
     void    setAndroidFlag(bool flag);
     void    setCurrentUser(QString uname, QString email, QString imgLink, int dt);
     void    setExportingState(QString message);
+    void    setImportingState(QString message);
     void    resetStoryView();
 
     /* Gui diagram drawing */
@@ -91,6 +93,7 @@ public slots:
     void    onGuiRegisterApp();
     void    onGuiExportData(QString fileName);
     void    onGuiImportData(QString fileName);
+    void    onGuiGetImportFilesList();
 
     /* Postioning handlers */
     void    onPositionDetected();
@@ -114,6 +117,8 @@ private:
     QList<QObject*> langsList;
 
     Position *position = nullptr;
+
+    FileManager             *fMan = nullptr;
 
     QString                 exportFileName = "";
 
