@@ -66,6 +66,8 @@ bool exportToFile(QString name)
 
                 tmpFile.close();
 
+                qDebug() << "CRC = " << QString::number(crc, 16);
+
                 table->dbFile.size = tmpSize;
                 strcpy(table->dbFile.name, DBManager::getDbFile().toLocal8Bit());
                 offset += tmpSize;
@@ -100,6 +102,8 @@ bool exportToFile(QString name)
                         tmpFile.close();
                     }
 
+                    qDebug() << "CRC = " << QString::number(crc, 16) << "tmpSize = " << tmpSize;
+
                     table->imgFiles[cnt].size = tmpSize;
                     strcpy(table->imgFiles[cnt].name, imgFileName.toLocal8Bit());
                     offset += tmpSize;
@@ -109,6 +113,9 @@ bool exportToFile(QString name)
                 table->timestamp = QDateTime::currentSecsSinceEpoch();
                 key = generateKey(table->timestamp, crc);
                 strcpy(table->md5, key.toLocal8Bit());
+
+                qDebug() << "TM = " << QString::number(table->timestamp, 16);
+                qDebug() << "FINAL CRC = " << QString::number(crc, 16) << " key = " << key;
 
                 exportFile.seek(0);
                 exportFile.write((char*)table, sizeof(ArchiveTable));
@@ -140,6 +147,7 @@ bool importFromFile(QString name)
     unsigned int crc = 0;
     QString key = "";
     bool res = false;
+    QDir rm;
     QString imgWorkDir = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + DBManager::getImgFolder();
     QString dbWorkDir = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + DBManager::getDbFolder();
     QString imgTmpDir = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/_" + DBManager::getImgFolder();
@@ -147,13 +155,18 @@ bool importFromFile(QString name)
     QString imgBackupDir = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + DBManager::getImgFolder() + "_backup";
     QString dbBackupDir = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/" + DBManager::getDbFolder() + "_backup";
 
-    QDir().rmdir(imgBackupDir);
-    QDir().rmdir(dbBackupDir);
+    rm.setPath(imgBackupDir);
+    qDebug() << "Remove " << imgBackupDir << "res = " << rm.removeRecursively();
 
-    QDir().rmdir(imgTmpDir);
-    QDir().rmdir(dbTmpDir);
+    rm.setPath(dbBackupDir);
+    qDebug() << "Remove " << dbBackupDir << "res = " << rm.removeRecursively();
 
+    rm.setPath(imgTmpDir);
+    qDebug() << "Remove " << imgTmpDir << "res = " << rm.removeRecursively();
     QDir().mkdir(imgTmpDir);
+
+    rm.setPath(dbTmpDir);
+    qDebug() << "Remove " << dbTmpDir << "res = " << rm.removeRecursively();
     QDir().mkdir(dbTmpDir);
 
     table = new ArchiveTable();
@@ -170,6 +183,8 @@ bool importFromFile(QString name)
                 tmpFile.setFileName(dbTmpDir + "/" + table->dbFile.name);
                 importFile.seek(table->dbFile.offset);
                 sz = table->dbFile.size;
+
+                qDebug() << "sz = " << sz;
 
                 if (sz > MAX_DB_FILESIZE)
                 {
@@ -188,9 +203,9 @@ bool importFromFile(QString name)
 
                             if (read > 0)
                             {
+                                sz -= read;
                                 tmpFile.write(tmpBuf, read);
                                 tmpSize += read;
-                                sz -= read;
 
                                 for (i = 0; i < read; i++)
                                     crc += tmpBuf[i];
@@ -201,6 +216,8 @@ bool importFromFile(QString name)
                         tmpFile.close();
                     }
                 }
+
+                qDebug() << "CRC = " << QString::number(crc, 16) << "tmpSize = " << tmpSize;
 
                 if (tmpSize == table->dbFile.size)
                 {
@@ -230,18 +247,19 @@ bool importFromFile(QString name)
 
                                 if (read > 0)
                                 {
+                                    sz -= read;
                                     tmpFile.write(tmpBuf, read);
                                     tmpSize += read;
 
                                     for (i = 0; i < read; i++)
                                         crc += tmpBuf[i];
-
-                                    sz -= read;
                                 }
                             }
                             while (sz != 0 && read > 0);
 
                             tmpFile.close();
+
+                            qDebug() << "CRC = " << QString::number(crc, 16) << "tmpSize = " << tmpSize;
 
                             if (tmpSize != table->imgFiles[cnt].size)
                             {
@@ -264,14 +282,14 @@ bool importFromFile(QString name)
 
                     key = generateKey(table->timestamp, crc);
 
-                    qDebug() << "KEY = " << key;
-                    qDebug() << "TABLE KEY " << QString(table->md5);
+                    qDebug() << "TM = " << QString::number(table->timestamp, 16);
+                    qDebug() << "CRC = " << QString::number(crc, 16) << " key = " << key;
 
                     //if (strcmp(table->md5, key.toLocal8Bit()) != 0)
 //                    {
 //                        qDebug() << "Wrong md5 summ";
 //                        res = false;
-///                    }
+//                    }
                 }
                 else
                     qDebug() << "Import: Wrong DB size";
