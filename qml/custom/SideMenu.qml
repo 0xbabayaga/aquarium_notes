@@ -280,22 +280,6 @@ Item
 
                     Behavior on color { ColorAnimation { duration: 200 }    }
 
-                    /*
-                    Text
-                    {
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.verticalCenterOffset: 3 * app.scale
-                        anchors.left: parent.left
-                        anchors.leftMargin: AppTheme.padding * 4 * app.scale
-                        height: AppTheme.rowHeightMin * app.scale
-                        verticalAlignment: Text.AlignVCenter
-                        font.family: AppTheme.fontFamily
-                        font.pixelSize: AppTheme.fontBigSize * app.scale
-                        color: AppTheme.blueColor
-                        text: "⠛"
-                    }
-                    */
-
                     Text
                     {
                         id: textMenu

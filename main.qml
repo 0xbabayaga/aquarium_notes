@@ -236,12 +236,53 @@ Window
             interactive: page_TankData.visible === false
         }
 
+        Rectangle
+        {
+            id: rectAppLoadingSpinner
+            objectName: "rectAppLoadingSpinner"
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            width: parent.width
+            height: AppTheme.rowHeight * 2 * app.scale
+
+            Image
+            {
+                id: imgSpinner
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                source: "qrc:/resources/img/icon.png"
+                width: AppTheme.rowHeight * app.scale
+                height: AppTheme.rowHeight * app.scale
+
+                NumberAnimation on rotation
+                {
+                    from: 0
+                    to: 360
+                    running: imgSpinner.visible === true
+                    loops: Animation.Infinite
+                    duration: 1500
+                }
+            }
+
+            Text
+            {
+                id: textAccountName
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: imgSpinner.top
+                anchors.topMargin: AppTheme.rowHeight * app.scale
+                font.family: AppTheme.fontFamily
+                font.pixelSize: AppTheme.fontNormalSize * app.scale
+                color: AppTheme.greyColor
+                text: qsTr("Loading data")
+            }
+        }
+
         Page_AccountsWizard
         {
             id: page_AccountWizard
             objectName: "page_AccountWizard"
             anchors.fill: rectBackground
-            visible: isAccountCreated === false
+            visible: false
 
             onSigAppInitCompleted: isAccountCreated = true
         }

@@ -50,6 +50,7 @@ AppManager::AppManager(QQmlApplicationEngine *engine, QObject *parent) : DBManag
     readAppSett();
 
     actionList = new ActionList();
+    fMan = new FileManager(QStandardPaths::writableLocation(QStandardPaths::DownloadLocation));
 
     /* Initializing all models to avoid Qml reference error */
     qmlEngine->rootContext()->setContextProperty("tanksListModel", QVariant::fromValue(curSelectedObjs.listOfUserTanks));
@@ -58,6 +59,7 @@ AppManager::AppManager(QQmlApplicationEngine *engine, QObject *parent) : DBManag
     qmlEngine->rootContext()->setContextProperty("curValuesListModel", QVariant::fromValue(curSelectedObjs.listOfCurrValues));
     qmlEngine->rootContext()->setContextProperty("graphPointsList", QVariant::fromValue(pointList));
     qmlEngine->rootContext()->setContextProperty("datesList", QVariant::fromValue(datesList));
+    qmlEngine->rootContext()->setContextProperty("importFileListModel", QVariant::fromValue(fMan->getFileList()));
 
     createTankTypesList();
 
@@ -69,8 +71,6 @@ AppManager::AppManager(QQmlApplicationEngine *engine, QObject *parent) : DBManag
     createLangList();
 
     loadTranslations(appSett.value(SETT_LANG).toInt());
-
-    fMan = new FileManager(QStandardPaths::writableLocation(QStandardPaths::DownloadLocation));
 
     position = new Position();
 
@@ -515,10 +515,13 @@ bool AppManager::getHistoryParams()
 void AppManager::setInitialDialogStage(int stage, QString name)
 {
     if (stage != AppDef::AppInit_Completed)
-        setQmlParam("app", "isAccountCreated", false);
+        //setQmlParam("app", "isAccountCreated", false);
+        setQmlParam("page_AccountWizard", "visible" , true);
 
     setQmlParam("page_AccountWizard", "stage", stage);
     setQmlParam("page_AccountWizard", "currentUName", name);
+
+    setQmlParam("rectAppLoadingSpinner", "visible", false);
 }
 
 void AppManager::setLastSmpId(int id)
