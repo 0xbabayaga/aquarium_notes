@@ -268,7 +268,7 @@ void AppManager::setSettAfterQMLReady()
 
 void AppManager::checkAppRegistered()
 {
-#define FULL_FEATURES_ENABLED
+//#define FULL_FEATURES_ENABLED
 
 #ifdef FULL_FEATURES_ENABLED
     setQmlParam("app", "global_FULLFEATURES", true);

@@ -287,29 +287,19 @@ Item
                                                                      qsTr("All data assosiated with current account will be deleted!"))
                     }
 
-                    Text
+                    IconSimpleButton
                     {
-                        id: textExport
+                        id: buttonExport
+                        anchors.bottom: parent.bottom
+                        anchors.bottomMargin: AppTheme.margin * app.scale
                         anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.top: parent.top
-                        anchors.topMargin: AppTheme.rowHeightMin * 2 * app.scale
-                        height: AppTheme.compHeight / 2 * app.scale
-                        verticalAlignment: Text.AlignVCenter
-                        font.family: AppTheme.fontFamily
-                        font.underline: true
-                        font.pixelSize: AppTheme.fontSmallSize * app.scale
-                        color: AppTheme.blueFontColor
-                        text: qsTr("EXPORT DATA")
+                        image: "qrc:/resources/img/icon_export.png"
+                        visible: (app.global_FULLFEATURES === true)
 
-                        MouseArea
+                        onSigButtonClicked:
                         {
-                            anchors.fill: parent
-
-                            onClicked:
-                            {
-                                exportDialog.showDialog(true, qsTr("Please wait until data is exporting"))
-                                app.sigExportData("")
-                            }
+                            exportDialog.showDialog(true, qsTr("Please wait until data is exporting"))
+                            app.sigExportData("")
                         }
                     }
                 }

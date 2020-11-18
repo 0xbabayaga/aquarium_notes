@@ -8,8 +8,8 @@ import AppDefs 1.0
 Item
 {
     id: tips
-    width: app.width - AppTheme.margin * 2 * app.scale
-    height: AppTheme.compHeight * app.scale
+    width: app.width// - AppTheme.margin * 2 * app.scale
+    height: AppTheme.rowHeightMin * app.scale
     opacity: 0
     visible: false
 
@@ -67,8 +67,6 @@ Item
     Rectangle
     {
         anchors.fill: parent
-        radius: AppTheme.radius * 2 * app.scale
-        //color: AppTheme.lightBlueColor
         color: AppTheme.blueColor
 
         Text
@@ -79,10 +77,10 @@ Item
             height: parent.height
             width: parent.width
             font.family: AppTheme.fontFamily
-            font.pixelSize: AppTheme.fontSuperSmallSize * app.scale
+            font.pixelSize: AppTheme.fontSmallSize * app.scale
             color: AppTheme.whiteColor
-            //color: AppTheme.blueColor
             text: "None"
+            wrapMode: Text.WordWrap
         }
 
         MouseArea

@@ -95,13 +95,13 @@ Item
             }
             else
             {
-                tip.tipText = qsTr("TANK max count reached!")
+                tip.tipText = qsTr("You can only add ") + AppDefs.TANKS_COUNT_FULL_LIMIT + qsTr(" tanks.")
                 tip.show(true)
             }
         }
         else
         {
-            tip.tipText = qsTr("TANK creating functionality limitation!")
+            tip.tipText = qsTr("You cannot add more than ") + AppDefs.TANKS_COUNT_LIMIT + qsTr(" tank.") + qsTr("\nLimitation of non-registered version.")
             tip.show(true)
         }
     }
@@ -561,15 +561,6 @@ Item
                             }
                         }
                     }
-
-                    Tips
-                    {
-                        id: tip
-                        anchors.bottom: columnContainer.bottom
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        visible: false
-                        tipText: qsTr("")
-                    }
                 }
 
                 Rectangle
@@ -708,7 +699,6 @@ Item
                             width: parent.width
                             model: aquariumTypesListModel
                             currentIndex: (tanksListModel.length > 0) ? tanksListModel[tanksList.currentIndex].type : ""
-                            //KeyNavigation.tab: textFileName
                         }
 
                         Item { height: 1; width: 1;}
@@ -753,12 +743,21 @@ Item
                         anchors.bottom: parent.bottom
                         anchors.bottomMargin: AppTheme.margin * app.scale
                         image: "qrc:/resources/img/icon_ok.png"
-                        //KeyNavigation.tab: textUserName
 
                         onSigButtonClicked: checkAndCreate()
                     }
                 }
             }
+        }
+
+        Tips
+        {
+            id: tip
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: AppTheme.rowHeight * 2 * app.scale
+            anchors.horizontalCenter: parent.horizontalCenter
+            visible: false
+            tipText: qsTr("")
         }
     }
 

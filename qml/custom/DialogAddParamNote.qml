@@ -344,20 +344,12 @@ Item
                                 if (app.isFullFunctionality() === true &&
                                     imagesList.selectedImagesList.count === AppDefs.NOTE_IMAGES_COUNT_FULL_LIMIT)
                                 {
-                                   tip.tipText = qsTr("Available count of images is reached")
+                                   tip.tipText = qsTr("You can only add ") + AppDefs.NOTE_IMAGES_COUNT_FULL_LIMIT + qsTr(" images.")
                                 }
                                 else
-                                    tip.tipText = qsTr("Limitation of non-registered version")
+                                    tip.tipText = qsTr("You cannot add more than ") + AppDefs.NOTE_IMAGES_COUNT_LIMIT + qsTr(" image.") + qsTr("\nLimitation of non-registered version.")
 
                                 tip.show(true)
-                            }
-
-                            Tips
-                            {
-                                id: tip
-                                anchors.bottom: imagesList.bottom
-                                visible: false
-                                tipText: qsTr("")
                             }
                         }
                     }
@@ -415,6 +407,15 @@ Item
                             warningDialog.showDialog(true, qsTr("Warning"), qsTr("Please fill in each of the parameters"))
                     }
                 }
+            }
+
+            Tips
+            {
+                id: tip
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: AppTheme.rowHeight * 2 * app.scale
+                visible: false
+                tipText: qsTr("")
             }
 
 
