@@ -210,7 +210,6 @@ void AppManager::readAppSett()
 {
     if (appSett.value(SETT_MAGICKEY) != settMagicKey)
     {
-        //appSett.setValue(SETT_LANG, AppDef::Lang_English);
         appSett.setValue(SETT_DIMENSIONUNITS, AppDef::Dimensions_CM);
         appSett.setValue(SETT_VOLUMEUNITS, AppDef::Volume_L);
         appSett.setValue(SETT_DATEFORMAT, AppDef::DateFormat_DD_MM_YYYY);
@@ -223,16 +222,9 @@ void AppManager::readAppSett()
             appSett.setValue(SETT_LANG, AppDef::Lang_Belarussian);
         else
             appSett.setValue(SETT_LANG, AppDef::Lang_English);
-
-        qDebug() << "No magic key found - reset options";
     }
     else
     {
-        qDebug() << "SETT_LANG" << appSett.value(SETT_LANG);
-        qDebug() << "SETT_DIMENSIONUNITS" << appSett.value(SETT_DIMENSIONUNITS);
-        qDebug() << "SETT_VOLUMEUNITS" << appSett.value(SETT_VOLUMEUNITS);
-        qDebug() << "SETT_DATEFORMAT" << appSett.value(SETT_DATEFORMAT);
-
         if (appSett.value(SETT_LANG) >= AppDef::Lang_End)
             appSett.setValue(SETT_LANG, AppDef::Lang_English);
 
@@ -274,7 +266,6 @@ void AppManager::checkAppRegistered()
     setQmlParam("app", "global_FULLFEATURES", true);
     setQmlParam("app", "global_APP_TYPE", AppDef::UStatus_EnabledPro);
 #else
-
     if (currentSelectedObjs()->user != 0)
     {
         QString appKey = getAppKey();

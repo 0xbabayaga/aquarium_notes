@@ -50,13 +50,13 @@ Item
                     }
                     else
                     {
-                        tip.tipText = qsTr("ACTIONS max count reached!")
+                        tip.tipText = qsTr("You can only add ") + AppDefs.ACTIONS_COUNT_FULL_LIMIT + qsTr(" actions.")
                         tip.show(true)
                     }
                 }
                 else
                 {
-                    tip.tipText = qsTr("ACTIONS functionality limitation!")
+                    tip.tipText = tip.tipText = qsTr("You cannot add more than ") + AppDefs.ACTIONS_COUNT_LIMIT + qsTr(" actions.") + qsTr("\nLimitation of non-registered version.")
                     tip.show(true)
                 }
 

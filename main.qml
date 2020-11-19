@@ -222,7 +222,7 @@ Window
                     font.family: AppTheme.fontFamily
                     font.pixelSize: AppTheme.fontNormalSize * app.scale
                     color: AppTheme.whiteColor
-                    text: qsTr("AQUARIUM NOTES")
+                    text: global_APP_NAME.toUpperCase()
                 }
             }
         }

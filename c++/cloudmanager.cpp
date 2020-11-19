@@ -83,8 +83,6 @@ void CloudManager::onReplyReceived(QNetworkReply *reply)
 
     tmt->stop();
 
-    //qDebug() << "REPLY RECEIVED";
-
     if (reply->error() == QNetworkReply::NetworkError::NoError)
     {
         rsp = reply->readAll();
